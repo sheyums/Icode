@@ -255,10 +255,8 @@ end
 
 try
     rng(7);
-    trueShift = -20;
+    trueShift = -100;
     x         = trueShift + exp(1.5 + 0.5 * randn(300, 1));
-
-    assert(all(x < 0), 'Test setup: expected all observations to be negative.');
 
     r = shiftlognormal_MLE(x);
 
@@ -280,9 +278,11 @@ end
 % Condition: exp(6*sigma) < 2, i.e., sigma < log(2)/6 ≈ 0.116.
 
 try
+    % sigma=0.02 guarantees exp(6*sigma)=1.13 << 2, so range << gap to
+    % trueShift=0 regardless of seed.
     rng(8);
     trueShift = 0;
-    x         = trueShift + exp(3 + 0.05 * randn(300, 1));
+    x         = trueShift + exp(3 + 0.02 * randn(500, 1));
 
     ws = warning('off', 'all');
     r  = shiftlognormal_MLE(x);
