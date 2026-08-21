@@ -7,19 +7,118 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = ...
 %       jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed)
 %
-% REPRODUCIBILITY
-%   Pass rng_seed (a nonnegative integer) to make the bootstrap
-%   deterministic.  The global stream is seeded on entry and its previous
-%   state is restored on exit via onCleanup, including on error or Ctrl-C, so
-%   calling jsd_kde never perturbs the caller's random stream.  Omit rng_seed
-%   (default []) to draw from the current stream and leave it advanced, which
-%   is the historical behaviour.
+% DESCRIPTION
+%   Estimates the Jensen-Shannon distance (JSD; the square root of the
+%   Jensen-Shannon divergence) between the empirical distributions of two
+%   sample vectors P and Q.  Continuous density estimates are obtained via KDE
+%   with an automatically selected bandwidth (ksdensity's normal-reference
+%   plug-in rule), evaluated on a fixed grid.  Numerical integration uses the
+%   trapezoidal rule.
+%
+%   For right-skewed data a log-transform is optionally applied before KDE.
+%   The divergence is then evaluated in the transformed space directly; see
+%   SCALE INVARIANCE below for why this needs no Jacobian correction.
+%
+%   When n_boot > 0, a nonparametric bootstrap yields confidence intervals and
+%   a noise-corrected distance, d_corr.  Finite-sample KDE bias is estimated by
+%   computing JSD between pairs of bootstrap resamples drawn from the *same*
+%   distribution (P vs P', Q vs Q').  The mean bias is taken as an ensemble
+%   average over all n_boot replicates and subtracted as a constant scalar in
+%   divergence (squared-distance) space before the square root.
+%
+% INPUTS
+%   P, Q              Numeric column (or row) vectors of observations.
+%                     All values must be >= min_cutoff.  Neither may be empty.
+%   Ngrid             Number of evaluation grid points (default: 512).
+%   min_cutoff        Hard lower bound of the support.  Defaults to
+%                     min([P; Q]).  Set to a known physical minimum (e.g. 0 for
+%                     positive-definite quantities) to enable bounded-support
+%                     KDE with boundary correction.  NOTE: at its default the
+%                     cutoff coincides with the observed minimum, which selects
+%                     the unbounded estimator; bounded support is used only
+%                     when min_cutoff lies strictly below the data.
+%   do_log_transform  Logical scalar; if true, log-transforms the data before
+%                     KDE.  If empty or omitted, auto-detected from sample
+%                     skewness (default).  Auto-detection fires on default
+%                     calls, so a skewed sample takes the log path unless the
+%                     transform is explicitly disabled with false.
+%   n_boot            Number of bootstrap replicates (default: 0, no bootstrap).
+%                     For publication-quality CI and noise correction,
+%                     1000-2000 is a reasonable choice.
+%   ci_alpha          Nominal coverage level, alpha in (0,1)
+%                     (default: 0.05 => 95% CI).
+%   rng_seed          Nonnegative integer seed for the bootstrap, or [] to draw
+%                     from the current stream (default: []).  See
+%                     REPRODUCIBILITY below.
+%
+% OUTPUTS
+%   d                 Jensen-Shannon distance, scalar in [0, 1] (bits basis).
+%                     Deterministic given the data; the bootstrap does not
+%                     enter it.
+%   d_CI              1x2 bootstrap CI on d; [] if n_boot = 0.
+%   d_SE              Bootstrap standard error of d; [] if n_boot = 0.
+%   d_boot            n_boot x 1 bootstrap distribution of d; [] if n_boot = 0.
+%   noise_P           Mean bootstrap JSD distance of P vs P' (noise floor).
+%   noise_Q           Mean bootstrap JSD distance of Q vs Q' (noise floor).
+%                     Both are descriptive distance-scale summaries only; the
+%                     actual correction is performed in divergence space.  Note
+%                     these return 0, not [], when n_boot = 0.
+%   d_corr            Noise-corrected JSD distance: ensemble-mean KDE bias
+%                     subtracted in divergence space, then sqrt; clamped at 0.
+%                     Returns 0 when n_boot = 0, since no noise estimate exists.
+%   d_corr_CI         Bootstrap CI on d_corr; [] if n_boot = 0.
+%   d_corr_SE         Bootstrap standard error of d_corr; [] if n_boot = 0.
+%
+% SCALE INVARIANCE
+%   JS divergence is exactly invariant under a smooth invertible
+%   reparametrisation y = g(x): the Jacobian cancels inside the log because the
+%   mixture transforms identically to its components,
+%       p_Y/m_Y = (p_X/g')/(m_X/g') = p_X/m_X,
+%   and the remaining g' cancels against dy = g' dx.  The estimator therefore
+%   evaluates the integrals directly in the transformed space on a uniform grid
+%   rather than back-transforming to the original scale.  This is the same
+%   estimator either way, but the uniform grid and the absence of a division by
+%   exp(y) make the trapezoidal quadrature markedly more accurate.
+%
+%   A corollary worth knowing: the log-transform offset (`shift`) cannot bias
+%   the estimand, only the smoothing, since it is part of a monotone map.
+%
+% ALGORITHM NOTES
+%   Units.  JSD is computed in bits (log base 2), giving JS divergence in [0,1]
+%   and hence d in [0,1].
+%
+%   Grid extension.  The evaluation grid extends 3 KDE bandwidths beyond the
+%   observed data extremes to prevent truncation of KDE tail mass at the
+%   integration boundary.  The bandwidth used for this extension is taken on
+%   the grid's own scale.  That distinction matters: bounded-support ksdensity
+%   works internally on log(x - min_cutoff) and returns a bandwidth on THAT
+%   scale, which is meaningless added to raw data values, so a separate
+%   raw-scale bandwidth is estimated for sizing in that branch.
+%
+%   Boundary handling.  Under bounded support the KDE is singular at exactly
+%   x = min_cutoff (internal log(0) -> -Inf, then 0/0).  The first grid node is
+%   therefore placed just inside the support.  The estimated density tends to 0
+%   at the boundary, so no mass is lost.
+%
+%   Bandwidth caching.  bw_P and bw_Q are extracted via ksdensity once before
+%   any bootstrap iteration and passed explicitly to all internal ksdensity
+%   calls, eliminating O(6 * n_boot) redundant bandwidth estimations that would
+%   otherwise dominate runtime.  The bootstrap loop is a plain for-loop;
+%   replacing it with parfor (Parallel Computing Toolbox) requires no further
+%   changes.
+%
+%   Noise correction.  avg_noise_div is the ensemble mean of all n_boot noise
+%   replicates, computed after the loop rather than per-iteration.  This gives a
+%   lower-variance noise floor (SE proportional to 1/sqrt(n_boot)) and decouples
+%   noise-estimator variance from the corrected bootstrap distribution.
+%   Subtracting a scalar shifts that distribution rigidly, so d_boot_corr
+%   reflects only the sampling variance of JSD itself.
 %
 % DEGENERATE INPUT
 %   A sample with zero range carries no scale information, so no bandwidth can
 %   be estimated from it and the KDE is undefined.  Rather than depend on
-%   ksdensity's internal fallback for this case, such input is detected up
-%   front and resolved in closed form:
+%   ksdensity's internal zero-sigma fallback, such input is detected up front
+%   and resolved in closed form:
 %     - both samples constant at the same value -> d = 0 (identical measures);
 %     - both constant at different values, or exactly one constant -> d = 1,
 %       since a point mass is mutually singular with respect to any other
@@ -27,33 +126,39 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %       singular measures is exactly log2(2) = 1 bit.
 %   A jsd_kde:degenerateInput warning is issued so the result is never silent.
 %
-% SCALE INVARIANCE
-%   JS divergence is exactly invariant under a smooth invertible
-%   reparametrisation y = g(x): the Jacobian cancels inside the log because
-%   the mixture transforms identically to its components,
-%       p_Y/m_Y = (p_X/g')/(m_X/g') = p_X/m_X,
-%   and the remaining g' cancels against dy = g' dx.  The estimator therefore
-%   evaluates the integrals directly in the transformed space on a uniform
-%   grid rather than back-transforming to the original scale.
+% REPRODUCIBILITY
+%   Pass rng_seed (a nonnegative integer) to make the bootstrap deterministic.
+%   The global stream is seeded on entry and its previous state is restored on
+%   exit via onCleanup, including on error or Ctrl-C, so calling jsd_kde never
+%   perturbs the caller's random stream.  Omit rng_seed (default []) to draw
+%   from the current stream and leave it advanced.
 %
-% PATCH NOTES (relative to the previous revision)
-%   (1) BANDWIDTH UNITS.  Bounded-support ksdensity works internally on
-%       log(x - min_cutoff) and returns a bandwidth on THAT scale, so it
-%       cannot be added to raw data values when sizing the evaluation grid.
-%       A separate raw-scale bandwidth is now obtained for the grid extension
-%       while the KDE itself keeps the bounded-support bandwidth.
-%   (2) BOUNDARY OFFSET.  With bounded support the KDE is singular at exactly
-%       x = min_cutoff (internal log(0) -> -Inf, then 0/0).  The first grid
-%       node is now placed just inside the support.
-%   (3) CONDITIONAL SHIFT.  The log-transform offset is applied only to the
-%       extent needed to keep the smallest observation a sensible distance
-%       above min_cutoff.  When min_cutoff already sits comfortably below the
-%       data the shift is exactly zero, leaving log(x - min_cutoff) unperturbed.
-%   (4) DEGENERATE INPUT.  Zero-range samples are detected up front and
-%       resolved in closed form (see DEGENERATE INPUT above) instead of being
-%       passed to ksdensity, which cannot estimate a bandwidth from them.
-%   (5) RNG CONTROL.  Optional rng_seed makes the bootstrap reproducible, with
-%       the caller's stream state restored on exit (see REPRODUCIBILITY above).
+%   Only d is deterministic without a seed.  d_CI, d_SE, d_boot, d_corr,
+%   d_corr_CI and d_corr_SE all vary run to run, so results intended to be
+%   reproducible from saved output should always be generated with a seed.
+%
+% LIMITATIONS
+%   d_corr_CI is conditional on the noise floor being known exactly.  Because
+%   avg_noise_div is subtracted as a constant, Var[avg_noise_div] is excluded by
+%   construction, so the interval is narrower than a full accounting of the
+%   uncertainty in d_corr would give.
+%
+%   When min_cutoff coincides with the observed minimum the estimator is
+%   unbounded, so KDE mass falling below min_cutoff is truncated at the
+%   integration limit and redistributed by renormalisation.  P and Q are
+%   treated identically, so the effect on d is second order.
+%
+%   Grid resolution is fixed at Ngrid points spanning [min_cutoff, max + ext].
+%   A min_cutoff set far below the bulk of the data spends much of the grid on
+%   empty space; raise Ngrid in that situation.
+%
+% REFERENCES
+%   Lin, J. (1991). Divergence measures based on the Shannon entropy.
+%     IEEE Trans. Inf. Theory, 37(1), 145-151.
+%   Endres, D.M. & Schindelin, J.E. (2003). A new metric for probability
+%     distributions. IEEE Trans. Inf. Theory, 49(7), 1858-1860.
+%   Osterreicher, F. & Vajda, I. (2003). A new class of metric divergences
+%     on probability spaces. Ann. Inst. Stat. Math., 55(3), 639-653.
 
 %% ------------------ Defaults & Setup ------------------
 arguments
