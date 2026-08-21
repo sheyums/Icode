@@ -1,11 +1,31 @@
-function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha)
+function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed)
 % JSD_KDE  Jensen-Shannon distance between two univariate distributions
 %          estimated via kernel density estimation (KDE).
 %
 % SYNTAX
 %   d = jsd_kde(P, Q)
 %   [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = ...
-%       jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha)
+%       jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed)
+%
+% REPRODUCIBILITY
+%   Pass rng_seed (a nonnegative integer) to make the bootstrap
+%   deterministic.  The global stream is seeded on entry and its previous
+%   state is restored on exit via onCleanup, including on error or Ctrl-C, so
+%   calling jsd_kde never perturbs the caller's random stream.  Omit rng_seed
+%   (default []) to draw from the current stream and leave it advanced, which
+%   is the historical behaviour.
+%
+% DEGENERATE INPUT
+%   A sample with zero range carries no scale information, so no bandwidth can
+%   be estimated from it and the KDE is undefined.  Rather than depend on
+%   ksdensity's internal fallback for this case, such input is detected up
+%   front and resolved in closed form:
+%     - both samples constant at the same value -> d = 0 (identical measures);
+%     - both constant at different values, or exactly one constant -> d = 1,
+%       since a point mass is mutually singular with respect to any other
+%       distribution supported elsewhere, and JS divergence between mutually
+%       singular measures is exactly log2(2) = 1 bit.
+%   A jsd_kde:degenerateInput warning is issued so the result is never silent.
 %
 % SCALE INVARIANCE
 %   JS divergence is exactly invariant under a smooth invertible
@@ -29,6 +49,11 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %       extent needed to keep the smallest observation a sensible distance
 %       above min_cutoff.  When min_cutoff already sits comfortably below the
 %       data the shift is exactly zero, leaving log(x - min_cutoff) unperturbed.
+%   (4) DEGENERATE INPUT.  Zero-range samples are detected up front and
+%       resolved in closed form (see DEGENERATE INPUT above) instead of being
+%       passed to ksdensity, which cannot estimate a bandwidth from them.
+%   (5) RNG CONTROL.  Optional rng_seed makes the bootstrap reproducible, with
+%       the caller's stream state restored on exit (see REPRODUCIBILITY above).
 
 %% ------------------ Defaults & Setup ------------------
 arguments
@@ -39,10 +64,28 @@ arguments
     do_log_transform                                                        = []
     n_boot      (1,1) {mustBeInteger, mustBeNonnegative}                    = 0
     ci_alpha    (1,1) {mustBeInRange(ci_alpha, 0, 1, "exclusive")}          = 0.05
+    rng_seed                                                                = []
 end
 
 P = P(:); Q = Q(:);
 nP = numel(P); nQ = numel(Q);
+
+%% ------------------ Reproducibility ------------------
+% Seed the global stream when a seed is supplied, and restore whatever state
+% the caller had on the way out.  onCleanup fires on normal return, on error
+% and on Ctrl-C, so the caller's stream is never left reseeded by this call.
+% cleanup_rng must stay in scope for the lifetime of the function; it is
+% intentionally never referenced again.
+if ~isempty(rng_seed)
+    if ~(isnumeric(rng_seed) && isscalar(rng_seed) && isreal(rng_seed) && ...
+            isfinite(rng_seed) && rng_seed >= 0 && rng_seed == floor(rng_seed))
+        error('jsd_kde:badSeed', ...
+            'rng_seed must be [] or a nonnegative integer scalar.');
+    end
+    rng_state_in = rng;
+    cleanup_rng  = onCleanup(@() rng(rng_state_in));  %#ok<NASGU>
+    rng(rng_seed, 'twister');
+end
 
 % Resolve data-dependent default
 if isnan(min_cutoff), min_cutoff = min([P; Q]); end
@@ -53,6 +96,58 @@ end
 
 observed_min = min([P;Q]);
 min_is_observed = abs(min_cutoff - observed_min) < 10*eps(observed_min);
+
+%% ------------------ Degenerate (zero-range) input ------------------
+% Handled before anything that needs a scale estimate: skewness of a constant
+% vector is 0/0 = NaN, and no bandwidth can be estimated from a sample with no
+% spread.  Resolving these cases in closed form keeps the result deterministic
+% and independent of ksdensity's internal zero-sigma fallback.  Reaching the
+% code below also establishes that both samples have positive range, which is
+% what guarantees the std fallback for `spread` is strictly positive.
+P_is_const = (max(P) - min(P)) <= 10*eps(max(abs(P)));
+Q_is_const = (max(Q) - min(Q)) <= 10*eps(max(abs(Q)));
+
+if P_is_const || Q_is_const
+    if P_is_const && Q_is_const
+        val_tol = 10*eps(max(abs([P(1), Q(1)])));
+        if abs(P(1) - Q(1)) <= val_tol
+            d = 0;   % identical point masses
+            reason = 'both samples are constant at the same value';
+        else
+            d = 1;   % distinct point masses are mutually singular
+            reason = 'both samples are constant at different values';
+        end
+    else
+        d = 1;       % a point mass is singular w.r.t. any spread-out measure
+        if P_is_const, reason = 'P is constant'; else, reason = 'Q is constant'; end
+    end
+
+    warning('jsd_kde:degenerateInput', ...
+        ['Degenerate input (%s): KDE is undefined, returning the exact ' ...
+         'limiting distance d = %g.'], reason, d);
+
+    % Every resample of a constant sample is that same constant, so the
+    % bootstrap is deterministic and the noise floor is exactly zero.  Outputs
+    % follow the same convention as the main path: the noise-corrected
+    % quantities are only populated when a bootstrap was actually requested.
+    noise_P = 0; noise_Q = 0;
+    if n_boot > 0
+        d_boot    = repmat(d, n_boot, 1);
+        d_CI      = [d, d];
+        d_SE      = 0;
+        d_corr    = d;
+        d_corr_CI = [d, d];
+        d_corr_SE = 0;
+    else
+        d_boot    = [];
+        d_CI      = [];
+        d_SE      = [];
+        d_corr    = 0;
+        d_corr_CI = [];
+        d_corr_SE = [];
+    end
+    return;
+end
 
 %% ------------------ Auto-log decision ------------------
 % Auto-log functions when min_cutoff is at its default (observed minimum).
@@ -72,6 +167,8 @@ end
 
 %% ------------------ Grid Setup (FIXED for Bootstrapping) ------------------
 spread = max(median([P;Q]) - min_cutoff, iqr([P;Q]));
+% Both samples are known to have positive range here (see the degenerate-input
+% block above), so this fallback is strictly positive.
 if spread <= 0, spread = std([P;Q]); end
 
 % --- PATCH (3): conditional log-transform shift ---------------------------
