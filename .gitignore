@@ -1,2 +1,5 @@
 # Auto-generated Octave twin (see tools/make_octave_twin.py)
 FitHyperexponentialMLE_oct.m
+
+# Octave dumps this binary workspace image if a session is interrupted
+octave-workspace
