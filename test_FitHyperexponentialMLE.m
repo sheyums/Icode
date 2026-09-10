@@ -166,6 +166,10 @@ try
     rng(11);
     d = round(simTrunc([0.8 0.2], [150 1500], 300, 800, 1e-6));
     d(1:6) = 300;                      % force ties exactly at xmin
+    % round() also maps naturally-drawn values in (300, 300.5) onto 300, so
+    % the tie count is stream-dependent and must not be hard-coded: the
+    % invariant is that the diagnostic equals the true number of ties.
+    nTies = nnz(d == 300);
     % The warning must stay ENABLED for lastwarn to record it, so the
     % warning text below is expected output for this test.
     prevWarn = warning('on', 'FitHyperexponentialMLE:UnboundedLikelihood');
@@ -177,14 +181,13 @@ try
     warning(prevWarn);
     flagged = H.Diagnostics.UnboundedContinuousLikelihood;
     warned  = strcmp(wid, 'FitHyperexponentialMLE:UnboundedLikelihood');
-    counted = H.Diagnostics.nAtXmin == 6;
+    counted = H.Diagnostics.nAtXmin == nTies;
     if flagged && warned && counted
-        fprintf('[PASS] Test 6: %d ties at xmin detected, unbounded likelihood warned\n', ...
-            H.Diagnostics.nAtXmin);
+        fprintf('[PASS] Test 6: all %d ties at xmin detected, unbounded likelihood warned\n', nTies);
         nPassed = nPassed + 1;
     else
-        fprintf('[FAIL] Test 6: flagged=%d warned=%d nAtXmin=%d\n', ...
-            flagged, warned, H.Diagnostics.nAtXmin);
+        fprintf('[FAIL] Test 6: flagged=%d warned=%d nAtXmin=%d (true ties %d)\n', ...
+            flagged, warned, H.Diagnostics.nAtXmin, nTies);
         nFailed = nFailed + 1;
     end
 catch err
@@ -351,24 +354,43 @@ end
 %% Test 14: SE fields are NaN (not 0) when CovValid is false
 try
     rng(41);
-    d = [310; 320; 340; 400; 410; 450; 900];
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:});
-    ok = true; checked = false;
-    for K = 2:3
-        f = H.AllFits(K);
-        if f.Success && ~f.CovValid
-            checked = true;
-            if ~all(isnan(f.WeightsUntruncatedSE)) || ~all(isnan(f.WeightsObservedSE)) ...
-                    || ~all(isnan(f.TauSE)) || ~all(isnan(f.RateSE))
-                ok = false;
+    % Whether any given fit ends up non-identified depends on the RNG
+    % stream, so scan several adversarial datasets rather than relying on
+    % one of them to degenerate.
+    cases = {[310; 320; 340; 400; 410; 450; 900], ...
+             [301; 302; 303; 304; 305; 306], ...
+             [305; 305; 306; 306; 307; 307; 308; 308], ...
+             300 + [1; 2; 2; 3; 3; 4; 5; 800; 1600]};
+    ok = true; checked = 0;
+    for ci = 1:numel(cases)
+        try
+            H = fitfun(cases{ci}, 300, 'MaxComponents', 3, FAST{:});
+        catch innerErr
+            % NoValidFit is the correct outcome when every model order is
+            % degenerate for a dataset this small; move on to the next.
+            if strcmp(innerErr.identifier, 'FitHyperexponentialMLE:NoValidFit')
+                continue
+            end
+            rethrow(innerErr);
+        end
+        for K = 2:3
+            f = H.AllFits(K);
+            if f.Success && ~f.CovValid
+                checked = checked + 1;
+                if ~all(isnan(f.WeightsUntruncatedSE)) || ~all(isnan(f.WeightsObservedSE)) ...
+                        || ~all(isnan(f.TauSE)) || ~all(isnan(f.RateSE))
+                    ok = false;
+                end
             end
         end
     end
-    if ok && checked
-        fprintf('[PASS] Test 14: all SE fields NaN when CovValid is false\n'); nPassed = nPassed + 1;
-    elseif ~checked
-        fprintf('[PASS] Test 14: skipped, every fit was identified (no CovValid=false case)\n');
+    if ok && checked > 0
+        fprintf('[PASS] Test 14: all SE fields NaN when CovValid is false (%d case(s) exercised)\n', ...
+            checked);
         nPassed = nPassed + 1;
+    elseif checked == 0
+        fprintf('[FAIL] Test 14: no CovValid=false case arose, assertion never exercised\n');
+        nFailed = nFailed + 1;
     else
         fprintf('[FAIL] Test 14: an SE field was 0 rather than NaN with CovValid=false\n');
         nFailed = nFailed + 1;
