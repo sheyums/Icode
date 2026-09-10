@@ -23,7 +23,7 @@ function test_FitHyperexponentialMLE()
 % 11.  MaxRate ceiling respected       - no tau below SamplingInterval
 % 12.  Discrete n_min clamp            - xmin < dt/2 cannot inflate logL
 % 13.  Discrete truncation consistency - rounds into support, not dropped
-% 14.  WeightSE is NaN, not 0          - when CovValid is false and K>1
+% 14.  SE fields are NaN, not 0        - when CovValid is false and K>1
 % 15.  Warning state not leaked        - singularMatrix state preserved
 % 16.  Insufficient data               - correct error identifier
 % 17.  Discrete-mode recovery          - tau and q near truth on a grid
@@ -83,8 +83,8 @@ try
     d = simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6);
     H = fitfun(d, 300, 'MaxComponents', 2, FAST{:});
     needTop = {'SelectedK','AllFits','Selected','DistributionType','xmin','n','Diagnostics'};
-    needFit = {'K','k','n','Weights','WeightsObserved','Rates','Tau','RateSE', ...
-               'TauSE','WeightSE','WeightObservedSE','CovValid','LogLik','AIC', ...
+    needFit = {'K','k','n','WeightsObserved','WeightsUntruncated','Rates','Tau','RateSE', ...
+               'TauSE','WeightsObservedSE','WeightsUntruncatedSE','CovValid','LogLik','AIC', ...
                'AICc','Success','Converged','Degenerate','DegenerateReason', ...
                'AtRateBound','ExitFlag','BestParamVector'};
     missTop = needTop(~isfield(H, needTop));
@@ -107,9 +107,9 @@ try
     s = H.Selected; K = H.SelectedK;
     sorted   = all(diff(s.Tau) > 0);
     lengthsOK = all(cellfun(@(f) numel(s.(f)) == K, ...
-        {'Weights','WeightsObserved','Rates','Tau','RateSE','TauSE','WeightSE','WeightObservedSE'}));
+        {'WeightsUntruncated','WeightsObserved','Rates','Tau','RateSE','TauSE','WeightsUntruncatedSE','WeightsObservedSE'}));
     reciprocal = all(abs(s.Tau .* s.Rates - 1) < 1e-10);
-    sumsOne  = abs(sum(s.WeightsObserved) - 1) < 1e-8 && abs(sum(s.Weights) - 1) < 1e-8;
+    sumsOne  = abs(sum(s.WeightsObserved) - 1) < 1e-8 && abs(sum(s.WeightsUntruncated) - 1) < 1e-8;
     if sorted && lengthsOK && reciprocal && sumsOne
         fprintf('[PASS] Test 3: components sorted by tau, all vectors aligned and normalized\n');
         nPassed = nPassed + 1;
@@ -129,7 +129,7 @@ try
     d = simTrunc([0.7 0.3], [120 1800], xmin, 1200, 1e-6);
     H = fitfun(d, xmin, 'MaxComponents', 2, FAST{:});
     s = H.AllFits(2);
-    qExpected = s.Weights .* exp(-s.Rates * xmin);
+    qExpected = s.WeightsUntruncated .* exp(-s.Rates * xmin);
     qExpected = qExpected / sum(qExpected);
     if max(abs(s.WeightsObserved - qExpected)) < 1e-10
         fprintf('[PASS] Test 4: WeightsObserved equals w_j*exp(-lam_j*xmin)/S(xmin)\n');
@@ -149,7 +149,7 @@ try
     d = simTrunc([0.85 0.15], [90 1600], xmin, 2500, 1e-6);
     H = fitfun(d, xmin, 'MaxComponents', 2, FAST{:});
     s = H.AllFits(2);
-    gap = max(abs(s.Weights - s.WeightsObserved));
+    gap = max(abs(s.WeightsUntruncated - s.WeightsObserved));
     if gap > 0.2
         fprintf('[PASS] Test 5: w and q differ by %.2f under truncation (report q)\n', gap);
         nPassed = nPassed + 1;
@@ -348,7 +348,7 @@ catch err
     fprintf('[FAIL] Test 13: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
-%% Test 14: WeightSE is NaN (not 0) when CovValid is false
+%% Test 14: SE fields are NaN (not 0) when CovValid is false
 try
     rng(41);
     d = [310; 320; 340; 400; 410; 450; 900];
@@ -358,7 +358,7 @@ try
         f = H.AllFits(K);
         if f.Success && ~f.CovValid
             checked = true;
-            if ~all(isnan(f.WeightSE)) || ~all(isnan(f.WeightObservedSE)) ...
+            if ~all(isnan(f.WeightsUntruncatedSE)) || ~all(isnan(f.WeightsObservedSE)) ...
                     || ~all(isnan(f.TauSE)) || ~all(isnan(f.RateSE))
                 ok = false;
             end

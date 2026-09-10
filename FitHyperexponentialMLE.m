@@ -76,9 +76,21 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   so the data constrain (q, lambda) directly, and w is only recovered
 %   afterwards by the back-transform w_j ~ q_j * exp(+lambda_j*xmin).
 %
-%   H.Selected.Weights          = w  (UNTRUNCATED mixture weights)
-%   H.Selected.WeightsObserved  = q  (fraction of the OBSERVED, >= xmin
-%                                     bouts belonging to component j)
+%   H.Selected.WeightsObserved     = q  (fraction of the OBSERVED, i.e.
+%                                        >= xmin, bouts from component j)
+%   H.Selected.WeightsUntruncated  = w  (mixing weights over ALL bouts the
+%                                        process produced, those below
+%                                        xmin included)
+%
+%   There is deliberately NO field called "Weights". The unqualified name
+%   is what a reader reaches for expecting "the fraction of bouts in this
+%   component" -- which is q -- whereas the mixture's own weight
+%   PARAMETER is w, and on real data the two are different numbers by a
+%   factor of five or more. Rather than let ".Weights" quietly return
+%   whichever one, it does not exist: H.AllFits(K).Weights raises
+%   "Reference to non-existent field", and you have to say which you
+%   meant. Their standard errors follow the same names,
+%   WeightsObservedSE and WeightsUntruncatedSE.
 %
 %   REPORT q, NOT w, when describing your data. The two differ by orders
 %   of magnitude whenever lambda_j*xmin is large: a component with
@@ -90,6 +102,85 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   literal zeros. All-but-one weights printing as 0.0000 is that
 %   underflow, not a fitting error -- check WeightsObserved, which stays
 %   well scaled.
+%
+%   Two further traps when writing q up:
+%
+%     - tau_j is NOT the typical duration of that component's bouts. Every
+%       observation is conditioned on T >= xmin and each component is
+%       individually memoryless, so component j's OBSERVED durations have
+%       mean xmin + tau_j. A tau_j = 99 s component under xmin = 300 s
+%       gives bouts averaging 399 s, not 99 s. tau_j is the decay constant
+%       of the excess over the threshold -- which is precisely what makes
+%       it comparable across different choices of xmin.
+%
+%     - q_j is a proportion over a LATENT component label, not a rule for
+%       classifying individual bouts. The components overlap heavily; one
+%       observation's posterior is
+%           P(j | t) ~ q_j * lambda_j * exp(-lambda_j*(t-xmin))
+%       and on a real 3-component sleep-bout fit only about a third of
+%       bouts could be assigned to a single component with >90 percent
+%       confidence. n*q_j is an expected count, not a subset you can point
+%       at. (As an internal check, those posteriors summed over all
+%       observations equal n*q_j exactly at the MLE -- the EM stationarity
+%       identity, and a useful confirmation that the optimizer really is
+%       at a stationary point rather than merely somewhere with a good
+%       function value.)
+%
+%   So what is w for? In principle it is the xmin-INVARIANT quantity: q is
+%   defined relative to your threshold, so it is not comparable between
+%   studies using different cutoffs, nor between sleep bouts (xmin=300)
+%   and wake bouts (xmin=2), whereas w is a property of the process alone.
+%   In practice that advantage does not cash out. Refitting one real
+%   dataset at xmin = 300, 350, ..., 500 held tau_2 and tau_3 to ~1.5
+%   percent while w for the fast component wandered over 0.61..1.00 and
+%   collapsed entirely at the top of that range -- recovering w means
+%   dividing q by an ever-smaller survival probability, which amplifies
+%   noise faster than the added truncation removes it. Use w for
+%   simulating the untruncated process, and for estimating what fraction
+%   of the population fell below xmin (1 - S(xmin)), an extrapolation
+%   resting entirely on the exponential form holding below xmin where
+%   there is no data. To compare against a study using a different cutoff
+%   x, do NOT pass w around; predict their weights from your own fit as
+%       q_j(x) ~ w_j * exp(-lambda_j*x),
+%   keeping the compared quantity one the data actually constrain.
+%
+%   Two further traps when writing q up:
+%
+%     - tau_j is NOT the typical duration of that component's bouts. Every
+%       observation is conditioned on T >= xmin and each component is
+%       individually memoryless, so component j's OBSERVED durations have
+%       mean xmin + tau_j. A tau_j = 99 s component under xmin = 300 s
+%       produces bouts averaging 399 s, not 99 s. tau_j is the decay
+%       constant of the excess over the threshold -- which is precisely
+%       what makes it comparable across different choices of xmin.
+%
+%     - q_j is a proportion over a LATENT component label, not a rule for
+%       classifying individual bouts. The components overlap heavily; a
+%       single observation's posterior is
+%           P(j | t) ~ q_j * lambda_j * exp(-lambda_j*(t-xmin))
+%       and on a real 3-component sleep-bout fit only about a third of
+%       bouts could be assigned to one component with >90%% confidence.
+%       n*q_j is an expected count, not a subset you can point at. (As an
+%       internal check, those posteriors summed over all observations
+%       equal n*q_j exactly at the MLE -- the EM stationarity identity.)
+%
+%   So what is w for? In principle it is the xmin-INVARIANT quantity: q is
+%   defined relative to your threshold and so is not comparable between
+%   studies using different cutoffs, nor between sleep bouts (xmin=300)
+%   and wake bouts (xmin=2), whereas w is a property of the animal alone.
+%   In practice that advantage does not cash out. Refitting one real
+%   dataset at xmin = 300, 350, ..., 500 held tau_2 and tau_3 to ~1.5%%
+%   while w for the fast component wandered over 0.61..1.00 and collapsed
+%   completely at the top of the range -- recovering w means dividing q by
+%   an ever-smaller survival probability, which amplifies noise faster
+%   than the extra truncation removes it. Use w for simulating the
+%   untruncated process, and for estimating what fraction of the
+%   population fell below xmin (1 - S(xmin)), an extrapolation that rests
+%   entirely on the exponential form holding below xmin where there is no
+%   data. To compare against a study using a different cutoff x, do NOT
+%   pass w around; predict their weights from your own fit as
+%       q_j(x) ~ w_j * exp(-lambda_j*x),
+%   keeping the compared quantity one the data actually constrain.
 %
 %   ======================================================================
 %   THE CONTINUOUS LIKELIHOOD IS UNBOUNDED IF ANY OBSERVATION EQUALS xmin
@@ -242,8 +333,9 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   H.SelectedK        chosen number of components (minimum AICc among
 %                       model orders that pass the identifiability gating)
 %   H.AllFits          1 x MaxComponents struct array, one per K, with
-%                       fields K, k, n, Weights, WeightsObserved, Rates,
-%                       Tau, RateSE, TauSE, WeightSE, WeightObservedSE,
+%                       fields K, k, n, WeightsObserved, WeightsUntruncated,
+%                       Rates, Tau, RateSE, TauSE, WeightsObservedSE,
+%                       WeightsUntruncatedSE,
 %                       CovValid, LogLik, AIC, AICc, Success, Converged,
 %                       Degenerate, DegenerateReason, ExitFlag,
 %                       BestParamVector
@@ -254,13 +346,13 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   H.DistributionType, H.xmin, H.n
 %
 %   Tau = 1./Rates (time units, matching eventseries/xmin). RateSE, TauSE,
-%   WeightSE, WeightObservedSE are asymptotic standard errors, obtained
+%   WeightsUntruncatedSE, WeightsObservedSE are asymptotic standard errors, obtained
 %   post-hoc (after fminsearch converges, not part of the optimization
 %   itself) from a numerical Hessian of the negative log-likelihood at the
 %   MLE -- the observed information matrix, which is the preferable
 %   variance estimator here (Efron & Hinkley 1978, Biometrika 65:457-487)
 %   -- inverted to get the covariance of the underlying log-rate/logit
-%   parameters, then propagated to Rates, Tau, Weights and
+%   parameters, then propagated to Rates, Tau, WeightsUntruncated and
 %   WeightsObserved via the delta method. CovValid is false (and the SE
 %   fields are NaN) when the Hessian is not usable as a covariance matrix
 %   (non-positive-definite, e.g. near label-switching or a poorly
@@ -277,6 +369,44 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   likelihoods are multimodal and only weakly identified (Redner & Walker
 %   1984, SIAM Rev. 26:195-239), and AICc itself becomes unreliable once n
 %   is only a few times k=2K-1.
+%
+%   A second check, cheaper than simulation and available on your own
+%   data: refit at a higher threshold x > xmin and compare the refitted q
+%   against what the ORIGINAL fit predicts there via
+%   q_j(x) ~ w_j*exp(-lambda_j*x). That is a genuine out-of-sample test of
+%   the mixture form -- a model fitted to bouts >= 300 s predicting the
+%   composition of bouts >= 500 s -- and is stronger evidence for K than
+%   the AICc ranking, which only ever compares in-sample fit. Agreement to
+%   <= 0.01 in q is what a well-specified 3-component fit looks like. Do
+%   not expect the FAST component's tau to survive this: it is exactly
+%   what the raised threshold removes, so its estimate legitimately
+%   degrades (99 s -> 36 s over that range on the dataset above) while the
+%   slow components stay put to ~1.5 percent. AICc over-selection is real
+%   too: in simulation at n=400 with a true K=2, AICc chose K=3 in 4 of 40
+%   replicates, so prefer a parametric bootstrap likelihood-ratio test
+%   (McLachlan 1987, Appl. Stat. 36:318-324) when the model ORDER is
+%   itself the scientific claim -- the mixture LRT has no chi-square null
+%   distribution (Hartigan 1985, Proc. Berkeley Conf. II:807-810; Chen,
+%   Chen & Kalbfleisch 2001, JRSS-B 63:19-29).
+%
+%   A second check, cheaper than simulation and available on your own
+%   data: refit at a higher threshold x > xmin, and compare the refitted q
+%   against what the ORIGINAL fit predicts there via
+%   q_j(x) ~ w_j*exp(-lambda_j*x). That is a genuine out-of-sample test of
+%   the mixture form -- a model fitted to bouts >= 300 s predicting the
+%   composition of bouts >= 500 s -- and is stronger evidence for K than
+%   the AICc ranking, which only ever compares in-sample fit. Agreement to
+%   <=0.01 in q is what a well-specified 3-component fit looks like. Do
+%   not expect the FAST component's tau to survive this: it is exactly
+%   what the higher threshold is removing, so its estimate legitimately
+%   degrades (99 s -> 36 s over that range on the dataset above) while the
+%   slow components stay put. AICc over-selection is also real: in
+%   simulation at n=400 with a true K=2, AICc chose K=3 in 4 of 40
+%   replicates, so prefer a parametric bootstrap likelihood-ratio test
+%   (McLachlan 1987, Appl. Stat. 36:318-324) when the model order itself
+%   is the scientific claim -- the mixture LRT has no chi-square null
+%   distribution (Hartigan 1985; Chen, Chen & Kalbfleisch 2001, JRSS-B
+%   63:19-29).
 %
 %   See also SHIFTLOGNORMAL_MLE, SIGWORTHSINEV3,
 %   CALCBOUTSIZESONSETSOFFSETS.
@@ -499,10 +629,10 @@ if options.Verbose
             fprintf(['    Component %d: tau=%.4g (SE %.4g)   q=%.4f (SE %.4f)' ...
                 '   w_untrunc=%.4g   rate=%.4g (SE %.4g)\n'], ...
                 j, sel.Tau(j), sel.TauSE(j), sel.WeightsObserved(j), ...
-                sel.WeightObservedSE(j), sel.Weights(j), sel.Rates(j), sel.RateSE(j));
+                sel.WeightsObservedSE(j), sel.WeightsUntruncated(j), sel.Rates(j), sel.RateSE(j));
         else
             fprintf('    Component %d: tau=%.4g   q=%.4f   w_untrunc=%.4g   rate=%.4g\n', ...
-                j, sel.Tau(j), sel.WeightsObserved(j), sel.Weights(j), sel.Rates(j));
+                j, sel.Tau(j), sel.WeightsObserved(j), sel.WeightsUntruncated(j), sel.Rates(j));
         end
     end
 end
@@ -511,9 +641,9 @@ end
 
 % ========================================================================
 function s = initFitStruct()
-s = struct('K', NaN, 'k', NaN, 'n', NaN, 'Weights', [], ...
-    'WeightsObserved', [], 'Rates', [], 'Tau', [], 'RateSE', [], ...
-    'TauSE', [], 'WeightSE', [], 'WeightObservedSE', [], ...
+s = struct('K', NaN, 'k', NaN, 'n', NaN, 'WeightsObserved', [], ...
+    'WeightsUntruncated', [], 'Rates', [], 'Tau', [], 'RateSE', [], ...
+    'TauSE', [], 'WeightsObservedSE', [], 'WeightsUntruncatedSE', [], ...
     'CovValid', false, 'LogLik', NaN, 'AIC', NaN, 'AICc', NaN, ...
     'Success', false, 'Converged', false, 'Degenerate', true, ...
     'DegenerateReason', 'not fitted', 'AtRateBound', false, ...
@@ -564,7 +694,7 @@ end
 [~, weights, rates, extra] = negLogLik(bestZ, K, data, xmin, n_min, ...
     isDiscrete, options.SamplingInterval, options.MaxRate);
 
-out.Weights = weights;
+out.WeightsUntruncated = weights;
 out.WeightsObserved = extra.WeightsObserved;
 out.Rates = rates;
 out.Tau = 1 ./ rates;
@@ -587,10 +717,10 @@ out.AtRateBound = any(rates >= options.MaxRate * (1 - 1e-6));
 rateSE = nan(1, K);
 tauSE = nan(1, K);
 if K == 1
-    weightSE = 0;            % w == 1 identically, no uncertainty
+    weightUntruncSE = 0;            % w == 1 identically, no uncertainty
     weightObsSE = 0;
 else
-    weightSE = nan(1, K);
+    weightUntruncSE = nan(1, K);
     weightObsSE = nan(1, K);
 end
 covValid = false;
@@ -645,7 +775,7 @@ try
                 Jw = softmaxJacobianFreeParams(weights);
                 covAlpha = covZ(K+1:end, K+1:end);
                 covW = Jw * covAlpha * Jw';
-                weightSE = sqrt(max(diag(covW), 0))';
+                weightUntruncSE = sqrt(max(diag(covW), 0))';
             end
 
             % q depends on BOTH the logits and the rates, so propagate it
@@ -664,8 +794,8 @@ end
 
 out.RateSE = rateSE;
 out.TauSE = tauSE;
-out.WeightSE = weightSE;
-out.WeightObservedSE = weightObsSE;
+out.WeightsUntruncatedSE = weightUntruncSE;
+out.WeightsObservedSE = weightObsSE;
 out.CovValid = covValid;
 
 % Canonical component ordering. The mixture likelihood is invariant to
@@ -673,17 +803,17 @@ out.CovValid = covValid;
 % optimizer happened to end on -- which makes "component 1" mean different
 % things across K, across animals, and across bootstrap replicates. All
 % per-component vectors are permuted together, so the pairing between
-% Weights/WeightsObserved/Rates/Tau and their SEs is preserved.
+% WeightsUntruncated/WeightsObserved/Rates/Tau and their SEs is preserved.
 if options.SortComponents && K > 1
     [~, ord] = sort(out.Tau, 'ascend');
-    out.Weights = out.Weights(ord);
+    out.WeightsUntruncated = out.WeightsUntruncated(ord);
     out.WeightsObserved = out.WeightsObserved(ord);
     out.Rates = out.Rates(ord);
     out.Tau = out.Tau(ord);
     out.RateSE = out.RateSE(ord);
     out.TauSE = out.TauSE(ord);
-    out.WeightSE = out.WeightSE(ord);
-    out.WeightObservedSE = out.WeightObservedSE(ord);
+    out.WeightsUntruncatedSE = out.WeightsUntruncatedSE(ord);
+    out.WeightsObservedSE = out.WeightsObservedSE(ord);
 end
 
 end
