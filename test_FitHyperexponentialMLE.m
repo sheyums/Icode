@@ -28,6 +28,9 @@ function test_FitHyperexponentialMLE()
 % 16.  Insufficient data               - correct error identifier
 % 17.  Discrete-mode recovery          - tau and q near truth on a grid
 % 18.  VERBOSE mode                    - does not error
+% 19.  Grid mismatch detected           - wrong SamplingInterval units warn
+% 20.  No false-positive grid warning   - correct units, and continuous data
+% 21.  Unit invariance                  - seconds vs minutes give same fit
 
 % MATLAB runs the real function. Octave cannot parse an "arguments" block,
 % so under Octave these tests run against the auto-generated twin
@@ -481,6 +484,106 @@ try
     fprintf('[PASS] Test 18: verbose mode runs without error\n'); nPassed = nPassed + 1;
 catch err
     fprintf('[FAIL] Test 18: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 19: grid mismatch detected when SamplingInterval is in wrong units
+try
+    rng(59);
+    % Integer-second durations expressed in MINUTES, with SamplingInterval
+    % left at its default 1: round(t/1) rounds every duration to a whole
+    % minute, which is the silent failure this guard exists to catch.
+    dsec = 300 + ceil(-600*log(rand(500,1)));
+    dmin = dsec / 60;
+    prevWarn = warning('on', 'FitHyperexponentialMLE:GridMismatch');
+    lastwarn('');
+    fprintf('--- begin expected warning ---\n');
+    H = fitfun(dmin, 5, 'MaxComponents', 1, 'DistributionType', 'discrete', FAST{:});
+    fprintf('--- end expected warning ---\n');
+    [~, wid] = lastwarn();
+    warning(prevWarn);
+    warned   = strcmp(wid, 'FitHyperexponentialMLE:GridMismatch');
+    spacing  = abs(H.Diagnostics.GridSpacing - 1/60) < 1e-9;
+    mism     = H.Diagnostics.GridMismatch;
+    collapsed = H.Diagnostics.nDistinctOnGrid < H.Diagnostics.nDistinctData;
+    if warned && spacing && mism && collapsed
+        fprintf('[PASS] Test 19: wrong-unit SamplingInterval caught (%d -> %d distinct)\n', ...
+            H.Diagnostics.nDistinctData, H.Diagnostics.nDistinctOnGrid);
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 19: warned=%d spacing=%d mismatch=%d collapsed=%d\n', ...
+            warned, spacing, mism, collapsed);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 19: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 20: no false-positive grid warning
+try
+    rng(61);
+    dsec = 300 + ceil(-600*log(rand(500,1)));
+    % (a) correct units: minutes with SamplingInterval = 1/60
+    Ha = fitfun(dsec/60, 5, 'MaxComponents', 1, 'DistributionType', 'discrete', ...
+        'SamplingInterval', 1/60, FAST{:});
+    % (b) correct units: seconds with SamplingInterval = 1
+    Hb = fitfun(dsec, 300, 'MaxComponents', 1, 'DistributionType', 'discrete', ...
+        'SamplingInterval', 1, FAST{:});
+    % (c) genuinely continuous durations: the smallest gap is arbitrary and
+    %     must NOT be reported as a grid
+    dcont = 300 - 900*log(rand(500,1));
+    Hc = fitfun(dcont, 300, 'MaxComponents', 1, FAST{:});
+    okA = ~Ha.Diagnostics.GridMismatch && ...
+          Ha.Diagnostics.nDistinctOnGrid == Ha.Diagnostics.nDistinctData;
+    okB = ~Hb.Diagnostics.GridMismatch && ...
+          Hb.Diagnostics.nDistinctOnGrid == Hb.Diagnostics.nDistinctData;
+    okC = ~Hc.Diagnostics.GridMismatch && ~Hc.Diagnostics.LooksGridded;
+    if okA && okB && okC
+        fprintf('[PASS] Test 20: no grid warning for correct units or continuous data\n');
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 20: minutes=%d seconds=%d continuous=%d\n', okA, okB, okC);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 20: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 21: unit invariance -- seconds and minutes must give the same fit
+try
+    rng(67);
+    wT = [0.7 0.3]; tauT = [120 1200]; xs = 300;
+    pT = 1 - exp(-1 ./ tauT);
+    nWant = 2500; dsec = zeros(nWant,1); filled = 0;
+    while filled < nWant
+        mm = 4*(nWant - filled) + 2000;
+        j = 1 + (rand(mm,1) > wT(1));
+        pv = pT(:);
+        nn = ceil(log(rand(mm,1)) ./ log(1 - pv(j)));
+        nn = nn(nn >= xs);
+        take = min(numel(nn), nWant - filled);
+        dsec(filled+1:filled+take) = nn(1:take);
+        filled = filled + take;
+    end
+    Hs = fitfun(dsec, xs, 'MaxComponents', 2, 'DistributionType', 'discrete', ...
+        'SamplingInterval', 1, 'RandomSeed', 3, FAST{:});
+    Hm = fitfun(dsec/60, xs/60, 'MaxComponents', 2, 'DistributionType', 'discrete', ...
+        'SamplingInterval', 1/60, 'RandomSeed', 3, FAST{:});
+    sameK = Hs.SelectedK == Hm.SelectedK;
+    % A pmf is unit-free, so the discrete log-likelihood must be identical.
+    sameL = abs(Hs.Selected.LogLik - Hm.Selected.LogLik) < 1e-6;
+    sameT = sameK && max(abs(Hm.Selected.Tau*60 - Hs.Selected.Tau) ./ Hs.Selected.Tau) < 1e-3;
+    sameQ = sameK && max(abs(Hm.Selected.WeightsObserved - Hs.Selected.WeightsObserved)) < 1e-4;
+    if sameK && sameL && sameT && sameQ
+        fprintf('[PASS] Test 21: seconds and minutes agree (K=%d, logL identical, tau ratio 60)\n', ...
+            Hs.SelectedK);
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 21: sameK=%d sameLogL=%d sameTau=%d sameQ=%d\n', ...
+            sameK, sameL, sameT, sameQ);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 21: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary

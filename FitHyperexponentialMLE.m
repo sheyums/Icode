@@ -289,7 +289,14 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %                       default MaxRate ceiling, and the rate range used
 %                       to seed the multistart -- so it is consulted in
 %                       BOTH modes, not only in discrete mode. Set it to
-%                       your true acquisition interval.
+%                       your true acquisition interval, IN THE SAME UNITS
+%                       as eventseries and xmin. If you rescale the
+%                       durations you must rescale this too: converting
+%                       seconds to minutes means xmin=5 AND
+%                       SamplingInterval=1/60, not the default 1. Getting
+%                       this wrong is silent and costly -- see the
+%                       grid-spacing guard, reported in
+%                       H.Diagnostics.GridMismatch.
 %   MaxRate             positive scalar, default 1/SamplingInterval. Hard
 %                       ceiling on fitted rates, i.e. tau_j >=
 %                       SamplingInterval: a time constant shorter than the
@@ -341,8 +348,9 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %                       BestParamVector
 %   H.Selected         convenience copy of H.AllFits(H.SelectedK)
 %   H.Diagnostics      struct: nAtXmin, XminEqualsDataMin, LooksGridded,
-%                       UnboundedContinuousLikelihood, nDropped fields,
-%                       ExcludedK and Recommendation
+%                       UnboundedContinuousLikelihood, GridSpacing,
+%                       GridMismatch, nDistinctData, nDistinctOnGrid,
+%                       nDropped fields, ExcludedK and Recommendation
 %   H.DistributionType, H.xmin, H.n
 %
 %   Tau = 1./Rates (time units, matching eventseries/xmin). RateSE, TauSE,
@@ -494,6 +502,60 @@ diag_.XminEqualsDataMin = (min(data) == xmin);
 diag_.LooksGridded = all(abs(data/dt - round(data/dt)) < 1e-9);
 diag_.UnboundedContinuousLikelihood = ~isDiscrete && diag_.nAtXmin > 0;
 diag_.Recommendation = '';
+
+% ---- grid-spacing guard -------------------------------------------------
+% eventseries, xmin and SamplingInterval must share units. Rescaling the
+% durations (seconds -> minutes, say) while leaving SamplingInterval at its
+% default silently destroys resolution: round(t/dt) then collapses distinct
+% durations onto a coarse grid, n_min lands on the wrong step, and the fit
+% still returns plausible-looking numbers. Measured on one real dataset,
+% minutes-valued durations left at SamplingInterval=1 discarded 92% of the
+% resolution and inflated the fastest tau by 116% (99 s -> 215 s) with no
+% error raised. Nothing else here can notice it: at the wrong dt the data
+% genuinely are not on the dt grid, so LooksGridded is false and the "use
+% discrete mode" hint above goes quiet too.
+uData = unique(data);
+diag_.nDistinctData = numel(uData);
+if numel(uData) >= 2
+    diag_.GridSpacing = min(diff(uData));
+else
+    diag_.GridSpacing = NaN;
+end
+diag_.nDistinctOnGrid = numel(unique(round(data / dt)));
+
+g = diag_.GridSpacing;
+% Only claim a grid if every observation really is a multiple of g -- for
+% genuinely continuous durations the smallest gap is arbitrary and means
+% nothing. The tolerance is loose enough for the float error in t/g at
+% ratios of ~1e4 (~1e-12) and tight enough to reject non-multiples.
+griddedAtG = isfinite(g) && g > 0 && all(abs(data/g - round(data/g)) < 1e-6);
+diag_.GridMismatch = griddedAtG && abs(dt - g) > 1e-6 * g;
+
+if isDiscrete && diag_.nDistinctOnGrid < diag_.nDistinctData
+    lost = 100 * (1 - diag_.nDistinctOnGrid / diag_.nDistinctData);
+    if griddedAtG
+        hint = sprintf([' The durations lie on a grid of spacing %.6g, so ' ...
+            'SamplingInterval=%.6g is very likely what you meant (n_min ' ...
+            'would then be %d rather than %d).'], ...
+            g, g, max(1, round(xmin/g)), n_min);
+    else
+        hint = [' The durations are not multiples of any single spacing, ' ...
+            'so check what your acquisition interval actually is.'];
+    end
+    gridMsg = sprintf(['SamplingInterval=%.6g discards resolution: ' ...
+        'round(t/SamplingInterval) collapses %d distinct durations into ' ...
+        '%d (%.1f%% lost).%s Remember that eventseries, xmin and ' ...
+        'SamplingInterval must share units -- rescaling the durations ' ...
+        'requires rescaling SamplingInterval by the same factor.'], ...
+        dt, diag_.nDistinctData, diag_.nDistinctOnGrid, lost, hint);
+    diag_.Recommendation = gridMsg;
+    warning('FitHyperexponentialMLE:GridMismatch', '%s', gridMsg);
+elseif diag_.GridMismatch && options.Verbose
+    fprintf(['FitHyperexponentialMLE: durations lie on a grid of spacing ' ...
+        '%.6g but SamplingInterval=%.6g. SamplingInterval also sets the ' ...
+        'MaxRate ceiling and the multistart seeding, so set it to your ' ...
+        'true acquisition interval (same units as xmin).\n'], g, dt);
+end
 
 if diag_.UnboundedContinuousLikelihood
     if diag_.XminEqualsDataMin
