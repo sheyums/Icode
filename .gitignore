@@ -2,4 +2,5 @@
 FitHyperexponentialMLE_oct.m
 FitExponentiatedWeibullMLE_oct.m
 test_*_oct.m
+tmp*.m
 octave-workspace

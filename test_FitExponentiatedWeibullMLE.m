@@ -391,12 +391,19 @@ try
     Hc = fitfun(d, xmin, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
     % A pmf is a density times a bin width, so logL_disc - n*log(dt) should
     % approach logL_cont from below as dt shrinks.
+    % These fits deliberately bin genuinely continuous data, so the
+    % grid-spacing guard fires each time and is correct to: rounding really
+    % does discard resolution here, and the message says so without
+    % inventing an acquisition interval. Marked expected so it does not
+    % read as a failure.
     gaps = [];
+    fprintf('--- begin expected warnings (continuous data binned on purpose) ---\n');
     for dt = [1, 0.1, 0.01]
         Hd = fitfun(d, xmin, 'DistributionType', 'discrete', ...
             'SamplingInterval', dt, FAST{:}, 'RandomSeed', 3);
         gaps(end+1) = (Hd.LogLik - Hd.n*log(dt)) - Hc.LogLik;
     end
+    fprintf('--- end expected warnings ---\n');
     shrinking = abs(gaps(3)) < abs(gaps(1)) && abs(gaps(3)) < 0.05*numel(d);
     [nPassed, nFailed] = report(shrinking, nPassed, nFailed, 14, ...
         sprintf('discrete -> continuous as dt->0 (gap %.2f, %.2f, %.3f nats)', ...
