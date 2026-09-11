@@ -174,6 +174,20 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   set by your recording/scoring protocol (e.g. 300 s for the standard
 %   5-minute sleep rule), not a quantity to estimate from the data.
 %
+%   BUT TIES AT xmin DO NOT IMPLY THAT xmin WAS ESTIMATED. A correctly
+%   specified protocol threshold produces them too, whenever it lands on a
+%   grid value of discrete durations: under the 5-minute rule no bout
+%   below 300 s can exist, and with integer-second durations the floor sits
+%   exactly on a representable value, so P(T = 300) > 0 and some bouts
+%   fall there. With genuinely continuous durations a hard floor at 300
+%   would give P(T = exactly 300) = 0 and no ties at all. The atom comes
+%   from the DISCRETENESS of the data meeting the truncation point, not
+%   from how xmin was chosen -- and the function cannot tell the two apart,
+%   since it only observes that min(data) == xmin. So a tie warning on a
+%   protocol xmin is not a reproach; it is telling you the continuous
+%   model is the wrong one for grid-valued durations. The remedy is
+%   option 1 below, not a different xmin.
+%
 %   Three ways out, in order of preference:
 %     1. Use DistributionType="discrete" (with SamplingInterval matching
 %        your acquisition rate). Integer-valued durations ARE discrete,
