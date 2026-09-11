@@ -76,6 +76,25 @@ function H = FitTruncatedDiscreteMLE(eventseries, xmin, modelName, options)
 %                                               FITEXPONENTIATEDWEIBULLMLE
 %                                               with FixAlpha=true; provided
 %                                               as its own row for sweeps.
+%     "powerlaw"        [alpha]                 Pareto with its scale PINNED
+%                                               at the first bin's lower
+%                                               edge. A free scale cancels
+%                                               out of S(t)/S(xmin) and is
+%                                               unidentified. NOTE this is
+%                                               the BINNED CONTINUOUS power
+%                                               law, not the zeta/Zipf
+%                                               distribution Clauset et al.
+%                                               use for discrete data; the
+%                                               two are different models
+%                                               with different
+%                                               log-likelihoods. Binned
+%                                               Pareto is used here because
+%                                               every other family in the
+%                                               registry is discretized the
+%                                               same way, and mixing
+%                                               conventions is exactly the
+%                                               AIC error this engine is
+%                                               built to avoid.
 %     "beta"            [p, q], on [0, UpperBound]
 %                                               Beta's support is bounded,
 %                                               so UpperBound is REQUIRED
@@ -188,7 +207,8 @@ end
 
 isDiscrete = strcmp(options.DistributionType, "discrete");
 dt = options.SamplingInterval;
-M  = getModel(modelName, xmin, options);
+n_min_pre = max(1, round(xmin / dt));
+M  = getModel(modelName, xmin, options, (n_min_pre-1)*dt);
 
 % ---------------------------------------------------------------- data prep
 raw = eventseries(:);
@@ -243,6 +263,13 @@ else
     diag_.GridSpacing = NaN;
 end
 diag_.nDistinctOnGrid = numel(unique(round(data / dt)));
+
+% For bounded-support families, how much of the support the data actually
+% occupy. A parameter governing the density near the upper bound is
+% extrapolation wherever no observations reach it.
+if isfinite(options.UpperBound) && options.UpperBound > 0
+    diag_.SupportCoverage = max(data) / options.UpperBound;
+end
 
 g = diag_.GridSpacing;
 griddedAtG = isfinite(g) && g > 0 && all(abs(data/g - round(data/g)) < 1e-6);
@@ -405,7 +432,8 @@ function d = initDiagnostics()
 d = struct('nNonFinite', 0, 'nBelowXmin', 0, 'nAtXmin', 0, ...
     'XminEqualsDataMin', false, 'LooksGridded', false, ...
     'GridSpacing', NaN, 'GridMismatch', false, 'nDistinctData', 0, ...
-    'nDistinctOnGrid', 0, 'LocationGap', NaN, 'GuardOK', true, ...
+    'nDistinctOnGrid', 0, 'LocationGap', NaN, 'SupportCoverage', NaN, ...
+    'GuardOK', true, ...
     'Recommendation', '');
 end
 
@@ -451,7 +479,7 @@ end
 end
 
 % ---------------------------------------------------------------- registry
-function M = getModel(name, xmin, options)
+function M = getModel(name, xmin, options, binFloor)
 %GETMODEL The model registry. Each entry supplies a CDF, a survival
 %function, a log density, an unconstrained->natural parameter map, start
 %values, a validity test and an optional guard. Everything else -- the
@@ -546,10 +574,34 @@ switch name
                            - betaln(th(1), th(2)) - log(B);
         M.starts = @(d,xm,ns) [0 0; randn(max(ns-1,1),2)*0.8];
 
+    case 'powerlaw'
+        % Pareto. Its scale is PINNED, not fitted: under left truncation
+        % S(t)/S(xmin) = (xmin/t)^alpha, in which a free scale cancels
+        % exactly, so it is unidentified -- the same cancellation that
+        % un-identifies the exponentiated Weibull's alpha deep in the tail.
+        % Pinning it at the lower edge of the first retained bin also keeps
+        % that bin's probability positive; pinning at xmin itself would give
+        % the first bin zero mass and assign probability 0 to every
+        % observation sitting at xmin.
+        if binFloor > 0
+            s0 = binFloor;
+        else
+            s0 = xmin;
+        end
+        M.ParamNames = {'alpha'};
+        M.nPar = 1;
+        M.unpack = @(z) exp(z(1));
+        M.valid  = @(th) isfinite(th) && th > 0;
+        M.cdf    = @(t,th) 1 - min((s0./max(t,s0)).^th(1), 1);
+        M.sf     = @(t,th) min((s0./max(t,s0)).^th(1), 1);
+        M.logpdf = @(t,th) log(th(1)) + th(1)*log(s0) - (th(1)+1)*log(max(t,s0));
+        M.starts = @(d,xm,ns) log(max(1/max(mean(log(d/s0)),eps), 1e-3)) + ...
+                              [0; randn(max(ns-1,1),1)*0.5];
+
     otherwise
         error('FitTruncatedDiscreteMLE:UnknownModel', ...
             ['Unknown model "%s". Registered: gamma, gamma_fixedshape, ' ...
-             'chisquared, pearson3, weibull, beta.'], name);
+             'chisquared, pearson3, weibull, beta, powerlaw.'], name);
 end
 end
 
