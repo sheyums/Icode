@@ -211,12 +211,6 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %       in log space: the mixture has collapsed to fewer components;
 %     - a component sits at the MaxRate ceiling: the optimizer was pushing
 %       tau below the sampling resolution;
-%     - lambda_j*xmin > MaxTruncationExponent: the component is so far below
-%       the truncation point that exp(-lambda_j*xmin) underflows relative to
-%       the other components, so its untruncated weight carries no
-%       significant digits at all (this is the deterministic guard against
-%       the unbounded-likelihood runaway described above, and does not
-%       depend on the Hessian being detected as singular);
 %     - logL(K) - logL(K-1) < DeadComponentTol: the extra component is
 %       dead and contributes nothing;
 %     - the Hessian is not positive definite (CovValid=false), i.e. the
@@ -225,6 +219,19 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   because the extra parameters are unidentified: AICc's penalty assumes
 %   k estimable parameters (Hurvich & Tsai 1989, Biometrika 76:297-307),
 %   which fails exactly here.
+%
+%   Every criterion in that list relaxes as n grows, which is the point:
+%   more data should be able to earn a component. An earlier version also
+%   barred a model order when lambda_j*xmin exceeded MaxTruncationExponent,
+%   and that criterion contains no n, so it would have rejected a model
+%   order at ANY sample size. Simulation from a 4-component truth at
+%   n=30000 showed the mistake plainly: AICc preferred K=4, its smallest
+%   component had 98 expected observations, and the old rule still barred
+%   it. That condition is now only a flag on WeightsUntruncated, which is
+%   all it ever described -- see MaxTruncationExponent below. Reparametrizing
+%   in q (see the weight discussion above) also repaired CovValid, which
+%   had been failing for the same reason: the Hessian was singular in w
+%   coordinates regardless of n.
 %
 %   REVISION NOTES: likelihood evaluation is done entirely in log space
 %   via logsumexp (avoids the flat, zero-gradient region a linear-space
@@ -298,15 +305,19 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   MinExpectedCount    nonnegative scalar, default 5. A component whose
 %                       expected observed count n*q_j falls below this is
 %                       treated as unsupported (degenerate).
-%   MaxTruncationExponent  positive scalar, default log(1/eps) ~ 36.04. A
-%                       component with lambda_j*xmin above this is treated
-%                       as degenerate: the back-transform gain
-%                       exp(+lambda_j*xmin) then exceeds 1/eps, so the
-%                       untruncated weights lose every significant digit
-%                       (they print as 0.0000 while one weight prints as
-%                       1.0000). At the default the component is also
-%                       contributing less than eps of the observable
-%                       probability relative to a component at tau ~ xmin.
+%   MaxTruncationExponent  positive scalar, default log(1/eps) ~ 36.04.
+%                       When max_j lambda_j*xmin exceeds this, the
+%                       back-transform gain exp(+lambda_j*xmin) exceeds
+%                       1/eps, so WeightsUntruncated has no significant
+%                       digits left; it is then returned as NaN and
+%                       WeightsUntruncatedReliable is false. This is NOT a
+%                       reason to exclude the model order from selection.
+%                       The exponent contains no n, so barring on it would
+%                       reject a model order at ANY sample size -- verified
+%                       by simulation at n=30000, where AICc preferred K=4
+%                       and its smallest component had 98 expected
+%                       observations. WeightsObserved, Rates and Tau are
+%                       unaffected and remain fully usable.
 %   DuplicateRateTol    nonnegative scalar, default 0.05. Two components
 %                       whose |log(tau_i)-log(tau_j)| is below this are
 %                       treated as collapsed (degenerate).
@@ -649,12 +660,6 @@ for K = 1:options.MaxComponents
             reasons{end+1} = 'duplicate/collapsed time constants'; %#ok<AGROW>
         end
     end
-    if any(f.Rates * xmin > options.MaxTruncationExponent)
-        reasons{end+1} = sprintf(['component almost entirely truncated away ' ...
-            '(lambda*xmin = %.1f > %.1f): its untruncated weight is ' ...
-            'numerically meaningless'], max(f.Rates)*xmin, ...
-            options.MaxTruncationExponent); %#ok<AGROW>
-    end
     if f.AtRateBound
         reasons{end+1} = sprintf('component at the MaxRate ceiling (tau = %.6g)', ...
             1/options.MaxRate); %#ok<AGROW>
@@ -780,7 +785,8 @@ s = struct('K', NaN, 'k', NaN, 'n', NaN, 'WeightsObserved', [], ...
     'WeightsUntruncated', [], 'Rates', [], 'Tau', [], 'RateSE', [], ...
     'TauSE', [], 'WeightsObservedSE', [], 'WeightsUntruncatedSE', [], ...
     'CovValid', false, 'LogLik', NaN, 'AIC', NaN, 'AICc', NaN, ...
-    'PointwiseLogLik', [], ...
+    'PointwiseLogLik', [], 'BackTransformExponent', NaN, ...
+    'WeightsUntruncatedReliable', false, ...
     'Success', false, 'Converged', false, 'Degenerate', true, ...
     'DegenerateReason', 'not fitted', 'AtRateBound', false, ...
     'ExitFlag', NaN, 'BestParamVector', []);
@@ -827,11 +833,11 @@ if isempty(bestZ) || bestNegLL >= PENALTY
     return
 end
 
-[~, weights, rates, extra] = negLogLik(bestZ, K, data, xmin, n_min, ...
+[~, weightsObs, rates, extra] = negLogLik(bestZ, K, data, xmin, n_min, ...
     isDiscrete, options.SamplingInterval, options.MaxRate);
 
-out.WeightsUntruncated = weights;
-out.WeightsObserved = extra.WeightsObserved;
+out.WeightsObserved = weightsObs;
+out.WeightsUntruncated = extra.WeightsUntruncated;
 out.PointwiseLogLik = extra.PointwiseLogLik;
 out.Rates = rates;
 out.Tau = 1 ./ rates;
@@ -847,6 +853,21 @@ out.Converged = (bestExitFlag == 1);
 out.ExitFlag = bestExitFlag;
 out.BestParamVector = bestZ;
 out.AtRateBound = any(rates >= options.MaxRate * (1 - 1e-6));
+
+% Whether the DERIVED untruncated weights carry any significant digits.
+% The back-transform gain is exp(+lambda_j*xmin); once that exceeds 1/eps
+% the smaller w's are numerical noise. This is deliberately NOT a reason to
+% exclude the model order from selection: the exponent contains no n, so
+% barring on it would reject a model order at ANY sample size, including
+% one where AICc prefers it and every component has hundreds of
+% observations behind it. It says the w column is unusable, nothing more --
+% q, Rates and Tau are unaffected.
+out.BackTransformExponent = extra.BackTransformExponent;
+out.WeightsUntruncatedReliable = ...
+    (extra.BackTransformExponent <= options.MaxTruncationExponent);
+if ~out.WeightsUntruncatedReliable
+    out.WeightsUntruncated(:) = NaN;
+end
 
 % --- Post-hoc asymptotic standard errors, via a numerical Hessian of the
 % negative log-likelihood AT the already-found MLE (the optimization
@@ -908,20 +929,24 @@ try
             % same |derivative| magnitude as for rate since d(exp(-z))/dz = -exp(-z)).
             tauSE = out.Tau .* seZ(1:K);
 
+            % q IS the parametrization now, so its standard errors come
+            % straight from the softmax Jacobian on the logit block -- no
+            % rate dependence to propagate.
             if K > 1
-                Jw = softmaxJacobianFreeParams(weights);
+                Jq = softmaxJacobianFreeParams(weightsObs);
                 covAlpha = covZ(K+1:end, K+1:end);
-                covW = Jw * covAlpha * Jw';
-                weightUntruncSE = sqrt(max(diag(covW), 0))';
+                covQ = Jq * covAlpha * Jq';
+                weightObsSE = sqrt(max(diag(covQ), 0))';
             end
 
-            % q depends on BOTH the logits and the rates, so propagate it
-            % through a numerical Jacobian of the full map z -> q rather
-            % than the softmax Jacobian alone.
-            Jq = observedWeightJacobian(@(zz) getObservedWeights(zz, K, data, ...
+            % w is now the derived quantity and depends on BOTH the logits
+            % and the rates (through exp(+lambda_j*xmin)), so it needs a
+            % numerical Jacobian of the full map z -> w. Exactly the
+            % treatment q used to get, with the roles reversed.
+            Jw = weightJacobian(@(zz) getUntruncatedWeights(zz, K, data, ...
                 xmin, n_min, isDiscrete, options.SamplingInterval, options.MaxRate), bestZ, K);
-            covQ = Jq * covZ * Jq';
-            weightObsSE = sqrt(max(diag(covQ), 0))';
+            covW = Jw * covZ * Jw';
+            weightUntruncSE = sqrt(max(diag(covW), 0))';
         end
     end
 catch
@@ -1006,7 +1031,7 @@ for si = 1:nStarts
 end
 end
 
-function [negLL, weights, rates, extra] = negLogLik(z, K, data, xmin, ...
+function [negLL, weightsObs, rates, extra] = negLogLik(z, K, data, xmin, ...
     n_min, isDiscrete, samplingInterval, maxRate)
 z = z(:).';
 log_rates_raw = z(1:K);
@@ -1023,45 +1048,47 @@ excess = max(0, log_rates_raw - log_rate_max);
 log_rates = min(log_rates_raw, log_rate_max);
 rates = exp(log_rates);
 
+% The free weight parameters are the logits of the OBSERVED weights q,
+% not of the untruncated weights w. q is what left-truncated data
+% identify; w is its exp(+lambda_j*xmin)-amplified back-transform, which
+% underflows whenever lambda_j*xmin is large -- and that made the Hessian
+% singular IN THOSE COORDINATES AT ANY SAMPLE SIZE, not just at small n.
+% Measured at the same fitted point on n=30000 simulated from a
+% 4-component truth: condition number 2.5e7 and NOT positive definite in
+% w, against 2.2e3 and positive definite in q. The model was identified
+% throughout; only the coordinates were degenerate.
 if K == 1
-    log_w = 0;
-    weights = 1;
+    log_q = 0;
+    weightsObs = 1;
 else
     logits = [z(K+1:end), 0];
-    log_w = logits - logsumexp_vec(logits);
-    weights = exp(log_w);
+    log_q = logits - logsumexp_vec(logits);
+    weightsObs = exp(log_q);
 end
 
 T = data(:); % N x 1 vector
 
 if ~isDiscrete
-    % log f(t) = logsumexp_j (log_w_j + log_rate_j - rate_j * t)
-    log_comp = log_w + log_rates - (T * rates); % N x K
-    log_fObs = logsumexp_mat(log_comp, 2);      % N x 1
-
-    % log S(xmin) = logsumexp_j (log_w_j - rate_j * xmin)
-    log_surv_j = log_w - rates * xmin;          % 1 x K
-    log_Sxmin = logsumexp_vec(log_surv_j);
-
-    negLL = -( sum(log_fObs) - numel(T) * log_Sxmin );
+    % Conditioned on T >= xmin, component j is itself a NORMALIZED
+    % exponential on [xmin, inf): lambda_j*exp(-lambda_j*(t-xmin)). Since
+    % sum_j q_j = 1, the truncated mixture needs NO separate normalizer --
+    % that is the second gain from this parametrization, as log S(xmin)
+    % leaves the likelihood entirely instead of being subtracted n times.
+    log_comp = log_q + log_rates - ((T - xmin) * rates); % N x K
+    log_fObs = logsumexp_mat(log_comp, 2);               % N x 1
+    negLL = -sum(log_fObs);
 else
     dt = samplingInterval;
     n_obs = round(T / dt);
 
-    log_q = -rates * dt;                 % log(1 - p) = -lambda * dt
-    log_p = log(-expm1(-rates * dt));    % Numerically stable log(p) = log(1 - exp(-lambda*dt))
+    log_1mp = -rates * dt;                % log(1 - p) = -lambda * dt
+    log_p = log(-expm1(-rates * dt));     % stable log(1 - exp(-lambda*dt))
 
-    % log P(N = n) = logsumexp_j (log_w_j + (n - 1)*log_q_j + log_p_j)
-    log_comp = log_w + (n_obs - 1) * log_q + log_p; % N x K
+    % P(N=n | N>=n_min, component j) = (1-p_j)^(n-n_min) * p_j, which sums
+    % to 1 over n >= n_min, so again no normalizer is required.
+    log_comp = log_q + (n_obs - n_min) * log_1mp + log_p; % N x K
     log_fObs = logsumexp_mat(log_comp, 2);
-
-    % log S(n_min) = log P(N >= n_min) = logsumexp_j (log_w_j + (n_min - 1)*log_q_j)
-    % n_min is clamped to >= 1 by the caller: at n_min = 0 this survival
-    % would exceed 1 and the "normalizer" would inflate the likelihood.
-    log_surv_j = log_w + (n_min - 1) * log_q;
-    log_Sxmin = logsumexp_vec(log_surv_j);
-
-    negLL = -( sum(log_fObs) - numel(n_obs) * log_Sxmin );
+    negLL = -sum(log_fObs);
 end
 
 negLL = negLL + numel(T) * sum(excess.^2);
@@ -1071,30 +1098,40 @@ if ~isfinite(negLL)
 end
 
 if nargout > 3
-    % Observed-population (truncated) weights: the fraction of the bouts
-    % that actually clear xmin contributed by each component. This is the
-    % quantity the data identify; the untruncated weights above are its
-    % exp(+lambda_j*xmin)-amplified back-transform.
-    % Per-observation log-likelihood contributions, summing to LogLik.
-    % Needed to compare this fit against another model family by a Vuong
-    % (1989) test, which works on the pointwise log-ratios rather than the
-    % totals.
-    extra = struct('WeightsObserved', exp(log_surv_j - log_Sxmin), ...
-        'PointwiseLogLik', log_fObs - log_Sxmin);
+    % Untruncated weights, now the DERIVED quantity: q_j propto
+    % w_j*exp(-lambda_j*xmin) inverts to w_j propto q_j*exp(+lambda_j*xmin),
+    % i.e. w is the softmax of (log q_j + lambda_j*xmin). Computing it as a
+    % softmax rather than by exponentiating and renormalizing means it
+    % saturates cleanly to [1 0 ... 0] instead of overflowing; saturated is
+    % still no precision left, which is what BackTransformExponent reports
+    % so the caller can tell.
+    if isDiscrete
+        backExp = rates * (n_min - 1) * samplingInterval;
+    else
+        backExp = rates * xmin;
+    end
+    log_w_unnorm = log_q + backExp;
+    log_w = log_w_unnorm - logsumexp_vec(log_w_unnorm);
+    % S(xmin) = 1 / sum_j q_j*exp(+lambda_j*xmin), a by-product rather than
+    % something the likelihood has to evaluate.
+    extra = struct('WeightsUntruncated', exp(log_w), ...
+        'LogSxmin', -logsumexp_vec(log_w_unnorm), ...
+        'BackTransformExponent', max(backExp), ...
+        'PointwiseLogLik', log_fObs);
 end
 end
 
-function q = getObservedWeights(z, K, data, xmin, n_min, isDiscrete, dt, maxRate)
-%GETOBSERVEDWEIGHTS Thin wrapper returning only q, for the Jacobian below.
-% Evaluated on a single observation: q depends on the parameters alone, not
-% on the sample, so this avoids re-sweeping all n durations per finite
-% difference.
+function w = getUntruncatedWeights(z, K, data, xmin, n_min, isDiscrete, dt, maxRate)
+%GETUNTRUNCATEDWEIGHTS Thin wrapper returning only w, for the Jacobian
+% below. Evaluated on a single observation: w depends on the parameters
+% alone, not on the sample, so this avoids re-sweeping all n durations per
+% finite difference.
 [~, ~, ~, extra] = negLogLik(z, K, data(1), xmin, n_min, isDiscrete, dt, maxRate);
-q = extra.WeightsObserved(:);
+w = extra.WeightsUntruncated(:);
 end
 
-function J = observedWeightJacobian(qfun, z0, K)
-%OBSERVEDWEIGHTJACOBIAN Central-difference dq_i/dz_m, K x k.
+function J = weightJacobian(qfun, z0, K)
+%WEIGHTJACOBIAN Central-difference d(weight_i)/dz_m, K x k.
 z0 = z0(:).';
 p = numel(z0);
 h = max(1e-6, 1e-6*abs(z0));

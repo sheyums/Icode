@@ -586,19 +586,24 @@ end
 %% Test 22: soft return when no model order is identifiable
 try
     rng(71);
-    % Six observations within 6 s of xmin: no model order survives the
-    % identifiability gating, which by default raises NoValidFit.
-    d = [301; 302; 303; 304; 305; 306];
+    % Force every model order out of selection with an unreachable
+    % MinExpectedCount. Triggering the path through an option is
+    % deterministic; an earlier version of this test used six tightly
+    % clustered observations and relied on the gating rejecting them, which
+    % it did only because of a criterion since found to be wrong (it barred
+    % model orders at any sample size, K=1 included).
+    d = simTrunc([0.8 0.2], [150 1500], 300, 200, 1e-6);
+    gateOut = {'MinExpectedCount', 1e9};
     threw = false;
     try
-        fitfun(d, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
+        fitfun(d, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 2, gateOut{:}, FAST{:});
     catch err
         threw = strcmp(err.identifier, 'FitHyperexponentialMLE:NoValidFit');
     end
-    H = fitfun(d, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 3, 'ErrorOnNoValidFit', false, FAST{:});
+    H = fitfun(d, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 2, gateOut{:}, 'ErrorOnNoValidFit', false, FAST{:});
     okFail   = H.Failed && isnan(H.SelectedK);
     okReason = ~isempty(strfind(H.FailureReason, 'NoValidFit'));
-    okFits   = numel(H.AllFits) == 3;
+    okFits   = numel(H.AllFits) == 2;
     okSel    = isempty(H.Selected.Tau);
     if threw && okFail && okReason && okFits && okSel
         fprintf('[PASS] Test 22: NoValidFit throws by default, returns Failed=true when asked\n');
@@ -642,7 +647,9 @@ try
     % struct array, some of which failed. MATLAB rejects this assignment if
     % the field names or their order differ between the two outputs.
     good = simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6);
-    samples = {good, [301; 302; 303; 304; 305; 306], [310; 320; 330], good};
+    % The two failures are TooFewData, which is deterministic: fewer than 5
+    % usable observations cannot be fitted at any parametrization.
+    samples = {good, [310; 320; 330], [310; 320; 330; 340], good};
     clear results
     for ii = 1:numel(samples)
         results(ii) = fitfun(samples{ii}, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 2, ...
