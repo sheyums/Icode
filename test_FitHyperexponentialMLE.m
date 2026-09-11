@@ -57,7 +57,7 @@ try
     rng(42);
     wTrue = [0.8 0.2]; tauTrue = [150 1500]; xmin = 300;
     d = simTrunc(wTrue, tauTrue, xmin, 6000, 1e-6);
-    H = fitfun(d, xmin, 'MaxComponents', 3, FAST{:});
+    H = fitfun(d, xmin, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     s = H.Selected;
     qTrue = wTrue .* exp(-xmin ./ tauTrue); qTrue = qTrue / sum(qTrue);
     okTau = H.SelectedK == 2 && all(abs(s.Tau - tauTrue) ./ tauTrue < 0.25);
@@ -79,7 +79,7 @@ end
 try
     rng(1);
     d = simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6);
-    H = fitfun(d, 300, 'MaxComponents', 2, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     needTop = {'SelectedK','AllFits','Selected','DistributionType','xmin','n','Diagnostics'};
     needFit = {'K','k','n','WeightsObserved','WeightsUntruncated','Rates','Tau','RateSE', ...
                'TauSE','WeightsObservedSE','WeightsUntruncatedSE','CovValid','LogLik','AIC', ...
@@ -101,7 +101,7 @@ end
 try
     rng(7);
     d = simTrunc([0.7 0.3], [100 2000], 300, 1500, 1e-6);
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     s = H.Selected; K = H.SelectedK;
     sorted   = all(diff(s.Tau) > 0);
     lengthsOK = all(cellfun(@(f) numel(s.(f)) == K, ...
@@ -125,7 +125,7 @@ try
     rng(3);
     xmin = 300;
     d = simTrunc([0.7 0.3], [120 1800], xmin, 1200, 1e-6);
-    H = fitfun(d, xmin, 'MaxComponents', 2, FAST{:});
+    H = fitfun(d, xmin, 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     s = H.AllFits(2);
     qExpected = s.WeightsUntruncated .* exp(-s.Rates * xmin);
     qExpected = qExpected / sum(qExpected);
@@ -145,7 +145,7 @@ try
     rng(5);
     xmin = 300;
     d = simTrunc([0.85 0.15], [90 1600], xmin, 2500, 1e-6);
-    H = fitfun(d, xmin, 'MaxComponents', 2, FAST{:});
+    H = fitfun(d, xmin, 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     s = H.AllFits(2);
     gap = max(abs(s.WeightsUntruncated - s.WeightsObserved));
     if gap > 0.2
@@ -173,7 +173,7 @@ try
     prevWarn = warning('on', 'FitHyperexponentialMLE:UnboundedLikelihood');
     lastwarn('');
     fprintf('--- begin expected warning ---\n');
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     fprintf('--- end expected warning ---\n');
     [~, wid] = lastwarn();
     warning(prevWarn);
@@ -197,7 +197,7 @@ try
     rng(13);
     d = round(simTrunc([0.8 0.2], [150 1500], 300, 600, 1e-6));
     prevWarn = warning('off', 'FitHyperexponentialMLE:UnboundedLikelihood');
-    H = fitfun(d, min(d), 'MaxComponents', 2, FAST{:});
+    H = fitfun(d, min(d), 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     warning(prevWarn);
     if H.Diagnostics.XminEqualsDataMin && H.Diagnostics.nAtXmin >= 1
         fprintf('[PASS] Test 7: xmin = min(data) flagged (nAtXmin=%d)\n', H.Diagnostics.nAtXmin);
@@ -217,7 +217,7 @@ try
     % Genuinely one exponential, so K=3 has nothing real to fit: it must be
     % excluded rather than selected on an unidentified likelihood gain.
     d = 300 - 700*log(rand(500,1));
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     excludedSomething = ~isempty(H.Diagnostics.ExcludedK);
     reasonsGiven = true;
     for K = H.Diagnostics.ExcludedK
@@ -243,7 +243,7 @@ end
 try
     rng(19);
     d = simTrunc([0.8 0.2], [150 1500], 300, 500, 1e-6);
-    H = fitfun(d, 300, 'MaxComponents', 2, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     ok = true;
     for K = 1:2
         f = H.AllFits(K);
@@ -267,7 +267,7 @@ end
 try
     rng(23);
     d = 300 - 800*log(rand(3000,1));
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     tauOK = abs(H.Selected.Tau(1) - 800)/800 < 0.15;
     if H.SelectedK == 1 && tauOK
         fprintf('[PASS] Test 10: single exponential -> K=1, tau=%.0f\n', H.Selected.Tau(1));
@@ -362,7 +362,7 @@ try
     ok = true; checked = 0;
     for ci = 1:numel(cases)
         try
-            H = fitfun(cases{ci}, 300, 'MaxComponents', 3, FAST{:});
+            H = fitfun(cases{ci}, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
         catch innerErr
             % NoValidFit is the correct outcome when every model order is
             % degenerate for a dataset this small; move on to the next.
@@ -403,7 +403,7 @@ try
     warning('on', 'MATLAB:singularMatrix');
     before = warning('query', 'MATLAB:singularMatrix');
     d = simTrunc([0.8 0.2], [150 1500], 300, 300, 1e-6);
-    H = fitfun(d, 300, 'MaxComponents', 3, FAST{:}); %#ok<NASGU>
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:}); %#ok<NASGU>
     after = warning('query', 'MATLAB:singularMatrix');
     if strcmp(before.state, after.state)
         fprintf('[PASS] Test 15: singularMatrix warning state preserved (%s)\n', after.state);
@@ -420,7 +420,7 @@ end
 try
     caught = '';
     try
-        fitfun([310; 320; 330], 300, 'MaxComponents', 1, FAST{:});
+        fitfun([310; 320; 330], 300, 'SamplingInterval', 1, 'MaxComponents', 1, FAST{:});
     catch err
         caught = err.identifier;
     end
@@ -473,7 +473,7 @@ try
     rng(53);
     d = simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6);
     fprintf('--- begin expected verbose output ---\n');
-    H = fitfun(d, 300, 'MaxComponents', 2, 'nStartsBase', 4, ...
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 2, 'nStartsBase', 4, ...
         'nStartsPerComponent', 3, 'maxStarts', 12, 'Verbose', true); %#ok<NASGU>
     fprintf('--- end expected verbose output ---\n');
     fprintf('[PASS] Test 18: verbose mode runs without error\n'); nPassed = nPassed + 1;
@@ -492,7 +492,7 @@ try
     prevWarn = warning('on', 'FitHyperexponentialMLE:GridMismatch');
     lastwarn('');
     fprintf('--- begin expected warning ---\n');
-    H = fitfun(dmin, 5, 'MaxComponents', 1, 'DistributionType', 'discrete', FAST{:});
+    H = fitfun(dmin, 5, 'SamplingInterval', 1, 'MaxComponents', 1, 'DistributionType', 'discrete', FAST{:});
     fprintf('--- end expected warning ---\n');
     [~, wid] = lastwarn();
     warning(prevWarn);
@@ -526,7 +526,7 @@ try
     % (c) genuinely continuous durations: the smallest gap is arbitrary and
     %     must NOT be reported as a grid
     dcont = 300 - 900*log(rand(500,1));
-    Hc = fitfun(dcont, 300, 'MaxComponents', 1, FAST{:});
+    Hc = fitfun(dcont, 300, 'SamplingInterval', 1, 'MaxComponents', 1, FAST{:});
     okA = ~Ha.Diagnostics.GridMismatch && ...
           Ha.Diagnostics.nDistinctOnGrid == Ha.Diagnostics.nDistinctData;
     okB = ~Hb.Diagnostics.GridMismatch && ...
@@ -589,11 +589,11 @@ try
     d = [301; 302; 303; 304; 305; 306];
     threw = false;
     try
-        fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+        fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, FAST{:});
     catch err
         threw = strcmp(err.identifier, 'FitHyperexponentialMLE:NoValidFit');
     end
-    H = fitfun(d, 300, 'MaxComponents', 3, 'ErrorOnNoValidFit', false, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 3, 'ErrorOnNoValidFit', false, FAST{:});
     okFail   = H.Failed && isnan(H.SelectedK);
     okReason = ~isempty(strfind(H.FailureReason, 'NoValidFit'));
     okFits   = numel(H.AllFits) == 3;
@@ -615,11 +615,11 @@ try
     d = [310; 320; 330];
     threw = false;
     try
-        fitfun(d, 300, 'MaxComponents', 2, FAST{:});
+        fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     catch err
         threw = strcmp(err.identifier, 'FitHyperexponentialMLE:TooFewData');
     end
-    H = fitfun(d, 300, 'MaxComponents', 2, 'ErrorOnNoValidFit', false, FAST{:});
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 2, 'ErrorOnNoValidFit', false, FAST{:});
     okFail   = H.Failed && isnan(H.SelectedK) && H.n == 3;
     okReason = ~isempty(strfind(H.FailureReason, 'TooFewData'));
     if threw && okFail && okReason
@@ -643,7 +643,7 @@ try
     samples = {good, [301; 302; 303; 304; 305; 306], [310; 320; 330], good};
     clear results
     for ii = 1:numel(samples)
-        results(ii) = fitfun(samples{ii}, 300, 'MaxComponents', 2, ...
+        results(ii) = fitfun(samples{ii}, 300, 'SamplingInterval', 1, 'MaxComponents', 2, ...
             'ErrorOnNoValidFit', false, FAST{:});
     end
     failedFlags = [results.Failed];

@@ -158,9 +158,11 @@ function H = FitExponentiatedWeibullMLE(eventseries, xmin, options)
 %   NAME-VALUE OPTIONS
 %   DistributionType    "continuous" (default) or "discrete". See WHEN TO
 %                       USE WHICH MODE above.
-%   SamplingInterval    positive scalar, default 1, in the SAME UNITS as
-%                       eventseries and xmin. Sets the discrete-mode bin
-%                       width and seeds the multistart. Rescaling the
+%   SamplingInterval    REQUIRED positive scalar, in the SAME UNITS as
+%                       eventseries and xmin. There is no default --
+%                       omitting it raises SamplingIntervalRequired. Sets
+%                       the discrete-mode bin width and seeds the
+%                       multistart. Rescaling the
 %                       durations means rescaling this too (seconds to
 %                       minutes is xmin=5 AND SamplingInterval=1/60); a
 %                       mismatch is caught by the grid-spacing guard and
@@ -238,7 +240,7 @@ arguments
     eventseries double {mustBeReal}
     xmin (1,1) double {mustBePositive}
     options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "continuous"
-    options.SamplingInterval (1,1) double {mustBePositive} = 1
+    options.SamplingInterval (1,1) double = NaN
     options.FixAlpha (1,1) logical = false
     options.MinAlphaIdentifiability (1,1) double {mustBePositive} = 1e-3
     options.nStartsBase (1,1) double {mustBeInteger,mustBePositive} = 20
@@ -251,6 +253,20 @@ arguments
     options.TolFun (1,1) double {mustBePositive} = 1e-10
     options.Verbose (1,1) logical = true
     options.ErrorOnNoValidFit (1,1) logical = true
+end
+
+if isnan(options.SamplingInterval)
+    error('FitExponentiatedWeibullMLE:SamplingIntervalRequired', ...
+        ['SamplingInterval is required. It is load-bearing in BOTH modes: ' ...
+         'in discrete mode it is the bin width and sets n_min, and in ' ...
+         'continuous mode it sets the default MaxRate, i.e. a hard floor ' ...
+         'of tau >= SamplingInterval that can silently clamp a fast ' ...
+         'component. Pass your acquisition interval in the SAME UNITS as ' ...
+         'xmin (seconds data at 1 Hz: SamplingInterval=1; the same data ' ...
+         'rescaled to minutes: SamplingInterval=1/60).']);
+elseif ~(options.SamplingInterval > 0)
+    error('FitExponentiatedWeibullMLE:InvalidSamplingInterval', ...
+        'SamplingInterval must be a positive scalar.');
 end
 
 PENALTY = 1e12;

@@ -110,7 +110,7 @@ try
     for m = 1:2
         rng(110+m);
         d = simEW(800, 0.8, 0.6, 100, 400, MODES{m}, 1);
-        H = fitfun(d, 100, 'DistributionType', MODES{m}, FAST{:});
+        H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:});
         miss = [need(~isfield(H, need)), needD(~isfield(H.Diagnostics, needD))];
         if ~isempty(miss), bad{end+1} = [MODES{m} ': ' strjoin(miss, ',')]; end
     end
@@ -156,7 +156,7 @@ try
     % against the CDF increment over the same finite range
     xminC = 100;
     dc = simEW(800, 0.8, 0.6, xminC, 600, 'continuous', 1);
-    Hc = fitfun(dc, xminC, 'DistributionType', 'continuous', FAST{:});
+    Hc = fitfun(dc, xminC, 'SamplingInterval', 1, 'DistributionType', 'continuous', FAST{:});
     U = Hc.Lambda * 400;
     tg = linspace(xminC, U, 400001)';
     S = 1 - exp(logEWCDF(xminC, Hc.Lambda, Hc.K, Hc.Alpha));
@@ -180,7 +180,7 @@ try
     for m = 1:2
         rng(150+m);
         d = simEW(800, 0.8, 0.6, 100, 500, MODES{m}, 1);
-        H = fitfun(d, 100, 'DistributionType', MODES{m}, FAST{:});
+        H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:});
         if numel(H.PointwiseLogLik) ~= H.n || abs(sum(H.PointwiseLogLik) - H.LogLik) > 1e-8
             bad{end+1} = sprintf('%s: numel=%d n=%d resid=%.3e', MODES{m}, ...
                 numel(H.PointwiseLogLik), H.n, sum(H.PointwiseLogLik) - H.LogLik);
@@ -198,8 +198,8 @@ try
     for m = 1:2
         rng(160+m);
         d = simEW(800, 0.8, 0.6, 100, 1500, MODES{m}, 1);
-        Hew = fitfun(d, 100, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 5);
-        Hwb = fitfun(d, 100, 'DistributionType', MODES{m}, 'FixAlpha', true, ...
+        Hew = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 5);
+        Hwb = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, 'FixAlpha', true, ...
             FAST{:}, 'RandomSeed', 5);
         lrs(m) = 2*(Hew.LogLik - Hwb.LogLik);
         if ~(Hwb.Alpha == 1 && Hwb.k == 2 && Hew.k == 3 && Hwb.AlphaSE == 0 ...
@@ -221,7 +221,7 @@ try
     for m = 1:2
         rng(170+m);
         d = simEW(400, 0.7, 0.5, 40, 2500, MODES{m}, 1);   % alpha*k = 0.35
-        H = fitfun(d, 40, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 7);
+        H = fitfun(d, 40, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 7);
         if ~strcmp(H.HazardShape, 'decreasing')
             bad{end+1} = sprintf('%s: "%s" (k=%.3f ak=%.3f)', MODES{m}, ...
                 H.HazardShape, H.K, H.Alpha*H.K);
@@ -239,7 +239,7 @@ try
     for m = 1:2
         rng(180+m);
         d = simEW(400, 2.0, 1.5, 40, 2500, MODES{m}, 1);   % alpha*k = 3
-        H = fitfun(d, 40, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 8);
+        H = fitfun(d, 40, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 8);
         if ~strcmp(H.HazardShape, 'increasing')
             bad{end+1} = sprintf('%s: "%s" (k=%.3f ak=%.3f)', MODES{m}, ...
                 H.HazardShape, H.K, H.Alpha*H.K);
@@ -258,7 +258,7 @@ try
         rng(190+m);
         d = simEW(800, 0.8, 0.6, 100, 400, MODES{m}, 1);
         for fa = [false true]
-            H = fitfun(d, 100, 'DistributionType', MODES{m}, 'FixAlpha', fa, FAST{:});
+            H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, 'FixAlpha', fa, FAST{:});
             p = 3 - double(fa);
             aic = 2*p - 2*H.LogLik;
             aicc = aic + 2*p*(p+1)/(H.n - p - 1);
@@ -283,7 +283,7 @@ try
         prevWarn = warning('on', 'FitExponentiatedWeibullMLE:AlphaNotIdentified');
         lastwarn('');
         fprintf('--- begin expected warning (%s) ---\n', MODES{m});
-        H = fitfun(d, 900, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 10);
+        H = fitfun(d, 900, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 10);
         fprintf('--- end expected warning ---\n');
         [~, wid] = lastwarn();
         warning(prevWarn);
@@ -307,7 +307,7 @@ try
     for m = 1:2
         rng(210+m);
         d = simEW(800, 0.8, 0.6, 100, 2000, MODES{m}, 1);
-        H = fitfun(d, 100, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 11);
+        H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, 'RandomSeed', 11);
         vals(m) = H.Diagnostics.ExpMinusUmin;
         if ~(H.Diagnostics.AlphaIdentifiable && vals(m) > 1e-3)
             bad{end+1} = sprintf('%s: flagged=%d val=%.3g', MODES{m}, ...
@@ -330,7 +330,7 @@ try
         est = []; ses = [];
         for r = 1:R
             d = simEW(lamT, kT, aT, xmin, 500, MODES{m}, 1);
-            H = fitfun(d, xmin, 'DistributionType', MODES{m}, FAST{:}, ...
+            H = fitfun(d, xmin, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}, ...
                 'RandomSeed', 400+r);
             if H.CovValid && isfinite(H.KSE)
                 est(end+1,:) = [H.Lambda H.K];
@@ -359,18 +359,18 @@ try
     for m = 1:2
         threw = false;
         try
-            fitfun([110; 120; 130], 100, 'DistributionType', MODES{m}, FAST{:});
+            fitfun([110; 120; 130], 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:});
         catch err
             threw = strcmp(err.identifier, 'FitExponentiatedWeibullMLE:TooFewData');
         end
-        H = fitfun([110; 120; 130], 100, 'DistributionType', MODES{m}, ...
+        H = fitfun([110; 120; 130], 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, ...
             'ErrorOnNoValidFit', false, FAST{:});
         okSoft = threw && H.Failed && isnan(H.Lambda) && ~H.Success ...
                  && ~isempty(strfind(H.FailureReason, 'TooFewData')) ...
                  && isnan(H.LambdaSE) && isnan(H.KSE);
         rng(230+m);
         d = simEW(800, 0.8, 0.6, 100, 400, MODES{m}, 1);
-        Hf = fitfun(d, 100, 'DistributionType', MODES{m}, 'FixAlpha', true, FAST{:});
+        Hf = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, 'FixAlpha', true, FAST{:});
         okSE = Hf.AlphaSE == 0 && (Hf.CovValid || isnan(Hf.LambdaSE));
         if ~(okSoft && okSE)
             bad{end+1} = sprintf('%s: soft=%d se=%d', MODES{m}, okSoft, okSE);
@@ -388,7 +388,7 @@ try
     rng(240);
     xmin = 100;
     d = simEW(800, 0.8, 0.6, xmin, 1500, 'continuous', 1);
-    Hc = fitfun(d, xmin, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
+    Hc = fitfun(d, xmin, 'SamplingInterval', 1, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
     % A pmf is a density times a bin width, so logL_disc - n*log(dt) should
     % approach logL_cont from below as dt shrinks.
     % These fits deliberately bin genuinely continuous data, so the
@@ -430,8 +430,8 @@ try
         bad{end+1} = 'discrete parameters not equivariant';
     end
     % continuous: a density per unit time scales, so logL shifts by n*log(c)
-    Cs = fitfun(dsec, 120, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
-    Cm = fitfun(dsec/c, 120/c, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
+    Cs = fitfun(dsec, 120, 'SamplingInterval', 1, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
+    Cm = fitfun(dsec/c, 120/c, 'SamplingInterval', 1, 'DistributionType', 'continuous', FAST{:}, 'RandomSeed', 3);
     if abs((Cm.LogLik - Cs.LogLik) - Cs.n*log(c)) > 1e-3
         bad{end+1} = sprintf('continuous shift %.4f vs n*log(c)=%.4f', ...
             Cm.LogLik - Cs.LogLik, Cs.n*log(c));
@@ -501,7 +501,7 @@ try
     prevWarn = warning('on', 'FitExponentiatedWeibullMLE:GridMismatch');
     lastwarn('');
     fprintf('--- begin expected warning ---\n');
-    Hbad = fitfun(dsec/60, 100/60, 'DistributionType', 'discrete', FAST{:});
+    Hbad = fitfun(dsec/60, 100/60, 'SamplingInterval', 1, 'DistributionType', 'discrete', FAST{:});
     fprintf('--- end expected warning ---\n');
     [~, wid] = lastwarn();
     Hok = fitfun(dsec, 100, 'DistributionType', 'discrete', ...
@@ -509,7 +509,7 @@ try
     % continuous mode: the mismatch is flagged but must not warn, since no
     % rounding happens there
     lastwarn('');
-    Hc = fitfun(dsec/60, 100/60, 'DistributionType', 'continuous', FAST{:});
+    Hc = fitfun(dsec/60, 100/60, 'SamplingInterval', 1, 'DistributionType', 'continuous', FAST{:});
     [~, wid2] = lastwarn();
     warning(prevWarn);
     ok = strcmp(wid, 'FitExponentiatedWeibullMLE:GridMismatch') ...
@@ -534,7 +534,7 @@ try
     for m = 1:2
         rng(300+m);
         d = simEW(800, 0.8, 0.6, 100, 300, MODES{m}, 1);
-        H = fitfun(d, 100, 'DistributionType', MODES{m}, FAST{:}); %#ok<NASGU>
+        H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, FAST{:}); %#ok<NASGU>
         after = warning('query', 'MATLAB:singularMatrix');
         if ~strcmp(before.state, after.state)
             bad{end+1} = sprintf('%s: %s -> %s', MODES{m}, before.state, after.state);
@@ -553,7 +553,7 @@ try
         rng(310+m);
         d = simEW(800, 0.8, 0.6, 100, 400, MODES{m}, 1);
         fprintf('--- begin expected verbose output (%s) ---\n', MODES{m});
-        H = fitfun(d, 100, 'DistributionType', MODES{m}, 'nStartsBase', 8, ...
+        H = fitfun(d, 100, 'SamplingInterval', 1, 'DistributionType', MODES{m}, 'nStartsBase', 8, ...
             'nStartsPerParameter', 6, 'maxStarts', 26, 'Verbose', true); %#ok<NASGU>
         fprintf('--- end expected verbose output ---\n');
     end

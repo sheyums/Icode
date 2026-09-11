@@ -246,9 +246,11 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %                       xmin. Same concern Clauset/Shalizi/Newman (2009,
 %                       SIAM Rev. 51:661-703) raise for discrete vs.
 %                       continuous power laws.
-%   SamplingInterval    positive scalar, default 1 (same time units as
-%                       xmin). Sets the discrete-mode step size, the
-%                       default MaxRate ceiling, and the rate range used
+%   SamplingInterval    REQUIRED positive scalar, same time units as
+%                       xmin. There is no default -- omitting it raises
+%                       SamplingIntervalRequired. Sets the discrete-mode
+%                       step size, the default MaxRate ceiling, and the
+%                       rate range used
 %                       to seed the multistart -- so it is consulted in
 %                       BOTH modes, not only in discrete mode. Set it to
 %                       your true acquisition interval, IN THE SAME UNITS
@@ -399,7 +401,7 @@ arguments
     xmin (1,1) double {mustBePositive}
     options.MaxComponents (1,1) double {mustBeInteger,mustBePositive} = 4
     options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "continuous"
-    options.SamplingInterval (1,1) double {mustBePositive} = 1
+    options.SamplingInterval (1,1) double = NaN
     options.MaxRate (1,1) double = NaN
     options.MinExpectedCount (1,1) double {mustBeNonnegative} = 5
     options.MaxTruncationExponent (1,1) double {mustBePositive} = log(1/eps)
@@ -416,6 +418,20 @@ arguments
     options.TolX (1,1) double {mustBePositive} = 1e-9
     options.TolFun (1,1) double {mustBePositive} = 1e-9
     options.Verbose (1,1) logical = true
+end
+
+if isnan(options.SamplingInterval)
+    error('FitHyperexponentialMLE:SamplingIntervalRequired', ...
+        ['SamplingInterval is required. It is load-bearing in BOTH modes: ' ...
+         'in discrete mode it is the bin width and sets n_min, and in ' ...
+         'continuous mode it sets the default MaxRate, i.e. a hard floor ' ...
+         'of tau >= SamplingInterval that can silently clamp a fast ' ...
+         'component. Pass your acquisition interval in the SAME UNITS as ' ...
+         'xmin (seconds data at 1 Hz: SamplingInterval=1; the same data ' ...
+         'rescaled to minutes: SamplingInterval=1/60).']);
+elseif ~(options.SamplingInterval > 0)
+    error('FitHyperexponentialMLE:InvalidSamplingInterval', ...
+        'SamplingInterval must be a positive scalar.');
 end
 
 if isnan(options.MaxRate)
