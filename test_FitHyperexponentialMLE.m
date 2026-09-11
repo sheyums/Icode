@@ -676,7 +676,11 @@ end
 %% Test 25: SamplingInterval is required
 try
     rng(79);
-    d = simTrunc([0.8 0.2], [150 1500], 300, 200, 1e-6);
+    % Rounded to the 1 s grid: this test post-dates the switch of the
+    % default DistributionType to "discrete", so ungridded data here would
+    % (correctly) trip the grid guard and emit a warning unrelated to what
+    % is being tested.
+    d = round(simTrunc([0.8 0.2], [150 1500], 300, 200, 1e-6));
     % Omitted entirely.
     missingId = '';
     try
