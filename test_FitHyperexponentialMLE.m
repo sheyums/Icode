@@ -35,20 +35,12 @@ function test_FitHyperexponentialMLE()
 % 23.  Soft return on TooFewData        - ErrorOnNoValidFit=false
 % 24.  Batch struct-array compatibility - mixed successes and failures
 
-% MATLAB runs the real function. Octave cannot parse an "arguments" block,
-% so under Octave these tests run against the auto-generated twin
-% FitHyperexponentialMLE_oct.m (identical body, name-value parsing shim).
-%
 % Written as a function file rather than a script so that the local
-% simulator below is visible in both MATLAB (local functions must follow
-% all script code) and Octave (a script's functions must be defined
-% before first use). A function file satisfies both.
+% simulator at the bottom is in scope for every test: MATLAB requires a
+% script's local functions to follow all script code, and a function file
+% satisfies that without constraining where the tests sit.
 
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    fitfun = @FitHyperexponentialMLE_oct;
-else
-    fitfun = @FitHyperexponentialMLE;
-end
+fitfun = @FitHyperexponentialMLE;
 
 % Light multistart settings throughout: these are correctness smoke tests,
 % not an assessment of how well the multistart explores a hard likelihood.
