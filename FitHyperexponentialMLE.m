@@ -144,44 +144,6 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %       q_j(x) ~ w_j * exp(-lambda_j*x),
 %   keeping the compared quantity one the data actually constrain.
 %
-%   Two further traps when writing q up:
-%
-%     - tau_j is NOT the typical duration of that component's bouts. Every
-%       observation is conditioned on T >= xmin and each component is
-%       individually memoryless, so component j's OBSERVED durations have
-%       mean xmin + tau_j. A tau_j = 99 s component under xmin = 300 s
-%       produces bouts averaging 399 s, not 99 s. tau_j is the decay
-%       constant of the excess over the threshold -- which is precisely
-%       what makes it comparable across different choices of xmin.
-%
-%     - q_j is a proportion over a LATENT component label, not a rule for
-%       classifying individual bouts. The components overlap heavily; a
-%       single observation's posterior is
-%           P(j | t) ~ q_j * lambda_j * exp(-lambda_j*(t-xmin))
-%       and on a real 3-component sleep-bout fit only about a third of
-%       bouts could be assigned to one component with >90%% confidence.
-%       n*q_j is an expected count, not a subset you can point at. (As an
-%       internal check, those posteriors summed over all observations
-%       equal n*q_j exactly at the MLE -- the EM stationarity identity.)
-%
-%   So what is w for? In principle it is the xmin-INVARIANT quantity: q is
-%   defined relative to your threshold and so is not comparable between
-%   studies using different cutoffs, nor between sleep bouts (xmin=300)
-%   and wake bouts (xmin=2), whereas w is a property of the animal alone.
-%   In practice that advantage does not cash out. Refitting one real
-%   dataset at xmin = 300, 350, ..., 500 held tau_2 and tau_3 to ~1.5%%
-%   while w for the fast component wandered over 0.61..1.00 and collapsed
-%   completely at the top of the range -- recovering w means dividing q by
-%   an ever-smaller survival probability, which amplifies noise faster
-%   than the extra truncation removes it. Use w for simulating the
-%   untruncated process, and for estimating what fraction of the
-%   population fell below xmin (1 - S(xmin)), an extrapolation that rests
-%   entirely on the exponential form holding below xmin where there is no
-%   data. To compare against a study using a different cutoff x, do NOT
-%   pass w around; predict their weights from your own fit as
-%       q_j(x) ~ w_j * exp(-lambda_j*x),
-%   keeping the compared quantity one the data actually constrain.
-%
 %   ======================================================================
 %   THE CONTINUOUS LIKELIHOOD IS UNBOUNDED IF ANY OBSERVATION EQUALS xmin
 %   ======================================================================
@@ -323,6 +285,21 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   DeadComponentTol    nonnegative scalar, default 1e-4. Minimum logL
 %                       improvement over K-1 required for K to count as a
 %                       genuine extra component.
+%   ErrorOnNoValidFit   logical, default true. When true (the default), a
+%                       sample with fewer than 5 usable observations raises
+%                       TooFewData and a sample where no model order passes
+%                       the identifiability gating raises NoValidFit. Set
+%                       it FALSE for batch work -- fitting one animal at a
+%                       time -- where a single pathological sample would
+%                       otherwise abort the whole loop. The call then
+%                       returns normally with H.Failed = true,
+%                       H.FailureReason naming the cause, H.SelectedK =
+%                       NaN, H.Selected an empty (unfitted) template, and
+%                       whatever per-K fits were obtained still in
+%                       H.AllFits for inspection. The output struct has the
+%                       same fields in the same order either way, so
+%                       results(i) = H works across a mix of successes and
+%                       failures; filter afterwards on [results.Failed].
 %   SortComponents      logical, default true. Return components sorted by
 %                       ascending Tau, so component indices mean the same
 %                       thing across K, across animals, and across
@@ -347,6 +324,11 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %                       Degenerate, DegenerateReason, ExitFlag,
 %                       BestParamVector
 %   H.Selected         convenience copy of H.AllFits(H.SelectedK)
+%   H.Failed           true if the fit could not be completed (only
+%                       reachable with ErrorOnNoValidFit=false; otherwise
+%                       those cases throw). When true, SelectedK is NaN.
+%   H.FailureReason    '' on success, else 'TooFewData: ...' or
+%                       'NoValidFit: ...'
 %   H.Diagnostics      struct: nAtXmin, XminEqualsDataMin, LooksGridded,
 %                       UnboundedContinuousLikelihood, GridSpacing,
 %                       GridMismatch, nDistinctData, nDistinctOnGrid,
@@ -397,25 +379,6 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   distribution (Hartigan 1985, Proc. Berkeley Conf. II:807-810; Chen,
 %   Chen & Kalbfleisch 2001, JRSS-B 63:19-29).
 %
-%   A second check, cheaper than simulation and available on your own
-%   data: refit at a higher threshold x > xmin, and compare the refitted q
-%   against what the ORIGINAL fit predicts there via
-%   q_j(x) ~ w_j*exp(-lambda_j*x). That is a genuine out-of-sample test of
-%   the mixture form -- a model fitted to bouts >= 300 s predicting the
-%   composition of bouts >= 500 s -- and is stronger evidence for K than
-%   the AICc ranking, which only ever compares in-sample fit. Agreement to
-%   <=0.01 in q is what a well-specified 3-component fit looks like. Do
-%   not expect the FAST component's tau to survive this: it is exactly
-%   what the higher threshold is removing, so its estimate legitimately
-%   degrades (99 s -> 36 s over that range on the dataset above) while the
-%   slow components stay put. AICc over-selection is also real: in
-%   simulation at n=400 with a true K=2, AICc chose K=3 in 4 of 40
-%   replicates, so prefer a parametric bootstrap likelihood-ratio test
-%   (McLachlan 1987, Appl. Stat. 36:318-324) when the model order itself
-%   is the scientific claim -- the mixture LRT has no chi-square null
-%   distribution (Hartigan 1985; Chen, Chen & Kalbfleisch 2001, JRSS-B
-%   63:19-29).
-%
 %   See also SHIFTLOGNORMAL_MLE, SIGWORTHSINEV3,
 %   CALCBOUTSIZESONSETSOFFSETS.
 
@@ -431,6 +394,7 @@ arguments
     options.DuplicateRateTol (1,1) double {mustBeNonnegative} = 0.05
     options.DeadComponentTol (1,1) double {mustBeNonnegative} = 1e-4
     options.SortComponents (1,1) logical = true
+    options.ErrorOnNoValidFit (1,1) logical = true
     options.nStartsBase (1,1) double {mustBeInteger,mustBePositive} = 10
     options.nStartsPerComponent (1,1) double {mustBeInteger,mustBePositive} = 10
     options.maxStarts (1,1) double {mustBeInteger,mustBePositive} = 80
@@ -488,15 +452,27 @@ if options.Verbose && (nNonFinite > 0 || nBelowXmin > 0)
         nBelowXmin, xmin);
 end
 
+% Diagnostics are seeded with every field present from the outset, so that
+% a soft return below has exactly the same shape as a successful one.
+diag_ = initDiagnostics();
+diag_.nNonFinite = nNonFinite;
+diag_.nBelowXmin = nBelowXmin;
+
 if n < 5
-    error('FitHyperexponentialMLE:TooFewData', ...
-        'Fewer than 5 usable observations (n=%d) after applying xmin.', n);
+    msg = sprintf(['Fewer than 5 usable observations (n=%d) after applying ' ...
+        'xmin.'], n);
+    if options.ErrorOnNoValidFit
+        error('FitHyperexponentialMLE:TooFewData', '%s', msg);
+    end
+    if options.Verbose
+        fprintf('FitHyperexponentialMLE: %s Returning Failed=true.\n', msg);
+    end
+    H = assembleOutput(NaN, repmat(initFitStruct(), 1, options.MaxComponents), ...
+        options, xmin, n, diag_, true, ['TooFewData: ' msg]);
+    return
 end
 
 % ------------------------------------------------------- likelihood hazards
-diag_ = struct();
-diag_.nNonFinite = nNonFinite;
-diag_.nBelowXmin = nBelowXmin;
 diag_.nAtXmin = nnz(data == xmin);
 diag_.XminEqualsDataMin = (min(data) == xmin);
 diag_.LooksGridded = all(abs(data/dt - round(data/dt)) < 1e-9);
@@ -643,24 +619,26 @@ for K = 1:options.MaxComponents
 end
 
 if ~any(valid)
-    error('FitHyperexponentialMLE:NoValidFit', ...
-        ['No model order passed the identifiability gating. %s Inspect ' ...
-         'H.AllFits(K).DegenerateReason via a Verbose call, relax ' ...
-         'MinExpectedCount/DuplicateRateTol, reduce MaxComponents, or ' ...
-         'collect more data.'], diag_.Recommendation);
+    msg = sprintf(['No model order passed the identifiability gating. %s ' ...
+        'Inspect H.AllFits(K).DegenerateReason via a Verbose call, relax ' ...
+        'MinExpectedCount/DuplicateRateTol, reduce MaxComponents, or ' ...
+        'collect more data.'], diag_.Recommendation);
+    if options.ErrorOnNoValidFit
+        error('FitHyperexponentialMLE:NoValidFit', '%s', msg);
+    end
+    if options.Verbose
+        fprintf('FitHyperexponentialMLE: %s Returning Failed=true.\n', msg);
+    end
+    diag_.ExcludedK = find([allFits.Success]);
+    H = assembleOutput(NaN, allFits, options, xmin, n, diag_, true, ...
+        ['NoValidFit: ' msg]);
+    return
 end
 
 [~, selectedK] = min(aicc);
 diag_.ExcludedK = find(~valid & [allFits.Success]);
 
-H = struct();
-H.SelectedK = selectedK;
-H.AllFits = allFits;
-H.Selected = allFits(selectedK);
-H.DistributionType = options.DistributionType;
-H.xmin = xmin;
-H.n = n;
-H.Diagnostics = diag_;
+H = assembleOutput(selectedK, allFits, options, xmin, n, diag_, false, '');
 
 if options.Verbose
     fprintf('FitHyperexponentialMLE: selected K=%d by AICc (n=%d, %s).\n', ...
@@ -702,6 +680,41 @@ end
 end
 
 % ========================================================================
+function H = assembleOutput(selectedK, allFits, options, xmin, n, diag_, ...
+    failed, failureReason)
+%ASSEMBLEOUTPUT Build the output struct. Every return path goes through
+%here so the field names AND their order are identical whether the fit
+%succeeded or soft-failed -- MATLAB refuses "results(i) = H" between
+%structs whose fields differ in name or order, which would otherwise break
+%the batch loops that ErrorOnNoValidFit=false exists to support.
+H = struct();
+H.SelectedK = selectedK;
+H.AllFits = allFits;
+if isnan(selectedK)
+    % An unfitted template rather than [], so that downstream code reading
+    % H.Selected.Tau gets an empty value (which propagates as empty)
+    % instead of erroring on a field reference into [].
+    H.Selected = initFitStruct();
+else
+    H.Selected = allFits(selectedK);
+end
+H.DistributionType = options.DistributionType;
+H.xmin = xmin;
+H.n = n;
+H.Failed = failed;
+H.FailureReason = failureReason;
+H.Diagnostics = diag_;
+end
+
+function d = initDiagnostics()
+%INITDIAGNOSTICS All diagnostic fields, in a fixed order, at defaults.
+d = struct('nNonFinite', 0, 'nBelowXmin', 0, 'nAtXmin', 0, ...
+    'XminEqualsDataMin', false, 'LooksGridded', false, ...
+    'UnboundedContinuousLikelihood', false, 'GridSpacing', NaN, ...
+    'GridMismatch', false, 'nDistinctData', 0, 'nDistinctOnGrid', 0, ...
+    'ExcludedK', [], 'Recommendation', '');
+end
+
 function s = initFitStruct()
 s = struct('K', NaN, 'k', NaN, 'n', NaN, 'WeightsObserved', [], ...
     'WeightsUntruncated', [], 'Rates', [], 'Tau', [], 'RateSE', [], ...

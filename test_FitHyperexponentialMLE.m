@@ -31,6 +31,9 @@ function test_FitHyperexponentialMLE()
 % 19.  Grid mismatch detected           - wrong SamplingInterval units warn
 % 20.  No false-positive grid warning   - correct units, and continuous data
 % 21.  Unit invariance                  - seconds vs minutes give same fit
+% 22.  Soft return on NoValidFit        - ErrorOnNoValidFit=false
+% 23.  Soft return on TooFewData        - ErrorOnNoValidFit=false
+% 24.  Batch struct-array compatibility - mixed successes and failures
 
 % MATLAB runs the real function. Octave cannot parse an "arguments" block,
 % so under Octave these tests run against the auto-generated twin
@@ -584,6 +587,89 @@ try
     end
 catch err
     fprintf('[FAIL] Test 21: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 22: soft return when no model order is identifiable
+try
+    rng(71);
+    % Six observations within 6 s of xmin: no model order survives the
+    % identifiability gating, which by default raises NoValidFit.
+    d = [301; 302; 303; 304; 305; 306];
+    threw = false;
+    try
+        fitfun(d, 300, 'MaxComponents', 3, FAST{:});
+    catch err
+        threw = strcmp(err.identifier, 'FitHyperexponentialMLE:NoValidFit');
+    end
+    H = fitfun(d, 300, 'MaxComponents', 3, 'ErrorOnNoValidFit', false, FAST{:});
+    okFail   = H.Failed && isnan(H.SelectedK);
+    okReason = ~isempty(strfind(H.FailureReason, 'NoValidFit'));
+    okFits   = numel(H.AllFits) == 3;
+    okSel    = isempty(H.Selected.Tau);
+    if threw && okFail && okReason && okFits && okSel
+        fprintf('[PASS] Test 22: NoValidFit throws by default, returns Failed=true when asked\n');
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 22: threw=%d failed=%d reason=%d fits=%d emptySel=%d\n', ...
+            threw, okFail, okReason, okFits, okSel);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 22: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 23: soft return when there are too few observations
+try
+    d = [310; 320; 330];
+    threw = false;
+    try
+        fitfun(d, 300, 'MaxComponents', 2, FAST{:});
+    catch err
+        threw = strcmp(err.identifier, 'FitHyperexponentialMLE:TooFewData');
+    end
+    H = fitfun(d, 300, 'MaxComponents', 2, 'ErrorOnNoValidFit', false, FAST{:});
+    okFail   = H.Failed && isnan(H.SelectedK) && H.n == 3;
+    okReason = ~isempty(strfind(H.FailureReason, 'TooFewData'));
+    if threw && okFail && okReason
+        fprintf('[PASS] Test 23: TooFewData throws by default, returns Failed=true when asked\n');
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 23: threw=%d failed=%d reason=%d\n', threw, okFail, okReason);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 23: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 24: successes and failures coexist in one struct array
+try
+    rng(73);
+    % The actual batch-loop pattern: per-animal fits collected into a
+    % struct array, some of which failed. MATLAB rejects this assignment if
+    % the field names or their order differ between the two outputs.
+    good = simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6);
+    samples = {good, [301; 302; 303; 304; 305; 306], [310; 320; 330], good};
+    clear results
+    for ii = 1:numel(samples)
+        results(ii) = fitfun(samples{ii}, 300, 'MaxComponents', 2, ...
+            'ErrorOnNoValidFit', false, FAST{:});
+    end
+    failedFlags = [results.Failed];
+    nOK = sum(~failedFlags);
+    sel  = [results(~failedFlags).Selected];
+    taus = [sel.Tau];
+    if numel(results) == 4 && nOK == 2 && all(failedFlags == [false true true false]) ...
+            && numel(taus) == 4 && all(isfinite(taus))
+        fprintf('[PASS] Test 24: mixed batch assigns into one struct array (%d/%d usable)\n', ...
+            nOK, numel(results));
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 24: n=%d nOK=%d flags=%s\n', numel(results), nOK, ...
+            mat2str(failedFlags));
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 24: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary
