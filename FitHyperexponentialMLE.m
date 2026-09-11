@@ -319,11 +319,23 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   H.AllFits          1 x MaxComponents struct array, one per K, with
 %                       fields K, k, n, WeightsObserved, WeightsUntruncated,
 %                       Rates, Tau, RateSE, TauSE, WeightsObservedSE,
-%                       WeightsUntruncatedSE,
+%                       WeightsUntruncatedSE, PointwiseLogLik,
 %                       CovValid, LogLik, AIC, AICc, Success, Converged,
 %                       Degenerate, DegenerateReason, ExitFlag,
 %                       BestParamVector
 %   H.Selected         convenience copy of H.AllFits(H.SelectedK)
+%   PointwiseLogLik    n x 1 per-observation log-likelihood contributions,
+%                       summing to LogLik. Use these to compare this fit
+%                       against a different model family (a power law, an
+%                       exponentiated Weibull) by a Vuong (1989,
+%                       Econometrica 57:307-333) test, which is the right
+%                       non-nested test since the mixture likelihood-ratio
+%                       has no chi-square null:
+%                         D = H1.Selected.PointwiseLogLik - L2;
+%                         V = sqrt(n)*mean(D)/std(D,1);   % ~N(0,1)
+%                       Both sides must be fitted to the SAME observations
+%                       under the SAME measure -- so the same
+%                       DistributionType, SamplingInterval and xmin.
 %   H.Failed           true if the fit could not be completed (only
 %                       reachable with ErrorOnNoValidFit=false; otherwise
 %                       those cases throw). When true, SelectedK is NaN.
@@ -720,6 +732,7 @@ s = struct('K', NaN, 'k', NaN, 'n', NaN, 'WeightsObserved', [], ...
     'WeightsUntruncated', [], 'Rates', [], 'Tau', [], 'RateSE', [], ...
     'TauSE', [], 'WeightsObservedSE', [], 'WeightsUntruncatedSE', [], ...
     'CovValid', false, 'LogLik', NaN, 'AIC', NaN, 'AICc', NaN, ...
+    'PointwiseLogLik', [], ...
     'Success', false, 'Converged', false, 'Degenerate', true, ...
     'DegenerateReason', 'not fitted', 'AtRateBound', false, ...
     'ExitFlag', NaN, 'BestParamVector', []);
@@ -771,6 +784,7 @@ end
 
 out.WeightsUntruncated = weights;
 out.WeightsObserved = extra.WeightsObserved;
+out.PointwiseLogLik = extra.PointwiseLogLik;
 out.Rates = rates;
 out.Tau = 1 ./ rates;
 out.LogLik = -bestNegLL;
@@ -975,13 +989,13 @@ T = data(:); % N x 1 vector
 if ~isDiscrete
     % log f(t) = logsumexp_j (log_w_j + log_rate_j - rate_j * t)
     log_comp = log_w + log_rates - (T * rates); % N x K
-    log_fT = logsumexp_mat(log_comp, 2);        % N x 1
+    log_fObs = logsumexp_mat(log_comp, 2);      % N x 1
 
     % log S(xmin) = logsumexp_j (log_w_j - rate_j * xmin)
     log_surv_j = log_w - rates * xmin;          % 1 x K
     log_Sxmin = logsumexp_vec(log_surv_j);
 
-    negLL = -( sum(log_fT) - numel(T) * log_Sxmin );
+    negLL = -( sum(log_fObs) - numel(T) * log_Sxmin );
 else
     dt = samplingInterval;
     n_obs = round(T / dt);
@@ -991,7 +1005,7 @@ else
 
     % log P(N = n) = logsumexp_j (log_w_j + (n - 1)*log_q_j + log_p_j)
     log_comp = log_w + (n_obs - 1) * log_q + log_p; % N x K
-    log_fN = logsumexp_mat(log_comp, 2);
+    log_fObs = logsumexp_mat(log_comp, 2);
 
     % log S(n_min) = log P(N >= n_min) = logsumexp_j (log_w_j + (n_min - 1)*log_q_j)
     % n_min is clamped to >= 1 by the caller: at n_min = 0 this survival
@@ -999,7 +1013,7 @@ else
     log_surv_j = log_w + (n_min - 1) * log_q;
     log_Sxmin = logsumexp_vec(log_surv_j);
 
-    negLL = -( sum(log_fN) - numel(n_obs) * log_Sxmin );
+    negLL = -( sum(log_fObs) - numel(n_obs) * log_Sxmin );
 end
 
 negLL = negLL + numel(T) * sum(excess.^2);
@@ -1013,7 +1027,12 @@ if nargout > 3
     % that actually clear xmin contributed by each component. This is the
     % quantity the data identify; the untruncated weights above are its
     % exp(+lambda_j*xmin)-amplified back-transform.
-    extra = struct('WeightsObserved', exp(log_surv_j - log_Sxmin));
+    % Per-observation log-likelihood contributions, summing to LogLik.
+    % Needed to compare this fit against another model family by a Vuong
+    % (1989) test, which works on the pointwise log-ratios rather than the
+    % totals.
+    extra = struct('WeightsObserved', exp(log_surv_j - log_Sxmin), ...
+        'PointwiseLogLik', log_fObs - log_Sxmin);
 end
 end
 

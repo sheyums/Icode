@@ -1,3 +1,5 @@
 # Octave-only build artifacts, not part of the MATLAB package
 FitHyperexponentialMLE_oct.m
+FitExponentiatedWeibullMLE_oct.m
+test_*_oct.m
 octave-workspace
