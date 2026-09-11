@@ -189,11 +189,12 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   option 1 below, not a different xmin.
 %
 %   Three ways out, in order of preference:
-%     1. Use DistributionType="discrete" (with SamplingInterval matching
-%        your acquisition rate). Integer-valued durations ARE discrete,
-%        the geometric pmf is bounded by 1, and no divergence is possible.
-%        This is the statistically correct model for gridded data, not
-%        just a numerical workaround.
+%     1. Stay in DistributionType="discrete", which is the DEFAULT (with
+%        SamplingInterval matching your acquisition rate). Integer-valued
+%        durations ARE discrete, the geometric pmf is bounded by 1, and no
+%        divergence is possible. This is the statistically correct model
+%        for gridded data, not just a numerical workaround. You only reach
+%        this pathology by asking for "continuous" explicitly.
 %     2. Pass the protocol's true xmin rather than min(eventseries).
 %     3. Keep continuous mode but rely on the MaxRate ceiling and the
 %        degeneracy gating below, which stop the runaway and refuse to
@@ -249,9 +250,20 @@ function H = FitHyperexponentialMLE(eventseries, xmin, options)
 %   NAME-VALUE OPTIONS
 %   MaxComponents      positive integer, default 4. Fits K = 1..MaxComponents
 %                       and selects among them by AICc.
-%   DistributionType    "continuous" (default) or "discrete". Use
-%                       "discrete" whenever the durations live on a grid
-%                       (integer multiples of the sampling interval),
+%   DistributionType    "discrete" (DEFAULT) or "continuous". The default
+%                       changed to "discrete": bout durations scored from a
+%                       sampled recording are counts of sampling steps, not
+%                       real numbers, so the pmf is the correct model and
+%                       is the one you almost always want. Override with
+%                       "continuous" only for genuinely real-valued
+%                       durations with no observation equal to xmin. Note
+%                       that switching modes changes LogLik/AIC/AICc by
+%                       roughly n*log(dt) -- they are a pmf in one mode and
+%                       a density in the other -- so an AIC recorded under
+%                       an older release that defaulted to "continuous" is
+%                       NOT comparable to one from the current default.
+%                       Keep "discrete" whenever the durations live on a
+%                       grid (integer multiples of the sampling interval),
 %                       which is the usual case for bout data, and ALWAYS
 %                       when any observation equals xmin. The relevant
 %                       criterion is grid-valued data / ties at xmin, NOT
@@ -414,7 +426,7 @@ arguments
     eventseries double {mustBeReal}
     xmin (1,1) double {mustBePositive}
     options.MaxComponents (1,1) double {mustBeInteger,mustBePositive} = 4
-    options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "continuous"
+    options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
     options.SamplingInterval (1,1) double = NaN
     options.MaxRate (1,1) double = NaN
     options.MinExpectedCount (1,1) double {mustBeNonnegative} = 5

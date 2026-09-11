@@ -95,7 +95,8 @@ function H = FitExponentiatedWeibullMLE(eventseries, xmin, options)
 %     - the competing model you want an AIC against is itself a continuous
 %       density you cannot refit as a pmf.
 %
-%   IN CASE OF DOUBT, USE "discrete". As dt -> 0 the discrete
+%   IN CASE OF DOUBT, USE "discrete" -- which is why it is the DEFAULT.
+%   As dt -> 0 the discrete
 %   log-likelihood approaches the continuous one plus n*log(dt), and the
 %   parameter estimates converge, so discrete is continuous-in-the-limit
 %   and never the riskier choice. Its only cost is that SamplingInterval
@@ -156,8 +157,12 @@ function H = FitExponentiatedWeibullMLE(eventseries, xmin, options)
 %                 it.
 %
 %   NAME-VALUE OPTIONS
-%   DistributionType    "continuous" (default) or "discrete". See WHEN TO
-%                       USE WHICH MODE above.
+%   DistributionType    "discrete" (DEFAULT) or "continuous". See WHEN TO
+%                       CALL THIS DISCRETE AND WHEN CONTINUOUS above.
+%                       Switching modes changes LogLik/AIC/AICc by roughly
+%                       n*log(dt), so an AIC recorded under an older
+%                       release that defaulted to "continuous" is NOT
+%                       comparable to one from the current default.
 %   SamplingInterval    REQUIRED positive scalar, in the SAME UNITS as
 %                       eventseries and xmin. There is no default --
 %                       omitting it raises SamplingIntervalRequired. Sets
@@ -239,7 +244,7 @@ function H = FitExponentiatedWeibullMLE(eventseries, xmin, options)
 arguments
     eventseries double {mustBeReal}
     xmin (1,1) double {mustBePositive}
-    options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "continuous"
+    options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
     options.SamplingInterval (1,1) double = NaN
     options.FixAlpha (1,1) logical = false
     options.MinAlphaIdentifiability (1,1) double {mustBePositive} = 1e-3
