@@ -34,6 +34,8 @@ function test_FitHyperexponentialMLE()
 % 22.  Soft return on NoValidFit        - ErrorOnNoValidFit=false
 % 23.  Soft return on TooFewData        - ErrorOnNoValidFit=false
 % 24.  Batch struct-array compatibility - mixed successes and failures
+% 25.  SamplingInterval is required   - omitting it errors, as does a
+%                                       non-positive value
 
 % Written as a function file rather than a script so that the local
 % simulator at the bottom is in scope for every test: MATLAB requires a
@@ -662,6 +664,43 @@ try
     end
 catch err
     fprintf('[FAIL] Test 24: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 25: SamplingInterval is required
+try
+    rng(79);
+    d = simTrunc([0.8 0.2], [150 1500], 300, 200, 1e-6);
+    % Omitted entirely.
+    missingId = '';
+    try
+        fitfun(d, 300, 'MaxComponents', 1, 'Verbose', false);
+    catch err
+        missingId = err.identifier;
+    end
+    % Present but not positive.
+    badId = '';
+    try
+        fitfun(d, 300, 'SamplingInterval', 0, 'MaxComponents', 1, 'Verbose', false);
+    catch err
+        badId = err.identifier;
+    end
+    % Supplied properly: still fits, so the check does not block normal use.
+    H = fitfun(d, 300, 'SamplingInterval', 1, 'MaxComponents', 1, 'Verbose', false);
+    okMissing = strcmp(missingId, 'FitHyperexponentialMLE:SamplingIntervalRequired');
+    okBad     = strcmp(badId, 'FitHyperexponentialMLE:InvalidSamplingInterval');
+    % Success is per-fit on this fitter (H.Selected.Success), unlike
+    % FitExponentiatedWeibullMLE where it sits at the top level.
+    okFits    = ~H.Failed && H.Selected.Success && isfinite(H.Selected.LogLik);
+    if okMissing && okBad && okFits
+        fprintf('[PASS] Test 25: SamplingInterval required (omitted and non-positive both error)\n');
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 25: missing="%s" nonpositive="%s" fitsWhenGiven=%d\n', ...
+            missingId, badId, okFits);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 25: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary

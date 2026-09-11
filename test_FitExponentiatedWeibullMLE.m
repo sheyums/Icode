@@ -41,6 +41,8 @@ function test_FitExponentiatedWeibullMLE()
 % 19.  Grid mismatch guard             - DISCRETE warns, CONTINUOUS silent
 % 20.  Warning state not leaked        - both modes
 % 21.  VERBOSE mode                    - both modes
+% 22.  SamplingInterval is required   - omitting it errors, as does a
+%                                       non-positive value
 %
 % Written as a function file so the local simulators at the bottom are in
 % scope for every test.
@@ -561,6 +563,38 @@ try
         'verbose mode runs in both modes without error', '');
 catch err
     [nPassed, nFailed] = report(false, nPassed, nFailed, 21, '', err.message);
+end
+
+%% Test 22: SamplingInterval is required
+try
+    rng(320);
+    d = simEW(800, 0.8, 0.6, 100, 200, 'discrete', 1);
+    missingId = '';
+    try
+        fitfun(d, 100, 'Verbose', false);
+    catch err
+        missingId = err.identifier;
+    end
+    badId = '';
+    try
+        fitfun(d, 100, 'SamplingInterval', -1, 'Verbose', false);
+    catch err
+        badId = err.identifier;
+    end
+    H = fitfun(d, 100, 'SamplingInterval', 1, FAST{:});
+    okMissing = strcmp(missingId, 'FitExponentiatedWeibullMLE:SamplingIntervalRequired');
+    okBad     = strcmp(badId, 'FitExponentiatedWeibullMLE:InvalidSamplingInterval');
+    okFits    = H.Success && ~H.Failed && isfinite(H.LogLik);
+    if okMissing && okBad && okFits
+        fprintf('[PASS] Test 22: SamplingInterval required (omitted and non-positive both error)\n');
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 22: missing="%s" nonpositive="%s" fitsWhenGiven=%d\n', ...
+            missingId, badId, okFits);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 22: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary
