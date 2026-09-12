@@ -196,7 +196,14 @@ if options.Verbose
 end
 
 % ------------------------------------------------------------------ fitting
-rows = struct([]); fits = struct([]); nr = 0;
+% Accumulated in cells and concatenated once, NOT grown by rows(nr)=...
+% from struct([]). struct([]) is a 0x0 struct array with no FIELDS, so the
+% first such assignment is between structures with different field sets:
+% MATLAB rejects it ("Subscripted assignment between dissimilar
+% structures") while Octave silently allows it. horzcat of structs requires
+% identical field names in identical order, which makeRow and makeRec
+% guarantee, and it behaves the same in both.
+rowsC = {}; fitsC = {}; nr = 0;
 for ci = 1:numel(cands)
     c = cands(ci);
     try
@@ -209,9 +216,13 @@ for ci = 1:numel(cands)
     end
     for oi = 1:numel(out)
         nr = nr + 1;
-        rows(nr) = out(oi).Row;
-        fits(nr) = out(oi).Fit;
+        rowsC{nr} = out(oi).Row;
+        fitsC{nr} = out(oi).Fit;
     end
+end
+if nr > 0
+    rows = [rowsC{:}];
+    fits = [fitsC{:}];
 end
 if nr == 0
     error('CompareBoutModels:NoFits', 'No model in the library could be fitted.');
@@ -409,7 +420,7 @@ function out = fitHyperCand(d, x, mc, common)
 % aborting the whole comparison.
 H = FitHyperexponentialMLE(d, x, common{:}, 'MaxComponents', mc, ...
     'ErrorOnNoValidFit', false);
-out = struct('Row', {}, 'Fit', {});
+acc = {};
 for K = 1:numel(H.AllFits)
     f = H.AllFits(K);
     name = sprintf('hyperexp K=%d', K);
@@ -430,8 +441,12 @@ for K = 1:numel(H.AllFits)
             pn, pv, pse);
         rec = makeRec(name, f.SurvivalHandle, f, @(nd) refitHyper(nd, x, K, common));
     end
-    out(end+1,1) = struct('Row', row, 'Fit', rec);                 %#ok<AGROW>
+    acc{K} = struct('Row', row, 'Fit', rec);
 end
+% Concatenated once, for the same reason the caller does: growing a struct
+% array element by element is the operation whose MATLAB and Octave
+% semantics differ.
+out = [acc{:}];
 end
 
 function r = refitHyper(nd, x, K, common)
@@ -530,22 +545,35 @@ tf = strcmpi(char(v), 'auto');
 end
 
 function T = rowsToTable(rows)
-% struct2table needs same-height fields, so the variable-length parameter
-% vectors travel as 1x1 cells (makeRow already wrapped them). Without the
-% toolbox-free table type -- Octave -- hand back the struct array, which
-% every field access in the header still works on.
+% Columns built explicitly rather than via struct2table. For a 1x1 struct
+% array struct2table requires every field to have the same number of ROWS,
+% and Reason is '' -- 0x0 char, zero rows -- against k's one, so any
+% single-model comparison would throw. Building the columns by hand is
+% also the only way to control their order, and it keeps the
+% variable-length parameter fields boxed as cell columns, which is what
+% table2struct unboxes again so R.Table(i).Params matches the shape
+% Octave's struct array already has.
 if ~(exist('struct2table', 'file') == 2 || exist('struct2table', 'builtin') == 5)
-    T = rows; return
+    T = rows; return          % Octave: hand back the struct array
 end
-% struct2table needs every field the same height, so the three
-% variable-length parameter fields are boxed into cell columns here and
-% only here. table2struct unboxes them again, which is what makes
-% R.Table(i).Params and the Octave struct array's field agree in shape.
-plain = rmfield(rows, {'ParamNames', 'Params', 'ParamSE'});
-T = struct2table(plain);
-T.ParamNames = {rows.ParamNames}.';
-T.Params     = {rows.Params}.';
-T.ParamSE    = {rows.ParamSE}.';
+T = table();
+T.Model        = {rows.Model}.';
+T.k            = [rows.k].';
+T.nReported    = [rows.nReported].';
+T.n            = [rows.n].';
+T.LogLik       = [rows.LogLik].';
+T.AIC          = [rows.AIC].';
+T.AICc         = [rows.AICc].';
+T.BIC          = [rows.BIC].';
+T.dAICc        = [rows.dAICc].';
+T.AkaikeWeight = [rows.AkaikeWeight].';
+T.dBIC         = [rows.dBIC].';
+T.Degenerate   = [rows.Degenerate].';
+T.Reason       = {rows.Reason}.';
+T.ParamText    = {rows.ParamText}.';
+T.ParamNames   = {rows.ParamNames}.';
+T.Params       = {rows.Params}.';
+T.ParamSE      = {rows.ParamSE}.';
 end
 
 function notes = nestingNotes()

@@ -43,6 +43,8 @@ function test_CompareBoutModels()
 % 20.  RandomSeed reproducibility     - identical log-likelihoods twice
 % 21.  ParamText                      - non-empty and names every parameter
 % 22.  Plot=false leaves no figure    - R.Figure empty, nothing opened
+% 23.  Plot=true actually draws      - plotFit's only coverage; SKIPPED
+%                                      where there is no graphics toolkit
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -533,6 +535,37 @@ try
         sprintf('figures %d -> %d, R.Figure empty=%d', before, after, isempty(R.Figure)));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 22, '', err.message);
+end
+
+%% Test 23: the plot path actually runs
+%  Test 22 only checks that Plot=false opens NOTHING, which would pass
+%  just as happily if plotFit were broken. This one calls it. plotFit had
+%  no coverage at all until this test: the container it was written in has
+%  no graphics toolkit, so in MATLAB this is its only exercise.
+try
+    rng(23);
+    d = simGammaDisc(0.7, 500, XMIN, DT, 300);
+    hasGraphics = true;
+    if exist('OCTAVE_VERSION', 'builtin')
+        hasGraphics = ~isempty(available_graphics_toolkits());
+    end
+    if ~hasGraphics
+        fprintf(['[PASS] Test 23: skipped, no graphics toolkit available ' ...
+            '(plotFit NOT exercised)\n']);
+        nPassed = nPassed + 1;
+    else
+        R = cbm(d, XMIN, 'SamplingInterval', DT, 'Models', {'gamma'}, ...
+            'GoFBootstrap', 0, 'Plot', true, 'Verbose', false);
+        % two panels: the survival curve and the Pearson residuals
+        nAx = numel(findall(R.Figure, 'Type', 'axes'));
+        ok = ~isempty(R.Figure) && ishandle(R.Figure) && nAx >= 2;
+        if ~isempty(R.Figure) && ishandle(R.Figure), close(R.Figure); end
+        [nPassed, nFailed] = rep(ok, nPassed, nFailed, 23, ...
+            sprintf('plotFit drew a figure with %d axes', nAx), ...
+            sprintf('R.Figure empty=%d, axes=%d', isempty(R.Figure), nAx));
+    end
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...
