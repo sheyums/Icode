@@ -102,7 +102,7 @@ end
 %% Test 2: Required fields present, both modes
 try
     need = {'Lambda','K','Alpha','LambdaSE','KSE','AlphaSE','HazardShape', ...
-            'k','n','LogLik','PointwiseLogLik','AIC','AICc','CovValid', ...
+            'k','n','LogLik','PointwiseLogLik','SurvivalHandle','AIC','AICc','CovValid', ...
             'Success','Converged','ExitFlag','BestParamVector','FixAlpha', ...
             'DistributionType','xmin','Failed','FailureReason','Diagnostics'};
     needD = {'nNonFinite','nBelowXmin','nAtXmin','XminEqualsDataMin', ...
@@ -595,6 +595,33 @@ try
     end
 catch err
     fprintf('[FAIL] Test 22: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 23: SurvivalHandle is consistent with the likelihood
+try
+    rng(231);
+    dtS = 1; dS = simEW(800, 0.8, 0.6, 100, 400, 'discrete', dtS);
+    HS = fitfun(dS, 100, 'DistributionType', 'discrete', 'SamplingInterval', dtS, FAST{:});
+    nn = round(dS/dtS);
+    p  = HS.SurvivalHandle((nn-1)*dtS) - HS.SurvivalHandle(nn*dtS);
+    % A bin's probability must equal exp of that observation's pointwise
+    % log-likelihood, or the goodness-of-fit expected counts and the plotted
+    % curve would describe a different model from the one that was fitted.
+    okBin  = max(abs(p - exp(HS.PointwiseLogLik))) < 1e-10;
+    okOne  = abs(HS.SurvivalHandle((max(1,round(100/dtS))-1)*dtS) - 1) < 1e-12;
+    tg     = (100:20:100*20)';
+    okMono = all(diff(HS.SurvivalHandle(tg)) <= 1e-15);
+    if okBin && okOne && okMono
+        fprintf(['[PASS] Test 23: SurvivalHandle matches the likelihood ' ...
+            '(max dev %.1e), is 1 below xmin, and is monotone\n'], ...
+            max(abs(p - exp(HS.PointwiseLogLik))));
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 23: bins=%d one=%d mono=%d\n', okBin, okOne, okMono);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 23: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary

@@ -84,7 +84,7 @@ try
     H = fitfun(d, 300, 'DistributionType', 'continuous', 'SamplingInterval', 1, 'MaxComponents', 2, FAST{:});
     needTop = {'SelectedK','AllFits','Selected','DistributionType','xmin','n','Diagnostics'};
     needFit = {'K','k','n','WeightsObserved','WeightsUntruncated','Rates','Tau','RateSE', ...
-               'TauSE','WeightsObservedSE','WeightsUntruncatedSE','CovValid','LogLik','AIC', ...
+               'TauSE','WeightsObservedSE','WeightsUntruncatedSE','CovValid','LogLik','SurvivalHandle','AIC', ...
                'AICc','Success','Converged','Degenerate','DegenerateReason', ...
                'AtRateBound','ExitFlag','BestParamVector'};
     missTop = needTop(~isfield(H, needTop));
@@ -712,6 +712,34 @@ try
     end
 catch err
     fprintf('[FAIL] Test 25: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 26: SurvivalHandle is consistent with the likelihood
+try
+    rng(261);
+    dtS = 1; dS = round(simTrunc([0.8 0.2], [150 1500], 300, 400, 1e-6));
+    HH = fitfun(dS, 300, 'DistributionType', 'discrete', 'SamplingInterval', dtS, 'MaxComponents', 2, FAST{:});
+    HS = HH.AllFits(2);
+    nn = round(dS/dtS);
+    p  = HS.SurvivalHandle((nn-1)*dtS) - HS.SurvivalHandle(nn*dtS);
+    % A bin's probability must equal exp of that observation's pointwise
+    % log-likelihood, or the goodness-of-fit expected counts and the plotted
+    % curve would describe a different model from the one that was fitted.
+    okBin  = max(abs(p - exp(HS.PointwiseLogLik))) < 1e-10;
+    okOne  = abs(HS.SurvivalHandle((max(1,round(300/dtS))-1)*dtS) - 1) < 1e-12;
+    tg     = (300:20:300*20)';
+    okMono = all(diff(HS.SurvivalHandle(tg)) <= 1e-15);
+    if okBin && okOne && okMono
+        fprintf(['[PASS] Test 26: SurvivalHandle matches the likelihood ' ...
+            '(max dev %.1e), is 1 below xmin, and is monotone\n'], ...
+            max(abs(p - exp(HS.PointwiseLogLik))));
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 26: bins=%d one=%d mono=%d\n', okBin, okOne, okMono);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 26: errored (%s)\n', err.message); nFailed = nFailed + 1;
 end
 
 %% Summary

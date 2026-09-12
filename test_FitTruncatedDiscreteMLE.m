@@ -36,6 +36,8 @@ function test_FitTruncatedDiscreteMLE()
 % 19.  Grid mismatch guard            - wrong SamplingInterval units warn
 % 20.  Toolbox cross-check            - vs gamcdf/wblcdf, SKIPPED if absent
 % 21.  VERBOSE mode                   - does not error
+% 22.  SurvivalHandle consistency     - matches the fitted likelihood
+% 23.  logL is never positive         - the truncated-probability invariant
 
 FAST = {'SamplingInterval', 1, 'nStarts', 3, 'Verbose', false};
 ALL  = {'gamma','chisquared','pearson3','weibull','beta','powerlaw'};
@@ -68,7 +70,7 @@ end
 try
     rng(2); d = simGammaDisc(0.6, 900, 100, 1, 200);
     H = fitModel(d, 100, 'gamma', FAST);
-    need = {'Model','ParamNames','Params','ParamSE','CovValid','k','n', ...
+    need = {'Model','ParamNames','Params','ParamSE','SurvivalHandle','CovValid','k','n', ...
             'LogLik','PointwiseLogLik','AIC','AICc','BIC','Success', ...
             'Converged','ExitFlag','BestParamVector','DistributionType', ...
             'SamplingInterval','xmin','Failed','FailureReason','Diagnostics'};
@@ -420,6 +422,77 @@ try
     [nPassed,nFailed] = rep(true,nPassed,nFailed,21,'verbose mode runs without error','');
 catch err
     [nPassed,nFailed] = rep(false,nPassed,nFailed,21,'',err.message);
+end
+
+%% Test 22: SurvivalHandle is consistent with the likelihood
+try
+    rng(221);
+    dtS = 1; dS = simGammaDisc(0.6, 900, 100, dtS, 250);
+    HS = FitGammaMLE(dS, 100, 'SamplingInterval', dtS, 'nStarts', 3, 'Verbose', false);
+    nn = round(dS/dtS);
+    p  = HS.SurvivalHandle((nn-1)*dtS) - HS.SurvivalHandle(nn*dtS);
+    % A bin's probability must equal exp of that observation's pointwise
+    % log-likelihood, or the goodness-of-fit expected counts and the plotted
+    % curve would describe a different model from the one that was fitted.
+    okBin  = max(abs(p - exp(HS.PointwiseLogLik))) < 1e-10;
+    okOne  = abs(HS.SurvivalHandle((max(1,round(100/dtS))-1)*dtS) - 1) < 1e-12;
+    tg     = (100:20:100*20)';
+    okMono = all(diff(HS.SurvivalHandle(tg)) <= 1e-15);
+    if okBin && okOne && okMono
+        fprintf(['[PASS] Test 22: SurvivalHandle matches the likelihood ' ...
+            '(max dev %.1e), is 1 below xmin, and is monotone\n'], ...
+            max(abs(p - exp(HS.PointwiseLogLik))));
+        nPassed = nPassed + 1;
+    else
+        fprintf('[FAIL] Test 22: bins=%d one=%d mono=%d\n', okBin, okOne, okMono);
+        nFailed = nFailed + 1;
+    end
+catch err
+    fprintf('[FAIL] Test 22: errored (%s)\n', err.message); nFailed = nFailed + 1;
+end
+
+%% Test 23: the log-likelihood can never be positive
+%  A left-truncated log-likelihood is a sum of log CONDITIONAL
+%  probabilities, so it is at most 0 by construction. An earlier version
+%  floored the bin probability p at realmin without touching the
+%  normalizer S(xmin); where S(xmin) had decayed into the subnormals
+%  (4.9e-324, which still passes S>0) the floored ratio p/S reached 4.5e15
+%  and each observation contributed +36 instead of a negative number. A
+%  Weibull with scale 10.7 fitted to data starting at 300 reported
+%  logL = +39972 and beat every honest model in a comparison table.
+%
+%  A large xmin/scale ratio is what drives the multistarts through that
+%  region, so this fits every family at xmin=300 with dt=30 -- the sleep
+%  protocol's own numbers -- and checks the invariant. It also checks the
+%  fit is a real one: the manufactured optimum sat at a scale thirty times
+%  below xmin, so an implausibly small scale is the fingerprint.
+try
+    rng(23); xminF = 300; dtF = 30;
+    dF = simGammaDisc(0.5, 1200, xminF, dtF, 300);
+    FAR = {'SamplingInterval', dtF, 'nStarts', 6, 'Verbose', false};
+    bad = {};
+    for m = ALL
+        H = fitModel(dF, xminF, m{1}, FAR);
+        if ~(H.LogLik < 0)
+            bad{end+1} = sprintf('%s: logL=%+.2f', m{1}, H.LogLik); %#ok<AGROW>
+            continue
+        end
+        if ~all(H.PointwiseLogLik <= 0)
+            bad{end+1} = sprintf('%s: %d positive pointwise terms', m{1}, ...
+                nnz(H.PointwiseLogLik > 0)); %#ok<AGROW>
+        end
+    end
+    % and specifically the family that exhibited it, with its scale checked
+    Hw = fitModel(dF, xminF, 'weibull', FAR);
+    if Hw.Params(1) < xminF/10
+        bad{end+1} = sprintf('weibull scale %.3g is far below xmin', Hw.Params(1));
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 23, ...
+        sprintf('every family keeps logL < 0 at xmin/dt=%d (weibull scale %.4g)', ...
+            round(xminF/dtF), Hw.Params(1)), ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
 end
 
 %% Summary

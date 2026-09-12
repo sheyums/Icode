@@ -458,6 +458,19 @@ else
 end
 fit.CovValid = covValid;
 
+% Truncated survival handle, P(T > t | T >= xmin). See
+% FITTRUNCATEDDISCRETEMLE for why one handle covers both goodness-of-fit
+% expected counts and plotting.
+lamF = fit.Lambda; kF = fit.K; aF = fit.Alpha;
+if isDiscrete
+    Sref = -expm1(logCDF((n_min-1)*dt, lamF, kF, aF));
+    fit.SurvivalHandle = @(t) min( ...
+        -expm1(logCDF(round(t(:)/dt)*dt, lamF, kF, aF)) / Sref, 1);
+else
+    Sref = -expm1(logCDF(xmin, lamF, kF, aF));
+    fit.SurvivalHandle = @(t) min(-expm1(logCDF(t(:), lamF, kF, aF)) / Sref, 1);
+end
+
 % Hazard-shape regime (Mudholkar & Srivastava 1993).
 ak = fit.Alpha * fit.K;
 if fit.K >= 1 && ak >= 1
@@ -516,7 +529,8 @@ function H = assembleOutput(fit, nPar, options, xmin, n, diag_, failed, reason)
 if isempty(fit)
     fit = struct('Lambda', NaN, 'K', NaN, 'Alpha', NaN, 'LambdaSE', NaN, ...
         'KSE', NaN, 'AlphaSE', NaN, 'HazardShape', '', 'LogLik', NaN, ...
-        'PointwiseLogLik', [], 'CovValid', false, 'Converged', false, ...
+        'PointwiseLogLik', [], 'SurvivalHandle', [], 'CovValid', false, ...
+        'Converged', false, ...
         'ExitFlag', NaN, 'BestParamVector', []);
 end
 H = struct();
@@ -531,6 +545,7 @@ H.k = nPar;
 H.n = n;
 H.LogLik = fit.LogLik;
 H.PointwiseLogLik = fit.PointwiseLogLik;
+H.SurvivalHandle = fit.SurvivalHandle;
 H.AIC = 2*nPar - 2*fit.LogLik;
 if (n - nPar - 1) > 0
     H.AICc = H.AIC + (2*nPar*(nPar+1)) / (n - nPar - 1);

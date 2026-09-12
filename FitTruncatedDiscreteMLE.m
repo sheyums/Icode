@@ -140,6 +140,10 @@ function H = FitTruncatedDiscreteMLE(eventseries, xmin, modelName, options)
 %   OUTPUT
 %   H.Model, H.ParamNames, H.Params, H.ParamSE, H.CovValid
 %   H.k, H.n, H.LogLik, H.PointwiseLogLik, H.AIC, H.AICc, H.BIC
+%   H.SurvivalHandle   @(t) P(T > t | T >= xmin) for the fitted model. A
+%                       bin's probability is Sh((n-1)*dt) - Sh(n*dt), so this
+%                       one handle serves both goodness-of-fit expected counts
+%                       and plotting. Empty on a soft-failed fit.
 %   H.Success, H.Converged, H.ExitFlag, H.BestParamVector
 %   H.Failed, H.FailureReason, H.DistributionType, H.xmin, H.Diagnostics
 %
@@ -365,6 +369,18 @@ end
 fit.ParamSE = se;
 fit.CovValid = covValid;
 
+% Truncated survival function, P(T > t | T >= xmin), as a handle. One
+% handle serves both the goodness-of-fit expected bin counts (a bin's
+% probability is Sh((n-1)*dt) - Sh(n*dt)) and the plotted curve, so a
+% comparison wrapper never has to re-derive each family's CDF.
+if isDiscrete
+    Sref = M.sf((n_min-1)*dt, fit.Params);
+    fit.SurvivalHandle = @(t) min(M.sf(round(t/dt)*dt, fit.Params) / Sref, 1);
+else
+    Sref = M.sf(xmin, fit.Params);
+    fit.SurvivalHandle = @(t) min(M.sf(t, fit.Params) / Sref, 1);
+end
+
 % --- model-specific guard (currently: pearson3's location running to xmin)
 diag_ = M.guard(fit.Params, xmin, options, diag_);
 
@@ -397,7 +413,8 @@ function H = assembleOutput(fit, M, options, xmin, n, diag_, failed, reason)
 if isempty(fit)
     fit = struct('Params', nan(1, M.nPar), 'ParamSE', nan(1, M.nPar), ...
         'CovValid', false, 'LogLik', NaN, 'PointwiseLogLik', [], ...
-        'Converged', false, 'ExitFlag', NaN, 'BestParamVector', []);
+        'SurvivalHandle', [], 'Converged', false, 'ExitFlag', NaN, ...
+        'BestParamVector', []);
 end
 H = struct();
 H.Model = M.Name;
@@ -409,6 +426,7 @@ H.k = M.nPar;
 H.n = n;
 H.LogLik = fit.LogLik;
 H.PointwiseLogLik = fit.PointwiseLogLik;
+H.SurvivalHandle = fit.SurvivalHandle;
 H.AIC = 2*M.nPar - 2*fit.LogLik;
 if (n - M.nPar - 1) > 0
     H.AICc = H.AIC + (2*M.nPar*(M.nPar+1)) / (n - M.nPar - 1);
@@ -468,8 +486,28 @@ else
     if ~(Sx > 0) || any(~isfinite(p))
         negLL = PENALTY; pointwise = -inf(size(t)); return
     end
-    p(p <= 0) = realmin;
-    pointwise = log(p) - log(Sx);
+    % Floor the CONDITIONAL bin probability p/Sx, and cap it at 1. Flooring
+    % p alone -- what an earlier version did -- MANUFACTURES likelihood.
+    % Deep in a bad region p and Sx both underflow, but Sx can reach the
+    % smallest SUBNORMAL (4.9e-324, which still passes Sx>0) while the
+    % floor pins p at realmin (2.2e-308). The ratio is then 4.5e15: a
+    % conditional probability fifteen orders of magnitude above 1, worth
+    % +36 of log-likelihood per observation. A Weibull with scale 10.7
+    % against data starting at 300 scored logL = +39972 and won a model
+    % comparison outright.
+    %
+    % The floor itself has to stay. Returning PENALTY on an underflowing
+    % bin instead removes the ramp fminsearch needs to walk out of that
+    % region: with no gradient anywhere on the plateau, every multistart
+    % from a poor scale dies there and the fit fails outright. Flooring the
+    % ratio keeps a finite objective while putting the plateau at
+    % log(realmin) = -708 per observation -- catastrophically BAD rather
+    % than spuriously good, so the optimizer leaves it instead of climbing
+    % into it. Capping at 1 makes the sign of the log-likelihood an
+    % invariant, not an accident of which quantity underflowed first.
+    r = min(p / Sx, 1);
+    r(r <= 0) = realmin;
+    pointwise = log(r);
 end
 
 negLL = -sum(pointwise);
