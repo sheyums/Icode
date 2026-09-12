@@ -18,12 +18,26 @@ function L = HyperexponentialLRT(eventseries, xmin, K0, K1, options)
 %   go negative), or two components sharing a time constant (a whole flat
 %   ridge, since mass slides between the twins with no change in
 %   likelihood). Neither is an interior maximum, the information matrix is
-%   singular along the ridge, and the chi-square approximation does not
-%   hold; the true null distribution has an atom at zero and is generally
-%   stochastically smaller than chi2(2). Using chi-square here
-%   OVERSTATES the evidence for the larger model. See Hartigan (1985),
-%   McLachlan (1987) Appl Statist 36:318-324, Lindsay (1995), and
-%   McLachlan & Peel (2000) Finite Mixture Models, ch. 6.
+%   singular along the ridge, and the chi-square approximation does not hold.
+%   The true null distribution instead carries an ATOM AT ZERO, from the
+%   replicates in which the extra component collapses.
+%
+%   The DIRECTION of the chi-square error is not guaranteed a priori, and
+%   depends on the family: for normal mixtures with unrestricted variances
+%   the LRT can diverge without bound (Hartigan 1985), the opposite
+%   direction entirely. That is exactly why the null has to be simulated
+%   rather than argued.
+%
+%   For THIS family, measured: on truncated exponential mixtures at n=800
+%   the simulated null put 17-24% of its mass exactly at zero and had a
+%   95th percentile of 4.0-4.7, against chi2(2)'s 5.99. The null is
+%   therefore stochastically SMALLER, so chi-square is CONSERVATIVE here:
+%   its critical value is too high and it under-rejects a real extra
+%   component. Do not carry that direction over to another family, another
+%   n, or another truncation -- read L.LRNull for the null actually
+%   obtained in your case. See Hartigan (1985), McLachlan (1987) Appl
+%   Statist 36:318-324, Lindsay (1995), and McLachlan & Peel (2000) Finite
+%   Mixture Models, ch. 6.
 %
 %   McLachlan's remedy, implemented here: fit both orders to the data and
 %   record LR. Then generate B datasets FROM THE FITTED K0 MODEL, refit
