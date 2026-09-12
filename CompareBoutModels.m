@@ -119,6 +119,19 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   GoFMinExpected    pooling threshold on expected counts, default 5.
 %   GoFAlpha          significance level for "passes", default 0.05.
 %   GoFBootstrap      "auto" (default), 0, or a positive integer B.
+%   OrderLRT          "auto" (default), true or false. When two
+%                     hyperexponential orders come out close, run
+%                     HYPEREXPONENTIALLRT to ask whether the extra
+%                     component is real -- a question no information
+%                     criterion answers. Costs B refits of both orders, so
+%                     "auto" fires only on the close case; pass false to
+%                     never run it.
+%   OrderLRTThreshold gap, on EITHER criterion, under which "auto" fires.
+%                     Default 2, the conventional "no meaningful
+%                     difference" band.
+%   OrderLRTReplicates  B for that test, default 199. The finest p-value
+%                     resolvable is 1/(B+1), so raise it to quote a
+%                     tighter bound.
 %   Plot              logical, default true.
 %   RandomSeed, Verbose
 %
@@ -147,6 +160,9 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   R.SelectionPath what was skipped on the way down, and why
 %   R.GoF          G, bins, df bounds, chi-square p at both, bootstrap p
 %                  and B if run, Passed
+%   R.OrderLRT     the mixture-order bootstrap LRT when it ran, else
+%                  empty. See HYPEREXPONENTIALLRT; read
+%                  R.OrderLRT.NegativeLRFraction before its p-value.
 %   R.Nesting      the equivalences listed above, as text
 %   R.Figure       figure handle, or empty
 %   R.n, R.xmin, R.SamplingInterval, R.DistributionType
@@ -167,6 +183,9 @@ arguments
     options.GoFMinExpected (1,1) double {mustBePositive} = 5
     options.GoFAlpha (1,1) double {mustBePositive} = 0.05
     options.GoFBootstrap = "auto"
+    options.OrderLRT = "auto"
+    options.OrderLRTThreshold (1,1) double {mustBeNonnegative} = 2
+    options.OrderLRTReplicates (1,1) double {mustBeInteger,mustBePositive} = 199
     options.Plot (1,1) logical = true
     options.RandomSeed = []
     options.Verbose (1,1) logical = true
@@ -306,6 +325,33 @@ R.Nesting = nestingNotes();
 R.xmin = xmin; R.SamplingInterval = dt; R.DistributionType = mode;
 R.RankBy = options.RankBy;
 
+% ---------------------------------- is the extra mixture component real?
+% AICc and BIC price a component differently -- 2 per parameter against
+% log(n), which at n=4000 is 8.3 -- so on real data they routinely disagree
+% about mixture order, and neither is an answer to "is it there". The
+% likelihood-ratio test is, but its chi-square null does not apply to
+% mixtures, so HYPEREXPONENTIALLRT simulates the null instead. Run here
+% only when the criteria are actually close, since it costs B refits.
+R.OrderLRT = [];
+[doLRT, kLo, kHi, why] = orderLRTNeeded(rows, ok, options);
+if doLRT
+    if options.Verbose
+        fprintf(['\nCompareBoutModels: hyperexp K=%d and K=%d are %s, which ' ...
+            'no information criterion can settle. Running the bootstrap LRT ' ...
+            '(B=%d); this refits both orders %d times.\n'], ...
+            kLo, kHi, why, options.OrderLRTReplicates, options.OrderLRTReplicates);
+    end
+    try
+        R.OrderLRT = HyperexponentialLRT(eventseries, xmin, kLo, kHi, ...
+            'SamplingInterval', dt, 'DistributionType', mode, ...
+            'B', options.OrderLRTReplicates, 'Verbose', options.Verbose);
+    catch err
+        if options.Verbose
+            fprintf('CompareBoutModels: order LRT skipped (%s).\n', err.message);
+        end
+    end
+end
+
 % -------------------------------------------- goodness of fit, walking down
 data = retainedData(eventseries, xmin, dt, mode);
 path = {}; sel = []; gof = [];
@@ -353,6 +399,12 @@ if options.Verbose
         fprintf('%-22s %4d %12.2f %11.2f %11.2f %8.2f %7.3f%s\n', ...
             rows(i).Model, rows(i).k, rows(i).LogLik, rows(i).AICc, ...
             rows(i).BIC, rows(i).dAICc, rows(i).AkaikeWeight, flag);
+    end
+    if ~isempty(R.OrderLRT)
+        L = R.OrderLRT;
+        fprintf(['order test: K=%d vs K=%d, LR=%.3f, bootstrap p=%.4g ' ...
+            '(%d replicates)\n            %s\n'], L.K0, L.K1, L.LR, ...
+            L.pValue, L.BValid, L.Note);
     end
     if ~isempty(sel)
         fprintf('\nselected: %s   %s\n', rows(sel).Model, rows(sel).ParamText);
@@ -685,6 +737,50 @@ end
 % ========================================================================
 %                        DATA AND GOODNESS OF FIT
 % ========================================================================
+function [doLRT, kLo, kHi, why] = orderLRTNeeded(rows, ok, options)
+%ORDERLRTNEEDED Decide whether the mixture-order LRT is worth its cost.
+%
+% Fires on the two best ADMISSIBLE hyperexponential orders when either
+% criterion puts them within OrderLRTThreshold. Either, not the ranking
+% one: a case where AICc separates them decisively and BIC calls it a tie
+% is exactly the case the LRT exists to settle, and testing only the
+% criterion in RankBy would miss it in one direction or the other.
+% Burnham & Anderson's convention treats a gap under about 2 as no
+% meaningful difference, which is the default.
+doLRT = false; kLo = NaN; kHi = NaN; why = '';
+if islogical(options.OrderLRT) || isnumeric(options.OrderLRT)
+    if ~options.OrderLRT, return; end
+elseif ~isAuto(options.OrderLRT)
+    return
+end
+
+idx = find(ok & strncmp({rows.Model}, 'hyperexp K=', 11));
+if numel(idx) < 2, return; end
+K = zeros(1, numel(idx));
+for i = 1:numel(idx)
+    K(i) = sscanf(rows(idx(i)).Model, 'hyperexp K=%d');
+end
+% rows are already ranked, so the first two admissible orders are the two
+% the table is actually asking the reader to choose between
+a = idx(1); b = idx(2);
+kLo = min(K(1), K(2)); kHi = max(K(1), K(2));
+if kLo == kHi, return; end
+
+dA = abs(rows(a).AICc - rows(b).AICc);
+dB = abs(rows(a).BIC  - rows(b).BIC);
+thr = options.OrderLRTThreshold;
+if dA <= thr && dB <= thr
+    why = sprintf('within %.3g on both AICc (%.2f) and BIC (%.2f)', thr, dA, dB);
+elseif dB <= thr
+    why = sprintf('separated by %.2f on AICc but only %.2f on BIC', dA, dB);
+elseif dA <= thr
+    why = sprintf('separated by %.2f on BIC but only %.2f on AICc', dB, dA);
+else
+    return
+end
+doLRT = true;
+end
+
 function d = retainedData(raw, xmin, dt, mode)
 % Must reproduce the fitters' own retention rule exactly, or the expected
 % counts are computed against a different n than the likelihood used. In
