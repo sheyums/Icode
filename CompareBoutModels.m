@@ -61,6 +61,13 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   orders the table and which winner is carried into the fit test; it does
 %   not hide the other.
 %
+%   Note dAICc is measured from the best NON-DEGENERATE row, so an
+%   excluded row can show a negative dAICc. That is informative rather
+%   than wrong: it says the excluded fit reached a lower AICc than any
+%   admissible one, which is precisely why it had to be gated rather than
+%   ranked. A Pearson III whose location has slid far below xmin will do
+%   this routinely.
+%
 %   AKAIKE WEIGHTS. w_i = exp(-dAICc_i/2) / sum_j exp(-dAICc_j/2), the
 %   relative support for each model given the candidate set. These matter
 %   more than the winner's identity: if the top three split weight
@@ -181,12 +188,34 @@ common = {'SamplingInterval', dt, 'DistributionType', mode, 'Verbose', false};
 
 % ------------------------------------------------------------- the library
 cands = buildLibrary(options, common);
+rowWant = {};
 if ~isempty(options.Models)
     want = asCellstr(options.Models);
-    cands = cands(ismember({cands.Name}, want));
+    % A request names either a FAMILY ("hyperexponential", "gamma") or one
+    % specific hyperexponential ORDER ("hyperexp K=2"). An order selects
+    % the family for fitting and then filters the rows it produced, and
+    % raises MaxComponents if it asks for an order above it -- otherwise
+    % naming "hyperexp K=5" under the default MaxComponents=4 would
+    % silently return nothing.
+    famWant = want;
+    for i = 1:numel(want)
+        if strncmp(want{i}, 'hyperexp K=', 11)
+            rowWant{end+1} = want{i};                            %#ok<AGROW>
+            famWant{i} = 'hyperexponential';
+            kk = sscanf(want{i}, 'hyperexp K=%d');
+            if ~isempty(kk) && kk > options.MaxComponents
+                options.MaxComponents = kk;
+                cands = buildLibrary(options, common);
+            end
+        end
+    end
+    cands = cands(ismember({cands.Name}, famWant));
     if isempty(cands)
         error('CompareBoutModels:NoModelsSelected', ...
-            'None of the requested models are in the library.');
+            ['None of the requested models are in the library. Valid ' ...
+             'names: hyperexponential (or "hyperexp K=n" for one order), ' ...
+             'exp_weibull, weibull, gamma, powerlaw_cutoff, pearson3, ' ...
+             'powerlaw, erlang, chisquared, beta.']);
     end
 end
 
@@ -206,6 +235,9 @@ end
 rowsC = {}; fitsC = {}; nr = 0;
 for ci = 1:numel(cands)
     c = cands(ci);
+    if options.Verbose
+        fprintf('  fitting %s ...\n', c.Name);
+    end
     try
         out = c.Fit(eventseries, xmin);
     catch err
@@ -215,9 +247,16 @@ for ci = 1:numel(cands)
         continue
     end
     for oi = 1:numel(out)
+        if ~isempty(rowWant) && strncmp(out(oi).Row.Model, 'hyperexp K=', 11) ...
+                && ~any(strcmp(out(oi).Row.Model, rowWant))
+            continue                  % an order the caller did not ask for
+        end
         nr = nr + 1;
         rowsC{nr} = out(oi).Row;
         fitsC{nr} = out(oi).Fit;
+        if options.Verbose
+            reportRow(rowsC{nr});
+        end
     end
 end
 if nr > 0
@@ -232,9 +271,18 @@ R.n = rows(1).n;
 % ------------------------------------------------- ranking and the weights
 ok = ~[rows.Degenerate] & isfinite([rows.AICc]) & isfinite([rows.BIC]);
 if ~any(ok)
+    % Name them. With Models= restricted to one or two candidates this is
+    % a likely and perfectly legitimate outcome -- the requested model was
+    % excluded -- and the generic message sent the caller looking for a
+    % table that the error prevented from being returned.
+    detail = cell(1, nr);
+    for i = 1:nr
+        detail{i} = sprintf('%s (%s)', rows(i).Model, ...
+            firstNonEmpty(rows(i).Reason, 'non-finite criterion'));
+    end
     error('CompareBoutModels:AllDegenerate', ...
-        ['Every candidate was flagged degenerate or produced a ' ...
-         'non-finite criterion. Inspect R.Table.Reason.']);
+        ['Every candidate was excluded, so there is nothing to rank: %s. ' ...
+         'Widen Models=, or inspect the reasons above.'], strjoin(detail, '; '));
 end
 aicc = [rows.AICc]; bicv = [rows.BIC];
 bestA = min(aicc(ok)); bestB = min(bicv(ok));
@@ -380,10 +428,59 @@ H = fitter(d, x, extra{:}, 'ErrorOnNoValidFit', false);
 pn = asCellstr(H.ParamNames);
 pv = H.Params(:).';
 pse = H.ParamSE(:).';
+% A fit the engine's own guard has declared unusable must not be allowed to
+% win. The guard sets Diagnostics.GuardOK=false and warns, but leaves
+% Failed=false -- it is a statement about the fit's meaning, not about
+% whether the optimizer ran. Pearson III's location running up against xmin
+% is the case in hand: the likelihood DIVERGES there, so the reported
+% parameters sit on that divergence rather than at a maximum, and the row
+% would otherwise rank on a log-likelihood that is not a maximised one.
+[degen, reason] = guardVerdict(H);
 row = makeRow(name, H.k, numel(pv), H.n, H.LogLik, H.AIC, H.AICc, H.BIC, ...
-    H.Failed, H.FailureReason, pn, pv, pse);
+    degen, reason, pn, pv, pse);
 rec = makeRec(name, H.SurvivalHandle, H, @(nd) refitSimple(nd, x, fitter, extra));
 out = struct('Row', row, 'Fit', rec);
+end
+
+function s = firstNonEmpty(a, b)
+if isempty(a), s = b; else, s = a; end
+end
+
+function reportRow(r)
+%REPORTROW One line per fitted row, printed as the sweep runs rather than
+%only in the final table, so a long run shows what it is doing and what it
+%got. Parameters are shown here because a wrong SamplingInterval or xmin
+%usually announces itself in an obviously wrong time constant long before
+%the ranking is reached.
+if r.Degenerate
+    fprintf('    %-20s logL=%12.2f   [excluded: %s]\n', ...
+        r.Model, r.LogLik, r.Reason);
+else
+    fprintf('    %-20s logL=%12.2f   %s\n', r.Model, r.LogLik, r.ParamText);
+end
+end
+
+function [degen, reason] = guardVerdict(H)
+%GUARDVERDICT Combine a hard failure with a model-specific guard verdict.
+degen = H.Failed;
+reason = H.FailureReason;
+if ~isfield(H, 'Diagnostics') || ~isfield(H.Diagnostics, 'GuardOK')
+    return
+end
+if H.Diagnostics.GuardOK
+    return
+end
+degen = true;
+g = 'model-specific guard failed';
+if isfield(H.Diagnostics, 'Recommendation') && ~isempty(H.Diagnostics.Recommendation)
+    % First sentence only: the full text is in the fitter's warning and in
+    % R.Fits(i).Full.Diagnostics.Recommendation. Split on '. ' rather than
+    % '.' so a decimal point in the reported gap does not cut it short.
+    g = H.Diagnostics.Recommendation;
+    cut = strfind(g, '. ');
+    if ~isempty(cut), g = g(1:cut(1)-1); end
+end
+if isempty(reason), reason = g; else, reason = [reason '; ' g]; end
 end
 
 function r = refitSimple(nd, x, fitter, extra)

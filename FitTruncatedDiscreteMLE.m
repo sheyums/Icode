@@ -184,6 +184,7 @@ arguments
     options.Shape (1,1) double = NaN
     options.UpperBound (1,1) double = NaN
     options.MinLocationGap (1,1) double {mustBePositive} = 1e-3
+    options.MinTailFraction (1,1) double {mustBeNonnegative} = 1e-10
     options.nStarts (1,1) double {mustBeInteger,mustBePositive} = 24
     options.RandomSeed = []
     options.MaxIter (1,1) double {mustBeInteger,mustBePositive} = 2000
@@ -384,6 +385,47 @@ end
 % --- model-specific guard (currently: pearson3's location running to xmin)
 diag_ = M.guard(fit.Params, xmin, options, diag_);
 
+% --- general guard: is the fit describing a TRUNCATED POPULATION at all?
+% S(xmin) is the fraction of the untruncated model lying in the observed
+% range, so n/S(xmin) is the population size the fit implies. A free
+% location or bound lets the optimizer slide the whole distribution far
+% below xmin and use the family purely as a tail SHAPE; shape, scale and
+% location are then jointly unidentified along that ridge, and the
+% likelihood can beat an honest 1- or 2-parameter fit.
+%
+% Observed on simulated exponential data: Pearson III converged to
+% location = -5.34e5 (six days before zero) with S(xmin) = 8.8e-320,
+% implying 1e322 underlying bouts from 400 observed. It won the comparison
+% outright and passed the goodness-of-fit test.
+%
+% The threshold is deliberately far below anything a real truncation
+% produces -- a sleep criterion retaining a few percent of bouts gives
+% S(xmin) of 0.01 to 0.1 -- so this fires only on the degenerate ridge,
+% never on legitimate heavy truncation. Set MinTailFraction=0 to disable.
+xminEff = xmin;
+if isDiscrete, xminEff = (n_min-1)*dt; end
+diag_.TailFraction = M.sf(xminEff, fit.Params);
+if options.MinTailFraction > 0 && ~(diag_.TailFraction >= options.MinTailFraction)
+    diag_.GuardOK = false;
+    % log10 of the implied population, because n/S overflows to Inf for
+    % the S values this actually fires on (6.5e-320 gives 1e322).
+    logPop = log10(n) - log10(max(diag_.TailFraction, realmin*1e-16));
+    msg = sprintf(['the fit has slid almost entirely below the truncation ' ...
+        'point: S(xmin) = %.3g, so only that fraction of the fitted ' ...
+        'distribution lies in the observed range and the %d observations ' ...
+        'imply an underlying population of about 1e%.0f. The family is ' ...
+        'being used as a bare tail shape, along which its parameters are ' ...
+        'jointly unidentified, so this is not a maximum in any useful ' ...
+        'sense. Treat this fit as unusable and prefer a model with fewer ' ...
+        'free parameters.'], diag_.TailFraction, n, logPop);
+    if isempty(diag_.Recommendation)
+        diag_.Recommendation = msg;
+    else
+        diag_.Recommendation = [diag_.Recommendation ' ALSO: ' msg];
+    end
+    warning('FitTruncatedDiscreteMLE:FitBelowTruncation', '%s', msg);
+end
+
 H = assembleOutput(fit, M, options, xmin, n, diag_, false, '');
 
 if options.Verbose
@@ -451,7 +493,7 @@ d = struct('nNonFinite', 0, 'nBelowXmin', 0, 'nAtXmin', 0, ...
     'XminEqualsDataMin', false, 'LooksGridded', false, ...
     'GridSpacing', NaN, 'GridMismatch', false, 'nDistinctData', 0, ...
     'nDistinctOnGrid', 0, 'LocationGap', NaN, 'SupportCoverage', NaN, ...
-    'GuardOK', true, ...
+    'TailFraction', NaN, 'GuardOK', true, ...
     'Recommendation', '');
 end
 
