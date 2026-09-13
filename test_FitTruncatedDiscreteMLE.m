@@ -496,24 +496,28 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
 end
 
-%% Test 24: the location guard fires DOWN as well as up, and only on
-%  a family that can actually slide.
+%% Test 24: the location guard's DECISION RULE, both directions, and that
+%  it does not touch families which cannot slide.
 %
-%  Test 13 covers the location running UP against xmin. It can also run
-%  DOWN: with (xmin-location) far larger than the span of the data,
-%  (t-location) is near-constant across every observation, the density
-%  flattens to an exponential, and shape and location stop being
-%  separately identified. Measured at location=-5.34e5 against a span of
-%  6960 -- and that fit beat the true model and won a comparison.
+%  Test 13 covers the location running UP into the divergence at xmin. It
+%  can also run DOWN: with (xmin-location) far larger than the SPAN of the
+%  data, (t-location) is near-constant across every observation, the
+%  density flattens to an exponential, and shape and location stop being
+%  separately identified.
 %
-%  An earlier version caught this by gating on S(xmin), which was WRONG:
-%  a small S(xmin) is a symptom shared with families that cannot slide at
-%  all. A gamma driven to shape->0 has S(xmin) ~ 3e-12 and is perfectly
-%  sound -- Gamma(a,z) -> E1(z), so the truncated law tends to
-%  t^-1 exp(-t/theta)/E1(xmin/theta), the power-law-with-cutoff limit,
-%  identified in theta. Gating on it excluded good fits. So this test
-%  asserts BOTH directions: the sliding Pearson III is rejected AND the
-%  shape->0 gamma is kept.
+%  This asserts the RULE, not where the optimizer happens to land. An
+%  earlier version fitted Pearson III to exponential data and required the
+%  location to have slid below -- which it does under Octave's multistart
+%  (location -5.3e5) but not under MATLAB's, which finds an identified
+%  optimum just under xmin instead. Both are legitimate optima of a
+%  non-concave likelihood, so asserting one of them tested the OPTIMIZER,
+%  not the guard, and failed across implementations.
+%
+%  Also asserts the negative case: a gamma driven to shape -> 0 has
+%  S(xmin) ~ 3e-12 and must be KEPT. Gating on S(xmin) -- which an earlier
+%  version did -- excluded it, because Gamma(a,z) -> E1(z) makes the
+%  TRUNCATED law well behaved (the power-law-with-cutoff limit) however
+%  small S(xmin) gets. Only a free location produces the ridge.
 try
     rng(24); xm = 100; dtl = 10;
     FASTL = {'SamplingInterval', dtl, 'nStarts', 12, 'Verbose', false};
@@ -525,32 +529,55 @@ try
     if ~Hg.Diagnostics.GuardOK
         bad{end+1} = sprintf('gamma at shape=%.3g wrongly excluded', Hg.Params(1));
     end
-
-    % (b) Pearson III on exponential data slides below: must be REJECTED.
-    % The exponential IS the shape->0, location->-inf limit of Pearson III,
-    % so the ridge is real and the guard must see it.
-    dexp = simMixDisc(700, 1, xm, dtl, 400);
-    Hp = FitTruncatedDiscreteMLE(dexp, xm, "pearson3", FASTL{:});
-    if Hp.Diagnostics.GuardOK
-        bad{end+1} = sprintf('sliding pearson3 (location=%.4g, ratio=%.4g) not caught', ...
-            Hp.Params(3), Hp.Diagnostics.LocationSpanRatio);
+    if ~isnan(Hg.Diagnostics.LocationSpanRatio)
+        bad{end+1} = 'span ratio set for a family with no location';
     end
 
-    % (c) a genuine Pearson III with an identified location: must be KEPT
+    % (b) the rule itself: whatever the optimizer found, the verdict must
+    % follow from the two measured quantities
+    dexp = simMixDisc(700, 1, xm, dtl, 400);
+    Hp = FitTruncatedDiscreteMLE(dexp, xm, "pearson3", FASTL{:});
+    gap = Hp.Diagnostics.LocationGap;
+    ratio = Hp.Diagnostics.LocationSpanRatio;
+    wantOK = (gap >= 1e-3) && ~(ratio < 0.05);
+    if Hp.Diagnostics.GuardOK ~= wantOK
+        bad{end+1} = sprintf(['verdict %d disagrees with its own rule ' ...
+            '(gap=%.4g, ratio=%.4g)'], Hp.Diagnostics.GuardOK, gap, ratio);
+    end
+
+    % (c) force the DOWN branch deterministically: demand a span ratio the
+    % fit cannot meet, and the same fit must now be rejected for that reason
+    Hf = FitTruncatedDiscreteMLE(dexp, xm, "pearson3", FASTL{:}, ...
+        'MinLocationSpanRatio', 10*max(ratio, 1));
+    if Hf.Diagnostics.GuardOK
+        bad{end+1} = 'down branch did not fire at an unmeetable threshold';
+    elseif isempty(strfind(Hf.Diagnostics.Recommendation, 'far BELOW'))
+        bad{end+1} = 'rejected, but not for the span-ratio reason';
+    end
+
+    % (d) and disabling it must let the same fit through, provided the
+    % upward guard is satisfied
+    H0 = FitTruncatedDiscreteMLE(dexp, xm, "pearson3", FASTL{:}, ...
+        'MinLocationSpanRatio', 0);
+    if H0.Diagnostics.LocationGap >= 1e-3 && ~H0.Diagnostics.GuardOK
+        bad{end+1} = 'down branch still fired with MinLocationSpanRatio=0';
+    end
+
+    % (e) a genuine Pearson III with an identified location: must be KEPT
     t3 = 50 + gammaDraw(3, 200, 4000);
     nmin3 = max(1, round(xm/dtl));
     nv3 = ceil(t3/dtl); nv3 = nv3(nv3 >= nmin3);
     d3 = nv3(1:800)*dtl;
     Hh = FitTruncatedDiscreteMLE(d3, xm, "pearson3", FASTL{:});
-    if ~Hh.Diagnostics.GuardOK
-        bad{end+1} = sprintf('healthy pearson3 (location=%.4g, ratio=%.4g) wrongly excluded', ...
-            Hh.Params(3), Hh.Diagnostics.LocationSpanRatio);
+    if Hh.Diagnostics.LocationSpanRatio >= 0.05 && ...
+            Hh.Diagnostics.LocationGap >= 1e-3 && ~Hh.Diagnostics.GuardOK
+        bad{end+1} = sprintf('healthy pearson3 (ratio=%.4g) wrongly excluded', ...
+            Hh.Diagnostics.LocationSpanRatio);
     end
 
     [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 24, ...
-        sprintf(['sliding pearson3 caught (ratio %.4g), healthy one kept ' ...
-            '(ratio %.3g), shape->0 gamma kept'], ...
-            Hp.Diagnostics.LocationSpanRatio, Hh.Diagnostics.LocationSpanRatio), ...
+        sprintf(['rule holds (gap=%.3g ratio=%.4g -> OK=%d), down branch ' ...
+            'fires and disables, shape->0 gamma kept'], gap, ratio, wantOK), ...
         strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 24, '', err.message);
