@@ -34,7 +34,7 @@ function test_HyperexponentialLRT()
 % 10.  Simulator reproduces the fit   - draws match the fitted survival
 % 11.  RandomSeed reproducibility     - same seed, same p
 % 12.  Degenerate replicates are KEPT - not silently dropped
-% 13.  Serial == parallel, exactly    - the only check on the seeding
+% 13.  All UseParallel modes equal    - the only check on the seeding
 
 if exist('OCTAVE_VERSION', 'builtin')
     lrt = @HyperexponentialLRT_oct;
@@ -289,7 +289,7 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 12, '', err.message);
 end
 
-%% Test 13: serial and parallel give IDENTICAL results
+%% Test 13: every UseParallel setting gives IDENTICAL results
 %  This is the only test that catches a seeding mistake, and a seeding
 %  mistake is the whole risk of parallelising a bootstrap. A bare parfor
 %  leaves every worker on its own stream and lets iterations finish in any
@@ -297,43 +297,73 @@ end
 %  would still look perfectly plausible, because a p-value from the wrong
 %  null is still a number in [0,1]. Nothing else here would notice.
 %
-%  So: not "both run", not "both give similar p", but EQUAL to the bit, on
-%  the LR, the whole null sample and the p-value. That holds only if each
-%  replicate carries its own seed and is therefore independent of the order
-%  it happens to be executed in.
+%  So the assertion is not "all three run", nor "the p-values are close",
+%  but EQUAL TO THE BIT across "auto", true and false, on the LR, the whole
+%  null sample, the p-value and the replicate bookkeeping. That holds only
+%  if each replicate carries its own seed and is therefore independent of
+%  the order it happens to be executed in.
 %
-%  Note this test is meaningful even with no pool and no Parallel Computing
-%  Toolbox, where parfor degrades to a serial loop: it still proves the
-%  per-replicate seeding path produces what the ordinary path produces.
-%  With a pool actually running it additionally proves order-independence.
+%  LIMIT, worth knowing when this passes. Where no pool is open and no
+%  Parallel Computing Toolbox exists, all three settings run serially, and
+%  the test then proves only that the seeding path reproduces the ordinary
+%  path -- real order-independence is demonstrated only on a machine with
+%  workers. L.RanInParallel says which case you are in, so a passing run
+%  tells you how much it proved.
 try
     rng(13);
     d = simMix([150 1600], [0.6 0.4], XMIN, DT, 500);
-    A = lrt(d, XMIN, 2, 3, FAST{:}, 'RandomSeed', 131, 'UseParallel', false);
-    B = lrt(d, XMIN, 2, 3, FAST{:}, 'RandomSeed', 131, 'UseParallel', true);
+    modes = {false, true, 'auto'};
+    names = {'false', 'true', 'auto'};
+    out = cell(1, 3);
+    for m = 1:3
+        out{m} = lrt(d, XMIN, 2, 3, FAST{:}, 'RandomSeed', 131, ...
+            'UseParallel', modes{m});
+    end
+    A = out{1};
     bad = {};
-    if A.pValue ~= B.pValue
-        bad{end+1} = sprintf('p differs: %.12g vs %.12g', A.pValue, B.pValue);
+    for m = 2:3
+        Bm = out{m};
+        if A.pValue ~= Bm.pValue
+            bad{end+1} = sprintf('%s: p %.12g vs %.12g', names{m}, ...
+                Bm.pValue, A.pValue); %#ok<AGROW>
+        end
+        if abs(A.LR - Bm.LR) > 0
+            bad{end+1} = sprintf('%s: LR differs by %.3g', names{m}, ...
+                abs(A.LR - Bm.LR)); %#ok<AGROW>
+        end
+        if ~isequal(size(A.LRNull), size(Bm.LRNull))
+            bad{end+1} = sprintf('%s: null sizes %d vs %d', names{m}, ...
+                numel(Bm.LRNull), numel(A.LRNull)); %#ok<AGROW>
+        elseif max(abs(A.LRNull - Bm.LRNull)) > 0
+            bad{end+1} = sprintf('%s: null differs by up to %.3g', names{m}, ...
+                max(abs(A.LRNull - Bm.LRNull))); %#ok<AGROW>
+        end
+        if A.BValid ~= Bm.BValid || A.FailedReplicates ~= Bm.FailedReplicates
+            bad{end+1} = sprintf('%s: bookkeeping differs', names{m}); %#ok<AGROW>
+        end
     end
-    if abs(A.LR - B.LR) > 0
-        bad{end+1} = sprintf('LR differs by %.3g', abs(A.LR - B.LR));
+    % false must never run in parallel, whatever the environment offers
+    if out{1}.RanInParallel
+        bad{end+1} = 'UseParallel=false ran in parallel';
     end
-    if ~isequal(size(A.LRNull), size(B.LRNull))
-        bad{end+1} = sprintf('null sizes differ: %d vs %d', ...
-            numel(A.LRNull), numel(B.LRNull));
-    elseif max(abs(A.LRNull - B.LRNull)) > 0
-        bad{end+1} = sprintf('null samples differ by up to %.3g', ...
-            max(abs(A.LRNull - B.LRNull)));
+    % and a bad value must be rejected rather than silently treated as one
+    % of the three
+    eid = '';
+    try
+        lrt(d, XMIN, 2, 3, FAST{:}, 'UseParallel', 'yes please');
+    catch err
+        eid = err.identifier;
     end
-    if A.BValid ~= B.BValid || A.FailedReplicates ~= B.FailedReplicates
-        bad{end+1} = 'replicate bookkeeping differs';
+    if isempty(strfind(eid, 'BadUseParallel'))
+        bad{end+1} = sprintf('unknown UseParallel gave "%s"', eid);
     end
-    if ~B.UseParallel || A.UseParallel
-        bad{end+1} = 'UseParallel not recorded in the output';
-    end
+    % no ternary in MATLAB, and merge() is Octave-only
+    ranWhere = 'serially';
+    if out{3}.RanInParallel, ranWhere = 'in parallel'; end
     [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 13, ...
-        sprintf(['serial and parallel agree exactly (p=%.4g, %d null LRs, ' ...
-            'max difference 0)'], A.pValue, A.BValid), strjoin(bad, '; '));
+        sprintf(['false, true and "auto" agree exactly (p=%.4g, %d null ' ...
+            'LRs); auto ran %s'], A.pValue, A.BValid, ranWhere), ...
+        strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 13, '', err.message);
 end

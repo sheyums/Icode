@@ -94,16 +94,32 @@ function L = HyperexponentialLRT(eventseries, xmin, K0, K1, options)
 %                     to the real data always use the fitter's defaults).
 %                     Defaults here are lower than the fitter's, for speed;
 %                     raise them if NegativeLRFraction is large.
-%   UseParallel       false (default) or true. Runs the replicate loop over
-%                     a parallel pool. Each replicate carries its OWN seed,
-%                     drawn serially from RandomSeed, so the result is
-%                     identical serial or parallel and independent of
-%                     worker count -- test 13 asserts exactly that. Needs
-%                     no toolbox: without the Parallel Computing Toolbox
-%                     MATLAB runs the loop serially anyway. The loop is
-%                     embarrassingly parallel with near-equal iteration
-%                     cost, so expect close to linear speedup once the pool
-%                     has started.
+%   UseParallel       "auto" (default), true, or false. Whether to run the
+%                     replicate loop over a parallel pool.
+%
+%                     "auto" uses a pool ONLY IF ONE IS ALREADY OPEN, and
+%                     never starts one. Open a pool once at the top of a
+%                     session and everything here is parallel with no
+%                     per-call flag; leave it closed and everything stays
+%                     serial, with progress ticks, no startup cost and a
+%                     debuggable call stack. Inside an outer parfor it
+%                     correctly finds no separate pool and stays serial,
+%                     which is where you want the parallelism anyway when
+%                     sweeping genotypes -- fewer, larger chunks.
+%
+%                     true forces a pool, STARTING one if necessary, which
+%                     costs 10-30 s. At B=999 that is noise; at B=99 it can
+%                     exceed the compute, which is why it is not the
+%                     default. false forces serial.
+%
+%                     The choice changes speed and nothing else. Each
+%                     replicate carries its own seed, drawn serially from
+%                     RandomSeed, so the LR, the whole null sample and the
+%                     p-value are identical under all three settings and
+%                     independent of worker count -- test 13 asserts that
+%                     to the bit. L.RanInParallel records what happened.
+%                     No toolbox is required: without the Parallel
+%                     Computing Toolbox the loop runs serially regardless.
 %   RandomSeed, Verbose
 %
 %   OUTPUT
@@ -139,7 +155,7 @@ arguments
     options.nStartsPerComponent (1,1) double {mustBeInteger,mustBePositive} = 4
     options.maxStarts (1,1) double {mustBeInteger,mustBePositive} = 20
     options.RandomSeed = []
-    options.UseParallel (1,1) logical = false
+    options.UseParallel = "auto"
     options.Verbose (1,1) logical = true
 end
 
@@ -193,14 +209,8 @@ if options.Verbose
     fprintf(['HyperexponentialLRT: K=%d vs K=%d on n=%d, %s mode.\n' ...
              '  logL(K=%d) = %.4f,  logL(K=%d) = %.4f,  LR = %.4f\n'], ...
         K0, K1, n, options.DistributionType, K0, f0.LogLik, K1, f1.LogLik, LR);
-    if options.UseParallel
-        fprintf(['  simulating %d replicates from the fitted K=%d model, ' ...
-            'in parallel (per-replicate seeds, so the answer does not ' ...
-            'depend on worker count) ...\n'], options.B, K0);
-    else
-        fprintf('  simulating %d replicates from the fitted K=%d model ...\n', ...
-            options.B, K0);
-    end
+    fprintf('  simulating %d replicates from the fitted K=%d model, %s ...\n', ...
+        options.B, K0, howChosen);
 end
 
 % ------------------------------------------------------ the null by simulation
@@ -219,9 +229,8 @@ seeds = randi(2^31-1, 1, options.B);
 % the client. So one loop body serves both modes, and nothing here needs
 % the Parallel Computing Toolbox: without it MATLAB runs parfor as a plain
 % loop, and Octave accepts both forms too.
-nw = 0;
-if options.UseParallel, nw = Inf; end
-serial = ~options.UseParallel;
+[nw, howChosen] = parallelWorkers(options.UseParallel);
+serial = (nw == 0);
 verbose = options.Verbose;
 tick = max(1, round(options.B/10));
 
@@ -290,6 +299,7 @@ L.LR = LR;
 L.pValue = pBoot;
 L.B = options.B;
 L.UseParallel = options.UseParallel;
+L.RanInParallel = ~serial;
 L.BValid = nValid;
 L.FailedReplicates = nFailed;
 L.LRNull = valid;
@@ -360,6 +370,53 @@ else
     % Memorylessness: an exponential conditioned on T >= xmin is xmin plus
     % a fresh exponential of the same rate.
     d = xmin - log(v) ./ lam;
+end
+end
+
+function [nw, how] = parallelWorkers(useParallel)
+%PARALLELWORKERS Resolve UseParallel into a worker cap for parfor.
+% 0 makes parfor run in the client, so one loop body covers every mode.
+%
+% "auto" deliberately does NOT start a pool. Starting one costs 10-30 s,
+% which at small B exceeds the compute it saves; it seizes every core,
+% which is wrong when the caller is sweeping datasets and should be
+% parallelising THAT loop instead; it silences the per-iteration progress
+% ticks, since pool output is buffered and arrives out of order; and it
+% puts the loop body beyond the reach of breakpoints. So a pool is used
+% when the caller has already opened one -- an explicit opt-in -- and
+% otherwise not.
+if islogical(useParallel) || isnumeric(useParallel)
+    if useParallel
+        nw = Inf; how = 'in parallel (forced)';
+    else
+        nw = 0;  how = 'serially (forced)';
+    end
+    return
+end
+if ~strcmpi(char(useParallel), 'auto')
+    error('HyperexponentialLRT:BadUseParallel', ...
+        'UseParallel must be "auto", true or false; got "%s".', ...
+        char(useParallel));
+end
+% gcp('nocreate') returns an open pool or empty, and never creates one.
+nw = 0; how = 'serially (auto: no pool open)';
+if exist('gcp', 'file') ~= 2 && exist('gcp', 'builtin') ~= 5
+    how = 'serially (auto: no Parallel Computing Toolbox)';
+    return
+end
+try
+    pool = gcp('nocreate');
+catch
+    return                      % no pool machinery: stay serial
+end
+if ~isempty(pool)
+    nw = Inf;
+    try
+        how = sprintf('in parallel (auto: %d-worker pool already open)', ...
+            pool.NumWorkers);
+    catch
+        how = 'in parallel (auto: pool already open)';
+    end
 end
 end
 
