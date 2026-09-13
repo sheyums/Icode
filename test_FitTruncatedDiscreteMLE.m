@@ -38,6 +38,7 @@ function test_FitTruncatedDiscreteMLE()
 % 21.  VERBOSE mode                   - does not error
 % 22.  SurvivalHandle consistency     - matches the fitted likelihood
 % 23.  logL is never positive         - the truncated-probability invariant
+% 24.  Location guard, both ways      - and NOT on families that cannot slide
 
 FAST = {'SamplingInterval', 1, 'nStarts', 3, 'Verbose', false};
 ALL  = {'gamma','chisquared','pearson3','weibull','beta','powerlaw'};
@@ -495,6 +496,66 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
 end
 
+%% Test 24: the location guard fires DOWN as well as up, and only on
+%  a family that can actually slide.
+%
+%  Test 13 covers the location running UP against xmin. It can also run
+%  DOWN: with (xmin-location) far larger than the span of the data,
+%  (t-location) is near-constant across every observation, the density
+%  flattens to an exponential, and shape and location stop being
+%  separately identified. Measured at location=-5.34e5 against a span of
+%  6960 -- and that fit beat the true model and won a comparison.
+%
+%  An earlier version caught this by gating on S(xmin), which was WRONG:
+%  a small S(xmin) is a symptom shared with families that cannot slide at
+%  all. A gamma driven to shape->0 has S(xmin) ~ 3e-12 and is perfectly
+%  sound -- Gamma(a,z) -> E1(z), so the truncated law tends to
+%  t^-1 exp(-t/theta)/E1(xmin/theta), the power-law-with-cutoff limit,
+%  identified in theta. Gating on it excluded good fits. So this test
+%  asserts BOTH directions: the sliding Pearson III is rejected AND the
+%  shape->0 gamma is kept.
+try
+    rng(24); xm = 100; dtl = 10;
+    FASTL = {'SamplingInterval', dtl, 'nStarts', 12, 'Verbose', false};
+    bad = {};
+
+    % (a) gamma pushed to shape -> 0 by two-scale data: must be KEPT
+    dmix = simMixDisc([150 1200], [0.65 0.35], xm, dtl, 600);
+    Hg = FitTruncatedDiscreteMLE(dmix, xm, "gamma", FASTL{:});
+    if ~Hg.Diagnostics.GuardOK
+        bad{end+1} = sprintf('gamma at shape=%.3g wrongly excluded', Hg.Params(1));
+    end
+
+    % (b) Pearson III on exponential data slides below: must be REJECTED.
+    % The exponential IS the shape->0, location->-inf limit of Pearson III,
+    % so the ridge is real and the guard must see it.
+    dexp = simMixDisc(700, 1, xm, dtl, 400);
+    Hp = FitTruncatedDiscreteMLE(dexp, xm, "pearson3", FASTL{:});
+    if Hp.Diagnostics.GuardOK
+        bad{end+1} = sprintf('sliding pearson3 (location=%.4g, ratio=%.4g) not caught', ...
+            Hp.Params(3), Hp.Diagnostics.LocationSpanRatio);
+    end
+
+    % (c) a genuine Pearson III with an identified location: must be KEPT
+    t3 = 50 + gammaDraw(3, 200, 4000);
+    nmin3 = max(1, round(xm/dtl));
+    nv3 = ceil(t3/dtl); nv3 = nv3(nv3 >= nmin3);
+    d3 = nv3(1:800)*dtl;
+    Hh = FitTruncatedDiscreteMLE(d3, xm, "pearson3", FASTL{:});
+    if ~Hh.Diagnostics.GuardOK
+        bad{end+1} = sprintf('healthy pearson3 (location=%.4g, ratio=%.4g) wrongly excluded', ...
+            Hh.Params(3), Hh.Diagnostics.LocationSpanRatio);
+    end
+
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 24, ...
+        sprintf(['sliding pearson3 caught (ratio %.4g), healthy one kept ' ...
+            '(ratio %.3g), shape->0 gamma kept'], ...
+            Hp.Diagnostics.LocationSpanRatio, Hh.Diagnostics.LocationSpanRatio), ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 24, '', err.message);
+end
+
 %% Summary
 fprintf('\n----------------------------------------\n');
 fprintf('Summary: %d passed, %d failed, %d total\n', nPassed, nFailed, nPassed+nFailed);
@@ -548,6 +609,22 @@ nmin = max(1, round(xmin/dt)); out = zeros(n,1); filled = 0;
 while filled < n
     t = gammaDraw(k, theta, 4*(n-filled) + 200);
     nv = ceil(t/dt); nv = nv(nv >= nmin);
+    take = min(numel(nv), n-filled);
+    out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
+end
+d = out;
+end
+
+function d = simMixDisc(tau, w, xmin, dt, n)
+% Mixture of exponentials on the dt grid, conditioned on clearing xmin.
+nmin = max(1, round(xmin/dt)); w = w(:).'/sum(w); cw = cumsum(w);
+out = zeros(n,1); filled = 0;
+while filled < n
+    m = 6*(n-filled) + 500;
+    u = rand(m,1); comp = ones(m,1);
+    for j = 1:numel(cw)-1, comp = comp + (u > cw(j)); end
+    t = -tau(comp)' .* log(rand(m,1));
+    nv = ceil(t(:)/dt); nv = nv(nv >= nmin);
     take = min(numel(nv), n-filled);
     out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
 end
