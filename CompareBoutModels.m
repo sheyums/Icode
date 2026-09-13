@@ -227,7 +227,10 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %                  ran. This is a DIFFERENT quantity from the ranked
 %                  winner and may disagree with it.
 %   R.Nesting      the equivalences listed above, as text
-%   R.Figure       figure handle, or empty
+%   R.Figure       figure handle, or empty. Drawn even when nothing passed
+%                  the fit test, showing the top-ranked admissible
+%                  candidate and labelled REJECTED, since that is when the
+%                  curve and its residuals are most worth seeing.
 %   R.n, R.xmin, R.SamplingInterval, R.DistributionType
 %
 %   See also FITHYPEREXPONENTIALMLE, FITEXPONENTIATEDWEIBULLMLE,
@@ -523,9 +526,22 @@ end
 
 % -------------------------------------------------------------------- plot
 R.Figure = [];
-if options.Plot && ~isempty(sel)
+% Plot even when NOTHING passed the fit test, using the top-ranked
+% admissible row. A blanket rejection is precisely when the curve is worth
+% seeing -- it is what tells you whether the model is close and the test is
+% merely powerful at this n, or whether it is the wrong shape entirely, and
+% the residual panel says where. Gating the plot on a pass meant the one
+% run that most needed a picture produced none. The figure labels itself
+% REJECTED so it cannot be mistaken for an accepted fit.
+if isempty(sel)
+    plotIdx = find(ok, 1);          % best admissible row, rejected or not
+else
+    plotIdx = sel;
+end
+if options.Plot && ~isempty(plotIdx) && ~isempty(gof)
     try
-        R.Figure = plotFit(data, xmin, dt, fits(sel), rows(sel), gof, options);
+        R.Figure = plotFit(data, xmin, dt, fits(plotIdx), rows(plotIdx), ...
+            gof, options);
     catch err
         if options.Verbose
             fprintf('CompareBoutModels: plotting skipped (%s).\n', err.message);
@@ -1157,7 +1173,13 @@ cnt = zeros(numel(ux), 1);
 for i = 1:numel(ux), cnt(i) = nnz(xs == ux(i)); end
 Semp = 1 - cumsum(cnt) / n;
 
-fh = figure('Name', sprintf('CompareBoutModels: %s', row.Model));
+rejected = isfield(gof, 'Passed') && ~gof.Passed;
+if rejected
+    tag = sprintf('REJECTED: %s', row.Model);
+else
+    tag = row.Model;
+end
+fh = figure('Name', sprintf('CompareBoutModels: %s', tag));
 
 % --- survival, log-log: where a heavy tail either is or is not straight
 subplot(2, 1, 1);
@@ -1172,8 +1194,12 @@ stairs([xmin; ux(kp)], [1; Semp(kp)], 'k-', 'LineWidth', 1.0); hold on
 plot(tg, Sfit, 'r-', 'LineWidth', 1.6);
 set(gca, 'XScale', 'log', 'YScale', 'log');
 xlabel('bout duration'); ylabel('P(T > t | T \geq xmin)');
-title(sprintf('%s   (n=%d, %s, dt=%g)   %s', row.Model, n, ...
-    options.DistributionType, dt, row.ParamText), 'Interpreter', 'none');
+ttl = sprintf('%s   (n=%d, %s, dt=%g)   %s', tag, n, ...
+    options.DistributionType, dt, row.ParamText);
+if rejected
+    ttl = sprintf('%s\n[best-ranked candidate; it FAILED the fit test -- see the residuals]', ttl);
+end
+title(ttl, 'Interpreter', 'none');
 legend({'data', 'fit'}, 'Location', 'southwest'); legend boxoff
 grid on
 
@@ -1187,9 +1213,18 @@ plot(xlim, [ 2  2], 'k:'); plot(xlim, [-2 -2], 'k:');
 xlabel(sprintf('G-test bin (%d bins, edges in R.GoF.Edges)', gof.nBins));
 ylabel('(O-E)/sqrt(E)');
 if isfinite(gof.pBootstrap)
-    title(sprintf('G=%.2f, bootstrap p=%.4g (B=%d)', gof.G, gof.pBootstrap, gof.B));
+    sub = sprintf('G=%.2f, bootstrap p=%.4g (B=%d)', gof.G, gof.pBootstrap, gof.B);
+elseif isnan(gof.G)
+    sub = sprintf('not testable: %s', gof.Basis);
 else
-    title(sprintf('G=%.2f, chi2 p in [%.4g, %.4g]', gof.G, gof.pLower, gof.pUpper));
+    sub = sprintf('G=%.2f, chi2 p in [%.4g, %.4g]', gof.G, gof.pLower, gof.pUpper);
 end
+if rejected && isfinite(gof.G) && isfinite(gof.dfLower) && gof.dfLower > 0
+    % G/df is the thing to read at large n, where the test rejects misfits
+    % far too small to matter: near 1 means the model is close and the test
+    % is merely powerful, large means it is the wrong shape.
+    sub = sprintf('%s   |   G/df = %.2f', sub, gof.G / gof.dfLower);
+end
+title(sub);
 grid on
 end

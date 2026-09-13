@@ -48,6 +48,7 @@ function test_CompareBoutModels()
 % 24.  Order LRT ladder              - off/on, ascending rungs, stop rule
 % 25.  Non-monotone families         - present, and win on a humped hazard
 % 26.  hyper_erlang nests hyperexp   - same fit twice when shapes are 1
+% 27.  Rejection still plots         - the run most needing a picture
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -713,6 +714,58 @@ try
             num2str(R.Fits(ihe).Full.Shapes)), strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 26, '', err.message);
+end
+
+%% Test 27: a blanket rejection still produces a plot
+%  Test 23 covers the accepted case. This covers the one that matters more:
+%  when NOTHING passes the fit test, the figure used to be suppressed --
+%  the single run most in need of a picture produced none, and the
+%  residual panel that says WHERE the misfit lives was exactly what was
+%  missing. It now draws the top-ranked admissible candidate, labelled
+%  REJECTED so it cannot be read as an accepted fit.
+%
+%  Forced deterministically by setting GoFAlpha to 1, which rejects
+%  everything whatever the data do. That tests the plumbing without
+%  depending on finding data the whole library fails.
+try
+    rng(27);
+    d = simGammaDisc(0.7, 500, XMIN, DT, 400);
+    hasGraphics = true;
+    if exist('OCTAVE_VERSION', 'builtin')
+        hasGraphics = ~isempty(available_graphics_toolkits());
+    end
+    args = {'SamplingInterval', DT, 'Verbose', false, 'OrderLRT', false, ...
+            'Models', {'gamma'}, 'GoFBootstrap', 0, 'GoFAlpha', 1};
+    Rn = cbm(d, XMIN, args{:}, 'Plot', false);
+    bad = {};
+    if ~isempty(Rn.Selected)
+        bad{end+1} = 'GoFAlpha=1 did not reject everything';
+    end
+    if ~hasGraphics
+        fprintf(['[PASS] Test 27: skipped, no graphics toolkit (rejection ' ...
+            'confirmed, plot NOT exercised)\n']);
+        nPassed = nPassed + 1;
+    else
+        Rp = cbm(d, XMIN, args{:}, 'Plot', true);
+        if isempty(Rp.Figure) || ~ishandle(Rp.Figure)
+            bad{end+1} = 'no figure drawn despite Plot=true';
+        else
+            nAx = numel(findall(Rp.Figure, 'Type', 'axes'));
+            nm = get(Rp.Figure, 'Name');
+            if nAx < 2
+                bad{end+1} = sprintf('%d axes, expected both panels', nAx);
+            end
+            if isempty(strfind(nm, 'REJECTED'))
+                bad{end+1} = sprintf('figure not labelled REJECTED ("%s")', nm);
+            end
+            close(Rp.Figure);
+        end
+        [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 27, ...
+            'a total rejection still draws both panels, labelled REJECTED', ...
+            strjoin(bad, '; '));
+    end
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 27, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...
