@@ -46,6 +46,8 @@ function test_CompareBoutModels()
 % 23.  Plot=true actually draws      - plotFit's only coverage; SKIPPED
 %                                      where there is no graphics toolkit
 % 24.  Order LRT ladder              - off/on, ascending rungs, stop rule
+% 25.  Non-monotone families         - present, and win on a humped hazard
+% 26.  hyper_erlang nests hyperexp   - same fit twice when shapes are 1
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -628,6 +630,91 @@ catch err
 end
 
 
+%% Test 25: the non-monotone-hazard families are in the library, and win
+%  when the hazard actually is non-monotone
+%
+%  The reason they were added. A hyperexponential's hazard is strictly
+%  decreasing at EVERY order, so on data whose hazard falls, rises and
+%  falls again no K will do -- the signature being that K+1 buys almost
+%  nothing while every candidate still fails the fit test. Both new
+%  families must therefore appear in the default library AND beat the
+%  mixture on such data, or they are not earning their place.
+try
+    rng(25);
+    % Weibull(k<1) + Weibull(k>1): hazard falls, rises, falls
+    d = simWeibullMix2(0.70, 8, 0.55, 600, 2.2, XMIN, DT, 1500);
+    R = cbm(d, XMIN, BASE{:}, 'MaxComponents', 3, 'GoFBootstrap', 0, ...
+        'HyperErlangMaxShape', 4);
+    T = tableRows(R.Table);
+    names = {T.Model};
+    bad = {};
+    for want = {'weibull_mix', 'hyper_erlang'}
+        if ~any(strcmp(names, want{1}))
+            bad{end+1} = sprintf('%s missing from the library', want{1}); %#ok<AGROW>
+        end
+    end
+    % both must beat every hyperexponential order on this data
+    hx = find(strncmp(names, 'hyperexp K=', 11) & ~[T.Degenerate]);
+    for want = {'weibull_mix', 'hyper_erlang'}
+        i = find(strcmp(names, want{1}), 1);
+        if isempty(i) || isempty(hx), continue; end
+        if T(i).Degenerate
+            bad{end+1} = sprintf('%s excluded: %s', want{1}, T(i).Reason); %#ok<AGROW>
+        elseif T(i).AICc >= min([T(hx).AICc])
+            bad{end+1} = sprintf(['%s (AICc %.1f) did not beat the best ' ...
+                'hyperexponential (%.1f) on a non-monotone hazard'], ...
+                want{1}, T(i).AICc, min([T(hx).AICc])); %#ok<AGROW>
+        end
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 25, ...
+        sprintf('both present; winner is %s', T(1).Model), strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 25, '', err.message);
+end
+
+%% Test 26: hyper_erlang and hyperexp are NOT independent rows
+%  With every stage count 1 the hyper-Erlang IS the hyperexponential at
+%  that order. On data the mixture already fits, the sweep should select
+%  shape 1 and the two rows then carry the SAME fit -- which R.Nesting has
+%  to say, or a reader counts one model twice as corroborating evidence.
+try
+    rng(26);
+    d = simHyperDisc([150 1200], [0.6 0.4], XMIN, DT, 900);
+    R = cbm(d, XMIN, BASE{:}, 'MaxComponents', 3, 'GoFBootstrap', 0, ...
+        'Models', {'hyperexponential', 'hyper_erlang'}, ...
+        'HyperErlangComponents', 3, 'HyperErlangMaxShape', 3);
+    T = tableRows(R.Table);
+    ihe = find(strcmp({T.Model}, 'hyper_erlang'), 1);
+    ihx = find(strcmp({T.Model}, 'hyperexp K=3'), 1);
+    bad = {};
+    if isempty(ihe) || isempty(ihx)
+        bad{end+1} = 'expected both hyper_erlang and hyperexp K=3 rows';
+    else
+        shp = R.Fits(ihe).Full.Shapes;
+        if all(shp == 1)
+            % then the two rows must agree to optimizer tolerance
+            dl = abs(T(ihe).LogLik - T(ihx).LogLik);
+            if dl > 1e-4
+                bad{end+1} = sprintf(['shapes are all 1 but logL differs ' ...
+                    'by %.3g from hyperexp K=3'], dl);
+            end
+            if T(ihe).k ~= T(ihx).k
+                bad{end+1} = sprintf('k %d vs %d at identical shapes', ...
+                    T(ihe).k, T(ihx).k);
+            end
+        end
+    end
+    % and the relationship must be stated, whatever the sweep chose
+    if ~any(~cellfun(@isempty, strfind(R.Nesting, 'hyper_erlang'))) %#ok<STRCL1>
+        bad{end+1} = 'R.Nesting does not mention hyper_erlang';
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 26, ...
+        sprintf('shapes [%s]; nesting recorded', ...
+            num2str(R.Fits(ihe).Full.Shapes)), strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 26, '', err.message);
+end
+
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...
     nPassed, nFailed, nPassed + nFailed);
 end
@@ -674,6 +761,23 @@ while filled < n
     t = -tau(comp)' .* log(rand(m,1));
     nv = ceil(t(:)/dt); nv = nv(nv >= nmin);
     take = min(numel(nv), n - filled);
+    out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
+end
+d = out;
+end
+
+function d = simWeibullMix2(w, s1, k1, s2, k2, xmin, dt, n)
+% Two Weibulls with shapes either side of 1: the hazard falls, rises, then
+% falls. No mixture of exponentials can reach that at any order.
+nmin = max(1, round(xmin/dt)); out = zeros(n,1); filled = 0;
+while filled < n
+    M = 6*(n-filled) + 500;
+    pick = rand(M,1) > w;
+    t = zeros(M,1);
+    t(~pick) = s1 * (-log(rand(nnz(~pick),1))).^(1/k1);
+    t( pick) = s2 * (-log(rand(nnz( pick),1))).^(1/k2);
+    nv = ceil(t/dt); nv = nv(nv >= nmin);
+    take = min(numel(nv), n-filled);
     out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
 end
 d = out;

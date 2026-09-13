@@ -21,6 +21,8 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %     powerlaw                              FITPOWERLAWMLE
 %     erlang                                FITERLANGMLE
 %     chisquared                            FITCHISQUAREDMLE
+%     weibull_mix                           FITWEIBULLMIXTUREMLE
+%     hyper_erlang                          FITHYPERERLANGMLE, shape swept
 %     beta                                  FITBETAMLE, only if UpperBound
 %                                           is supplied
 %
@@ -40,7 +42,11 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %       shape 1, weibull with shape 1, erlang with shape 1, and the
 %       exponentiated Weibull with alpha=k=1;
 %     weibull IS the exponentiated Weibull with alpha=1;
-%     erlang and chisquared are both constrained gammas.
+%     erlang and chisquared are both constrained gammas;
+%     hyper_erlang with every stage count 1 IS hyperexp K=Components, so if
+%       its swept shape comes back 1 its row duplicates that one exactly;
+%     weibull_mix contains the 2-component hyperexponential as the limit of
+%       both shapes going to 1.
 %   R.Nesting spells this out, and identical log-likelihoods among those
 %   rows are a CHECK on the implementations rather than a coincidence: if
 %   hyperexponential K=1 and a shape-1 gamma disagree by more than ~1e-9,
@@ -53,6 +59,28 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   roughly n*log(dt) above a continuous one, a difference of measure rather
 %   than of evidence. This is enforced, not merely documented: the options
 %   are passed to every fitter from one place.
+%
+%   MONOTONE VERSUS NON-MONOTONE HAZARDS. Most of this library has a
+%   monotone hazard, and the hyperexponential has a strictly DECREASING one
+%   at every K -- a sum of decreasing exponential terms cannot be otherwise
+%   -- so no order K will fit data whose hazard rises anywhere. Adding
+%   components to chase such a misfit is wasted: they refine a monotone
+%   shape rather than creating a hump, and the symptom is a family where
+%   K+1 buys almost nothing while the goodness-of-fit test still rejects
+%   everything. WEIBULL_MIX and HYPER_ERLANG are here for that case, the
+%   latter reaching it without leaving exponential rates by putting one
+%   branch's phases in SERIES rather than in parallel.
+%
+%   If every candidate is rejected, plot the empirical hazard before
+%   reading the ranking. A hazard that rises anywhere excludes most of this
+%   library a priori, which is a stronger and more useful statement than
+%   any AICc ordering among models that were all wrong.
+%
+%   COST. HYPER_ERLANG sweeps stage counts 1..HyperErlangMaxShape, so it
+%   costs that many fits rather than one, and a goodness-of-fit bootstrap
+%   on it re-sweeps per replicate -- deliberately, since a bootstrap
+%   replicate must get the same treatment the data got, shape selection
+%   included. Restrict Models= if that is too slow.
 %
 %   AICc VERSUS BIC. Both are reported and they will often disagree, by
 %   design: BIC's penalty is k*log(n), which at n=3400 is about 8.1 per
@@ -211,6 +239,8 @@ arguments
     options.SamplingInterval (1,1) double = NaN
     options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
     options.MaxComponents (1,1) double {mustBeInteger,mustBePositive} = 4
+    options.HyperErlangComponents (1,1) double {mustBeInteger,mustBePositive} = 3
+    options.HyperErlangMaxShape (1,1) double {mustBeInteger,mustBePositive} = 6
     options.UpperBound (1,1) double = NaN
     options.Models = []
     options.RankBy (1,1) string {mustBeMember(options.RankBy,["AICc","BIC"])} = "AICc"
@@ -530,7 +560,11 @@ simple = { ...
     'pearson3',        @FitPearson3MLE,       {}; ...
     'powerlaw',        @FitPowerLawMLE,       {}; ...
     'erlang',          @FitErlangMLE,         {}; ...
-    'chisquared',      @FitChiSquaredMLE,     {}};
+    'chisquared',      @FitChiSquaredMLE,     {}; ...
+    'weibull_mix',     @FitWeibullMixtureMLE, {}; ...
+    'hyper_erlang',    @FitHyperErlangMLE, ...
+        {'Components', options.HyperErlangComponents, ...
+         'MaxShape',   options.HyperErlangMaxShape}};
 if ~isnan(options.UpperBound)
     % Beta needs a finite upper support limit and has no sensible default:
     % the recording length is a choice about the experiment, not about the
@@ -805,6 +839,8 @@ notes = { ...
  'hyperexp K=1 IS the exponential = gamma(shape 1) = weibull(shape 1) = erlang(shape 1) = exp_weibull(alpha=k=1).'; ...
  'weibull IS exp_weibull with alpha = 1.'; ...
  'erlang and chisquared are both gammas under a constraint (integer shape; scale 2, shape nu/2).'; ...
+ 'hyper_erlang CONTAINS the hyperexponential: with every stage count 1 it IS hyperexp K=Components, to the digit. If its selected shape is 1, its row and that hyperexp row are the same fit twice -- check R.Fits(i).Full.Shapes.'; ...
+ 'weibull_mix contains the 2-component hyperexponential as a limit, both shapes going to 1, though its shapes are free rather than pinned there.'; ...
  'Rows above are NOT independent evidence. Equal log-likelihoods among them are a check on the implementations, not a coincidence: a disagreement beyond ~1e-9 means one is wrong.'};
 end
 
