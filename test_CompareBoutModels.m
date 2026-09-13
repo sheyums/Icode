@@ -45,6 +45,7 @@ function test_CompareBoutModels()
 % 22.  Plot=false leaves no figure    - R.Figure empty, nothing opened
 % 23.  Plot=true actually draws      - plotFit's only coverage; SKIPPED
 %                                      where there is no graphics toolkit
+% 24.  Order LRT wiring              - off/on, and what comes back
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -57,7 +58,12 @@ else
 end
 
 DT = 10; XMIN = 100;
-BASE = {'SamplingInterval', DT, 'Plot', false, 'Verbose', false};
+% OrderLRT off by default here: at B=999 an auto-triggered order test
+% would dominate the suite's runtime, and it is exercised deliberately in
+% test 24 with a small B rather than incidentally wherever two orders
+% happen to land close.
+BASE = {'SamplingInterval', DT, 'Plot', false, 'Verbose', false, ...
+        'OrderLRT', false};
 SMALL = {'hyperexponential', 'gamma', 'weibull', 'powerlaw'};
 
 nPassed = 0; nFailed = 0;
@@ -566,6 +572,32 @@ try
     end
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
+end
+
+%% Test 24: the order LRT wiring
+%  Three things: OrderLRT=false leaves R.OrderLRT empty, OrderLRT=true runs
+%  it whatever the gap, and what comes back is the LRT's own output for the
+%  two best admissible orders. B is tiny here -- this tests the WIRING, not
+%  the test itself, which has its own suite.
+try
+    rng(24);
+    d = simHyperDisc([150 1600], [0.6 0.4], XMIN, DT, 500);
+    args = {'SamplingInterval', DT, 'Plot', false, 'Verbose', false, ...
+            'MaxComponents', 3, 'Models', {'hyperexponential'}, ...
+            'GoFBootstrap', 0};
+    Roff = cbm(d, XMIN, args{:}, 'OrderLRT', false);
+    Ron  = cbm(d, XMIN, args{:}, 'OrderLRT', true, 'OrderLRTReplicates', 29);
+    L = Ron.OrderLRT;
+    ok = isempty(Roff.OrderLRT) && ~isempty(L) && ...
+         L.K0 < L.K1 && isfinite(L.LR) && ...
+         L.pValue > 0 && L.pValue <= 1 && L.B == 29 && ...
+         numel(L.LRNull) == L.BValid;
+    [nPassed, nFailed] = rep(ok, nPassed, nFailed, 24, ...
+        sprintf('OrderLRT off leaves it empty; on runs K=%d vs K=%d, p=%.3g', ...
+            L.K0, L.K1, L.pValue), ...
+        sprintf('off empty=%d, on empty=%d', isempty(Roff.OrderLRT), isempty(L)));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 24, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...

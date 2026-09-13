@@ -75,7 +75,19 @@ function L = HyperexponentialLRT(eventseries, xmin, K0, K1, options)
 %   NAME-VALUE OPTIONS
 %   SamplingInterval  REQUIRED, same units as xmin.
 %   DistributionType  "discrete" (default) or "continuous".
-%   B                 bootstrap replicates, default 199.
+%   B                 bootstrap replicates, default 999. A test has a
+%                     DECISION BOUNDARY that the estimate must resolve, so
+%                     it needs more replicates than an estimate does:
+%                     Davison & Hinkley (1997, sec. 4.2) recommend B >= 999
+%                     for tests and reserve 100-200 for standard errors.
+%                     The Monte Carlo error on the p-value is
+%                     sqrt(p(1-p)/B), so a true p of 0.05 carries a 95%
+%                     interval of [0.020, 0.080] at B=199 -- the verdict at
+%                     alpha=0.05 is then close to a coin flip on noise
+%                     alone -- against [0.036, 0.064] at B=999. Both
+%                     satisfy the alpha*(B+1)-integer convention, so that
+%                     is not what decides it; the sampling error is. Lower
+%                     it only for exploratory runs, and say what you used.
 %   MaxRate, MinExpectedCount   passed through to the fitter.
 %   nStartsBase, nStartsPerComponent, maxStarts
 %                     multistart budget for the REPLICATE fits (the fits
@@ -110,7 +122,7 @@ arguments
     K1 (1,1) double {mustBeInteger,mustBePositive}
     options.SamplingInterval (1,1) double = NaN
     options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
-    options.B (1,1) double {mustBeInteger,mustBePositive} = 199
+    options.B (1,1) double {mustBeInteger,mustBePositive} = 999
     options.MaxRate (1,1) double = NaN
     options.MinExpectedCount (1,1) double {mustBeNonnegative} = 5
     options.nStartsBase (1,1) double {mustBeInteger,mustBePositive} = 4

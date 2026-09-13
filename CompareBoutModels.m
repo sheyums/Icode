@@ -119,19 +119,23 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   GoFMinExpected    pooling threshold on expected counts, default 5.
 %   GoFAlpha          significance level for "passes", default 0.05.
 %   GoFBootstrap      "auto" (default), 0, or a positive integer B.
-%   OrderLRT          "auto" (default), true or false. When two
-%                     hyperexponential orders come out close, run
-%                     HYPEREXPONENTIALLRT to ask whether the extra
-%                     component is real -- a question no information
-%                     criterion answers. Costs B refits of both orders, so
-%                     "auto" fires only on the close case; pass false to
-%                     never run it.
+%   OrderLRT          "auto" (default), true, or false. Runs
+%                     HYPEREXPONENTIALLRT on the two best admissible
+%                     hyperexponential orders to ask whether the extra
+%                     component is REAL -- a question no information
+%                     criterion answers. "auto" fires only when the orders
+%                     are close (see OrderLRTThreshold); true always fires,
+%                     whatever the gap; false never does. It costs B refits
+%                     of both orders and is the dominant cost of a
+%                     comparison that triggers it.
 %   OrderLRTThreshold gap, on EITHER criterion, under which "auto" fires.
 %                     Default 2, the conventional "no meaningful
 %                     difference" band.
-%   OrderLRTReplicates  B for that test, default 199. The finest p-value
-%                     resolvable is 1/(B+1), so raise it to quote a
-%                     tighter bound.
+%   OrderLRTReplicates  B for that test, default 999, which is what a
+%                     test rather than an estimate needs -- see
+%                     HYPEREXPONENTIALLRT. The finest p-value resolvable is
+%                     1/(B+1). Lower it for exploratory runs; it is the
+%                     dominant cost of a comparison that triggers the LRT.
 %   Plot              logical, default true.
 %   RandomSeed, Verbose
 %
@@ -185,7 +189,7 @@ arguments
     options.GoFBootstrap = "auto"
     options.OrderLRT = "auto"
     options.OrderLRTThreshold (1,1) double {mustBeNonnegative} = 2
-    options.OrderLRTReplicates (1,1) double {mustBeInteger,mustBePositive} = 199
+    options.OrderLRTReplicates (1,1) double {mustBeInteger,mustBePositive} = 999
     options.Plot (1,1) logical = true
     options.RandomSeed = []
     options.Verbose (1,1) logical = true
@@ -757,8 +761,10 @@ function [doLRT, kLo, kHi, why] = orderLRTNeeded(rows, ok, options)
 % Burnham & Anderson's convention treats a gap under about 2 as no
 % meaningful difference, which is the default.
 doLRT = false; kLo = NaN; kHi = NaN; why = '';
+force = false;
 if islogical(options.OrderLRT) || isnumeric(options.OrderLRT)
     if ~options.OrderLRT, return; end
+    force = true;       % true means RUN IT, whatever the gap
 elseif ~isAuto(options.OrderLRT)
     return
 end
@@ -778,6 +784,11 @@ if kLo == kHi, return; end
 dA = abs(rows(a).AICc - rows(b).AICc);
 dB = abs(rows(a).BIC  - rows(b).BIC);
 thr = options.OrderLRTThreshold;
+if force
+    why = sprintf(['requested with OrderLRT=true (AICc gap %.2f, BIC gap ' ...
+        '%.2f)'], dA, dB);
+    doLRT = true; return
+end
 if dA <= thr && dB <= thr
     why = sprintf('within %.3g on both AICc (%.2f) and BIC (%.2f)', thr, dA, dB);
 elseif dB <= thr
