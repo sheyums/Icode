@@ -39,6 +39,10 @@ function test_FitTruncatedDiscreteMLE()
 % 22.  SurvivalHandle consistency     - matches the fitted likelihood
 % 23.  logL is never positive         - the truncated-probability invariant
 % 24.  Location guard, both ways      - and NOT on families that cannot slide
+% 25.  hyper_erlang nests hyperexp    - Shapes=ones(1,K) is the mixture
+% 26.  hyper_erlang recovers a hump   - which no hyperexponential can reach
+% 27.  weibull_mix recovery           - and shapes -> 1 on exponential data
+% 28.  Mixture guards                 - and the sweep refuses guarded fits
 
 FAST = {'SamplingInterval', 1, 'nStarts', 3, 'Verbose', false};
 ALL  = {'gamma','chisquared','pearson3','weibull','beta','powerlaw'};
@@ -583,6 +587,191 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 24, '', err.message);
 end
 
+%% Test 25: hyper_erlang NESTS the hyperexponential exactly
+%  This is the identity the whole family rests on. Shapes=ones(1,K) is K
+%  parallel single-phase branches, which is precisely a K-component
+%  hyperexponential, so the two must agree to optimizer tolerance and
+%  charge the same k. If they do not, hyper_erlang is not a generalisation
+%  of the mixture and "are memoryless states enough?" stops being a
+%  constraint on one model.
+try
+    rng(25); xm = 2; dtl = 1;
+    d = simMixDisc([30 800], [0.6 0.4], xm, dtl, 1200);
+    bad = {};
+    for K = 1:3
+        He = FitTruncatedDiscreteMLE(d, xm, "hyper_erlang", ...
+            'SamplingInterval', dtl, 'Shapes', ones(1,K), ...
+            'nStarts', 20, 'Verbose', false);
+        Hh = FitHyperexponentialMLE(d, xm, 'SamplingInterval', dtl, ...
+            'MaxComponents', K, 'ErrorOnNoValidFit', false, 'Verbose', false);
+        f = Hh.AllFits(K);
+        dl = abs(He.LogLik - f.LogLik);
+        if dl > 1e-6
+            bad{end+1} = sprintf('K=%d: logL differs by %.3g', K, dl); %#ok<AGROW>
+        end
+        if He.k ~= f.k
+            bad{end+1} = sprintf('K=%d: k %d vs %d', K, He.k, f.k); %#ok<AGROW>
+        end
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 25, ...
+        'Shapes=ones(1,K) reproduces the hyperexponential at K=1,2,3', ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 25, '', err.message);
+end
+
+%% Test 26: hyper_erlang recovers a humped hazard that no hyperexponential
+%  can reach, and the sweep finds it
+%
+%  The point of the family. Data from Exp+Exp+Erlang(3) have a hazard that
+%  falls, rises and falls again; a mixture of exponentials is completely
+%  monotone at every order and cannot. So the assertions are: the right
+%  shape is selected, the parameters come back, and extra EXPONENTIAL
+%  components buy nothing while the Erlang branch buys a lot.
+%
+%  Parameters are checked in the (shape, rate) ordering heUnpack imposes,
+%  not sorted across shapes -- getting that wrong makes a good fit look
+%  scrambled.
+try
+    rng(26); xm = 2; dtl = 1;
+    qt = [0.45 0.30 0.25]; rt = [1/6 1/90 3/500]; mt = [1 1 3];
+    d = simHyperErlangDisc(qt, rt, mt, xm, dtl, 2500);
+
+    H = FitHyperErlangMLE(d, xm, 'SamplingInterval', dtl, ...
+        'Components', 3, 'MaxShape', 5, 'nStarts', 20, 'Verbose', false);
+    bad = {};
+    if H.SelectedShape ~= 3
+        bad{end+1} = sprintf('selected m=%d, not 3', H.SelectedShape);
+    end
+    % truth in the fitted ordering: shape-1 branches by rate, then shape 3
+    wantR = [1/90, 1/6, 3/500];
+    wantQ = [0.30,  0.45, 0.25];
+    if H.SelectedShape == 3
+        relR = abs(H.Params(1:3) - wantR) ./ wantR;
+        absQ = abs(H.Params(4:6) - wantQ);
+        if max(relR) > 0.25
+            bad{end+1} = sprintf('rates off by up to %.0f%%', 100*max(relR));
+        end
+        if max(absQ) > 0.08
+            bad{end+1} = sprintf('weights off by up to %.3f', max(absQ));
+        end
+    end
+    % the sweep must prefer m>1, and m=1 must equal the hyperexponential
+    if ~all(isfinite(H.ShapeSweep(1:3)))
+        bad{end+1} = 'sweep has non-finite entries at m=1..3';
+    elseif H.ShapeSweep(1) >= H.ShapeSweep(3)
+        bad{end+1} = 'sweep did not prefer an Erlang branch over m=1';
+    end
+    % and more exponential components must not substitute
+    Hh = FitHyperexponentialMLE(d, xm, 'SamplingInterval', dtl, ...
+        'MaxComponents', 4, 'ErrorOnNoValidFit', false, 'Verbose', false);
+    if Hh.AllFits(3).Success && Hh.AllFits(4).Success
+        gainK = Hh.AllFits(4).LogLik - Hh.AllFits(3).LogLik;
+        gainM = H.LogLik - H.ShapeSweep(1);
+        if ~(gainM > 10 * max(gainK, 0.1))
+            bad{end+1} = sprintf(['Erlang branch gained %.2f nats against ' ...
+                '%.2f for a 4th exponential -- not the expected contrast'], ...
+                gainM, gainK);
+        end
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 26, ...
+        sprintf(['recovered m=%d with rates/weights in tolerance; the ' ...
+            'Erlang branch gained %.1f nats where a 4th exponential gained ' ...
+            '~0'], H.SelectedShape, H.LogLik - H.ShapeSweep(1)), ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 26, '', err.message);
+end
+
+%% Test 27: weibull_mix recovers a two-shape mixture, and collapses toward
+%  shape 1 on data that really is a hyperexponential
+try
+    rng(27); xm = 2; dtl = 1;
+    d = simWeibullMixDisc(0.70, 8, 0.55, 600, 2.2, xm, dtl, 2500);
+    H = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
+        'SamplingInterval', dtl, 'nStarts', 24, 'Verbose', false);
+    bad = {};
+    want = [0.70, 8, 0.55, 600, 2.2];
+    rel = abs(H.Params - want) ./ want;
+    if H.k ~= 5, bad{end+1} = sprintf('k=%d, not 5', H.k); end
+    if max(rel) > 0.30
+        bad{end+1} = sprintf('parameters off by up to %.0f%%', 100*max(rel));
+    end
+    if ~H.Diagnostics.GuardOK
+        bad{end+1} = 'guard rejected a well-separated mixture';
+    end
+    % on genuine 2-exponential data both shapes should sit near 1, since
+    % Weibull(scale, 1) IS the exponential
+    d2 = simMixDisc([40 900], [0.6 0.4], xm, dtl, 2000);
+    H2 = FitTruncatedDiscreteMLE(d2, xm, "weibull_mix", ...
+        'SamplingInterval', dtl, 'nStarts', 24, 'Verbose', false);
+    if H2.Diagnostics.GuardOK && max(abs(H2.Params([3 5]) - 1)) > 0.35
+        bad{end+1} = sprintf('shapes %.3g, %.3g on exponential data', ...
+            H2.Params(3), H2.Params(5));
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 27, ...
+        sprintf(['recovered w=%.3f shapes %.3g/%.3g; on exponential data ' ...
+            'shapes came back %.3g/%.3g'], H.Params(1), H.Params(3), ...
+            H.Params(5), H2.Params(3), H2.Params(5)), strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 27, '', err.message);
+end
+
+%% Test 28: both mixture guards fire, and hyper_erlang's sweep will not
+%  select a fit its guard rejected
+%
+%  Five parameters describe a one-component model in two ways -- a weight
+%  at a boundary, or two components converged on the same law -- and in
+%  both the extra parameters are unidentified, so the standard errors and
+%  the charged parameter count are wrong. A likelihood is still returned,
+%  which is why the sweep must not pick on likelihood alone.
+try
+    rng(28); xm = 2; dtl = 1;
+    bad = {};
+
+    % a single exponential: any 2-component mixture of it is degenerate,
+    % one way or the other
+    d = simMixDisc(300, 1, xm, dtl, 400);
+    Hw = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
+        'SamplingInterval', dtl, 'nStarts', 20, 'Verbose', false);
+    if Hw.Diagnostics.GuardOK
+        bad{end+1} = sprintf(['weibull_mix on single-exponential data not ' ...
+            'flagged (w=%.4g, scales %.4g/%.4g, shapes %.3g/%.3g)'], ...
+            Hw.Params(1), Hw.Params(2), Hw.Params(4), Hw.Params(3), Hw.Params(5));
+    end
+
+    % an unmeetable weight floor must fire the hyper_erlang guard, and the
+    % reason must be the weight, not something else
+    He = FitTruncatedDiscreteMLE(d, xm, "hyper_erlang", ...
+        'SamplingInterval', dtl, 'Shapes', [1 1 2], 'nStarts', 20, ...
+        'Verbose', false, 'MinMixtureCount', 1e6);
+    if He.Diagnostics.GuardOK
+        bad{end+1} = 'hyper_erlang weight guard did not fire at MinMixtureCount=1e6';
+    elseif isempty(strfind(He.Diagnostics.Recommendation, 'holds only'))
+        bad{end+1} = 'hyper_erlang rejected, but not for the weight';
+    end
+
+    % and with every shape guarded out, the sweeping wrapper must refuse
+    % rather than return an unidentified fit
+    eid = '';
+    try
+        FitHyperErlangMLE(d, xm, 'SamplingInterval', dtl, 'Components', 3, ...
+            'MaxShape', 3, 'nStarts', 8, 'Verbose', false, ...
+            'MinMixtureCount', 1e6);
+    catch err2
+        eid = err2.identifier;
+    end
+    if isempty(strfind(eid, 'NoValidFit'))
+        bad{end+1} = sprintf('sweep returned a guarded fit (err "%s")', eid);
+    end
+
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 28, ...
+        'both mixture guards fire, and the shape sweep refuses guarded fits', ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 28, '', err.message);
+end
+
 %% Summary
 fprintf('\n----------------------------------------\n');
 fprintf('Summary: %d passed, %d failed, %d total\n', nPassed, nFailed, nPassed+nFailed);
@@ -652,6 +841,45 @@ while filled < n
     for j = 1:numel(cw)-1, comp = comp + (u > cw(j)); end
     t = -tau(comp)' .* log(rand(m,1));
     nv = ceil(t(:)/dt); nv = nv(nv >= nmin);
+    take = min(numel(nv), n-filled);
+    out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
+end
+d = out;
+end
+
+function d = simHyperErlangDisc(q, rates, m, xmin, dt, n)
+% Hyper-Erlang draws on the dt grid. An Erlang(m, rate) is the sum of m
+% independent exponentials of that rate, which is what makes it a SERIES of
+% phases and its hazard rising.
+nmin = max(1, round(xmin/dt)); q = q(:).'/sum(q); cw = cumsum(q);
+out = zeros(n,1); filled = 0;
+while filled < n
+    M = 6*(n-filled) + 500;
+    u = rand(M,1); comp = ones(M,1);
+    for j = 1:numel(cw)-1, comp = comp + (u > cw(j)); end
+    t = zeros(M,1);
+    for j = 1:numel(q)
+        ix = (comp == j); nj = nnz(ix);
+        if nj == 0, continue; end
+        t(ix) = sum(-log(rand(nj, m(j)))/rates(j), 2);
+    end
+    nv = ceil(t/dt); nv = nv(nv >= nmin);
+    take = min(numel(nv), n-filled);
+    out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
+end
+d = out;
+end
+
+function d = simWeibullMixDisc(w, s1, k1, s2, k2, xmin, dt, n)
+nmin = max(1, round(xmin/dt));
+out = zeros(n,1); filled = 0;
+while filled < n
+    M = 6*(n-filled) + 500;
+    pick = rand(M,1) > w;
+    t = zeros(M,1);
+    t(~pick) = s1 * (-log(rand(nnz(~pick),1))).^(1/k1);
+    t( pick) = s2 * (-log(rand(nnz( pick),1))).^(1/k2);
+    nv = ceil(t/dt); nv = nv(nv >= nmin);
     take = min(numel(nv), n-filled);
     out(filled+1:filled+take) = nv(1:take)*dt; filled = filled + take;
 end
