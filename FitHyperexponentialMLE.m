@@ -484,7 +484,12 @@ elseif ~(options.MaxRate > 0)
 end
 
 if ~isempty(options.RandomSeed)
-    rng(options.RandomSeed);
+    % Pinned to 'twister' rather than bare rng(seed): rng keeps whatever
+    % generator is current, and a parallel worker's default generator is
+    % not the client's, so a bare call makes RandomSeed reproduce only
+    % within one execution mode. In the client this is identical to the
+    % default, so nothing changes serially.
+    rng(options.RandomSeed, 'twister');
 end
 
 isDiscrete = strcmp(options.DistributionType, "discrete");

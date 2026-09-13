@@ -747,15 +747,35 @@ try
     rng(28); xm = 2; dtl = 1;
     bad = {};
 
-    % a single exponential: any 2-component mixture of it is degenerate,
-    % one way or the other
+    % weibull_mix. Assert the RULE, not that the guard fires on particular
+    % data. An earlier version fitted it to single-exponential data and
+    % demanded a flag, on the assumption that two components cannot
+    % describe one law without degenerating. They can: the optimizer found
+    % w=0.050 with distinct scales and shapes, putting 20 of 400
+    % observations in the smaller component -- above the floor, and not
+    % collapsed, so the guard correctly declined. That was the same mistake
+    % as demanding a particular stage count or a particular optimum.
     d = simMixDisc(300, 1, xm, dtl, 400);
     Hw = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
         'SamplingInterval', dtl, 'nStarts', 20, 'Verbose', false);
-    if Hw.Diagnostics.GuardOK
-        bad{end+1} = sprintf(['weibull_mix on single-exponential data not ' ...
-            'flagged (w=%.4g, scales %.4g/%.4g, shapes %.3g/%.3g)'], ...
-            Hw.Params(1), Hw.Params(2), Hw.Params(4), Hw.Params(3), Hw.Params(5));
+    nEff = numel(d) * min(Hw.Params(1), 1-Hw.Params(1));
+    collapsed = abs(log(Hw.Params(4)/Hw.Params(2))) < 0.05 && ...
+                abs(log(Hw.Params(5)/Hw.Params(3))) < 0.05;
+    wantOK = ~(nEff < 5 || collapsed);
+    if Hw.Diagnostics.GuardOK ~= wantOK
+        bad{end+1} = sprintf(['weibull_mix verdict %d disagrees with its ' ...
+            'own rule (smaller component holds %.1f obs, collapsed=%d)'], ...
+            Hw.Diagnostics.GuardOK, nEff, collapsed);
+    end
+
+    % and force the weight branch deterministically, checking the reason
+    Hf = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
+        'SamplingInterval', dtl, 'nStarts', 20, 'Verbose', false, ...
+        'MinMixtureCount', 1e6);
+    if Hf.Diagnostics.GuardOK
+        bad{end+1} = 'weibull_mix weight guard did not fire at MinMixtureCount=1e6';
+    elseif isempty(strfind(Hf.Diagnostics.Recommendation, 'holds only'))
+        bad{end+1} = 'weibull_mix rejected, but not for the weight';
     end
 
     % an unmeetable weight floor must fire the hyper_erlang guard, and the

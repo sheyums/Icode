@@ -176,7 +176,12 @@ if K0 >= K1
         K0, K1);
 end
 if ~isempty(options.RandomSeed)
-    rng(options.RandomSeed);
+    % Pinned to 'twister' rather than bare rng(seed): rng keeps whatever
+    % generator is current, and a parallel worker's default generator is
+    % not the client's, so a bare call makes RandomSeed reproduce only
+    % within one execution mode. In the client this is identical to the
+    % default, so nothing changes serially.
+    rng(options.RandomSeed, 'twister');
 end
 
 dt = options.SamplingInterval;
@@ -243,7 +248,16 @@ msX = options.maxStarts;
 
 LRb = nan(1, B_);
 parfor (b = 1:B_, nw)
-    rng(seeds(b));
+    % 'twister' is NOT decoration. rng(seed) keeps whatever generator is
+    % current, and a parallel worker's default generator is not the
+    % client's -- so rng(seeds(b)) alone seeds twister here and something
+    % else on a worker, and the same seed yields different draws. The
+    % symptom is quiet: serial and parallel each stay internally
+    % reproducible while disagreeing with each other, so nothing looks
+    % random and nothing looks broken. Measured on a 2-worker pool before
+    % this was pinned: p = 0.46 serial against 0.64 parallel, null samples
+    % differing by up to 6.39.
+    rng(seeds(b), 'twister');
     try
         sim = simTruncMixture(q0, r0, n, xmin, dt, isDiscrete);
         Hb = FitHyperexponentialMLE(sim, xmin, common{:}, ...
