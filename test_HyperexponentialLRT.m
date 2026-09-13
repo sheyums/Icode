@@ -34,6 +34,7 @@ function test_HyperexponentialLRT()
 % 10.  Simulator reproduces the fit   - draws match the fitted survival
 % 11.  RandomSeed reproducibility     - same seed, same p
 % 12.  Degenerate replicates are KEPT - not silently dropped
+% 13.  Serial == parallel, exactly    - the only check on the seeding
 
 if exist('OCTAVE_VERSION', 'builtin')
     lrt = @HyperexponentialLRT_oct;
@@ -286,6 +287,55 @@ try
             L.FailedReplicates, L.B, nnz(L.LRNull < 1e-6)));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 12, '', err.message);
+end
+
+%% Test 13: serial and parallel give IDENTICAL results
+%  This is the only test that catches a seeding mistake, and a seeding
+%  mistake is the whole risk of parallelising a bootstrap. A bare parfor
+%  leaves every worker on its own stream and lets iterations finish in any
+%  order, so the null sample silently becomes irreproducible -- and it
+%  would still look perfectly plausible, because a p-value from the wrong
+%  null is still a number in [0,1]. Nothing else here would notice.
+%
+%  So: not "both run", not "both give similar p", but EQUAL to the bit, on
+%  the LR, the whole null sample and the p-value. That holds only if each
+%  replicate carries its own seed and is therefore independent of the order
+%  it happens to be executed in.
+%
+%  Note this test is meaningful even with no pool and no Parallel Computing
+%  Toolbox, where parfor degrades to a serial loop: it still proves the
+%  per-replicate seeding path produces what the ordinary path produces.
+%  With a pool actually running it additionally proves order-independence.
+try
+    rng(13);
+    d = simMix([150 1600], [0.6 0.4], XMIN, DT, 500);
+    A = lrt(d, XMIN, 2, 3, FAST{:}, 'RandomSeed', 131, 'UseParallel', false);
+    B = lrt(d, XMIN, 2, 3, FAST{:}, 'RandomSeed', 131, 'UseParallel', true);
+    bad = {};
+    if A.pValue ~= B.pValue
+        bad{end+1} = sprintf('p differs: %.12g vs %.12g', A.pValue, B.pValue);
+    end
+    if abs(A.LR - B.LR) > 0
+        bad{end+1} = sprintf('LR differs by %.3g', abs(A.LR - B.LR));
+    end
+    if ~isequal(size(A.LRNull), size(B.LRNull))
+        bad{end+1} = sprintf('null sizes differ: %d vs %d', ...
+            numel(A.LRNull), numel(B.LRNull));
+    elseif max(abs(A.LRNull - B.LRNull)) > 0
+        bad{end+1} = sprintf('null samples differ by up to %.3g', ...
+            max(abs(A.LRNull - B.LRNull)));
+    end
+    if A.BValid ~= B.BValid || A.FailedReplicates ~= B.FailedReplicates
+        bad{end+1} = 'replicate bookkeeping differs';
+    end
+    if ~B.UseParallel || A.UseParallel
+        bad{end+1} = 'UseParallel not recorded in the output';
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 13, ...
+        sprintf(['serial and parallel agree exactly (p=%.4g, %d null LRs, ' ...
+            'max difference 0)'], A.pValue, A.BValid), strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 13, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...

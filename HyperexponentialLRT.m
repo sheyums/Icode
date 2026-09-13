@@ -94,6 +94,16 @@ function L = HyperexponentialLRT(eventseries, xmin, K0, K1, options)
 %                     to the real data always use the fitter's defaults).
 %                     Defaults here are lower than the fitter's, for speed;
 %                     raise them if NegativeLRFraction is large.
+%   UseParallel       false (default) or true. Runs the replicate loop over
+%                     a parallel pool. Each replicate carries its OWN seed,
+%                     drawn serially from RandomSeed, so the result is
+%                     identical serial or parallel and independent of
+%                     worker count -- test 13 asserts exactly that. Needs
+%                     no toolbox: without the Parallel Computing Toolbox
+%                     MATLAB runs the loop serially anyway. The loop is
+%                     embarrassingly parallel with near-equal iteration
+%                     cost, so expect close to linear speedup once the pool
+%                     has started.
 %   RandomSeed, Verbose
 %
 %   OUTPUT
@@ -129,6 +139,7 @@ arguments
     options.nStartsPerComponent (1,1) double {mustBeInteger,mustBePositive} = 4
     options.maxStarts (1,1) double {mustBeInteger,mustBePositive} = 20
     options.RandomSeed = []
+    options.UseParallel (1,1) logical = false
     options.Verbose (1,1) logical = true
 end
 
@@ -182,39 +193,76 @@ if options.Verbose
     fprintf(['HyperexponentialLRT: K=%d vs K=%d on n=%d, %s mode.\n' ...
              '  logL(K=%d) = %.4f,  logL(K=%d) = %.4f,  LR = %.4f\n'], ...
         K0, K1, n, options.DistributionType, K0, f0.LogLik, K1, f1.LogLik, LR);
-    fprintf('  simulating %d replicates from the fitted K=%d model ...\n', ...
-        options.B, K0);
+    if options.UseParallel
+        fprintf(['  simulating %d replicates from the fitted K=%d model, ' ...
+            'in parallel (per-replicate seeds, so the answer does not ' ...
+            'depend on worker count) ...\n'], options.B, K0);
+    else
+        fprintf('  simulating %d replicates from the fitted K=%d model ...\n', ...
+            options.B, K0);
+    end
 end
 
 % ------------------------------------------------------ the null by simulation
 q0 = f0.WeightsObserved(:).';
 r0 = f0.Rates(:).';
-LRb = nan(1, options.B);
-nFailed = 0;
+% Every replicate gets its OWN seed, drawn serially here from the caller's
+% stream, and reseeds at the top of its iteration. That makes each replicate
+% self-contained, so the null sample no longer depends on the ORDER the
+% iterations finish in -- which is what a bare parfor would destroy. The
+% same RandomSeed then gives the same p on one core or sixty-four, a
+% stronger guarantee than the serial loop had, since that one relied on
+% every replicate drawing from one sequential stream.
+seeds = randi(2^31-1, 1, options.B);
+
+% parfor's second argument caps the workers; 0 forces the loop to run in
+% the client. So one loop body serves both modes, and nothing here needs
+% the Parallel Computing Toolbox: without it MATLAB runs parfor as a plain
+% loop, and Octave accepts both forms too.
+nw = 0;
+if options.UseParallel, nw = Inf; end
+serial = ~options.UseParallel;
+verbose = options.Verbose;
 tick = max(1, round(options.B/10));
-for b = 1:options.B
+
+% Broadcast copies, so the loop body does not reach into `options` (which
+% parfor would ship whole to every worker).
+B_  = options.B;
+nsB = options.nStartsBase;
+nsC = options.nStartsPerComponent;
+msX = options.maxStarts;
+
+LRb = nan(1, B_);
+parfor (b = 1:B_, nw)
+    rng(seeds(b));
     try
         sim = simTruncMixture(q0, r0, n, xmin, dt, isDiscrete);
         Hb = FitHyperexponentialMLE(sim, xmin, common{:}, ...
             'MaxComponents', K1, ...
-            'nStartsBase', options.nStartsBase, ...
-            'nStartsPerComponent', options.nStartsPerComponent, ...
-            'maxStarts', options.maxStarts);
+            'nStartsBase', nsB, ...
+            'nStartsPerComponent', nsC, ...
+            'maxStarts', msX);
         g0 = Hb.AllFits(K0); g1 = Hb.AllFits(K1);
         % Degenerate is NOT a reason to drop a replicate: under the null
         % K1 collapsing onto K0 is the expected outcome and is what puts
-        % the atom at zero into the null distribution.
-        if ~g0.Success || ~isfinite(g0.LogLik) || ~isfinite(g1.LogLik)
-            nFailed = nFailed + 1; continue
+        % the atom at zero into the null distribution. A replicate is only
+        % lost when no valid fit was found at all, which leaves NaN here
+        % and is counted after the loop -- a running counter would be a
+        % reduction inside try/catch, which parfor cannot analyse.
+        if g0.Success && isfinite(g0.LogLik) && isfinite(g1.LogLik)
+            LRb(b) = 2 * (g1.LogLik - g0.LogLik);
         end
-        LRb(b) = 2 * (g1.LogLik - g0.LogLik);
     catch
-        nFailed = nFailed + 1;
+        % leaves NaN
     end
-    if options.Verbose && mod(b, tick) == 0
-        fprintf('    %d/%d\n', b, options.B);
+    if serial && verbose && mod(b, tick) == 0
+        % Only serially: in a real pool the iterations finish out of order
+        % and MATLAB buffers worker output, so per-iteration ticks stop
+        % meaning anything.
+        fprintf('    %d/%d\n', b, B_);
     end
 end
+nFailed = sum(~isfinite(LRb));
 
 valid = LRb(isfinite(LRb));
 nValid = numel(valid);
@@ -241,6 +289,7 @@ L.LogLik0 = f0.LogLik; L.LogLik1 = f1.LogLik;
 L.LR = LR;
 L.pValue = pBoot;
 L.B = options.B;
+L.UseParallel = options.UseParallel;
 L.BValid = nValid;
 L.FailedReplicates = nFailed;
 L.LRNull = valid;
