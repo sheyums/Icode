@@ -45,7 +45,7 @@ function test_CompareBoutModels()
 % 22.  Plot=false leaves no figure    - R.Figure empty, nothing opened
 % 23.  Plot=true actually draws      - plotFit's only coverage; SKIPPED
 %                                      where there is no graphics toolkit
-% 24.  Order LRT wiring              - off/on, and what comes back
+% 24.  Order LRT ladder              - off/on, ascending rungs, stop rule
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -574,11 +574,12 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);
 end
 
-%% Test 24: the order LRT wiring
-%  Three things: OrderLRT=false leaves R.OrderLRT empty, OrderLRT=true runs
-%  it whatever the gap, and what comes back is the LRT's own output for the
-%  two best admissible orders. B is tiny here -- this tests the WIRING, not
-%  the test itself, which has its own suite.
+%% Test 24: the order LRT ladder
+%  Four things: OrderLRT=false leaves it empty; true climbs a LADDER over
+%  the admissible orders rather than testing one pair; every rung is a
+%  nested ascending comparison; and OrderLRTSupportedK is the smallest
+%  order not rejected. B is tiny -- this tests the WIRING and the ladder's
+%  shape, not the test itself, which has its own suite.
 try
     rng(24);
     d = simHyperDisc([150 1600], [0.6 0.4], XMIN, DT, 500);
@@ -588,17 +589,44 @@ try
     Roff = cbm(d, XMIN, args{:}, 'OrderLRT', false);
     Ron  = cbm(d, XMIN, args{:}, 'OrderLRT', true, 'OrderLRTReplicates', 29);
     L = Ron.OrderLRT;
-    ok = isempty(Roff.OrderLRT) && ~isempty(L) && ...
-         L.K0 < L.K1 && isfinite(L.LR) && ...
-         L.pValue > 0 && L.pValue <= 1 && L.B == 29 && ...
-         numel(L.LRNull) == L.BValid;
-    [nPassed, nFailed] = rep(ok, nPassed, nFailed, 24, ...
-        sprintf('OrderLRT off leaves it empty; on runs K=%d vs K=%d, p=%.3g', ...
-            L.K0, L.K1, L.pValue), ...
-        sprintf('off empty=%d, on empty=%d', isempty(Roff.OrderLRT), isempty(L)));
+    bad = {};
+    if ~isempty(Roff.OrderLRT), bad{end+1} = 'OrderLRT=false still ran it'; end
+    if ~isnan(Roff.OrderLRTSupportedK), bad{end+1} = 'SupportedK set with no ladder'; end
+    if isempty(L), bad{end+1} = 'OrderLRT=true produced no rungs'; end
+    for li = 1:numel(L)
+        if L(li).K0 >= L(li).K1
+            bad{end+1} = sprintf('rung %d not ascending: K0=%d K1=%d', ...
+                li, L(li).K0, L(li).K1); %#ok<AGROW>
+        end
+        if L(li).B ~= 29
+            bad{end+1} = sprintf('rung %d used B=%d', li, L(li).B); %#ok<AGROW>
+        end
+        if li > 1 && L(li).K0 ~= L(li-1).K1
+            bad{end+1} = 'rungs are not contiguous'; %#ok<AGROW>
+        end
+    end
+    % the ladder stops at the first non-rejection, so every rung but the
+    % last must have rejected, and SupportedK must be that stopping point
+    if ~isempty(L)
+        for li = 1:numel(L)-1
+            if L(li).pValue > 0.05
+                bad{end+1} = 'ladder continued past a non-rejection'; %#ok<AGROW>
+            end
+        end
+        last = L(end);
+        wantK = last.K1; if last.pValue > 0.05, wantK = last.K0; end
+        if Ron.OrderLRTSupportedK ~= wantK
+            bad{end+1} = sprintf('SupportedK=%d but the last rung says %d', ...
+                Ron.OrderLRTSupportedK, wantK); %#ok<AGROW>
+        end
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 24, ...
+        sprintf('ladder of %d ascending rung(s), stops correctly, supports K=%d', ...
+            numel(L), Ron.OrderLRTSupportedK), strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 24, '', err.message);
 end
+
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...
     nPassed, nFailed, nPassed + nFailed);

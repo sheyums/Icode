@@ -68,6 +68,31 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   ranked. A Pearson III whose location has slid far below xmin will do
 %   this routinely.
 %
+%   MIXTURE ORDER. AICc and BIC price a component differently -- 2 per
+%   parameter against log(n), which at n=4000 is 8.3 -- so they routinely
+%   disagree about how many exponentials a dataset supports, and neither
+%   is answering "is the extra component real". The likelihood-ratio test
+%   is, but its chi-square null does not hold for mixtures, so
+%   HYPEREXPONENTIALLRT simulates the null instead.
+%
+%   One pairwise test is not enough once three or more orders land close.
+%   Ranked first and second might be K=4 and K=3, and testing that pair
+%   alone would "support" K=4 on a rung whose own foundation, whether K=3
+%   beats K=2, was never examined. So the orders are climbed SEQUENTIALLY,
+%   K against K+1 ascending, stopping at the first non-rejection, and
+%   R.OrderLRTSupportedK is the smallest order not rejected in favour of
+%   the next (McLachlan & Peel 2000, sec. 6.4).
+%
+%   THE LADDER DOES NOT CONTROL A FAMILY-WISE ERROR RATE. Each rung is a
+%   valid test at its own alpha, but climbing several in sequence and
+%   stopping on the first acceptance inflates the overall type-I rate
+%   above that alpha, by an amount that depends on how many rungs were
+%   climbed and on their dependence. This is the standard procedure and it
+%   is reported as such: read the rungs, quote them individually, and do
+%   not present the ladder's endpoint as if it carried a single
+%   alpha-level guarantee. With a two-rung ladder the inflation is modest;
+%   with five it is not. GoFAlpha sets the per-rung level.
+%
 %   AKAIKE WEIGHTS. w_i = exp(-dAICc_i/2) / sum_j exp(-dAICc_j/2), the
 %   relative support for each model given the candidate set. These matter
 %   more than the winner's identity: if the top three split weight
@@ -119,15 +144,16 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   GoFMinExpected    pooling threshold on expected counts, default 5.
 %   GoFAlpha          significance level for "passes", default 0.05.
 %   GoFBootstrap      "auto" (default), 0, or a positive integer B.
-%   OrderLRT          "auto" (default), true, or false. Runs
-%                     HYPEREXPONENTIALLRT on the two best admissible
-%                     hyperexponential orders to ask whether the extra
-%                     component is REAL -- a question no information
-%                     criterion answers. "auto" fires only when the orders
-%                     are close (see OrderLRTThreshold); true always fires,
-%                     whatever the gap; false never does. It costs B refits
-%                     of both orders and is the dominant cost of a
-%                     comparison that triggers it.
+%   OrderLRT          "auto" (default), true, or false. Climbs a LADDER of
+%                     HYPEREXPONENTIALLRT tests to ask which mixture order
+%                     the data actually support -- a question no
+%                     information criterion answers. "auto" builds the
+%                     ladder over the admissible orders within
+%                     OrderLRTThreshold of the best on either criterion;
+%                     true builds it over every admissible order; false
+%                     never runs it. Each rung costs B refits of two
+%                     orders, so a three-rung ladder at B=999 is the
+%                     dominant cost of the whole comparison.
 %   OrderLRTThreshold gap, on EITHER criterion, under which "auto" fires.
 %                     Default 2, the conventional "no meaningful
 %                     difference" band.
@@ -164,9 +190,14 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   R.SelectionPath what was skipped on the way down, and why
 %   R.GoF          G, bins, df bounds, chi-square p at both, bootstrap p
 %                  and B if run, Passed
-%   R.OrderLRT     the mixture-order bootstrap LRT when it ran, else
-%                  empty. See HYPEREXPONENTIALLRT; read
-%                  R.OrderLRT.NegativeLRFraction before its p-value.
+%   R.OrderLRT     struct array, one element per rung actually climbed,
+%                  each the full HYPEREXPONENTIALLRT output; empty if the
+%                  ladder did not run. Read NegativeLRFraction on each
+%                  before its p-value.
+%   R.OrderLRTSupportedK  the smallest order not rejected in favour of the
+%                  next, i.e. what the ladder supports. NaN if no ladder
+%                  ran. This is a DIFFERENT quantity from the ranked
+%                  winner and may disagree with it.
 %   R.Nesting      the equivalences listed above, as text
 %   R.Figure       figure handle, or empty
 %   R.n, R.xmin, R.SamplingInterval, R.DistributionType
@@ -337,31 +368,46 @@ R.RankBy = options.RankBy;
 % mixtures, so HYPEREXPONENTIALLRT simulates the null instead. Run here
 % only when the criteria are actually close, since it costs B refits.
 R.OrderLRT = [];
-[doLRT, kLo, kHi, why] = orderLRTNeeded(rows, ok, options);
-if doLRT
+R.OrderLRTSupportedK = NaN;
+[rungs, whyLRT] = orderLRTPlan(rows, ok, options);
+if ~isempty(rungs)
     if options.Verbose
-        fprintf(['\n--- mixture order is unsettled: running the bootstrap ' ...
-            'LRT ---\n']);
-        fprintf('  hyperexp K=%d vs K=%d: %s.\n', kLo, kHi, why);
+        fprintf(['\n--- mixture order is unsettled: climbing the bootstrap ' ...
+            'LRT ladder ---\n']);
+        fprintf('  %s.\n', whyLRT);
         fprintf(['  A gap that small is within the arbitrariness of the ' ...
             'penalty itself (AIC charges 2 per parameter, BIC log(n)=%.1f), ' ...
-            'so neither criterion decides whether the extra component is\n' ...
+            'so neither criterion decides whether an extra component is\n' ...
             '  REAL. The likelihood-ratio test does, once its null is ' ...
             'simulated rather than assumed.\n'], log(rows(1).n));
-        fprintf(['  Cost: %d replicates, each refitting orders 1..%d. ' ...
-            'Expect minutes, not seconds. Pass OrderLRT=false to skip it, ' ...
-            'or OrderLRTThreshold to\n  change what counts as close ' ...
-            '(currently %.3g on either criterion).\n'], ...
-            options.OrderLRTReplicates, kHi, options.OrderLRTThreshold);
+        fprintf(['  Testing K vs K+1 ascending, stopping at the first ' ...
+            'non-rejection: %d rung(s) at up to %d replicates each. Pass ' ...
+            'OrderLRT=false to skip.\n'], size(rungs,1), options.OrderLRTReplicates);
     end
-    try
-        R.OrderLRT = HyperexponentialLRT(eventseries, xmin, kLo, kHi, ...
-            'SamplingInterval', dt, 'DistributionType', mode, ...
-            'B', options.OrderLRTReplicates, 'Verbose', options.Verbose);
-    catch err
-        if options.Verbose
-            fprintf('CompareBoutModels: order LRT skipped (%s).\n', err.message);
+    ladC = {};
+    supported = rungs(1,1);
+    for ri = 1:size(rungs,1)
+        try
+            Lr = HyperexponentialLRT(eventseries, xmin, rungs(ri,1), rungs(ri,2), ...
+                'SamplingInterval', dt, 'DistributionType', mode, ...
+                'B', options.OrderLRTReplicates, 'Verbose', options.Verbose);
+        catch err
+            if options.Verbose
+                fprintf('  rung K=%d vs K=%d skipped (%s).\n', ...
+                    rungs(ri,1), rungs(ri,2), err.message);
+            end
+            break
         end
+        ladC{end+1} = Lr;                                          %#ok<AGROW>
+        if Lr.pValue <= options.GoFAlpha
+            supported = rungs(ri,2);      % rejected: climb to the larger order
+        else
+            break                          % first non-rejection ends the ladder
+        end
+    end
+    if ~isempty(ladC)
+        R.OrderLRT = [ladC{:}];
+        R.OrderLRTSupportedK = supported;
     end
 end
 
@@ -414,10 +460,20 @@ if options.Verbose
             rows(i).BIC, rows(i).dAICc, rows(i).AkaikeWeight, flag);
     end
     if ~isempty(R.OrderLRT)
-        L = R.OrderLRT;
-        fprintf(['order test: K=%d vs K=%d, LR=%.3f, bootstrap p=%.4g ' ...
-            '(%d replicates)\n            %s\n'], L.K0, L.K1, L.LR, ...
-            L.pValue, L.BValid, L.Note);
+        fprintf('order ladder (stop at the first non-rejection, alpha=%g):\n', ...
+            options.GoFAlpha);
+        for li = 1:numel(R.OrderLRT)
+            L = R.OrderLRT(li);
+            if L.pValue <= options.GoFAlpha, verdict = 'reject K=%d'; else, verdict = 'retain K=%d'; end
+            fprintf('  K=%d vs K=%d:  LR=%8.3f  p=%.4g   %s\n', ...
+                L.K0, L.K1, L.LR, L.pValue, sprintf(verdict, L.K0));
+        end
+        fprintf('  supported order: K=%d\n', R.OrderLRTSupportedK);
+        if numel(R.OrderLRT) > 1
+            fprintf(['  NOTE %d sequential tests: the ladder does not ' ...
+                'control a family-wise error rate, so read the rungs, not ' ...
+                'one p-value.\n'], numel(R.OrderLRT));
+        end
     end
     if ~isempty(sel)
         fprintf('\nselected: %s   %s\n', rows(sel).Model, rows(sel).ParamText);
@@ -750,21 +806,32 @@ end
 % ========================================================================
 %                        DATA AND GOODNESS OF FIT
 % ========================================================================
-function [doLRT, kLo, kHi, why] = orderLRTNeeded(rows, ok, options)
-%ORDERLRTNEEDED Decide whether the mixture-order LRT is worth its cost.
+function [rungs, why] = orderLRTPlan(rows, ok, options)
+%ORDERLRTPLAN Which order comparisons to run, as a LADDER of rungs.
 %
-% Fires on the two best ADMISSIBLE hyperexponential orders when either
-% criterion puts them within OrderLRTThreshold. Either, not the ranking
-% one: a case where AICc separates them decisively and BIC calls it a tie
-% is exactly the case the LRT exists to settle, and testing only the
-% criterion in RankBy would miss it in one direction or the other.
-% Burnham & Anderson's convention treats a gap under about 2 as no
-% meaningful difference, which is the default.
-doLRT = false; kLo = NaN; kHi = NaN; why = '';
+% Testing only the top two ranked orders is not enough once three or more
+% land close together. Ranked first and second might be K=4 and K=3, and
+% testing that pair alone would "support" K=4 on a rung whose own
+% foundation -- whether K=3 beats K=2 -- was never examined.
+%
+% The standard procedure for mixture order is sequential (McLachlan & Peel
+% 2000, sec. 6.4): test K against K+1 ascending and STOP AT THE FIRST
+% NON-REJECTION, the supported order being the smallest K not rejected in
+% favour of the next. This returns the rungs; the caller climbs them and
+% stops.
+%
+% "auto" builds the ladder over the admissible orders lying within
+% OrderLRTThreshold of the best one on EITHER criterion -- the orders the
+% table is genuinely asking the reader to choose between. true builds it
+% over every admissible order, which is the honest ladder but costs a
+% bootstrap per rung. Rungs join CONSECUTIVE ENTRIES of that set, so a
+% gapped set (say K=2 and K=4 admissible, K=3 gated out) gives the rung
+% 2 vs 4, still a nested comparison and still valid.
+rungs = zeros(0, 2); why = '';
 force = false;
 if islogical(options.OrderLRT) || isnumeric(options.OrderLRT)
     if ~options.OrderLRT, return; end
-    force = true;       % true means RUN IT, whatever the gap
+    force = true;
 elseif ~isAuto(options.OrderLRT)
     return
 end
@@ -775,30 +842,29 @@ K = zeros(1, numel(idx));
 for i = 1:numel(idx)
     K(i) = sscanf(rows(idx(i)).Model, 'hyperexp K=%d');
 end
-% rows are already ranked, so the first two admissible orders are the two
-% the table is actually asking the reader to choose between
-a = idx(1); b = idx(2);
-kLo = min(K(1), K(2)); kHi = max(K(1), K(2));
-if kLo == kHi, return; end
 
-dA = abs(rows(a).AICc - rows(b).AICc);
-dB = abs(rows(a).BIC  - rows(b).BIC);
-thr = options.OrderLRTThreshold;
 if force
-    why = sprintf(['requested with OrderLRT=true (AICc gap %.2f, BIC gap ' ...
-        '%.2f)'], dA, dB);
-    doLRT = true; return
-end
-if dA <= thr && dB <= thr
-    why = sprintf('within %.3g on both AICc (%.2f) and BIC (%.2f)', thr, dA, dB);
-elseif dB <= thr
-    why = sprintf('separated by %.2f on AICc but only %.2f on BIC', dA, dB);
-elseif dA <= thr
-    why = sprintf('separated by %.2f on BIC but only %.2f on AICc', dB, dA);
+    Ks = unique(K);
+    why = sprintf('requested with OrderLRT=true, over every admissible order');
 else
-    return
+    % rows are ranked, so idx(1) is the best admissible order
+    bestA = rows(idx(1)).AICc; bestB = rows(idx(1)).BIC;
+    thr = options.OrderLRTThreshold;
+    keep = false(1, numel(idx));
+    for i = 1:numel(idx)
+        dA = abs(rows(idx(i)).AICc - bestA);
+        dB = abs(rows(idx(i)).BIC  - bestB);
+        keep(i) = (dA <= thr) || (dB <= thr);
+    end
+    Ks = unique(K(keep));
+    if numel(Ks) < 2, return; end
+    why = sprintf(['K=%s are all within %.3g of the best on AICc or BIC, ' ...
+        'so the table cannot say which order the data support'], ...
+        strtrim(sprintf('%d ', Ks)), thr);
 end
-doLRT = true;
+if numel(Ks) < 2, return; end
+Ks = sort(Ks);
+rungs = [Ks(1:end-1).', Ks(2:end).'];
 end
 
 function d = retainedData(raw, xmin, dt, mode)
