@@ -182,6 +182,7 @@ arguments
     options.SamplingInterval (1,1) double = NaN
     options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
     options.Shape (1,1) double = NaN
+    options.Shapes double = []
     options.UpperBound (1,1) double = NaN
     options.MinLocationGap (1,1) double {mustBePositive} = 1e-3
     options.MinLocationSpanRatio (1,1) double {mustBeNonnegative} = 0.05
@@ -621,6 +622,53 @@ switch name
         M.starts = @(d,xm,ns) [log(mean(d)) 0; ...
                                log(mean(d))+randn(max(ns-1,1),1)*0.8, randn(max(ns-1,1),1)*0.6];
 
+    case 'hyper_erlang'
+        % HYPER-ERLANG: sum_j q_j * Erlang(m_j, lambda_j), integer m_j.
+        %
+        % The exponential-native way to get a NON-MONOTONE hazard. A
+        % hyperexponential arranges its phases in PARALLEL -- enter one of
+        % K states, leave at that state's own rate -- and that topology
+        % forces a completely monotone hazard at every K. An Erlang
+        % arranges phases in SERIES, must pass through m stages, and its
+        % hazard RISES. Allow both and the mixture hazard can fall, rise
+        % and fall again while every parameter is still a rate.
+        %
+        % It NESTS the hyperexponential exactly: Shapes = ones(1,K) IS
+        % FitHyperexponentialMLE at order K, to the digit. So "are
+        % memoryless states enough?" becomes a constraint on this model
+        % rather than a comparison between two of them.
+        %
+        % Phase-type of order sum(m_j), so it keeps a Markov reading: an
+        % Erlang branch with m=2 says a bout in that branch passes through
+        % two sequential sub-stages before it can end -- a refractory or
+        % cumulative process, not a memoryless one. Hyper-Erlangs are dense
+        % in the distributions on [0,inf) (Tijms 1994), so a hyper-Erlang
+        % that still will not fit is telling you something structural.
+        %
+        % NOTE an order-2 phase-type cannot hump at all -- PH(2) hazards
+        % are monotone -- so the smallest useful shape vector for a humped
+        % hazard has sum(m_j) >= 3.
+        if isempty(options.Shapes) || any(options.Shapes < 1) ...
+                || any(options.Shapes ~= round(options.Shapes))
+            error('FitTruncatedDiscreteMLE:ShapesRequired', ...
+                ['Model "hyper_erlang" requires Shapes, a vector of ' ...
+                 'positive INTEGER stage counts, one per component. ' ...
+                 'Shapes=ones(1,K) reproduces the K-component ' ...
+                 'hyperexponential; give one component m>=2 for a rising ' ...
+                 'hazard contribution.']);
+        end
+        mm = sort(options.Shapes(:).');          % non-decreasing, see unpack
+        J  = numel(mm);
+        M.ParamNames = heParamNames(mm);
+        M.nPar = 2*J - 1;                        % J rates + J weights, sum=1
+        M.unpack = @(z) heUnpack(z, mm);
+        M.valid  = @(th) heValid(th, J);
+        M.cdf    = @(t,th) heCDF(t, th, mm);
+        M.sf     = @(t,th) heSF(t, th, mm);
+        M.logpdf = @(t,th) heLogPdf(t, th, mm);
+        M.starts = @(d,xm,ns) heStarts(d, mm, ns);
+        M.guard  = @(th,xm,o,dg) heGuard(th, mm, o, dg);
+
     case 'weibull_mix'
         % TWO-COMPONENT WEIBULL MIXTURE, for a NON-MONOTONE HAZARD.
         %
@@ -731,6 +779,138 @@ s = [log(k0), log(max(v/m,eps)), log(max(xmin,eps)); ...
      log(0.5), log(max(m,eps)),  log(max(xmin/2,eps)); ...
      bsxfun(@plus, [log(k0) log(max(v/m,eps)) log(max(xmin,eps))], ...
             randn(max(ns-2,1),3).*[0.9 0.9 1.2])];
+end
+
+function nm = heParamNames(mm)
+J = numel(mm);
+nm = cell(1, 2*J - 1);
+for j = 1:J, nm{j} = sprintf('rate%d_m%d', j, mm(j)); end
+for j = 1:J-1, nm{J+j} = sprintf('q%d', j); end
+nm{2*J-1} = sprintf('q%d', J);
+nm = nm(1:2*J-1);
+end
+
+function th = heUnpack(z, mm)
+%HEUNPACK z -> [rate1..rateJ, q1..qJ]. Weights by softmax with the last
+%logit pinned at 0, so sum(q)=1 holds by construction and only J-1 of them
+%are free -- the same device the hyperexponential uses in q coordinates.
+%
+% Components are ordered by (shape, rate). Shapes arrive sorted, so this
+% only permutes within equal-shape blocks -- which is exactly where the
+% label switching lives, since two components sharing a shape are
+% exchangeable and the optimizer would otherwise return whichever of the
+% equivalent optima it reached.
+J = numel(mm);
+rates = exp(z(1:J));
+if J == 1
+    q = 1;
+else
+    logits = [z(J+1:2*J-1), 0];
+    mx = max(logits);
+    e = exp(logits - mx);
+    q = e / sum(e);
+end
+[~, ord] = sortrows([mm(:), rates(:)], [1 2]);
+th = [rates(ord), q(ord)];
+end
+
+function ok = heValid(th, J)
+ok = all(isfinite(th)) && all(th(1:J) > 0) && all(th(J+1:end) >= 0) ...
+     && abs(sum(th(J+1:end)) - 1) < 1e-8;
+end
+
+function S = heSF(t, th, mm)
+J = numel(mm); t = max(t, 0);
+S = zeros(size(t));
+for j = 1:J
+    S = S + th(J+j) * gammainc(th(j)*t, mm(j), 'upper');
+end
+end
+
+function F = heCDF(t, th, mm)
+% Computed from the lower branch directly rather than as 1-S, so the
+% engine's median split gets an accurate small-probability value at the
+% bottom of the range instead of a cancellation.
+J = numel(mm); t = max(t, 0);
+F = zeros(size(t));
+for j = 1:J
+    F = F + th(J+j) * gammainc(th(j)*t, mm(j), 'lower');
+end
+end
+
+function lp = heLogPdf(t, th, mm)
+%HELOGPDF Log density by logsumexp. Components of a hyper-Erlang differ by
+%orders of magnitude over most of the range -- a fast branch contributes
+%nothing at long durations and vice versa -- so summing densities directly
+%underflows one away.
+J = numel(mm); t = max(t(:), realmin);
+L = zeros(numel(t), J);
+for j = 1:J
+    qj = th(J+j);
+    if qj <= 0
+        L(:,j) = -Inf;
+    else
+        L(:,j) = log(qj) + mm(j)*log(th(j)) + (mm(j)-1)*log(t) ...
+                 - th(j)*t - gammaln(mm(j));
+    end
+end
+mx = max(L, [], 2);
+lp = mx + log(sum(exp(L - repmat(mx, 1, J)), 2));
+lp(~isfinite(mx)) = -Inf;
+lp = reshape(lp, size(t));
+end
+
+function st = heStarts(d, mm, ns)
+%HESTARTS Rates spread across the data's own timescales.
+% An Erlang branch with m stages has mean m/rate, so its rate start is
+% scaled by m -- otherwise a 3-stage branch starts three times too slow and
+% the multistart wastes its budget walking there.
+ds = sort(d(:));
+q = @(p) max(ds(max(1, min(numel(ds), round(p*numel(ds))))), realmin);
+J = numel(mm);
+anchors = zeros(1, J);
+for j = 1:J
+    p = (j - 0.5) / J;                    % spread over the quantiles
+    anchors(j) = log(mm(j) / q(p));       % rate = stages / typical duration
+end
+base = [anchors, zeros(1, J-1)];
+extra = max(ns-1, 1);
+sc = [repmat(0.9, 1, J), repmat(0.7, 1, J-1)];
+st = [base; repmat(base, extra, 1) + randn(extra, 2*J-1) .* repmat(sc, extra, 1)];
+end
+
+function diag_ = heGuard(th, mm, options, diag_)
+%HEGUARD The same two failures as any mixture: a component nobody is in,
+%and two components that have become one.
+J = numel(mm);
+q = th(J+1:end);
+diag_.MixtureWeight = min(q);
+nEff = diag_.n * min(q);
+diag_.MixtureMinCount = nEff;
+if nEff < options.MinMixtureCount
+    diag_.GuardOK = false;
+    msg = sprintf(['a hyper-Erlang component holds only %.2f of the %d ' ...
+        'observations (weight %.4g), so its rate is not estimated and the ' ...
+        'parameter count the information criteria charge is wrong. Drop a ' ...
+        'component, or use the shape vector that fits.'], nEff, diag_.n, min(q));
+    diag_.Recommendation = msg;
+    warning('FitTruncatedDiscreteMLE:MixtureComponentEmpty', '%s', msg);
+    return
+end
+for a = 1:J-1
+    if mm(a) == mm(a+1) && abs(log(th(a+1)/th(a))) < 0.05
+        diag_.GuardOK = false;
+        msg = sprintf(['two hyper-Erlang components share a shape (m=%d) ' ...
+            'and have converged on the same rate (%.6g vs %.6g), so their ' ...
+            'weights are unidentified -- mass slides between the twins ' ...
+            'with no change in likelihood and the optimum is a ridge, not ' ...
+            'a point. Use fewer components at that shape.'], ...
+            mm(a), th(a), th(a+1));
+        diag_.Recommendation = msg;
+        warning('FitTruncatedDiscreteMLE:MixtureCollapsed', '%s', msg);
+        return
+    end
+end
 end
 
 function th = weibullMixUnpack(z)
