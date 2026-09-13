@@ -185,6 +185,7 @@ arguments
     options.UpperBound (1,1) double = NaN
     options.MinLocationGap (1,1) double {mustBePositive} = 1e-3
     options.MinLocationSpanRatio (1,1) double {mustBeNonnegative} = 0.05
+    options.MinMixtureCount (1,1) double {mustBeNonnegative} = 5
     options.nStarts (1,1) double {mustBeInteger,mustBePositive} = 24
     options.RandomSeed = []
     options.MaxIter (1,1) double {mustBeInteger,mustBePositive} = 2000
@@ -259,6 +260,7 @@ end
 diag_.nAtXmin = nnz(data == xmin);
 diag_.XminEqualsDataMin = (min(data) == xmin);
 diag_.DataSpan = max(data) - xmin;   % used by the pearson3 location guard
+diag_.n = n;                         % used by the mixture weight guard
 diag_.LooksGridded = all(abs(data/dt - round(data/dt)) < 1e-9);
 
 uData = unique(data);
@@ -476,6 +478,7 @@ d = struct('nNonFinite', 0, 'nBelowXmin', 0, 'nAtXmin', 0, ...
     'GridSpacing', NaN, 'GridMismatch', false, 'nDistinctData', 0, ...
     'nDistinctOnGrid', 0, 'LocationGap', NaN, 'SupportCoverage', NaN, ...
     'TailFraction', NaN, 'DataSpan', NaN, 'LocationSpanRatio', NaN, ...
+    'n', 0, 'MixtureWeight', NaN, 'MixtureMinCount', NaN, ...
     'GuardOK', true, ...
     'Recommendation', '');
 end
@@ -618,6 +621,45 @@ switch name
         M.starts = @(d,xm,ns) [log(mean(d)) 0; ...
                                log(mean(d))+randn(max(ns-1,1),1)*0.8, randn(max(ns-1,1),1)*0.6];
 
+    case 'weibull_mix'
+        % TWO-COMPONENT WEIBULL MIXTURE, for a NON-MONOTONE HAZARD.
+        %
+        % Every other family here has a monotone hazard, and a
+        % hyperexponential has a strictly decreasing one at ANY order --
+        % f(t) = sum q_j lam_j exp(-lam_j t) is a sum of decreasing terms,
+        % so no number of exponential components can produce a hump. Data
+        % whose hazard falls, rises, then falls again are therefore outside
+        % all of it by construction rather than by evidence, and that is
+        % what per0 DD WAKE bouts do: hazard 1.2e-2 at 2 s falling to
+        % 1.1e-3 by 70 s, rising to 1.65e-3 near 500 s, then falling away
+        % past 1000 s.
+        %
+        % This reaches all three regimes with two components: shape1 < 1
+        % gives the steep early decline, shape2 > 1 contributes the rising
+        % middle, and whichever component is heavier-tailed dominates again
+        % at the top. An exponential first component cannot do it -- its
+        % hazard is flat, so the mixture would START flat rather than
+        % falling tenfold.
+        %
+        % It NESTS the useful special cases, which makes each a testable
+        % hypothesis rather than a separate fit: shape1=shape2=1 is the
+        % 2-component hyperexponential, shape1=1 is exponential + Weibull,
+        % and identical components are a single Weibull. Because shape=1 is
+        % an INTERIOR point of shape>0 and the model stays identified
+        % there, testing shape2=1 is a REGULAR hypothesis -- ordinary
+        % chi2(1) applies, unlike the mixture-order question, which needs
+        % HYPEREXPONENTIALLRT.
+        M.ParamNames = {'w1','scale1','shape1','scale2','shape2'};
+        M.nPar = 5;
+        M.unpack = @(z) weibullMixUnpack(z);
+        M.valid  = @(th) all(isfinite(th)) && th(1) > 0 && th(1) < 1 ...
+                         && all(th(2:5) > 0);
+        M.cdf    = @(t,th) 1 - weibullMixSF(t, th);
+        M.sf     = @(t,th) weibullMixSF(t, th);
+        M.logpdf = @(t,th) weibullMixLogPdf(t, th);
+        M.starts = @(d,xm,ns) weibullMixStarts(d, ns);
+        M.guard  = @weibullMixGuard;
+
     case 'beta'
         if isnan(options.UpperBound) || ~(options.UpperBound > xmin)
             error('FitTruncatedDiscreteMLE:UpperBoundRequired', ...
@@ -689,6 +731,100 @@ s = [log(k0), log(max(v/m,eps)), log(max(xmin,eps)); ...
      log(0.5), log(max(m,eps)),  log(max(xmin/2,eps)); ...
      bsxfun(@plus, [log(k0) log(max(v/m,eps)) log(max(xmin,eps))], ...
             randn(max(ns-2,1),3).*[0.9 0.9 1.2])];
+end
+
+function th = weibullMixUnpack(z)
+%WEIBULLMIXUNPACK Unconstrained z to [w1 scale1 shape1 scale2 shape2].
+% Components are SORTED by scale. A mixture is invariant to relabelling
+% its components, so without a rule the optimizer drifts between two
+% equivalent optima, the multistart returns whichever it happened to land
+% on, and the standard errors describe a parameter whose identity changes
+% between runs.
+w = 1 / (1 + exp(-z(1)));
+sc = [exp(z(2)), exp(z(4))];
+sh = [exp(z(3)), exp(z(5))];
+if sc(1) > sc(2)
+    sc = sc([2 1]); sh = sh([2 1]); w = 1 - w;
+end
+th = [w, sc(1), sh(1), sc(2), sh(2)];
+end
+
+function S = weibullMixSF(t, th)
+t = max(t, 0);
+S = th(1) * exp(-(t/th(2)).^th(3)) + (1-th(1)) * exp(-(t/th(4)).^th(5));
+end
+
+function lp = weibullMixLogPdf(t, th)
+%WEIBULLMIXLOGPDF Log density by logsumexp, not log(sum(exp)).
+% One component is routinely many orders of magnitude below the other over
+% part of the range -- that is the point of a heterogeneous mixture -- so
+% summing the densities directly lets the smaller one underflow the larger
+% away and loses the very structure being fitted.
+t = max(t, realmin);
+l1 = log(th(1))     + log(th(3)) - log(th(2)) ...
+     + (th(3)-1)*(log(t)-log(th(2))) - (t/th(2)).^th(3);
+l2 = log(1-th(1))   + log(th(5)) - log(th(4)) ...
+     + (th(5)-1)*(log(t)-log(th(4))) - (t/th(4)).^th(5);
+m = max(l1, l2);
+lp = m + log(exp(l1-m) + exp(l2-m));
+lp(~isfinite(m)) = -Inf;      % both components dead here
+end
+
+function st = weibullMixStarts(d, ns)
+%WEIBULLMIXSTARTS Starts must BRACKET shape 1 in both components.
+% The whole reason for this family is a hazard that falls and then rises,
+% which needs shape < 1 in one component and shape > 1 in the other. Starts
+% clustered on one side of 1 leave the optimizer to cross a region where
+% the likelihood barely moves, and it frequently does not.
+ds = sort(d(:));
+q = @(p) ds(max(1, min(numel(ds), round(p*numel(ds)))));
+lo = log(max(q(0.25), realmin));
+hi = log(max(q(0.90), realmin));
+base = [0, lo, log(0.7), hi, log(1.6)];
+extra = max(ns-1, 1);
+jit = randn(extra, 5) .* repmat([0.8 0.9 0.45 0.9 0.45], extra, 1);
+st = [base; repmat(base, extra, 1) + jit];
+end
+
+function diag_ = weibullMixGuard(th, xmin, options, diag_)
+%WEIBULLMIXGUARD A mixture that has stopped being a mixture.
+% Two ways for five parameters to describe a one-component model, and in
+% both the extra parameters are unidentified and the information matrix is
+% singular, so the standard errors are meaningless and the parameter count
+% the information criteria charge is wrong:
+%   the weight has gone to a boundary, leaving one component carrying
+%   everything -- judged against sample size, since a component holding
+%   3 of 4000 observations is not estimated either;
+%   the two components have converged on the same scale AND shape, which
+%   is a single Weibull along a flat ridge, mass sliding freely between
+%   the twins.
+w = th(1);
+diag_.MixtureWeight = w;
+nEff = diag_.n * min(w, 1-w);
+diag_.MixtureMinCount = nEff;
+sameScale = abs(log(th(4)/th(2))) < 0.05;
+sameShape = abs(log(th(5)/th(3))) < 0.05;
+if nEff < options.MinMixtureCount
+    diag_.GuardOK = false;
+    msg = sprintf(['one mixture component holds only %.2f of the %d ' ...
+        'observations (weight %.4g), so it is not estimated: this is a ' ...
+        'single Weibull carrying five parameters, three of them ' ...
+        'unidentified. Prefer the 1-component weibull, whose parameter ' ...
+        'count the information criteria will charge correctly.'], ...
+        nEff, diag_.n, w);
+    diag_.Recommendation = msg;
+    warning('FitTruncatedDiscreteMLE:MixtureComponentEmpty', '%s', msg);
+elseif sameScale && sameShape
+    diag_.GuardOK = false;
+    msg = sprintf(['the two mixture components have converged on the same ' ...
+        'law (scale %.6g vs %.6g, shape %.4g vs %.4g), so the weight is ' ...
+        'unidentified -- mass slides between the twins with no change in ' ...
+        'likelihood, and the optimum is a flat ridge rather than a ' ...
+        'point. Prefer the 1-component weibull.'], ...
+        th(2), th(4), th(3), th(5));
+    diag_.Recommendation = msg;
+    warning('FitTruncatedDiscreteMLE:MixtureCollapsed', '%s', msg);
+end
 end
 
 function diag_ = pearson3Guard(th, xmin, options, diag_)
