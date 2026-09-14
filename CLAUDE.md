@@ -18,7 +18,8 @@ conditions on `T >= xmin`.
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. `pearson3` and `beta` are **opt-in**, not part of a default run. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
-| `test_*.m` (5 files) | 119 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
+| `BoutHazard.m` | Life-table hazard with Wilson bands. Does NOT rank models — it decides whether a whole FAMILY can work, by asking whether the hazard rises. |
+| `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
 
 ## Conventions that are not optional
@@ -159,6 +160,7 @@ test_FitHyperexponentialMLE       % 26
 test_FitExponentiatedWeibullMLE   % 23
 test_CompareBoutModels            % 29
 test_HyperexponentialLRT          % 13
+test_BoutHazard                   % 10
 ```
 
 **In MATLAB, run them by name from this directory.** Check `which
