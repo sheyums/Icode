@@ -256,8 +256,29 @@ if known; real use would refit it per dataset, which this does not capture.
 
 Both defects are addressed in 2371913 (own bins per replicate, sampler grid
 shift). The `RiseNullP` values in the table above (0.058, 0.156) are from
-4f49911, BEFORE that fix; `RiseNullP` at 2371913 on these bouts has not yet
-been measured, and should be checked against row 1.
+4f49911, BEFORE that fix. **At 2371913 on these bouts** (same settings,
+NullReplicates=999, RandomSeed=1):
+
+| | 16 bins | 20 bins |
+| --- | --- | --- |
+| `RiseNullP` | **0.010** | **0.068** |
+| null ratio median / 95th pct | 1.136 / 1.285 | 1.186 / 1.390 |
+| row 1 above (independent 999 datasets) | p 0.019, 1.138 / 1.303 | p 0.057, 1.184 / 1.392 |
+| `NonMonotone` | 1 | 0 |
+
+The fixed test agrees with row 1 to within Monte Carlo error (differences 0.009
+and 0.011, about 1.5 and 1.1 standard errors of a difference between two
+999-draw estimates), and the null distributions match. Trough, peak,
+`RiseRatio` and `RiseDisjoint` are unchanged from the table above.
+
+**Open, not decided: the bin count decides the side of 0.05.** Same data, same
+null, same statistic: p = 0.010 at 16 bins, 0.068 at 20. Choosing the bin count
+after seeing these would be selecting the analysis on its outcome. Options on
+the table: report the rise as supported but bin-sensitive across a set of bin
+counts fixed IN ADVANCE, reporting every one rather than the minimum; or
+pre-specify a single count by a rule; or a statistic that does not bin. None
+has been run. The structural argument above -- no hyperexponential can hump,
+and at k = 5 the series branch buys 18.70 nats -- does not rest on this p-value.
 
 **`weibull_mix` fit-test bootstrap: still running.** Observed G = 50.69 on 40
 bins, df [34, 39], chi-square p in [0.0327, 0.0995]. Staged rule: 199
