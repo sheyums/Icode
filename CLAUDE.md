@@ -103,6 +103,13 @@ one is a scalar, the other a curve.
   actually bites — and those are the small-`x` elements where the tail
   converges in a few terms, so the accurate branch is also the rare and cheap
   one.
+- **The same seed is NOT the same data across implementations.** `rng(25)`
+  then `rand` gives different draws in MATLAB and Octave, and a generator that
+  rejection-samples diverges on the first rejection. So a log-likelihood
+  measured in one and compared against the other is comparing two datasets, not
+  two fitters. This produced a "77-nat" gap that was really 13 once both sides
+  were measured on the same sample. Cross-platform claims need the same numbers
+  computed twice, or the data written to a file and read by both.
 - **Octave is not a proxy for MATLAB.** `*_oct.m` twins are local scaffolding
   (gitignored, regenerable) used for development. Octave has accepted three
   things MATLAB rejects: growing a struct array from `struct([])`,
