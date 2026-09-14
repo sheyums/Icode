@@ -10,6 +10,52 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   which candidate is least bad), and walks down the ranking until one
 %   passes. Returns the whole table, not just the winner.
 %
+%   THIS IS STEP 2 OF THREE, AND THE ORDER MATTERS.
+%
+%   1. LOOK AT THE HAZARD FIRST -- BOUTHAZARD. It decides which families
+%      are ADMISSIBLE, which no information criterion can: they rank the
+%      candidates you thought of. A hazard that falls and then RISES
+%      excludes, by construction rather than by evidence, every
+%      hyperexponential at every order (a sum of decreasing exponentials
+%      is decreasing), every other monotone family here, and exp_weibull
+%      (one turning point at most). It also rules out pooling individuals
+%      as the explanation, since mixing can only make a hazard fall
+%      faster. Skipping this step is how you get a confident fit from a
+%      family the data had already excluded.
+%
+%   2. THIS FUNCTION ranks what remains by likelihood, then tests whether
+%      the winner FITS. Read the output in this order:
+%         R.Skipped        a model that never competed is not a model that
+%                          lost -- usually a mixture whose guard rejected
+%                          every configuration, which is a statement about
+%                          the data
+%         R.Table          ranking, Degenerate, Reason
+%         R.Selected,
+%         R.SelectionPath  the walk-down STOPS at the first row that
+%                          passes, so rows below the winner are UNTESTED,
+%                          not accepted
+%
+%   3. CHECK THE WINNER BEFORE BELIEVING IT, via R.Fits(i).Full:
+%         Diagnostics.GuardOK        false = parameters unidentified,
+%                                    whatever the likelihood says
+%         Diagnostics.MixtureMinCount  observations in the smallest branch
+%         Diagnostics.TailFraction   S(xmin), the fraction of the
+%                                    untruncated law that survived
+%         q, not Theta's w           w is extrapolation below xmin
+%         branch MEANS, not stage counts -- m/lambda is identified, the
+%                                    integer m usually is not (ShapeSweep)
+%         k, not numel(Params)       mixtures print one number more than
+%                                    they charge
+%
+%      And when two orders are close, TEST rather than rank:
+%      HYPEREXPONENTIALLRT simulates the null, because the mixture-order
+%      LRT is non-regular and no chi-square applies. This function
+%      triggers it automatically when either criterion separates
+%      neighbouring orders by less than OrderLRTThreshold.
+%
+%      A comparison at MATCHED k is the strongest form available: the
+%      penalties cancel and the difference is pure likelihood.
+%
 %   THE LIBRARY
 %     hyperexponential K=1..MaxComponents   FITHYPEREXPONENTIALMLE, one row
 %                                           per K (see FLATTENING below)
