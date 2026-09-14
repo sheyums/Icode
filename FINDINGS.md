@@ -128,6 +128,7 @@ excluded requires running that bootstrap deliberately.
 `MixtureMinCount` = 315 of 3989 bouts in the smallest branch, sixty times the
 floor -- worth quoting given that the phantom-component bug below concerned a
 branch holding 2.5e-18 of its data while looking respectable.
+
 **The mechanism, and why it needs a series branch.** Branches 1 and 3 have
 nearly the same mean -- 660 s against 720 s -- and opposite hazard shapes. The
 9.5 s branch makes the hazard high at 2 s and then depletes; the Erlang branch's
