@@ -16,7 +16,7 @@ conditions on `T >= xmin`.
 | `FitHyperErlangMLE.m` | Mixture of Erlangs, shapes `[1..1 m]` swept over m. The exponential-native route to a **non-monotone hazard**. The sweep is warm-started (`WarmStart`, `SweepStarts`) via the engine's `StartZ`; cold starts are reduced, never removed, so a warm start can only add a candidate optimum. Refuses rather than return a fit whose guard rejected every shape. |
 | `FitWeibullMixtureMLE.m` | Two-component Weibull mixture; the other non-monotone-hazard family. |
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
-| `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. |
+| `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. `pearson3` and `beta` are **opt-in**, not part of a default run. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
 | `test_*.m` (5 files) | 117 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
@@ -54,6 +54,16 @@ what `M.sf`/`M.cdf`/`M.guard` are written in and the only thing safe to feed
 back into the model. `H.Params` is what gets *reported*, and for a mixture it is
 a transform of `Theta` with its own delta-method SEs. `nReport` exceeds `nPar`
 there, because `sum(q)=1` leaves one weight determined but still worth printing.
+
+**`pearson3` is opt-in: name it in `Models=` or it is not fitted.** It walked a
+ridge to the optimizer's evaluation budget on every start -- 516 s for THREE
+starts on 1500 bouts, so ~70 min for the engine's 26 -- and its own guard then
+rejected the result, so the default library was spending most of its compute on
+a row that could not be selected. `Models={'pearson3'}` still fits it, measured
+at 35 s for n=120 in Octave, and `Degenerate` came back 0 there: the ridge
+needs enough data to become the attractor, so do not read the guard as
+unconditional. Fit it deliberately when you want to see the ridge -- on 1500
+bouts the REJECTED fit outscored every legitimate model (`FINDINGS.md`).
 
 **A model absent from `R.Table` did not necessarily lose.** `R.Skipped` lists
 candidates that never entered the comparison, with the reason — usually a
