@@ -50,7 +50,7 @@ excluded, its location having run up against xmin at 299.852; note its AICc
 would have placed it third, above gamma, so the gate mattered. `K=4` and `K=5`
 were excluded as collapsed or non-identified, `K=4` with logL identical to K=3.
 
-## per0, DD, 3989 wake bouts (xmin = 2 s, dt = 1 s) — NO MODEL YET
+## per0, DD, 3989 wake bouts (xmin = 2 s, dt = 1 s)
 
 Recorded because the observation is solid even though the model is not.
 
@@ -74,12 +74,72 @@ construction rather than by evidence:
 
 Sleep bouts show no such hump, so the asymmetry is wake-specific.
 
-`hyper_erlang` and `weibull_mix` were added for this. **Both were added AFTER
-the original library failed on these same bouts**, so any G-test p-value on a
-winner among them is optimistic — the family was chosen having seen the data.
-The hazard argument above is the defensible claim; a passing fit-test on the
-new families is not, and should be stated as such or re-tested on held-out
-flies.
+`hyper_erlang` and `weibull_mix` were added for this.
+
+### The model: hyper-Erlang, three branches, one of them in series
+
+Selected model: **`hyper_erlang`, shapes [1 1 5]**, k = 5, logL = -29309.219.
+
+| branch | q, observed | mean | kind |
+| --- | --- | --- | --- |
+| 1 | 80.7% (SE 2.1%) | 660 s | memoryless, rate 1.515e-3 |
+| 2 | 7.9% (SE 0.6%) | 9.5 s | memoryless, rate 0.1053 |
+| 3 | 11.4% (SE 1.9%) | 720 s | **5 sequential stages**, rate 6.949e-3 |
+
+- Goodness of fit: **G = 38.92 on 40 bins, df [34, 39], p in [0.258, 0.474]**.
+  Passes on both Chernoff-Lehmann bounds. Akaike weight 0.99886.
+- `weibull_mix` second at dAICc 13.55, itself ambiguous on the fit test
+  (G = 50.69, p in [0.033, 0.099]).
+- **The best hyperexponential is rejected**: K=2 at dAICc 34.04 with
+  G = 76.96, p ~ 1e-4. K=3 no better. Exactly as the hazard argument requires.
+- The step-down did NOT fire: J=3 was identified, and the row carries the bare
+  `hyper_erlang` name. `hyperexp K=4` was excluded, a component at the rate
+  ceiling (tau = 1 s).
+
+**The mechanism, and why it needs a series branch.** Branches 1 and 3 have
+nearly the same mean -- 660 s against 720 s -- and opposite hazard shapes. The
+9.5 s branch makes the hazard high at 2 s and then depletes; the Erlang branch's
+RISING hazard lifts it through the middle; that branch then dies off faster than
+the slow exponential (asymptotic rate 6.9e-3 against 1.5e-3), so the hazard falls
+back to the slow branch's constant. Two turning points, from three branches, none
+of which individually has one.
+
+**The fit reproduces the hazard it was never shown.** Computing h(t) from the
+fitted parameters alone gives a trough of 1.31e-3 at t = 126 s and a peak of
+1.74e-3 at t = 896 s, falling to 1.52e-3 by 4000 s -- against the 1.2e-2 at 2 s,
+1.1e-3 near 70 s, 1.65e-3 near 500 s read off the data. Nothing in the
+likelihood targeted the hazard, so this is a check rather than a restatement.
+
+### What must NOT be reported
+
+**Not "five stages".** The shape sweep is flat where it matters:
+
+    m:      1          2          3          4          5          6
+    logL:  -29327.92  -29312.11  -29310.06  -29309.29  -29309.22  -29309.48
+    gain:       +15.81     +2.05      +0.77      +0.075     -0.26
+
+A series branch is decisive -- m=1 to m=2 buys **15.8 nats**. Past m=3 the
+profile is flat, m=5 beats m=4 by 0.075 nats, and `H.k` charges nothing for the
+integer so no criterion penalised taking the largest. The defensible claim is
+**a series branch of at least two, and probably three or more, stages**.
+
+**The p-value is optimistic.** Both non-monotone families were added AFTER the
+original library failed on these same bouts, so p in [0.26, 0.47] is a fit test
+on a family chosen having seen this data. The hazard argument is what stands
+without qualification; the G test supports it and does not establish it.
+Re-testing on held-out flies is the fix, and has not been done.
+
+**Truncation is nearly harmless here, unlike the sleep bouts.**
+`TailFraction` = 0.989, so q = [0.807, 0.079, 0.114] against untruncated
+w = [0.793, 0.095, 0.111]. The 240x back-transform caution that governs the
+sleep result does not bite at xmin = 2 s -- but it is a property of THIS
+threshold, not a general reprieve.
+
+**Still outstanding:** `BoutHazard` on these bouts, to put Wilson bands on the
+empirical hump. The model predicts a rise of x1.33 between 126 s and 896 s. If
+`RiseCI` excludes 1 the family-exclusion argument stands on the data alone; if
+it does not, the model still wins on likelihood but the structural claim needs
+softening.
 
 ## Mixture weights: the guard has to see what the data see
 
