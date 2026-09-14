@@ -325,13 +325,27 @@ end
 % identical field names in identical order, which makeRow and makeRec
 % guarantee, and it behaves the same in both.
 rowsC = {}; fitsC = {}; nr = 0;
+heSeed = [];                  % the hyperexponential optimum at the
+                              % hyper-Erlang's order, once it exists
 for ci = 1:numel(cands)
     c = cands(ci);
     if options.Verbose
         fprintf('  fitting %s ...\n', c.Name);
     end
     try
-        out = c.Fit(eventseries, xmin);
+        % hyper_erlang at shapes [1 1 ... 1] IS the hyperexponential at
+        % that order -- the same model, not a similar one -- and the
+        % hyperexponential rows have already been fitted by the time this
+        % candidate runs. Handing that optimum over as the m=1 starting
+        % point therefore costs nothing and starts the sweep at an answer
+        % instead of at a quantile guess. If the order was not fitted, or
+        % was degenerate, the seed is simply absent and the sweep starts
+        % cold as before.
+        xo = {};
+        if strcmp(c.Name, 'hyper_erlang') && ~isempty(heSeed)
+            xo = {'SeedRates', heSeed.Rates, 'SeedWeights', heSeed.Weights};
+        end
+        out = c.Fit(eventseries, xmin, xo);
     catch err
         if options.Verbose
             fprintf('  %-22s skipped: %s\n', c.Name, err.message);
@@ -346,6 +360,14 @@ for ci = 1:numel(cands)
         nr = nr + 1;
         rowsC{nr} = out(oi).Row;
         fitsC{nr} = out(oi).Fit;
+        if isempty(heSeed) && strcmp(out(oi).Row.Model, ...
+                sprintf('hyperexp K=%d', options.HyperErlangComponents)) ...
+                && ~out(oi).Row.Degenerate && ~isempty(out(oi).Fit.Full) ...
+                && isfield(out(oi).Fit.Full, 'Rates')
+            f = out(oi).Fit.Full;
+            heSeed = struct('Rates', f.Rates(:).', ...
+                            'Weights', f.WeightsObserved(:).');
+        end
         if options.Verbose
             reportRow(rowsC{nr});
         end
@@ -563,10 +585,10 @@ names = {}; fitters = {};
 
 mc = options.MaxComponents;
 names{end+1}   = 'hyperexponential';
-fitters{end+1} = @(d,x) fitHyperCand(d, x, mc, common);
+fitters{end+1} = @(d,x,xo) fitHyperCand(d, x, mc, common);
 
 names{end+1}   = 'exp_weibull';
-fitters{end+1} = @(d,x) fitEWCand(d, x, common);
+fitters{end+1} = @(d,x,xo) fitEWCand(d, x, common);
 
 % Engine-backed families. Column 3 holds extra options for that family.
 simple = { ...
@@ -590,7 +612,7 @@ end
 for i = 1:size(simple,1)
     nm = simple{i,1}; fh = simple{i,2}; ex = [common, simple{i,3}];
     names{end+1}   = nm;                                        %#ok<AGROW>
-    fitters{end+1} = @(d,x) fitSimpleCand(d, x, nm, fh, ex);     %#ok<AGROW>
+    fitters{end+1} = @(d,x,xo) fitSimpleCand(d, x, nm, fh, [ex, xo]); %#ok<AGROW>
 end
 
 cands = struct('Name', names, 'Fit', fitters);

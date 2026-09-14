@@ -136,6 +136,16 @@ function H = FitTruncatedDiscreteMLE(eventseries, xmin, modelName, options)
 %                       its much larger budget because it has up to 2K-1
 %                       parameters and a multimodal likelihood; copying
 %                       those caps here only wastes time.
+%   StartZ              extra starting points for the optimizer, one per
+%                       row, in its INTERNAL coordinates rather than the
+%                       reported parameters. Advanced: it exists so a
+%                       caller that has already fitted a neighbouring
+%                       model can say where the optimum is. They are tried
+%                       first and the model's own nStarts still run, so a
+%                       supplied start can only add a candidate optimum,
+%                       never suppress one. FITHYPERERLANGMLE uses it to
+%                       walk its shape sweep. A row of the wrong width is
+%                       an error; non-finite rows are dropped.
 %
 %   OUTPUT
 %   H.Model, H.ParamNames, H.Params, H.ParamSE, H.CovValid
@@ -188,6 +198,7 @@ arguments
     options.MinLocationSpanRatio (1,1) double {mustBeNonnegative} = 0.05
     options.MinMixtureCount (1,1) double {mustBeNonnegative} = 5
     options.nStarts (1,1) double {mustBeInteger,mustBePositive} = 24
+    options.StartZ double = []
     options.RandomSeed = []
     options.MaxIter (1,1) double {mustBeInteger,mustBePositive} = 2000
     options.MaxFunEvals (1,1) double {mustBeInteger,mustBePositive} = 4000
@@ -310,6 +321,28 @@ end
 % ------------------------------------------------------------------- fitting
 objfun = @(z) negLogLik(z, M, data, xmin, n_min, isDiscrete, dt, PENALTY);
 starts = M.starts(data, xmin, options.nStarts);
+
+% StartZ: caller-supplied starting points, tried FIRST and in addition to
+% the model's own. The coordinates are the optimizer's internal ones, not
+% the reported parameters -- this is a hook for a caller that has already
+% fitted a neighbouring model and knows where the optimum is, not a user
+% dial. FitHyperErlangMLE uses it to walk its shape sweep: the fit at m
+% stages is a short step from the fit at m-1 once the branch mean is held
+% fixed, so starting there converges in a fraction of the iterations a
+% cold start needs. Nothing is removed by supplying it -- the cold starts
+% still run -- so a warm start can only add a candidate optimum, never
+% hide one.
+if ~isempty(options.StartZ)
+    sz = options.StartZ;
+    if size(sz, 2) ~= size(starts, 2)
+        error('FitTruncatedDiscreteMLE:StartZWidth', ...
+            ['StartZ has %d columns but model "%s" optimizes over %d. ' ...
+             'StartZ is in the internal coordinates, one row per ' ...
+             'starting point.'], size(sz,2), M.Name, size(starts,2));
+    end
+    sz = sz(all(isfinite(sz), 2), :);
+    starts = [sz; starts];
+end
 
 optOptions = optimset('Display', 'off', 'MaxIter', options.MaxIter, ...
     'MaxFunEvals', options.MaxFunEvals, 'TolX', options.TolX, ...
@@ -828,7 +861,7 @@ function S = heSF(t, th, mm)
 J = numel(mm); t = max(t, 0);
 S = zeros(size(t));
 for j = 1:J
-    S = S + th(J+j) * gammainc(th(j)*t, mm(j), 'upper');
+    S = S + th(J+j) * erlangSFint(th(j)*t, mm(j));
 end
 end
 
@@ -839,7 +872,77 @@ function F = heCDF(t, th, mm)
 J = numel(mm); t = max(t, 0);
 F = zeros(size(t));
 for j = 1:J
-    F = F + th(J+j) * gammainc(th(j)*t, mm(j), 'lower');
+    F = F + th(J+j) * erlangCDFint(th(j)*t, mm(j));
+end
+end
+
+function S = erlangSFint(x, m)
+%ERLANGSFINT Erlang survival at INTEGER shape, with no special function.
+%   S = P(Poisson(x) <= m-1) = exp(-x) * sum_{j=0}^{m-1} x^j / j!, where
+%   x = lambda*t. This is the Erlang-Poisson identity, EXACT rather than
+%   an approximation, and it costs m terms -- m <= MaxShape, so at most a
+%   handful. The recursion p_j = p_{j-1}*x/j is the standard stable
+%   Poisson-pmf recursion: every term is positive, so nothing cancels and
+%   the relative error stays at rounding.
+%
+%   Why not gammainc: a hyper-Erlang's shapes are integers BY
+%   CONSTRUCTION -- that is the premise of the shape sweep -- while
+%   gammainc is a general incomplete gamma that cannot know it and pays
+%   for the general case on every call. In Octave it is interpreted, and
+%   measurement put one hyper-Erlang row at 379 s against 49 s for seven
+%   other families combined, with the cost nearly independent of n: it
+%   was per-CALL overhead, not per-observation work.
+x = max(x, 0);
+p = exp(-x);                    % the j = 0 term
+S = p;
+for j = 1:m-1
+    p = p .* x / j;
+    S = S + p;
+end
+S = min(max(S, 0), 1);
+end
+
+function F = erlangCDFint(x, m)
+%ERLANGCDFINT Erlang CDF at INTEGER shape: F = P(Poisson(x) >= m).
+%   Two branches, for the same reason heCDF exists at all -- so the
+%   engine's median split gets an accurate SMALL probability at the
+%   bottom of the range rather than a cancellation.
+%
+%   x < m: sum the upper tail DIRECTLY. Poisson terms peak at j ~ x, so
+%   with x < m they are already decreasing at j = m and the sum
+%   converges geometrically; the result is accurate even when it is
+%   1e-300, which 1 - S could never be.
+%   x >= m: then F >= 1/2 roughly, so forming it as 1 - S costs nothing,
+%   and S is the cheap m-term sum.
+x = max(x, 0);
+F = zeros(size(x));
+small = x < m;
+if any(small(:))
+    xs = x(small);
+    p = exp(-xs);
+    for j = 1:m
+        p = p .* xs / j;        % p is now the j = m term
+    end
+    s = p;
+    j = m;
+    % max(s(:), realmin) is the two-argument elementwise max, so the test
+    % is each term against ITS OWN running sum, and the loop runs until
+    % every element has converged on its own scale rather than on the
+    % vector's largest. Measured against an independent series expansion
+    % this branch holds ~1e-14 relative error down to F ~ 1e-69 -- better
+    % than Octave's own gammainc, which drifts to 1.5e-3 relative at
+    % x = 0.1, m = 8. Accuracy here is not incidental: these are the
+    % small bin probabilities at the bottom of the fitted range.
+    while j <= m + 1000
+        j = j + 1;
+        p = p .* xs / j;
+        s = s + p;
+        if all(p(:) <= eps * max(s(:), realmin)), break; end
+    end
+    F(small) = min(max(s, 0), 1);
+end
+if any(~small(:))
+    F(~small) = 1 - erlangSFint(x(~small), m);
 end
 end
 
@@ -855,8 +958,11 @@ for j = 1:J
     if qj <= 0
         L(:,j) = -Inf;
     else
+        % gammaln(m) for integer m is log((m-1)!), a sum of at most
+        % MaxShape-1 logs. Computed directly so the density, like the
+        % survival, makes no special-function call at all.
         L(:,j) = log(qj) + mm(j)*log(th(j)) + (mm(j)-1)*log(t) ...
-                 - th(j)*t - gammaln(mm(j));
+                 - th(j)*t - sum(log(1:mm(j)-1));
     end
 end
 mx = max(L, [], 2);

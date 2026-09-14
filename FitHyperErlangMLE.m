@@ -4,6 +4,8 @@ function H = FitHyperErlangMLE(eventseries, xmin, varargin)
 %   H = FITHYPERERLANGMLE(eventseries, xmin, SamplingInterval=dt, ...)
 %   H = FITHYPERERLANGMLE(..., Components=3, MaxShape=6)
 %   H = FITHYPERERLANGMLE(..., Shapes=[1 1 2])     one fixed shape vector
+%   H = FITHYPERERLANGMLE(..., WarmStart=true, SweepStarts=3)
+%   H = FITHYPERERLANGMLE(..., SeedRates=r, SeedWeights=q)
 %
 %   THE EXPONENTIAL-NATIVE WAY TO GET A NON-MONOTONE HAZARD. A
 %   hyperexponential arranges its phases in PARALLEL -- enter one of K
@@ -38,6 +40,22 @@ function H = FitHyperErlangMLE(eventseries, xmin, varargin)
 %   skip the sweep. H.ShapeSweep holds the log-likelihood at every m, so
 %   you can see whether the optimum is interior or stuck at an endpoint.
 %
+%   COST, AND THE WARM START. The sweep is MaxShape independent fits, each
+%   a full multistart, so at the engine's default it is MaxShape x 24
+%   optimizations of a 2J-1 parameter mixture to produce ONE row --
+%   measured at 379 s for m <= 4 against 49 s for seven other families
+%   combined. WarmStart=true (the default) chains them instead: the
+%   optimum at m-1 is carried into m with the series branch's rate
+%   rescaled by m/(m-1), which holds that branch's MEAN fixed, and only
+%   SweepStarts (default 3) cold starts are run alongside. The cold starts
+%   are reduced, never removed, so the warm point can only add a candidate
+%   optimum. Set WarmStart=false for the original independent sweep.
+%
+%   SeedRates/SeedWeights supply an external starting point for m=1 --
+%   COMPAREBOUTMODELS passes the hyperexponential fit it has already
+%   computed at the same order, which is the m=1 member of this very
+%   family and therefore free.
+%
 %   READ THE SWEEP, NOT ONLY THE AICc. The integer shape breaks the
 %   parameter count the information criteria assume: their penalties are
 %   derived for continuous parameters, and an integer one is not worth a
@@ -58,6 +76,7 @@ function H = FitHyperErlangMLE(eventseries, xmin, varargin)
 %   FITWEIBULLMIXTUREMLE, FITERLANGMLE.
 
 nComp = 3; maxShape = 6; fixedShapes = [];
+warmStart = true; sweepStarts = 3; seedRates = []; seedWeights = [];
 keep = true(1, numel(varargin));
 for ii = 1:numel(varargin)-1
     if ~(ischar(varargin{ii}) || isstring(varargin{ii})), continue; end
@@ -65,6 +84,10 @@ for ii = 1:numel(varargin)-1
         case 'components', nComp = varargin{ii+1};       keep(ii:ii+1) = false;
         case 'maxshape',   maxShape = varargin{ii+1};    keep(ii:ii+1) = false;
         case 'shapes',     fixedShapes = varargin{ii+1}; keep(ii:ii+1) = false;
+        case 'warmstart',  warmStart = varargin{ii+1};   keep(ii:ii+1) = false;
+        case 'sweepstarts',sweepStarts = varargin{ii+1}; keep(ii:ii+1) = false;
+        case 'seedrates',  seedRates = varargin{ii+1};   keep(ii:ii+1) = false;
+        case 'seedweights',seedWeights = varargin{ii+1}; keep(ii:ii+1) = false;
     end
 end
 passThrough = varargin(keep);
@@ -79,12 +102,48 @@ if ~isempty(fixedShapes)
 end
 
 best = []; bestM = NaN; sweep = nan(1, maxShape);
+prevZ = [];                      % the previous shape's optimum, in z
 for m = 1:maxShape
     shp = [ones(1, nComp-1), m];
     try
+        % WARM START. The fit at m stages is a short step from the fit at
+        % m-1 provided the branch MEAN is held fixed, because the mean is
+        % what the data determine: an Erlang(m, lam) branch has mean
+        % m/lam, so carrying lam forward unchanged would make the branch
+        % suddenly m/(m-1) times slower and throw away the step. Rescaling
+        % lam -> lam*m/(m-1) on the series branch moves the shape while
+        % leaving the fitted timescale where the likelihood put it.
+        %
+        % That the mean is the identified quantity and the stage count is
+        % not is not an assumption here -- it is what the engine's own
+        % test 26 measures, where data generated with m=3 are fitted at
+        % m=2 with the survival still within 0.015 of truth.
+        %
+        % The cold starts are REDUCED, not removed (sweepStarts of them),
+        % so the warm point is an addition to the search, not a
+        % substitute: an optimum somewhere else can still be found.
+        warm = {};
+        if warmStart
+            if m == 1 && ~isempty(seedRates) && numel(seedRates) == nComp
+                z0 = heZ(seedRates, seedWeights, nComp);
+                if ~isempty(z0), warm = {'StartZ', z0, 'nStarts', sweepStarts}; end
+            elseif m > 1 && ~isempty(prevZ)
+                z0 = prevZ;
+                z0(nComp) = z0(nComp) + log(m / (m-1));   % rates are logged
+                warm = {'StartZ', z0, 'nStarts', sweepStarts};
+            end
+        end
         Hm = FitTruncatedDiscreteMLE(eventseries, xmin, "hyper_erlang", ...
-            passThrough{:}, 'Shapes', shp);
+            passThrough{:}, warm{:}, 'Shapes', shp);
         sweep(m) = Hm.LogLik;
+        % Chain from this shape's optimum whether or not its GUARD passed:
+        % a guard-rejected fit is still the likelihood's maximum at that
+        % shape, and so still the best place to start the next one. Only
+        % the WINNER is filtered on the guard, below.
+        if Hm.Success
+            zc = heZ(Hm.Params(1:nComp), Hm.Params(nComp+1:2*nComp), nComp);
+            if ~isempty(zc), prevZ = zc; end
+        end
         % A shape whose fit the guard rejects must not win the sweep: its
         % likelihood is real but its parameters are not identified, so
         % picking it would report estimates that do not mean anything.
@@ -111,4 +170,25 @@ H.Model = 'hyper_erlang';
 H.Shapes = [ones(1, nComp-1), bestM];
 H.ShapeSweep = sweep;
 H.SelectedShape = bestM;
+end
+
+% ------------------------------------------------------------------------
+function z = heZ(rates, q, J)
+%HEZ Natural parameters -> the engine's internal coordinates for
+%"hyper_erlang": z = [log(rates), logits], the last logit pinned at 0 by
+%the softmax, exactly as heUnpack reads them. Returns empty if the point
+%cannot be expressed -- a vanished component has no finite logit, and a
+%start built from one would be a wall, not a hint.
+z = [];
+if numel(rates) ~= J || numel(q) ~= J, return; end
+rates = rates(:).'; q = q(:).';
+if ~all(isfinite(rates)) || ~all(rates > 0), return; end
+if ~all(isfinite(q)) || any(q <= 0), return; end
+q = q / sum(q);
+if J == 1
+    z = log(rates);
+else
+    z = [log(rates), log(q(1:J-1)) - log(q(J))];
+end
+if ~all(isfinite(z)), z = []; end
 end
