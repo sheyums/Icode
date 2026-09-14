@@ -686,7 +686,15 @@ switch name
                                log(mean(d))+randn(max(ns-1,1),1)*0.8, randn(max(ns-1,1),1)*0.6];
 
     case 'hyper_erlang'
-        % HYPER-ERLANG: sum_j q_j * Erlang(m_j, lambda_j), integer m_j.
+        % HYPER-ERLANG: sum_j w_j * Erlang(m_j, lambda_j), integer m_j.
+        %
+        %   f_j(t) = lam^m t^(m-1) exp(-lam t) / (m-1)!
+        %   S_j(t) = exp(-lam t) * sum_{i<m} (lam t)^i / i!     [erlangSFint]
+        %   S(t)   = sum_j w_j S_j(t),  F = 1 - S               [heSF, heCDF]
+        %
+        % mean m/lam per branch; the branch hazard rises from 0 to lam for
+        % m > 1 and is flat at lam for m = 1. The weights here are the
+        % UNTRUNCATED w; heReport converts them to observed q for output.
         %
         % The exponential-native way to get a NON-MONOTONE hazard. A
         % hyperexponential arranges its phases in PARALLEL -- enter one of
@@ -736,6 +744,14 @@ switch name
 
     case 'weibull_mix'
         % TWO-COMPONENT WEIBULL MIXTURE, for a NON-MONOTONE HAZARD.
+        %
+        %   S_i(t) = exp(-(t/a_i)^b_i),  a = scale, b = shape
+        %   f_i(t) = (b/a)(t/a)^(b-1) S_i(t)
+        %   S(t)   = w S_1(t) + (1-w) S_2(t),  F = 1 - S    [weibullMixSF]
+        %
+        % b = 1 is the exponential, b < 1 a decreasing component hazard,
+        % b > 1 an increasing one. w here is the UNTRUNCATED weight;
+        % wmReport converts to the observed q1/q2 for output.
         %
         % Every other family here has a monotone hazard, and a
         % hyperexponential has a strictly decreasing one at ANY order --

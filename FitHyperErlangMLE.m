@@ -7,6 +7,38 @@ function H = FitHyperErlangMLE(eventseries, xmin, varargin)
 %   H = FITHYPERERLANGMLE(..., WarmStart=true, SweepStarts=3)
 %   H = FITHYPERERLANGMLE(..., SeedRates=r, SeedWeights=q)
 %
+%   THE MODEL. Branch j is Erlang(m_j, lam_j) -- the time to pass through
+%   m_j independent exponential stages each of rate lam_j:
+%
+%       f_j(t) = lam_j^m_j t^(m_j-1) exp(-lam_j t) / (m_j - 1)!
+%       S_j(t) = exp(-lam_j t) * sum_{i=0}^{m_j-1} (lam_j t)^i / i!
+%
+%   with mean m_j/lam_j and variance m_j/lam_j^2. Its hazard RISES from 0
+%   to an asymptote of lam_j when m_j > 1, and is flat at lam_j when
+%   m_j = 1, where Erlang(1, lam) IS the exponential. Mixed over J branches
+%   with weights w summing to 1:
+%
+%       S(t) = sum_j w_j S_j(t),  f(t) = sum_j w_j f_j(t),  F = 1 - S
+%
+%   The S_j sum is finite and exact -- integer shape means no incomplete
+%   gamma is needed, which is both faster and more accurate in the tail
+%   (see erlangSFint in FITTRUNCATEDDISCRETEMLE).
+%
+%   WHAT IS MAXIMIZED is the LEFT-TRUNCATED likelihood of DISCRETE
+%   durations. With bin width dt and n_min = max(1, round(xmin/dt)), a bout
+%   of n bins contributes
+%
+%       P(N = n | N >= n_min) = [F(n*dt) - F((n-1)*dt)] / S((n_min-1)*dt)
+%
+%   and f(t)/S(xmin) in DistributionType="continuous" mode.
+%
+%   REPORTED PARAMETERS: [rate1_m<m1>, ..., rateJ_m<mJ>, q1, ..., qJ] --
+%   2J numbers while k = 2J-1, since sum(q) = 1 leaves one weight
+%   determined. Each rate's name carries its own stage count. The q are
+%   OBSERVED weights, q_j proportional to w_j * S_j(xmin), NOT the mixing
+%   weights w the likelihood is written in: H.Theta holds w, H.Params holds
+%   q, and on left-truncated data they are different numbers.
+%
 %   THE EXPONENTIAL-NATIVE WAY TO GET A NON-MONOTONE HAZARD. A
 %   hyperexponential arranges its phases in PARALLEL -- enter one of K
 %   states, leave at that state's own rate -- and that topology forces a
