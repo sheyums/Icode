@@ -53,24 +53,40 @@ end
 try
     rng(1, 'twister');
     lam = 1/500; xm = 100; dt = 1; n = 20000;
-    d = xm + round(-log(rand(n,1))/lam);
+    % Engine convention: a bout of k bins lies in ((k-1)dt, k dt], so
+    % k = ceil(x/dt) and the shortest attainable duration is xm. round()
+    % would put each bout in the NEAREST bin, half a step off, which biases
+    % the first bin's rate -- measured at a 7.4% miss rate there against
+    % 5% elsewhere.
+    d = xm - dt + ceil(-log(rand(n,1))/lam/dt)*dt;
     H = bh(d, xm, 'SamplingInterval', dt, 'NumBins', 12);
     rel = H.Hazard / lam;
-    covered = sum(H.Lower <= lam & lam <= H.Upper);
+    nb = numel(H.Hazard);
+    misses = nb - sum(H.Lower <= lam & lam <= H.Upper);
+    % A 95% band misses its own parameter 5% of the time BY DESIGN, so the
+    % number of misses over nb bins is Binomial(nb, 0.05) -- not zero, and
+    % not "at most one". An earlier version asserted at most one miss in
+    % 11 bins, which fails for 10.3% of perfectly calibrated datasets
+    % (measured over 1000 seeds; P(>=2 misses) = 0.102 for independent
+    % bands). MATLAB's seed 1 happened to land there and Octave's did not.
+    % The rule is the binomial's own upper tail: fail only above the 99th
+    % percentile, so a correct estimator false-fails ~0.15% of the time.
+    allowed = binoUpperTail(nb, 0.05, 0.99);
     bad = {};
     if max(abs(rel - 1)) > 0.25
         bad{end+1} = sprintf('hazard off by up to %.0f%%', 100*max(abs(rel-1)));
     end
-    if covered < numel(H.Hazard) - 1
-        bad{end+1} = sprintf('bands covered lambda in only %d of %d bins', ...
-            covered, numel(H.Hazard));
+    if misses > allowed
+        bad{end+1} = sprintf(['bands missed lambda in %d of %d bins; ' ...
+            'Binomial(%d, 0.05) allows up to %d at the 99th percentile'], ...
+            misses, nb, nb, allowed);
     end
     if H.NonMonotone
         bad{end+1} = 'called a rise on a memoryless law';
     end
     [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 2, ...
-        sprintf('flat within %.0f%%, covered in %d/%d bins', ...
-            100*max(abs(rel-1)), covered, numel(H.Hazard)), strjoin(bad, '; '));
+        sprintf('flat within %.0f%%, %d of %d bins missed (binomial allows %d)', ...
+            100*max(abs(rel-1)), misses, nb, allowed), strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 2, '', err.message);
 end
@@ -267,6 +283,17 @@ end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n', ...
     nPassed, nFailed, nPassed + nFailed);
+end
+
+function k = binoUpperTail(nb, p, conf)
+%BINOUPPERTAIL Smallest k with P(X <= k) >= conf for X ~ Binomial(nb, p).
+% Computed from the pmf rather than binoinv, which needs the Statistics
+% Toolbox -- this suite runs without one.
+c = 0; k = nb;
+for i = 0:nb
+    c = c + nchoosek(nb, i) * p^i * (1-p)^(nb-i);
+    if c >= conf, k = i; return; end
+end
 end
 
 function [nP, nF] = rep(ok, nP, nF, idx, passMsg, failMsg)
