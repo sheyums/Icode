@@ -22,6 +22,80 @@ conditions on `T >= xmin`.
 | `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
 
+## Analysing a new dataset
+
+Works for any left-truncated durations or sizes, not only sleep and wake
+bouts. **The order matters**: the hazard decides which families are
+ADMISSIBLE, the likelihood decides which admissible one is BEST, and the
+guards decide whether the winner's parameters mean anything. Run it the other
+way round and you get a confident fit from a family the data had already
+excluded.
+
+**0. Establish `xmin` and `dt` first. They are facts about the protocol, not
+choices.** `xmin` is the threshold below which durations do not exist -- 300 s
+for a 5-minute sleep criterion, or just the scoring resolution if nothing else
+censors. `dt` (`SamplingInterval`) is the recording grid. Everything conditions
+on `T >= xmin` and bins on `dt`; a wrong `dt` silently destroys resolution, and
+the grid-mismatch guard will name the spacing it detects instead.
+
+**1. Look at the hazard BEFORE fitting anything.**
+
+```matlab
+H = BoutHazard(x, xmin, SamplingInterval=dt, NumBins=16, Plot=true);
+```
+
+A hazard that falls and then RISES excludes -- by construction, not by
+evidence -- every hyperexponential at every order (a sum of decreasing
+exponentials is decreasing), every other monotone family here, and the
+exponentiated Weibull (one turning point at most). It also rules out
+between-individual heterogeneity as the explanation, since mixing shifts weight
+toward longer-lived components and can only make a hazard fall FASTER. No
+information criterion will tell you any of this: they rank the candidates you
+thought of. For a test rather than a picture, pass `NullSurvivalHandle` (a
+fitted hyperexponential's `SurvivalHandle`) and `NullReplicates`, fix the
+`NumBins` set before looking, and check `H.NullDropped` is 0.
+
+**2. Fit the library.**
+
+```matlab
+R = CompareBoutModels(x, xmin, SamplingInterval=dt, MaxComponents=5);
+```
+
+Read it in this order: **`R.Skipped`** (a model that never competed is not a
+model that lost), then `R.Table` (ranking, `Degenerate`, `Reason`), then
+`R.Selected` and `R.SelectionPath` -- the walk-down stops at the first row that
+passes the G test, so rows below the winner are UNTESTED, not accepted.
+
+**3. Check the winner before believing it.**
+
+| field | what it tells you |
+| --- | --- |
+| `Diagnostics.GuardOK` | false means parameters are unidentified, whatever the likelihood says |
+| `Diagnostics.MixtureMinCount` | observations in the smallest branch; a handful means that branch is decoration |
+| `Diagnostics.TailFraction` | `S(xmin)`, how much of the untruncated law survived truncation |
+| `q` vs `Theta`'s `w` | report `q`. `w` is extrapolation below `xmin` |
+| branch MEANS, not stage counts | `m/lambda` is identified; the integer `m` usually is not -- read `ShapeSweep` and see how flat it is |
+| `k` vs `numel(Params)` | criteria use `k`; mixtures print one number more than they charge |
+
+**4. When two orders are close, test rather than rank.** AICc and BIC can
+disagree by design (they penalise differently), and neither answers "is this
+component real". `HyperexponentialLRT` does, with a simulated null -- the
+mixture-order LRT is non-regular, so no chi-square applies. `CompareBoutModels`
+triggers it automatically when either criterion separates neighbouring orders
+by less than `OrderLRTThreshold`.
+
+**5. Prefer a comparison at MATCHED k.** When two candidates have the same
+free-parameter count, the information-criterion penalties cancel and the
+difference is pure likelihood -- immune to every argument about how `k` is
+counted. On the per0 wake bouts, `hyper_erlang` against `hyperexp K=3` (both
+k=5) differed by 18.7 nats, and `dAICc = 37.41` is exactly twice that.
+
+**6. State the caveats that the numbers cannot.** If a family was added
+BECAUSE the earlier library failed on these data, its goodness-of-fit p-value
+is optimistic -- the family was chosen having seen the data. Say so, or re-test
+on held-out individuals. Structural arguments (what a family's hazard CAN do)
+do not carry that problem and are the stronger claim.
+
 ## Conventions that are not optional
 
 **`SamplingInterval` is required everywhere**, in the same units as `xmin`.
