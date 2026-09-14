@@ -102,6 +102,7 @@ if ~isempty(fixedShapes)
 end
 
 best = []; bestM = NaN; sweep = nan(1, maxShape);
+bestAny = []; bestAnyM = NaN;   % best fit regardless of the guard
 prevZ = [];                      % the previous shape's optimum, in z
 for m = 1:maxShape
     shp = [ones(1, nComp-1), m];
@@ -125,7 +126,20 @@ for m = 1:maxShape
         warm = {};
         if warmStart
             if m == 1 && ~isempty(seedRates) && numel(seedRates) == nComp
-                z0 = heZ(seedRates, seedWeights, nComp);
+                % SeedWeights are OBSERVED weights, the convention every
+                % mixture here reports in. The model's own weights are
+                % untruncated, so back-transform first:
+                %   w_j  proportional to  q_j / S_j(xmin)
+                % and at m=1 every component is exponential, so
+                % S_j(xmin) = exp(-rate_j*xmin) and the gain is
+                % exp(+rate_j*xmin). That factor reaches 240x in these
+                % data, so it is taken in LOG space and re-centred before
+                % exponentiating; done naively it overflows to Inf and the
+                % seed becomes a wall instead of a hint.
+                lw = log(max(seedWeights(:).', realmin)) + seedRates(:).'*xmin;
+                lw = lw - max(lw);
+                wSeed = exp(lw); wSeed = wSeed / sum(wSeed);
+                z0 = heZ(seedRates, wSeed, nComp);
                 if ~isempty(z0), warm = {'StartZ', z0, 'nStarts', sweepStarts}; end
             elseif m > 1 && ~isempty(prevZ)
                 z0 = prevZ;
@@ -141,7 +155,11 @@ for m = 1:maxShape
         % shape, and so still the best place to start the next one. Only
         % the WINNER is filtered on the guard, below.
         if Hm.Success
-            zc = heZ(Hm.Params(1:nComp), Hm.Params(nComp+1:2*nComp), nComp);
+            % Theta, NOT Params: the reported weights are the OBSERVED
+            % ones, and feeding those back as if they were the mixing
+            % weights would start the next shape at a point the model
+            % never occupied.
+            zc = heZ(Hm.Theta(1:nComp), Hm.Theta(nComp+1:2*nComp), nComp);
             if ~isempty(zc), prevZ = zc; end
         end
         % A shape whose fit the guard rejects must not win the sweep: its
@@ -151,6 +169,9 @@ for m = 1:maxShape
         if usable && (isempty(best) || Hm.LogLik > best.LogLik)
             best = Hm; bestM = m;
         end
+        if Hm.Success && (isempty(bestAny) || Hm.LogLik > bestAny.LogLik)
+            bestAny = Hm; bestAnyM = m;      % guard verdict ignored here
+        end
     catch err
         if strcmp(err.identifier, 'FitTruncatedDiscreteMLE:SamplingIntervalRequired') ...
                 || strcmp(err.identifier, 'FitTruncatedDiscreteMLE:InvalidSamplingInterval')
@@ -159,10 +180,20 @@ for m = 1:maxShape
     end
 end
 if isempty(best)
-    error('FitHyperErlangMLE:NoValidFit', ...
-        ['No shape vector in 1..%d produced an identified fit at %d ' ...
-         'components. Try fewer components, or inspect a single Shapes ' ...
-         'vector directly.'], maxShape, nComp);
+    % Every shape was rejected by the guard. That is a real answer, not a
+    % missing one -- typically Components is larger than the data support,
+    % so whichever shape is tried one component ends up holding almost
+    % none of the retained bouts. Return the best of them with its guard
+    % verdict INTACT (GuardOK=false, with the reason) rather than
+    % erroring, so a comparison table shows the row and says why it cannot
+    % be used, which is how every other family here behaves. A caller that
+    % ranks on the guard, as COMPAREBOUTMODELS does, will not let it win.
+    if isempty(bestAny)
+        error('FitHyperErlangMLE:NoValidFit', ...
+            ['No shape vector in 1..%d could be fitted at all at %d ' ...
+             'components.'], maxShape, nComp);
+    end
+    best = bestAny; bestM = bestAnyM;
 end
 
 H = best;

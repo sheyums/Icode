@@ -376,7 +376,13 @@ end
 [~, pointwise] = negLogLik(bestZ, M, data, xmin, n_min, isDiscrete, dt, PENALTY);
 
 fit = struct();
-fit.Params = M.unpack(bestZ);
+% THETA is the model's natural parameter vector -- what M.sf, M.cdf and
+% M.guard are written in. PARAMS is what gets REPORTED, which for a
+% mixture is not the same thing: the fitted weights are untruncated, and
+% the weight worth reporting is the OBSERVED one. M.report maps between
+% them and is the identity for every non-mixture family.
+fit.Theta  = M.unpack(bestZ);
+fit.Params = M.report(fit.Theta, xmin);
 fit.LogLik = -bestNegLL;
 fit.PointwiseLogLik = pointwise;
 fit.ExitFlag = bestExitFlag;
@@ -384,7 +390,7 @@ fit.Converged = (bestExitFlag == 1);
 fit.BestParamVector = bestZ;
 
 % --- asymptotic standard errors at the MLE, delta-methoded to natural scale
-se = nan(1, M.nPar);
+se = nan(1, M.nReport);
 covValid = false;
 try
     Hess = computeNumericalHessian(objfun, bestZ);
@@ -401,7 +407,12 @@ try
         dvec = diag(covZ);
         if all(isfinite(dvec)) && all(dvec > 0)
             covValid = true;
-            J = numericalJacobian(@(zz) M.unpack(zz), bestZ, M.nPar);
+            % Delta method onto the REPORTED parameters, so a mixture's
+            % observed weights carry their own standard errors rather
+            % than the untruncated weights' -- the transform is part of
+            % the estimator, not a relabelling after it.
+            J = numericalJacobian(@(zz) M.report(M.unpack(zz), xmin), ...
+                                  bestZ, M.nReport);
             covTheta = J * covZ * J';
             se = sqrt(max(diag(covTheta), 0))';
         end
@@ -417,15 +428,15 @@ fit.CovValid = covValid;
 % probability is Sh((n-1)*dt) - Sh(n*dt)) and the plotted curve, so a
 % comparison wrapper never has to re-derive each family's CDF.
 if isDiscrete
-    Sref = M.sf((n_min-1)*dt, fit.Params);
-    fit.SurvivalHandle = @(t) min(M.sf(round(t/dt)*dt, fit.Params) / Sref, 1);
+    Sref = M.sf((n_min-1)*dt, fit.Theta);
+    fit.SurvivalHandle = @(t) min(M.sf(round(t/dt)*dt, fit.Theta) / Sref, 1);
 else
-    Sref = M.sf(xmin, fit.Params);
-    fit.SurvivalHandle = @(t) min(M.sf(t, fit.Params) / Sref, 1);
+    Sref = M.sf(xmin, fit.Theta);
+    fit.SurvivalHandle = @(t) min(M.sf(t, fit.Theta) / Sref, 1);
 end
 
 % --- model-specific guard (currently: pearson3's location running to xmin)
-diag_ = M.guard(fit.Params, xmin, options, diag_);
+diag_ = M.guard(fit.Theta, xmin, options, diag_);
 
 % --- S(xmin) as a DIAGNOSTIC, not a gate.
 % The fraction of the untruncated model lying in the observed range. Worth
@@ -447,7 +458,7 @@ diag_ = M.guard(fit.Params, xmin, options, diag_);
 % caught where it belongs, in pearson3Guard.
 xminEff = xmin;
 if isDiscrete, xminEff = (n_min-1)*dt; end
-diag_.TailFraction = M.sf(xminEff, fit.Params);
+diag_.TailFraction = M.sf(xminEff, fit.Theta);
 
 H = assembleOutput(fit, M, options, xmin, n, diag_, false, '');
 
@@ -455,7 +466,7 @@ if options.Verbose
     fprintf('FitTruncatedDiscreteMLE(%s): %s mode, n=%d, k=%d parameter(s).\n', ...
         M.Name, options.DistributionType, n, M.nPar);
     fprintf('  logL=%.4f  AICc=%.4f  BIC=%.4f\n', H.LogLik, H.AICc, H.BIC);
-    for j = 1:M.nPar
+    for j = 1:M.nReport
         if H.CovValid
             fprintf('  %-10s = %.6g (SE %.4g)\n', M.ParamNames{j}, H.Params(j), H.ParamSE(j));
         else
@@ -476,7 +487,7 @@ function H = assembleOutput(fit, M, options, xmin, n, diag_, failed, reason)
 %"results(i) = H" between structs whose fields differ in name or order,
 %which would break sweeps over models and over animals.
 if isempty(fit)
-    fit = struct('Params', nan(1, M.nPar), 'ParamSE', nan(1, M.nPar), ...
+    fit = struct('Params', nan(1, M.nReport), 'ParamSE', nan(1, M.nReport), ...
         'CovValid', false, 'LogLik', NaN, 'PointwiseLogLik', [], ...
         'SurvivalHandle', [], 'Converged', false, 'ExitFlag', NaN, ...
         'BestParamVector', []);
@@ -485,6 +496,10 @@ H = struct();
 H.Model = M.Name;
 H.ParamNames = M.ParamNames;
 H.Params = fit.Params;
+% The natural vector, for a caller that needs to re-enter the model --
+% FITHYPERERLANGMLE warm-starts its sweep from it. Reported Params may be
+% a transform of this and must not be fed back in.
+H.Theta = fit.Theta;
 H.ParamSE = fit.ParamSE;
 H.CovValid = fit.CovValid;
 H.k = M.nPar;
@@ -592,7 +607,15 @@ function M = getModel(name, xmin, options, binFloor)
 %truncation, the discretization, the optimizer, the standard errors -- is
 %the engine's.
 name = char(name);
-M = struct('Name', name, 'guard', @(th,xm,o,d) d);
+% report: natural parameters -> the vector that gets REPORTED. The
+% identity for every family whose parameters are already the ones worth
+% printing; the mixtures override it so their weights are reported as
+% OBSERVED shares, which is the convention across every mixture in this
+% library (see FITHYPEREXPONENTIALMLE). nReport is that vector's length,
+% which for a mixture EXCEEDS nPar: sum(q)=1 means one weight is not free,
+% but all of them are worth printing.
+M = struct('Name', name, 'guard', @(th,xm,o,d) d, ...
+           'report', @(th,xm) th, 'nReport', NaN);
 
 switch name
     case 'gamma'
@@ -700,6 +723,8 @@ switch name
         J  = numel(mm);
         M.ParamNames = heParamNames(mm);
         M.nPar = 2*J - 1;                        % J rates + J weights, sum=1
+        M.nReport = 2*J;                         % ...but all J are printed
+        M.report = @(th,xm) heReport(th, mm, xm);
         M.unpack = @(z) heUnpack(z, mm);
         M.valid  = @(th) heValid(th, J);
         M.cdf    = @(t,th) heCDF(t, th, mm);
@@ -736,8 +761,13 @@ switch name
         % there, testing shape2=1 is a REGULAR hypothesis -- ordinary
         % chi2(1) applies, unlike the mixture-order question, which needs
         % HYPEREXPONENTIALLRT.
-        M.ParamNames = {'w1','scale1','shape1','scale2','shape2'};
+        % q1/q2 are the OBSERVED weights, the same symbol every mixture
+        % in this library uses; both are printed although only one is
+        % free, so k stays 5.
+        M.ParamNames = {'q1','scale1','shape1','q2','scale2','shape2'};
         M.nPar = 5;
+        M.nReport = 6;
+        M.report = @(th,xm) wmReport(th, xm);
         M.unpack = @(z) weibullMixUnpack(z);
         M.valid  = @(th) all(isfinite(th)) && th(1) > 0 && th(1) < 1 ...
                          && all(th(2:5) > 0);
@@ -793,7 +823,21 @@ switch name
     otherwise
         error('FitTruncatedDiscreteMLE:UnknownModel', ...
             ['Unknown model "%s". Registered: gamma, gamma_fixedshape, ' ...
-             'chisquared, pearson3, weibull, beta, powerlaw.'], name);
+             'chisquared, pearson3, weibull, hyper_erlang, weibull_mix, ' ...
+             'beta, powerlaw.'], name);
+end
+
+% A family that did not override report/nReport reports its natural
+% parameters unchanged, one name each.
+if ~isfinite(M.nReport)
+    M.nReport = M.nPar;
+end
+if numel(M.ParamNames) ~= M.nReport
+    error('FitTruncatedDiscreteMLE:ParamNameCount', ...
+        ['Model "%s" declares %d reported parameters but names %d. Every ' ...
+         'reported number must carry its own name, or the table prints ' ...
+         'one parameter''s value under another''s label.'], ...
+        name, M.nReport, numel(M.ParamNames));
 end
 end
 
@@ -821,12 +865,45 @@ s = [log(k0), log(max(v/m,eps)), log(max(xmin,eps)); ...
 end
 
 function nm = heParamNames(mm)
+%HEPARAMNAMES One name per REPORTED number: J rates, then J weights.
+% All J weights are named and printed even though only J-1 are free --
+% sum(q)=1 makes the last one determined, not uninteresting. k stays at
+% 2J-1 and the information criteria are unaffected.
+%
+% The weights are q, the OBSERVED weights, as in every mixture here.
 J = numel(mm);
-nm = cell(1, 2*J - 1);
+nm = cell(1, 2*J);
 for j = 1:J, nm{j} = sprintf('rate%d_m%d', j, mm(j)); end
-for j = 1:J-1, nm{J+j} = sprintf('q%d', j); end
-nm{2*J-1} = sprintf('q%d', J);
-nm = nm(1:2*J-1);
+for j = 1:J, nm{J+j} = sprintf('q%d', j); end
+end
+
+function pr = heReport(th, mm, xmin)
+%HEREPORT Natural [rates, w] -> reported [rates, q].
+% The fitted weights are UNTRUNCATED: heSF forms sum_j w_j S_j(t) and the
+% engine divides by S(xmin). What a reader wants, and what every other
+% mixture in this library reports, is the OBSERVED weight -- component
+% j's share of the bouts that were actually RETAINED:
+%
+%       q_j  =  w_j S_j(xmin) / sum_i w_i S_i(xmin)
+%
+% The two differ by a factor that reaches 240x in these data, and w is
+% extrapolation into a region the protocol excluded whenever a component's
+% timescale sits below xmin. Reporting w under the name q, as this did,
+% put a number in the table that meant something else entirely.
+J = numel(mm);
+rates = th(1:J); w = th(J+1:2*J);
+Sx = zeros(1, J);
+for j = 1:J
+    Sx(j) = erlangSFint(rates(j)*xmin, mm(j));
+end
+contrib = w(:).' .* Sx;
+total = sum(contrib);
+if total > 0 && all(isfinite(contrib))
+    q = contrib / total;
+else
+    q = nan(1, J);
+end
+pr = [rates(:).', q];
 end
 
 function th = heUnpack(z, mm)
@@ -1123,6 +1200,25 @@ jit = randn(extra, 5) .* repmat([0.8 0.9 0.45 0.9 0.45], extra, 1);
 st = [base; repmat(base, extra, 1) + jit];
 end
 
+function pr = wmReport(th, xmin)
+%WMREPORT Natural [w, scale1, shape1, scale2, shape2] -> reported
+%[q1, scale1, shape1, q2, scale2, shape2], with q the OBSERVED weights.
+% Same argument as HEREPORT: the fitted w is untruncated, and under left
+% truncation a component whose mass lies below xmin can hold a large w
+% while contributing nothing to the retained data.
+w = [th(1), 1-th(1)];
+sc = [th(2), th(4)]; sh = [th(3), th(5)];
+Sx = exp(-(max(xmin,0)./sc).^sh);
+contrib = w .* Sx;
+total = sum(contrib);
+if total > 0 && all(isfinite(contrib))
+    q = contrib / total;
+else
+    q = [NaN NaN];
+end
+pr = [q(1), th(2), th(3), q(2), th(4), th(5)];
+end
+
 function diag_ = weibullMixGuard(th, xmin, options, diag_)
 %WEIBULLMIXGUARD A mixture that has stopped being a mixture.
 % Two ways for five parameters to describe a one-component model, and in
@@ -1135,20 +1231,26 @@ function diag_ = weibullMixGuard(th, xmin, options, diag_)
 %   the two components have converged on the same scale AND shape, which
 %   is a single Weibull along a flat ridge, mass sliding freely between
 %   the twins.
+% Judged on the OBSERVED share, not on the untruncated weight -- see
+% HEGUARD for the case that forced this: a component sitting below xmin
+% keeps a healthy w while holding none of the data, and min(w) passes it.
+pr = wmReport(th, xmin);
+q = [pr(1), pr(4)];
 w = th(1);
-diag_.MixtureWeight = w;
-nEff = diag_.n * min(w, 1-w);
+diag_.MixtureWeight = min(q);                   % OBSERVED share
+diag_.MixtureWeightUntruncated = min(w, 1-w);   % the mixing weight
+nEff = diag_.n * min(q);
 diag_.MixtureMinCount = nEff;
 sameScale = abs(log(th(4)/th(2))) < 0.05;
 sameShape = abs(log(th(5)/th(3))) < 0.05;
 if nEff < options.MinMixtureCount
     diag_.GuardOK = false;
     msg = sprintf(['one mixture component holds only %.2f of the %d ' ...
-        'observations (weight %.4g), so it is not estimated: this is a ' ...
-        'single Weibull carrying five parameters, three of them ' ...
-        'unidentified. Prefer the 1-component weibull, whose parameter ' ...
-        'count the information criteria will charge correctly.'], ...
-        nEff, diag_.n, w);
+        'observations (observed share %.4g, mixing weight %.4g), so it ' ...
+        'is not estimated: this is a single Weibull carrying five ' ...
+        'parameters, three of them unidentified. Prefer the 1-component ' ...
+        'weibull, whose parameter count the information criteria will ' ...
+        'charge correctly.'], nEff, diag_.n, min(q), min(w, 1-w));
     diag_.Recommendation = msg;
     warning('FitTruncatedDiscreteMLE:MixtureComponentEmpty', '%s', msg);
 elseif sameScale && sameShape

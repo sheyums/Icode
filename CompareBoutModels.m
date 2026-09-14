@@ -620,8 +620,11 @@ end
 
 % ------------------------------------------------------------------------
 function out = fitSimpleCand(d, x, name, fitter, extra)
-% Engine-backed families all report ParamNames/Params/ParamSE already, and
-% for them every parameter is free, so nReported == k.
+% Engine-backed families all report ParamNames/Params/ParamSE already.
+% nReported is taken from the reported vector rather than assumed equal to
+% k: the two mixtures (hyper_erlang, weibull_mix) print every weight while
+% sum(q)=1 leaves one of them determined, exactly as the hyperexponential
+% does, so they report one number more than they charge.
 H = fitter(d, x, extra{:}, 'ErrorOnNoValidFit', false);
 pn = asCellstr(H.ParamNames);
 pv = H.Params(:).';

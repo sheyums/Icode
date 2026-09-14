@@ -715,7 +715,17 @@ try
     H = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
         'SamplingInterval', dtl, 'nStarts', 24, 'Verbose', false);
     bad = {};
-    want = [0.70, 8, 0.55, 600, 2.2];
+    % The reported weights are the OBSERVED ones, so the truth to compare
+    % against is not the generator's mixing weight 0.70 -- it is that
+    % weight's share of what survived truncation:
+    %   q1 = w1 S1(xm) / (w1 S1(xm) + w2 S2(xm))
+    % With scale 8, shape 0.55 the fast component loses 37% of its mass
+    % below xm=2 while the slow one loses essentially none, so the
+    % observed weight sits near 0.59, not 0.70. Comparing against 0.70
+    % would be testing the truncation, not the fitter.
+    S1x = exp(-(xm/8)^0.55); S2x = exp(-(xm/600)^2.2);
+    q1T = 0.70*S1x / (0.70*S1x + 0.30*S2x);
+    want = [q1T, 8, 0.55, 1-q1T, 600, 2.2];
     rel = abs(H.Params - want) ./ want;
     if H.k ~= 5, bad{end+1} = sprintf('k=%d, not 5', H.k); end
     if max(rel) > 0.30
@@ -729,14 +739,17 @@ try
     d2 = simMixDisc([40 900], [0.6 0.4], xm, dtl, 2000);
     H2 = FitTruncatedDiscreteMLE(d2, xm, "weibull_mix", ...
         'SamplingInterval', dtl, 'nStarts', 24, 'Verbose', false);
-    if H2.Diagnostics.GuardOK && max(abs(H2.Params([3 5]) - 1)) > 0.35
+    % Params is [q1, scale1, shape1, q2, scale2, shape2], so the shapes
+    % sit at 3 and 6.
+    if H2.Diagnostics.GuardOK && max(abs(H2.Params([3 6]) - 1)) > 0.35
         bad{end+1} = sprintf('shapes %.3g, %.3g on exponential data', ...
-            H2.Params(3), H2.Params(5));
+            H2.Params(3), H2.Params(6));
     end
     [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 27, ...
-        sprintf(['recovered w=%.3f shapes %.3g/%.3g; on exponential data ' ...
-            'shapes came back %.3g/%.3g'], H.Params(1), H.Params(3), ...
-            H.Params(5), H2.Params(3), H2.Params(5)), strjoin(bad, '; '));
+        sprintf(['recovered q=%.3f (truth %.3f) shapes %.3g/%.3g; on ' ...
+            'exponential data shapes came back %.3g/%.3g'], H.Params(1), ...
+            q1T, H.Params(3), H.Params(6), H2.Params(3), H2.Params(6)), ...
+        strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 27, '', err.message);
 end
@@ -764,9 +777,12 @@ try
     d = simMixDisc(300, 1, xm, dtl, 400);
     Hw = FitTruncatedDiscreteMLE(d, xm, "weibull_mix", ...
         'SamplingInterval', dtl, 'nStarts', 20, 'Verbose', false);
-    nEff = numel(d) * min(Hw.Params(1), 1-Hw.Params(1));
-    collapsed = abs(log(Hw.Params(4)/Hw.Params(2))) < 0.05 && ...
-                abs(log(Hw.Params(5)/Hw.Params(3))) < 0.05;
+    % Params is [q1, scale1, shape1, q2, scale2, shape2]: the weights are
+    % the OBSERVED ones and the guard is judged on them, so nEff reads
+    % min(q1,q2) directly rather than min(w,1-w).
+    nEff = numel(d) * min(Hw.Params(1), Hw.Params(4));
+    collapsed = abs(log(Hw.Params(5)/Hw.Params(2))) < 0.05 && ...
+                abs(log(Hw.Params(6)/Hw.Params(3))) < 0.05;
     wantOK = ~(nEff < 5 || collapsed);
     if Hw.Diagnostics.GuardOK ~= wantOK
         bad{end+1} = sprintf(['weibull_mix verdict %d disagrees with its ' ...
