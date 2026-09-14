@@ -52,7 +52,8 @@ were excluded as collapsed or non-identified, `K=4` with logL identical to K=3.
 
 ## per0, DD, 3989 wake bouts (xmin = 2 s, dt = 1 s)
 
-Recorded because the observation is solid even though the model is not.
+The hazard observation came first and stands on its own; the model below was
+found afterwards, and reproduces it.
 
 **The empirical hazard has two turning points**: 1.2e-2 at 2 s, falling to
 1.1e-3 by 70 s, rising to 1.65e-3 near 500 s, then falling again past 1000 s.
