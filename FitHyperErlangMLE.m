@@ -102,7 +102,6 @@ if ~isempty(fixedShapes)
 end
 
 best = []; bestM = NaN; sweep = nan(1, maxShape);
-bestAny = []; bestAnyM = NaN;   % best fit regardless of the guard
 prevZ = [];                      % the previous shape's optimum, in z
 for m = 1:maxShape
     shp = [ones(1, nComp-1), m];
@@ -169,9 +168,6 @@ for m = 1:maxShape
         if usable && (isempty(best) || Hm.LogLik > best.LogLik)
             best = Hm; bestM = m;
         end
-        if Hm.Success && (isempty(bestAny) || Hm.LogLik > bestAny.LogLik)
-            bestAny = Hm; bestAnyM = m;      % guard verdict ignored here
-        end
     catch err
         if strcmp(err.identifier, 'FitTruncatedDiscreteMLE:SamplingIntervalRequired') ...
                 || strcmp(err.identifier, 'FitTruncatedDiscreteMLE:InvalidSamplingInterval')
@@ -180,20 +176,18 @@ for m = 1:maxShape
     end
 end
 if isempty(best)
-    % Every shape was rejected by the guard. That is a real answer, not a
-    % missing one -- typically Components is larger than the data support,
-    % so whichever shape is tried one component ends up holding almost
-    % none of the retained bouts. Return the best of them with its guard
-    % verdict INTACT (GuardOK=false, with the reason) rather than
-    % erroring, so a comparison table shows the row and says why it cannot
-    % be used, which is how every other family here behaves. A caller that
-    % ranks on the guard, as COMPAREBOUTMODELS does, will not let it win.
-    if isempty(bestAny)
-        error('FitHyperErlangMLE:NoValidFit', ...
-            ['No shape vector in 1..%d could be fitted at all at %d ' ...
-             'components.'], maxShape, nComp);
-    end
-    best = bestAny; bestM = bestAnyM;
+    % Every shape was rejected by the guard. REFUSE rather than hand back
+    % the best of them: an unidentified fit has real parameters attached
+    % to a likelihood that is a ridge, and a caller who gets a struct back
+    % has to remember to check GuardOK before believing any of it. The
+    % usual cause is Components being larger than the data support, and
+    % the message says so. A comparison wrapper should record the refusal
+    % and carry on -- COMPAREBOUTMODELS puts it in R.Skipped -- rather
+    % than make this function relax its contract.
+    error('FitHyperErlangMLE:NoValidFit', ...
+        ['No shape vector in 1..%d produced an identified fit at %d ' ...
+         'components. Try fewer components, or inspect a single Shapes ' ...
+         'vector directly.'], maxShape, nComp);
 end
 
 H = best;

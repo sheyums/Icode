@@ -226,6 +226,13 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %                  next, i.e. what the ladder supports. NaN if no ladder
 %                  ran. This is a DIFFERENT quantity from the ranked
 %                  winner and may disagree with it.
+%   R.Skipped      candidates that could not be fitted at all, as a
+%                  struct array of Model and Reason. Empty normally. A
+%                  model listed here never entered the comparison, which
+%                  is NOT the same as losing it -- the usual cause is a
+%                  mixture whose guard rejected every configuration,
+%                  which says the data do not support that many
+%                  components.
 %   R.Nesting      the equivalences listed above, as text
 %   R.Figure       figure handle, or empty. Drawn even when nothing passed
 %                  the fit test, showing the top-ranked admissible
@@ -325,6 +332,7 @@ end
 % identical field names in identical order, which makeRow and makeRec
 % guarantee, and it behaves the same in both.
 rowsC = {}; fitsC = {}; nr = 0;
+skipC = {}; nsk = 0;          % candidates that could not be fitted at all
 heSeed = [];                  % the hyperexponential optimum at the
                               % hyper-Erlang's order, once it exists
 for ci = 1:numel(cands)
@@ -347,6 +355,16 @@ for ci = 1:numel(cands)
         end
         out = c.Fit(eventseries, xmin, xo);
     catch err
+        % A candidate that could not be fitted at all. Recorded rather
+        % than merely printed: with Verbose=false the model would
+        % otherwise be absent from the table with nothing in the returned
+        % struct to say why, and "not in the table" reads like "lost the
+        % comparison" when it actually means "never entered it". The
+        % commonest case is a mixture whose guard rejected every
+        % configuration, which is a finding about the data, not a
+        % malfunction.
+        nsk = nsk + 1;
+        skipC{nsk} = struct('Model', c.Name, 'Reason', err.message);
         if options.Verbose
             fprintf('  %-22s skipped: %s\n', c.Name, err.message);
         end
@@ -376,6 +394,11 @@ end
 if nr > 0
     rows = [rowsC{:}];
     fits = [fitsC{:}];
+end
+if nsk > 0
+    R.Skipped = [skipC{:}];
+else
+    R.Skipped = struct('Model', {}, 'Reason', {});
 end
 if nr == 0
     error('CompareBoutModels:NoFits', 'No model in the library could be fitted.');
