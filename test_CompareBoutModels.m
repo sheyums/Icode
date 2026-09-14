@@ -49,6 +49,7 @@ function test_CompareBoutModels()
 % 25.  Non-monotone families         - present, and win on a humped hazard
 % 26.  hyper_erlang nests hyperexp   - same fit twice when shapes are 1
 % 27.  Rejection still plots         - the run most needing a picture
+% 28.  pearson3 is opt-in            - absent by default, named in the error
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -796,6 +797,48 @@ try
     end
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 27, '', err.message);
+end
+
+%% Test 28: pearson3 is opt-in -- absent from a default run, advertised
+%  in the error
+%
+%  Its free location walks a ridge its own guard rejects, at ~70 min per
+%  fit on 1500 bouts, so it left the default library. Two regressions
+%  matter: it creeping back into a default run, and the invalid-name error
+%  ceasing to name it -- which would make its absence read as "lost the
+%  comparison" rather than "never asked for". Reuses test 16's
+%  default-library run rather than paying for another; the error fires in
+%  the Models filter, before anything is fitted.
+%
+%  NOT covered: that Models={'pearson3'} still fits it. That needs a real
+%  fit, which is the expensive thing this change exists to avoid.
+try
+    bad = {};
+    if ~exist('R1', 'var')
+        bad{end+1} = 'test 16''s default-library run is unavailable';
+    elseif any(strcmp({tableRows(R1.Table).Model}, 'pearson3')) || ...
+            any(strcmp({R1.Skipped.Model}, 'pearson3'))
+        bad{end+1} = 'pearson3 entered a default-library run';
+    end
+    rng(28);
+    d = simGammaDisc(0.7, 500, XMIN, DT, 50);
+    eid = ''; msg = '';
+    try
+        cbm(d, XMIN, BASE{:}, 'Models', {'lognormal'});
+    catch err
+        eid = err.identifier; msg = err.message;
+    end
+    kOpt = strfind(msg, 'Opt-in'); kP3 = strfind(msg, 'pearson3');
+    if ~strcmp(eid, 'CompareBoutModels:NoModelsSelected')
+        bad{end+1} = sprintf('unknown name raised "%s"', eid);
+    elseif isempty(kOpt) || ~any(kP3 > kOpt(1))
+        bad{end+1} = sprintf('error does not list pearson3 as opt-in: "%s"', msg);
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 28, ...
+        'pearson3 absent by default and named as opt-in in the error', ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 28, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...

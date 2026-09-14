@@ -18,7 +18,7 @@ conditions on `T >= xmin`.
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. `pearson3` and `beta` are **opt-in**, not part of a default run. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
-| `test_*.m` (5 files) | 117 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
+| `test_*.m` (5 files) | 118 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
 
 ## Conventions that are not optional
@@ -153,7 +153,7 @@ one is a scalar, the other a curve.
 test_FitTruncatedDiscreteMLE      % 28
 test_FitHyperexponentialMLE       % 26
 test_FitExponentiatedWeibullMLE   % 23
-test_CompareBoutModels            % 27
+test_CompareBoutModels            % 28
 test_HyperexponentialLRT          % 13
 ```
 
