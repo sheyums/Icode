@@ -206,6 +206,12 @@ bin counts.
 | `RiseNullP` (null = hyperexp K=2 fit, 999 draws) | 0.058 | 0.156 |
 | `NonMonotone` (= `RiseNullP` < 0.05) | 0 | 0 |
 
+Unchanged at `2c65a98`: an A/B on identical draws gives the same 0.010 and
+0.068, with **0 of 999 null replicates dropped** at either bin count, so the
+`riseOf` zero-trough bug did not affect these values. At n = 3989 with 16-20
+bins no bin is empty; the bug bites at smaller n or more bins, and
+`H.NullDropped` now reports it rather than leaving it invisible.
+
 Before 4f49911 the trough could land on the last kept bin: at 20 bins it did
 (2850-4435 s, 35 at risk, 30 events, 1.228e-3 [0.773, 1.748]e-3), giving
 `RiseRatio` 1.000 and `NonMonotone` 0 on the same data that read 1.388 at 16
@@ -460,6 +466,7 @@ These are choices, not results. Worth revisiting before publication.
    Fix the set before looking at any p-value (e.g. 12/16/20/24), report all of
    them, and call the rise bin-sensitive if they straddle alpha. Decided by the
    user 2026-09-14; not yet applied to any dataset.
+
 
 ## One thing that does not transfer between implementations
 

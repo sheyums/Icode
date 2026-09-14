@@ -126,6 +126,9 @@ function H = BoutHazard(eventseries, xmin, options)
 %                                 fix the set of bin counts before looking,
 %                                 and report all of them, not the smallest
 %     H.RiseNullQuantiles         median and 95th percentile of the null
+%     H.NullDropped               null replicates whose statistic was not
+%                                 computable. Should be 0. Non-zero means
+%                                 RiseNullP rests on a biased subset
 %     H.RiseDisjoint              peak's lower band above trough's upper
 %     H.NonMonotone               RiseNullP < Alpha when a null was given --
 %                                 the only calibrated form. Falls back to
@@ -335,6 +338,7 @@ end
 % HYPEREXPONENTIALLRT's bootstrap, for a different statistic.
 H.RiseNullP = NaN;
 H.RiseNullQuantiles = [NaN NaN];
+H.NullDropped = 0;
 if ~isempty(options.NullSurvivalHandle) && options.NullReplicates > 0
     if ~isempty(options.RandomSeed)
         rng(options.RandomSeed + 1, 'twister');   % not the resampling stream
@@ -374,6 +378,12 @@ if ~isempty(options.NullSurvivalHandle) && options.NullReplicates > 0
             hb = hazardOf(tb, xmin, dt, options);
             rn(b) = riseOf(hb);
         end
+        % Report what was discarded. The filter below used to hide a
+        % non-random thinning of the null -- replicates whose trough
+        % landed on a zero-event bin -- and nothing said it had happened.
+        % A non-zero NullDropped means the p-value rests on fewer draws
+        % than requested, and on a biased subset of them.
+        H.NullDropped = nnz(~isfinite(rn));
         rn = rn(isfinite(rn));
         if ~isempty(rn)
             H.RiseNullP = (1 + sum(rn >= H.RiseRatio)) / (numel(rn) + 1);
