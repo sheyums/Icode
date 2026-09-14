@@ -145,6 +145,19 @@ test_CompareBoutModels -all` first: a stale copy elsewhere on the path wins
 over the repo unless you are `cd`'d into it, and that has already caused a
 "pass" that ran 24 of 27 tests.
 
+**`run('some\path\script.m')` defeats that check.** MATLAB changes into the
+script's folder for the duration, so the fitters resolve relative to THAT
+folder even though MATLAB was started in the repo — `which -all` run from the
+repo says the repo copy wins while `run()` quietly uses another one. A scratch
+script sitting beside stale copies will silently fit with them. This has
+already produced a discarded 35-minute timing, measured against a pre-fix
+engine. Either `addpath` the scratch folder and call the script by NAME, or
+open with
+
+    assert(isequal(fileparts(which('CompareBoutModels')), pwd))
+
+so a run against the wrong copy fails loudly instead of returning numbers.
+
 **In Octave they do NOT run by name.** Three of the suites call the bare
 `Fit*MLE` names, which resolve to the MATLAB originals and die on the
 `arguments` block. They need a generated test twin — see `verify_all.sh` in the
