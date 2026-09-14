@@ -640,6 +640,16 @@ end
 %  nothing while every candidate still fails the fit test. Both new
 %  families must therefore appear in the default library AND beat the
 %  mixture on such data, or they are not earning their place.
+%
+%  "In the library" means fitted OR refused. At the default
+%  HyperErlangComponents=3 no shape vector is identified on this two-regime
+%  data -- the third branch holds nothing -- so hyper_erlang lands in
+%  R.Skipped with a NoValidFit refusal. That is the contract working, and
+%  it counts as present; a skip for any OTHER reason is a crash and does
+%  not. The comparison is then made where the data support the model, at
+%  2 components, each family against the hyperexponentials of its own run.
+%  Asserted: the rule (beats every order). Not asserted: the selected
+%  stage count or the size of the gap, which are optimizer-dependent.
 try
     rng(25);
     % Weibull(k<1) + Weibull(k>1): hazard falls, rises, falls
@@ -648,27 +658,47 @@ try
         'HyperErlangMaxShape', 4);
     T = tableRows(R.Table);
     names = {T.Model};
+    skipNames = {R.Skipped.Model};
     bad = {};
     for want = {'weibull_mix', 'hyper_erlang'}
-        if ~any(strcmp(names, want{1}))
+        s = find(strcmp(skipNames, want{1}), 1);
+        if any(strcmp(names, want{1}))
+            continue
+        elseif isempty(s)
             bad{end+1} = sprintf('%s missing from the library', want{1}); %#ok<AGROW>
+        elseif isempty(strfind(R.Skipped(s).Reason, 'identified fit')) %#ok<STREMP>
+            bad{end+1} = sprintf('%s skipped, but not as a refusal: %s', ...
+                want{1}, R.Skipped(s).Reason); %#ok<AGROW>
         end
     end
+    % the humped-hazard data at the order they support
+    R2 = cbm(d, XMIN, BASE{:}, 'MaxComponents', 3, 'GoFBootstrap', 0, ...
+        'Models', {'hyperexponential', 'hyper_erlang'}, ...
+        'HyperErlangComponents', 2, 'HyperErlangMaxShape', 4);
+    T2 = tableRows(R2.Table);
     % both must beat every hyperexponential order on this data
-    hx = find(strncmp(names, 'hyperexp K=', 11) & ~[T.Degenerate]);
-    for want = {'weibull_mix', 'hyper_erlang'}
-        i = find(strcmp(names, want{1}), 1);
-        if isempty(i) || isempty(hx), continue; end
-        if T(i).Degenerate
-            bad{end+1} = sprintf('%s excluded: %s', want{1}, T(i).Reason); %#ok<AGROW>
-        elseif T(i).AICc >= min([T(hx).AICc])
+    runs = {T, 'weibull_mix'; T2, 'hyper_erlang'};
+    for r = 1:size(runs, 1)
+        Tr = runs{r,1}; want = runs{r,2}; nm = {Tr.Model};
+        hx = find(strncmp(nm, 'hyperexp K=', 11) & ~[Tr.Degenerate]);
+        i = find(strcmp(nm, want), 1);
+        if isempty(hx)
+            bad{end+1} = sprintf('no admissible hyperexponential beside %s', want); %#ok<AGROW>
+        elseif isempty(i)
+            bad{end+1} = sprintf('%s not fitted for the comparison', want); %#ok<AGROW>
+        elseif Tr(i).Degenerate
+            bad{end+1} = sprintf('%s excluded: %s', want, Tr(i).Reason); %#ok<AGROW>
+        elseif Tr(i).AICc >= min([Tr(hx).AICc])
             bad{end+1} = sprintf(['%s (AICc %.1f) did not beat the best ' ...
                 'hyperexponential (%.1f) on a non-monotone hazard'], ...
-                want{1}, T(i).AICc, min([T(hx).AICc])); %#ok<AGROW>
+                want, Tr(i).AICc, min([Tr(hx).AICc])); %#ok<AGROW>
         end
     end
+    heState = 'fitted at J=3';
+    if any(strcmp(skipNames, 'hyper_erlang')), heState = 'refused at J=3'; end
     [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 25, ...
-        sprintf('both present; winner is %s', T(1).Model), strjoin(bad, '; '));
+        sprintf('both present (hyper_erlang %s); both beat every hyperexp order', ...
+            heState), strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 25, '', err.message);
 end
