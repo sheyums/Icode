@@ -983,19 +983,28 @@ end
 
 function F = erlangCDFint(x, m)
 %ERLANGCDFINT Erlang CDF at INTEGER shape: F = P(Poisson(x) >= m).
-%   Two branches, for the same reason heCDF exists at all -- so the
-%   engine's median split gets an accurate SMALL probability at the
-%   bottom of the range rather than a cancellation.
+%   1 - S almost always, and the direct upper-tail sum only where that
+%   subtraction would actually lose the answer.
 %
-%   x < m: sum the upper tail DIRECTLY. Poisson terms peak at j ~ x, so
-%   with x < m they are already decreasing at j = m and the sum
-%   converges geometrically; the result is accurate even when it is
-%   1e-300, which 1 - S could never be.
-%   x >= m: then F >= 1/2 roughly, so forming it as 1 - S costs nothing,
-%   and S is the cheap m-term sum.
+%   S is the m-term sum and costs nothing. Forming F = 1 - S cancels, and
+%   the relative error of the result is about eps/F -- harmless at
+%   F = 0.1, fatal at F = 1e-300. So the direct sum is reserved for
+%   elements where F has fallen below TINY, and those are exactly the
+%   elements where x is small, where the tail sum's terms decay by x/j
+%   per step and converge in a handful of iterations. The expensive
+%   branch is therefore also the rare and cheap one.
+%
+%   Doing it the other way round -- direct sum whenever x < m -- is
+%   correct but SLOWER THAN GAMMAINC: measured 0.7x at m=4 with a third
+%   of the range below m, against 5x faster when the sum is skipped. The
+%   discrete likelihood calls the CDF for every bin edge, so that branch
+%   sat in the hot path and cost more than the special function it
+%   replaced.
+TINY = 1e-6;
 x = max(x, 0);
-F = zeros(size(x));
-small = x < m;
+S = erlangSFint(x, m);
+F = 1 - S;
+small = F < TINY;
 if any(small(:))
     xs = x(small);
     p = exp(-xs);
@@ -1004,25 +1013,20 @@ if any(small(:))
     end
     s = p;
     j = m;
-    % max(s(:), realmin) is the two-argument elementwise max, so the test
-    % is each term against ITS OWN running sum, and the loop runs until
-    % every element has converged on its own scale rather than on the
-    % vector's largest. Measured against an independent series expansion
-    % this branch holds ~1e-14 relative error down to F ~ 1e-69 -- better
-    % than Octave's own gammainc, which drifts to 1.5e-3 relative at
-    % x = 0.1, m = 8. Accuracy here is not incidental: these are the
-    % small bin probabilities at the bottom of the fitted range.
+    % max(s(:), realmin) is the two-argument elementwise max, so each
+    % term is judged against ITS OWN running sum. Measured against an
+    % independent series expansion this branch holds ~1e-14 relative
+    % error down to F ~ 1e-69 -- better than Octave's own gammainc,
+    % which drifts to 1.5e-3 relative at x = 0.1, m = 8.
     while j <= m + 1000
         j = j + 1;
         p = p .* xs / j;
         s = s + p;
         if all(p(:) <= eps * max(s(:), realmin)), break; end
     end
-    F(small) = min(max(s, 0), 1);
+    F(small) = s;
 end
-if any(~small(:))
-    F(~small) = 1 - erlangSFint(x(~small), m);
-end
+F = min(max(F, 0), 1);
 end
 
 function lp = heLogPdf(t, th, mm)
