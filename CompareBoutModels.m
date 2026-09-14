@@ -17,12 +17,22 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %     weibull                               FITWEIBULLMLE
 %     gamma                                 FITGAMMAMLE
 %     powerlaw_cutoff                       FITPOWERLAWCUTOFFMLE
-%     pearson3                              FITPEARSON3MLE
 %     powerlaw                              FITPOWERLAWMLE
 %     erlang                                FITERLANGMLE
 %     chisquared                            FITCHISQUAREDMLE
 %     weibull_mix                           FITWEIBULLMIXTUREMLE
 %     hyper_erlang                          FITHYPERERLANGMLE, shape swept
+%
+%   OPT-IN, absent unless asked for
+%     pearson3                              FITPEARSON3MLE, only if named
+%                                           in Models=. It cost ~70 min
+%                                           per fit on 1500 bouts, walking
+%                                           a ridge its own guard then
+%                                           rejects, so it is no longer
+%                                           part of a default run. Name it
+%                                           when you want to see that
+%                                           ridge -- it can outscore every
+%                                           legitimate model.
 %     beta                                  FITBETAMLE, only if UpperBound
 %                                           is supplied
 %
@@ -313,8 +323,9 @@ if ~isempty(options.Models)
         error('CompareBoutModels:NoModelsSelected', ...
             ['None of the requested models are in the library. Valid ' ...
              'names: hyperexponential (or "hyperexp K=n" for one order), ' ...
-             'exp_weibull, weibull, gamma, powerlaw_cutoff, pearson3, ' ...
-             'powerlaw, erlang, chisquared, beta.']);
+             'exp_weibull, weibull, gamma, powerlaw_cutoff, powerlaw, ' ...
+             'erlang, chisquared, weibull_mix, hyper_erlang. Opt-in: ' ...
+             'pearson3 (name it explicitly), beta (needs UpperBound).']);
     end
 end
 
@@ -618,7 +629,6 @@ simple = { ...
     'weibull',         @FitWeibullMLE,        {}; ...
     'gamma',           @FitGammaMLE,          {}; ...
     'powerlaw_cutoff', @FitPowerLawCutoffMLE, {}; ...
-    'pearson3',        @FitPearson3MLE,       {}; ...
     'powerlaw',        @FitPowerLawMLE,       {}; ...
     'erlang',          @FitErlangMLE,         {}; ...
     'chisquared',      @FitChiSquaredMLE,     {}; ...
@@ -632,6 +642,26 @@ if ~isnan(options.UpperBound)
     % data, so it is supplied or beta stays out of the library entirely.
     simple(end+1,:) = {'beta', @FitBetaMLE, {'UpperBound', options.UpperBound}};
 end
+% PEARSON III IS OPT-IN, named in Models= or absent.
+%
+% It cost more than the whole rest of the library combined -- measured at
+% 516 s for THREE starts on 1500 bouts, so about 70 minutes for the
+% engine's 26 -- because its free location slides toward minus infinity
+% along a ridge where shape and location stop being separately
+% identified, and fminsearch walks that ridge to its evaluation budget on
+% every start. The fit it returns is then rejected by pearson3Guard, so
+% the row can never be selected: the default library was spending most of
+% its compute on a candidate that cannot win.
+%
+% Keeping it reachable matters, though, and not as a courtesy. On those
+% same bouts the REJECTED fit scored logL = -6828.18 against the best
+% legitimate model's -6841.39 -- the ridge outranks everything, so
+% anyone who disables the guard, or reads the AICc column without
+% checking Degenerate, would select it. Pass Models={'pearson3', ...} to
+% see that happen deliberately.
+if requestedByName(options.Models, 'pearson3')
+    simple(end+1,:) = {'pearson3', @FitPearson3MLE, {}};
+end
 for i = 1:size(simple,1)
     nm = simple{i,1}; fh = simple{i,2}; ex = [common, simple{i,3}];
     names{end+1}   = nm;                                        %#ok<AGROW>
@@ -639,6 +669,17 @@ for i = 1:size(simple,1)
 end
 
 cands = struct('Name', names, 'Fit', fitters);
+end
+
+% ------------------------------------------------------------------------
+function tf = requestedByName(models, name)
+%REQUESTEDBYNAME Was this family asked for explicitly in Models=?
+% Used for the opt-in candidates. An empty Models means "the default
+% library", which is exactly what opt-in families are not part of.
+tf = false;
+if isempty(models), return; end
+nm = asCellstr(models);
+tf = any(strcmp(nm, name));
 end
 
 % ------------------------------------------------------------------------

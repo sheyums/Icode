@@ -120,6 +120,45 @@ independent implementations, with the survival still within 0.015 of truth. The
 is not, and no information criterion here charges for having swept over it.
 Quote `ShapeSweep` and how flat it is, not the selected integer alone.
 
+## Pearson III: a rejected ridge that outscores every legitimate model
+
+On test 25's synthetic humped data (n = 1500, xmin = 100, MATLAB), Pearson III
+returned
+
+    logL = -6828.18    shape 162058   scale 0.738   location -119120
+    GuardOK = 0        LocationGap = 1192.2
+
+against the best legitimate model on the SAME data, hyper-Erlang at J=2, with
+logL = -6841.39. **The rejected fit scores 13 nats higher than the winner.**
+
+It is rejected by the span-ratio arm of `pearson3Guard`, not the `xmin` arm:
+the location has run 119,000 s BELOW the data, which spans a few thousand, so
+`(t - location)` is nearly constant over every observation, the density
+flattens to `const * exp(-t/scale)`, and shape and location stop being
+separately identifiable. What the optimizer reports is a point on a ridge, not
+a maximum -- the gamma's normal limit, a huge shape with the location pushed
+far out. `pearson3Guard`'s header already documented this at
+`location = -5.34e5` on real bouts, where "that fit beat the true model and won
+a comparison outright". This is the same failure on different data.
+
+Two things follow, and they pull in opposite directions.
+
+**The row cannot win, and it cost more than the rest of the library
+combined.** 516 s for THREE starts, so roughly 70 minutes for the engine's 26,
+because every start walks that ridge to its evaluation budget. Pearson III is
+therefore **no longer in the default library** -- pass `Models={'pearson3',
+...}` to fit it.
+
+**But the ridge is a real hazard, and the default table no longer shows
+it.** Anyone who disables the guard, or who reads the AICc column without
+checking `Degenerate`, selects a fit whose parameters mean nothing. A
+three-parameter family with a free location will do this to left-truncated
+data whenever the data are close to exponential over their observed range;
+the guard is the only thing standing between that ridge and a published
+model. If a reviewer asks why Pearson III is absent, the answer is that it
+was excluded for being unidentifiable here, not for fitting badly -- it
+"fits" better than anything else.
+
 ## Judgement calls, open to revision
 
 These are choices, not results. Worth revisiting before publication.
