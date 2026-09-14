@@ -182,13 +182,17 @@ These are choices, not results. Worth revisiting before publication.
    encodes "J=3 does not work". On two-regime data it is refused and J=2
    wins by 447 AICc (Octave) and 514 (MATLAB), on different draws.
 
-   What the refusal currently throws away is the assessment's result: an
-   unsupported J=3 yields NO hyper-Erlang row at all, only an `R.Skipped`
-   entry, rather than the J=2 fit that does work. The intended follow-up is
-   a step-down -- on refusal at J, refit at J-1 and report which order was
-   used and why -- so the outcome reads "J=3 unsupported (a component held
-   0.3 of 1500 bouts), fitted at J=2". Cost is paid only when J fails, so
-   data supporting 3 components is unaffected. NOT YET IMPLEMENTED.
+   The decision is to RELY ON THE REFUSAL: when the data do not support 3
+   components, `R.Skipped` says so and the user picks an order. No code
+   change, and no J sweep.
+
+   The cost of that is worth stating, since it will come up again: an
+   unsupported J=3 yields no hyper-Erlang row at all, only the `R.Skipped`
+   entry, rather than the J=2 fit that does work and wins comfortably. A
+   step-down on refusal -- refit at J-1, report which order was used and
+   why, paid for only when J fails -- would keep the assessment's result.
+   That is an OPTION, considered and not adopted, recorded here so the
+   trade-off does not have to be rediscovered.
 6. **`erlangCDFint` switches to a direct tail sum below `F = 1e-6`.** The
    threshold is a speed/accuracy trade, not a derived constant: `1 - S` has
    relative error about `eps/F`, so 1e-6 keeps that below ~1e-10 while leaving
