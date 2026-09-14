@@ -153,26 +153,7 @@ if n < 2
 end
 
 % ------------------------------------------------------------------- bins
-if ~isempty(options.BinEdges)
-    edges = sort(options.BinEdges(:).');
-else
-    lo = xmin - dt;                    % so bouts exactly at xmin are events
-    hi = max(t);
-    if options.Spacing == "log"
-        % log spacing over the RETAINED range. lo can be 0 when xmin == dt,
-        % so the log grid starts at the first positive edge and lo is
-        % prepended, rather than taking log(0).
-        first = max(lo, dt/2);
-        e = exp(linspace(log(first), log(hi), options.NumBins + 1));
-        edges = [lo, e(2:end)];
-    else
-        edges = linspace(lo, hi, options.NumBins + 1);
-    end
-end
-% Snap to the sampling grid and drop duplicates: two edges inside one grid
-% step describe a bin no observation can fall in, which would read as a
-% hazard of exactly zero rather than as an empty bin.
-edges = unique(round(edges / dt) * dt);
+edges = buildEdges(t, xmin, dt, options);
 if numel(edges) < 2
     error('BoutHazard:DegenerateBins', ...
         ['Bin edges collapsed to %d distinct grid points. The data span ' ...
@@ -340,11 +321,20 @@ if ~isempty(options.NullSurvivalHandle) && options.NullReplicates > 0
     end
     Bn = options.NullReplicates;
     rn = nan(1, Bn);
-    grid_ = (edgesK(1) + dt) : dt : max(edgesK(end), max(t));
-    Sg = options.NullSurvivalHandle(grid_);
-    Sg = min(max(Sg(:).', 0), 1);
-    Sg(1) = 1;                       % truncated survival is 1 at the floor
-    pmf = max(-diff([Sg, 0]), 0);
+    % The grid holds the ATTAINABLE durations, xmin upward. The engine's
+    % truncated survival is 1 at xmin-dt, NOT at xmin, so the mass landing
+    % on g_k is S(g_k - dt) - S(g_k). Differencing S(grid) instead put
+    % every atom one step early: measured against the engine's own pmf,
+    % E[T] came out 0.99 s low and P(T=xmin) equalled the engine's
+    % P(xmin) + P(xmin+dt).
+    grid_ = (xmin) : dt : max(edgesK(end), max(t));
+    Sprev = options.NullSurvivalHandle(grid_ - dt);
+    Snow  = options.NullSurvivalHandle(grid_);
+    Sprev = min(max(Sprev(:).', 0), 1);
+    Snow  = min(max(Snow(:).',  0), 1);
+    Sprev(1) = 1;                    % S(xmin - dt) = 1 by construction
+    pmf = max(Sprev - Snow, 0);
+    pmf(end) = pmf(end) + max(Snow(end), 0);   % residual tail as one atom
     tot = sum(pmf);
     if tot > 0
         cdf_ = cumsum(pmf / tot);
@@ -352,7 +342,16 @@ if ~isempty(options.NullSurvivalHandle) && options.NullReplicates > 0
             u = rand(n, 1);
             idx = arrayfun(@(uu) find(cdf_ >= uu, 1), u);
             tb = grid_(idx).';
-            hb = binHazard(tb, edgesK, keep, width);
+            % EACH REPLICATE GETS ITS OWN BINS. Reusing the observed data's
+            % edges and keep mask makes the null and the observed statistic
+            % non-exchangeable: the observed ratio was computed after its
+            % own bin and at-risk selection, so holding those fixed for the
+            % null removes a source of variation the observed value had.
+            % Measured on 999 draws from a fitted K=2: fixing the bins
+            % raised p from 0.019 to 0.047 at 16 bins and from 0.057 to
+            % 0.185 at 20 -- a factor of 2.5 to 3, and the whole of the
+            % conservatism. The sampler shift above changed nothing.
+            hb = hazardOf(tb, xmin, dt, options);
             rn(b) = riseOf(hb);
         end
         rn = rn(isfinite(rn));
@@ -381,6 +380,53 @@ if options.Plot
 else
     H.Figure = [];
 end
+end
+
+% ------------------------------------------------------------------------
+function edges = buildEdges(t, xmin, dt, options)
+%BUILDEDGES The bin edges for one sample. Shared by the observed data and
+%by every null replicate, so a replicate is binned the way the data were.
+if ~isempty(options.BinEdges)
+    edges = sort(options.BinEdges(:).');
+else
+    lo = xmin - dt;                    % so bouts exactly at xmin are events
+    hi = max(t);
+    if options.Spacing == "log"
+        % log spacing over the RETAINED range. lo can be 0 when xmin == dt,
+        % so the log grid starts at the first positive edge and lo is
+        % prepended, rather than taking log(0).
+        first = max(lo, dt/2);
+        e = exp(linspace(log(first), log(hi), options.NumBins + 1));
+        edges = [lo, e(2:end)];
+    else
+        edges = linspace(lo, hi, options.NumBins + 1);
+    end
+end
+% Snap to the sampling grid and drop duplicates: two edges inside one grid
+% step describe a bin no observation can fall in, which would read as a
+% hazard of exactly zero rather than as an empty bin.
+edges = unique(round(edges / dt) * dt);
+end
+
+% ------------------------------------------------------------------------
+function h = hazardOf(t, xmin, dt, options)
+%HAZARDOF The whole estimator for one sample -- its own edges, its own
+%at-risk and saturation screening, its own rate conversion. This is what a
+%null replicate must go through for its statistic to be comparable with the
+%observed one.
+h = [];
+edges = buildEdges(t, xmin, dt, options);
+if numel(edges) < 2, return; end
+nb = numel(edges) - 1;
+aR = zeros(1, nb); ev = zeros(1, nb);
+for j = 1:nb
+    aR(j) = sum(t > edges(j));
+    ev(j) = sum(t > edges(j) & t <= edges(j+1));
+end
+kp = aR >= options.MinAtRisk & ~(ev >= aR);
+if ~any(kp), return; end
+w = diff(edges);
+h = -log1p(-min(ev(kp) ./ aR(kp), 1)) ./ w(kp);
 end
 
 % ------------------------------------------------------------------------
