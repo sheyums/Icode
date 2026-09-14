@@ -96,6 +96,8 @@ Selected model: **`hyper_erlang`, shapes [1 1 5]**, k = 5, logL = -29309.219.
 - **And the exponential branches are exhausted, not merely outscored**: K=2 to
   K=3 buys 0.32 nats for two parameters, K=3 to K=4 another 0.30 and lands on
   the rate ceiling (excluded, tau = 1 s).
+- The step-down did NOT fire: J=3 was identified, and the row carries the bare
+  `hyper_erlang` name.
 
 **The cleanest form of the evidence is at MATCHED complexity.** `hyperexp K=3`
 and `hyper_erlang` both have k = 5:
@@ -126,10 +128,6 @@ excluded requires running that bootstrap deliberately.
 `MixtureMinCount` = 315 of 3989 bouts in the smallest branch, sixty times the
 floor -- worth quoting given that the phantom-component bug below concerned a
 branch holding 2.5e-18 of its data while looking respectable.
-- The step-down did NOT fire: J=3 was identified, and the row carries the bare
-  `hyper_erlang` name. `hyperexp K=4` was excluded, a component at the rate
-  ceiling (tau = 1 s).
-
 **The mechanism, and why it needs a series branch.** Branches 1 and 3 have
 nearly the same mean -- 660 s against 720 s -- and opposite hazard shapes. The
 9.5 s branch makes the hazard high at 2 s and then depletes; the Erlang branch's
