@@ -92,6 +92,39 @@ Selected model: **`hyper_erlang`, shapes [1 1 5]**, k = 5, logL = -29309.219.
   (G = 50.69, p in [0.033, 0.099]).
 - **The best hyperexponential is rejected**: K=2 at dAICc 34.04 with
   G = 76.96, p ~ 1e-4. K=3 no better. Exactly as the hazard argument requires.
+- **And the exponential branches are exhausted, not merely outscored**: K=2 to
+  K=3 buys 0.32 nats for two parameters, K=3 to K=4 another 0.30 and lands on
+  the rate ceiling (excluded, tau = 1 s).
+
+**The cleanest form of the evidence is at MATCHED complexity.** `hyperexp K=3`
+and `hyper_erlang` both have k = 5:
+
+    hyperexp K=3   three memoryless branches          logL -29327.9229
+    hyper_erlang   two memoryless, one 5-stage series logL -29309.2191
+                                                           ----------
+                                                            18.70 nats
+
+The penalties cancel, so dAICc = 37.41 is exactly twice that, and no argument
+about how k is counted or whether the integer shape should be charged can touch
+it. Spending the same five parameters on a SERIES branch rather than a third
+exponential buys 18.7 nats.
+
+**Three nesting identities check out on this data**, through different code
+paths: `hyperexp K=3` equals `hyper_erlang`'s ShapeSweep at m=1 (-29327.9229
+both, since shapes [1 1 1] IS the 3-component mixture), `powerlaw_cutoff`
+equals `gamma` (-29450.2139), and `erlang` at shape 1 equals `hyperexp K=1`
+(-29572.4554). Implementation checks, not coincidences.
+
+**The runner-up is untested, not rejected.** `weibull_mix` has G = 50.69 with
+the Chernoff-Lehmann bounds straddling alpha, which is exactly the case
+`GoFBootstrap="auto"` exists to resolve -- but the walk-down stops at the first
+row that passes, and `hyper_erlang` passed first. Claiming `weibull_mix` is
+excluded requires running that bootstrap deliberately.
+
+**The guard reports health here, not just absence of failure.**
+`MixtureMinCount` = 315 of 3989 bouts in the smallest branch, sixty times the
+floor -- worth quoting given that the phantom-component bug below concerned a
+branch holding 2.5e-18 of its data while looking respectable.
 - The step-down did NOT fire: J=3 was identified, and the row carries the bare
   `hyper_erlang` name. `hyperexp K=4` was excluded, a component at the rate
   ceiling (tau = 1 s).
