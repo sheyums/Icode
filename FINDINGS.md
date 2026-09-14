@@ -136,7 +136,12 @@ These are choices, not results. Worth revisiting before publication.
    valid at its own alpha, but climbing several and stopping on the first
    acceptance inflates the overall type-I rate. Quote the rungs individually;
    do not present the endpoint as carrying one alpha-level guarantee.
-5. **`B = 999`** for the LRT. A test has a decision boundary the estimate must
+5. **`erlangCDFint` switches to a direct tail sum below `F = 1e-6`.** The
+   threshold is a speed/accuracy trade, not a derived constant: `1 - S` has
+   relative error about `eps/F`, so 1e-6 keeps that below ~1e-10 while leaving
+   the slow branch rare. Lower it if a fitted range ever needs bin
+   probabilities finer than that.
+6. **`B = 999`** for the LRT. A test has a decision boundary the estimate must
    resolve: the Monte Carlo error is `sqrt(p(1-p)/B)`, so a true p of 0.05 has
    a 95% interval of [0.020, 0.080] at B=199 against [0.036, 0.064] at B=999
    (Davison & Hinkley 1997, sec. 4.2). Even 999 is not tight at the boundary --

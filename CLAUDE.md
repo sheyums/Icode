@@ -13,7 +13,7 @@ conditions on `T >= xmin`.
 | `FitTruncatedDiscreteMLE.m` | **Shared engine.** One truncated likelihood, nine families in a `switch` registry. Adding a family costs ~15 lines: `ParamNames`, `cdf`, `sf`, `logpdf`, `unpack`, `valid`, `starts`; a mixture also needs `report`/`nReport` and a `guard`. |
 | `FitHyperexponentialMLE.m` | Mixture of exponentials, K=1..N, parametrized in **observed** weights `q`. |
 | `FitExponentiatedWeibullMLE.m` | Exponentiated Weibull; `FixAlpha=true` nests the plain Weibull. |
-| `FitHyperErlangMLE.m` | Mixture of Erlangs, shapes `[1..1 m]` swept over m. The exponential-native route to a **non-monotone hazard**. |
+| `FitHyperErlangMLE.m` | Mixture of Erlangs, shapes `[1..1 m]` swept over m. The exponential-native route to a **non-monotone hazard**. The sweep is warm-started (`WarmStart`, `SweepStarts`) via the engine's `StartZ`; cold starts are reduced, never removed, so a warm start can only add a candidate optimum. Refuses rather than return a fit whose guard rejected every shape. |
 | `FitWeibullMixtureMLE.m` | Two-component Weibull mixture; the other non-monotone-hazard family. |
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. |
@@ -55,6 +55,12 @@ back into the model. `H.Params` is what gets *reported*, and for a mixture it is
 a transform of `Theta` with its own delta-method SEs. `nReport` exceeds `nPar`
 there, because `sum(q)=1` leaves one weight determined but still worth printing.
 
+**A model absent from `R.Table` did not necessarily lose.** `R.Skipped` lists
+candidates that never entered the comparison, with the reason — usually a
+mixture whose guard rejected every configuration, which is a statement about
+the data rather than a malfunction. Absent from both is a bug; absent from the
+table but present in `R.Skipped` is a finding.
+
 **`S(xmin)`** is the *untruncated* survival at the threshold — the likelihood's
 normalizer, reported as `Diagnostics.TailFraction`. **`SurvivalHandle`** is the
 *truncated* survival `S(t)/S(xmin)`, which is 1 at `xmin`. Different objects;
@@ -80,8 +86,23 @@ one is a scalar, the other a curve.
   duplicate name outright. A one-platform failure the twins cannot catch,
   because the twins are what replace the `arguments` block.
 - **Integer-shape Erlang needs no `gammainc`.** `S = exp(-x) sum_{j<m} x^j/j!`
-  is exact, 11x faster, and more accurate in the deep tail than Octave's
-  `gammainc` (which drifts to 1.5e-3 relative at `x=0.1, m=8`).
+  is exact, ~11x faster for the survival and ~6x for the CDF, and more accurate
+  in the deep tail than Octave's `gammainc` (which drifts to 1.5e-3 relative at
+  `x=0.1, m=8`).
+- **Benchmark the function the hot path CALLS, not its sibling.** That 11x was
+  measured on `erlangSFint`. The discrete likelihood calls the *CDF* for every
+  bin edge, and `erlangCDFint` went unbenchmarked: it summed the upper tail
+  directly whenever `x < m`, which is most of the fitted range for a slow
+  branch, and was **0.7x** — 40% SLOWER than the `gammainc` it replaced. A
+  full-library call that had cost 379 s was still running after 17 minutes,
+  while the commit message advertised a speedup.
+- **Order numerical branches by what threatens the answer, not by the obvious
+  split.** `F = 1 - S` cancels with relative error about `eps/F`: harmless at
+  `F = 0.1`, fatal at `F = 1e-300`. Branching on `x < m` put the slow path in
+  the common case; branching on `F < 1e-6` puts it only where cancellation
+  actually bites — and those are the small-`x` elements where the tail
+  converges in a few terms, so the accurate branch is also the rare and cheap
+  one.
 - **Octave is not a proxy for MATLAB.** `*_oct.m` twins are local scaffolding
   (gitignored, regenerable) used for development. Octave has accepted three
   things MATLAB rejects: growing a struct array from `struct([])`,
