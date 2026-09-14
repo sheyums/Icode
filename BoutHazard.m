@@ -55,14 +55,20 @@ function H = BoutHazard(eventseries, xmin, options)
 %   form inverts the relation exactly and is the standard actuarial
 %   conversion (constant hazard within the interval).
 %
-%   CONFIDENCE BANDS are Wilson score intervals on the binomial d_j/n_j
-%   (Wilson 1927), not Wald. Wald intervals on a proportion collapse to
-%   zero width as d_j -> 0 and can cover below zero, which is precisely the
-%   regime of a hazard's tail; Brown, Cai & DasGupta (2001) is the standard
-%   reference for why the textbook interval should not be used here. The
-%   bands are pointwise, NOT simultaneous: reading "some bin rises" off 24
-%   of them invites a multiplicity error, which is what RiseRatio and its
-%   bootstrap interval are for.
+%   CONFIDENCE BANDS. Each bin's d_j out of n_j is a coin flip repeated
+%   n_j times, so the uncertainty on h_j is binomial. The textbook interval
+%   p +- z*sqrt(p(1-p)/n) (called Wald) fails exactly where a hazard's tail
+%   lives: at d_j = 0 it has ZERO width, claiming perfect knowledge from no
+%   events, and near p = 0 it extends below zero. The Wilson (1927) score
+%   interval inverts the test instead of approximating the estimator, stays
+%   inside [0,1] by construction, and keeps its coverage at small counts
+%   (Brown, Cai & DasGupta 2001).
+%
+%   The bands are POINTWISE: each covers its own bin 95% of the time, but
+%   the chance that ALL of them cover simultaneously is much lower. So
+%   scanning 24 bins for one that rises is not a 5% procedure -- with 24
+%   looks you expect about one excursion by chance. That is what RiseNullP
+%   exists for, and why RiseCI is not a substitute for it.
 %
 %   BINS default to log-spaced, since bout durations span decades. A bin
 %   left with fewer than MinAtRisk survivors is dropped rather than plotted
@@ -83,11 +89,21 @@ function H = BoutHazard(eventseries, xmin, options)
 %                       like for like rather than a continuous curve
 %                       against a binned estimate.
 %     Bootstrap         B resamples for the RiseRatio interval; 0 skips
-%     NullSurvivalHandle  a fitted MONOTONE model's truncated survival, to
-%                       test the rise against. Without it there is no null
-%                       and NonMonotone falls back to the band-overlap rule
-%     NullReplicates    draws from that null; nothing is refitted, so this
-%                       is cheap -- 999 costs seconds
+%     NullSurvivalHandle  a fitted MONOTONE model's truncated survival --
+%                       a hyperexponential is the natural choice, its hazard
+%                       being strictly decreasing at any order. This is what
+%                       the observed rise is tested AGAINST. Without it
+%                       there is no null and NonMonotone falls back to the
+%                       weaker band-overlap rule
+%     NullReplicates    draws from that null. Each replicate is put through
+%                       the WHOLE estimator -- its own bin edges, its own
+%                       at-risk and saturation screening -- because the
+%                       observed statistic went through those steps too,
+%                       and a null denied them is not comparable. Binning
+%                       the replicates on the observed sample's edges
+%                       instead raised p from 0.019 to 0.048 at 16 bins and
+%                       0.057 to 0.173 at 20 on real bouts. Nothing is
+%                       REFITTED, so 999 replicates still costs seconds
 %     RandomSeed        pinned to 'twister', as elsewhere here
 %     Plot              hazard with bands, log-log
 %
@@ -103,8 +119,12 @@ function H = BoutHazard(eventseries, xmin, options)
 %                                 large is only meaningful against a null
 %     H.RiseCI                    bootstrap percentile interval -- DESCRIPTIVE,
 %                                 not a test; see the note in the code
-%     H.RiseNullP                 p-value against NullSurvivalHandle, the
-%                                 only calibrated statement here
+%     H.RiseNullP                 (1 + #{null >= observed}) / (B + 1), the
+%                                 only calibrated statement here. It MOVES
+%                                 WITH NumBins -- 0.010 at 16 bins and
+%                                 0.068 at 20 on the same real bouts -- so
+%                                 fix the set of bin counts before looking,
+%                                 and report all of them, not the smallest
 %     H.RiseNullQuantiles         median and 95th percentile of the null
 %     H.RiseDisjoint              peak's lower band above trough's upper
 %     H.NonMonotone               RiseNullP < Alpha when a null was given --
