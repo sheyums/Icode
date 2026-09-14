@@ -289,9 +289,18 @@ nats -- does not rest on this p-value.
 bins, df [34, 39], chi-square p in [0.0327, 0.0995]. Staged rule: 199
 replicates; stop if p < 0.02 or > 0.12, else pool 200-replicate batches under
 new seeds until the 95% Monte Carlo interval clears 0.05 (cap 4999).
-First batch (seed 2, finished 10:31): **B = 199 valid, p = 0.080, MC SE 0.019,
-95% [0.042, 0.118]** -- inside the undecided range, so pooling continues at
-~5.5 s per replicate. Not a result until the interval clears 0.05.
+Pooled so far (every replicate valid; one seed per batch):
+
+| pooled B | seeds | p | MC SE | 95% interval |
+| --- | --- | --- | --- | --- |
+| 199 | 2 | 0.0800 | 0.0192 | [0.0423, 0.1177] |
+| 399 | 2-3 | 0.0750 | 0.0132 | [0.0492, 0.1008] |
+| 599 | 2-4 | 0.0667 | 0.0102 | [0.0467, 0.0866] |
+
+Every interval so far contains 0.05, so pooling continues (~4-5 s per
+replicate, a 200-replicate batch ~14-18 min). **Not a result until the
+interval clears 0.05 or the cap is reached** -- p has moved down with each
+batch, and if it settles near 0.05 the cap may arrive first.
 
 ## Mixture weights: the guard has to see what the data see
 
