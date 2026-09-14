@@ -92,9 +92,32 @@ for ii = 1:numel(varargin)-1
 end
 passThrough = varargin(keep);
 
+% The warm start supplies its own nStarts. If the caller also supplied
+% one, drop theirs from the pass-through: Octave's twin takes whichever
+% name-value pair comes last, but MATLAB's arguments block rejects a
+% duplicate name outright, so leaving both in place would fail on one
+% platform only -- the exact class of bug the twins exist to catch and
+% cannot, because they parse arguments differently.
+callerStarts = [];
+kp = true(1, numel(passThrough));
+for ii = 1:numel(passThrough)-1
+    if (ischar(passThrough{ii}) || isstring(passThrough{ii})) ...
+            && strcmpi(char(passThrough{ii}), 'nStarts')
+        callerStarts = passThrough{ii+1};
+        kp(ii:ii+1) = false;
+    end
+end
+passThroughCold = passThrough;          % with nStarts intact, for cold fits
+passThrough = passThrough(kp);          % without, for warm-started ones
+if isempty(callerStarts)
+    coldStarts = {};
+else
+    coldStarts = {'nStarts', callerStarts};
+end
+
 if ~isempty(fixedShapes)
     H = FitTruncatedDiscreteMLE(eventseries, xmin, "hyper_erlang", ...
-        passThrough{:}, 'Shapes', fixedShapes);
+        passThroughCold{:}, 'Shapes', fixedShapes);
     H.Model = 'hyper_erlang';
     H.Shapes = sort(fixedShapes(:).');
     H.ShapeSweep = [];
@@ -146,8 +169,13 @@ for m = 1:maxShape
                 warm = {'StartZ', z0, 'nStarts', sweepStarts};
             end
         end
+        if isempty(warm)
+            useOpts = [passThrough, coldStarts];   % caller's nStarts, if any
+        else
+            useOpts = [passThrough, warm];         % warm start sets its own
+        end
         Hm = FitTruncatedDiscreteMLE(eventseries, xmin, "hyper_erlang", ...
-            passThrough{:}, warm{:}, 'Shapes', shp);
+            useOpts{:}, 'Shapes', shp);
         sweep(m) = Hm.LogLik;
         % Chain from this shape's optimum whether or not its GUARD passed:
         % a guard-rejected fit is still the likelihood's maximum at that
