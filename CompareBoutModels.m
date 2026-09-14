@@ -1,0 +1,1476 @@
+function R = CompareBoutModels(eventseries, xmin, options)
+%COMPAREBOUTMODELS Fit a library of left-truncated models to bout durations
+%and compare them by AICc and BIC, test the winner's absolute fit, and plot
+%it against the data.
+%
+%   R = COMPAREBOUTMODELS(eventseries, xmin, SamplingInterval=dt, ...)
+%
+%   Pushes one dataset through every model in the library, ranks them,
+%   checks whether the ranked winner actually FITS (ranking alone only says
+%   which candidate is least bad), and walks down the ranking until one
+%   passes. Returns the whole table, not just the winner.
+%
+%   THIS IS STEP 2 OF THREE, AND THE ORDER MATTERS.
+%
+%   1. LOOK AT THE HAZARD FIRST -- BOUTHAZARD. It decides which families
+%      are ADMISSIBLE, which no information criterion can: they rank the
+%      candidates you thought of. A hazard that falls and then RISES
+%      excludes, by construction rather than by evidence, every
+%      hyperexponential at every order (a sum of decreasing exponentials
+%      is decreasing), every other monotone family here, and exp_weibull
+%      (one turning point at most). It also rules out pooling individuals
+%      as the explanation, since mixing can only make a hazard fall
+%      faster. Skipping this step is how you get a confident fit from a
+%      family the data had already excluded.
+%
+%   2. THIS FUNCTION ranks what remains by likelihood, then tests whether
+%      the winner FITS. Read the output in this order:
+%         R.Skipped        a model that never competed is not a model that
+%                          lost -- usually a mixture whose guard rejected
+%                          every configuration, which is a statement about
+%                          the data
+%         R.Table          ranking, Degenerate, Reason
+%         R.Selected,
+%         R.SelectionPath  the walk-down STOPS at the first row that
+%                          passes, so rows below the winner are UNTESTED,
+%                          not accepted
+%
+%   3. CHECK THE WINNER BEFORE BELIEVING IT, via R.Fits(i).Full:
+%         Diagnostics.GuardOK        false = parameters unidentified,
+%                                    whatever the likelihood says
+%         Diagnostics.MixtureMinCount  observations in the smallest branch
+%         Diagnostics.TailFraction   S(xmin), the fraction of the
+%                                    untruncated law that survived
+%         q, not Theta's w           w is extrapolation below xmin
+%         branch MEANS, not stage counts -- m/lambda is identified, the
+%                                    integer m usually is not (ShapeSweep)
+%         k, not numel(Params)       mixtures print one number more than
+%                                    they charge
+%
+%      And when two orders are close, TEST rather than rank:
+%      HYPEREXPONENTIALLRT simulates the null, because the mixture-order
+%      LRT is non-regular and no chi-square applies. This function
+%      triggers it automatically when either criterion separates
+%      neighbouring orders by less than OrderLRTThreshold.
+%
+%      A comparison at MATCHED k is the strongest form available: the
+%      penalties cancel and the difference is pure likelihood.
+%
+%   THE LIBRARY
+%     hyperexponential K=1..MaxComponents   FITHYPEREXPONENTIALMLE, one row
+%                                           per K (see FLATTENING below)
+%     exponentiated Weibull                 FITEXPONENTIATEDWEIBULLMLE
+%     weibull                               FITWEIBULLMLE
+%     gamma                                 FITGAMMAMLE
+%     powerlaw_cutoff                       FITPOWERLAWCUTOFFMLE
+%     powerlaw                              FITPOWERLAWMLE
+%     erlang                                FITERLANGMLE
+%     chisquared                            FITCHISQUAREDMLE
+%     weibull_mix                           FITWEIBULLMIXTUREMLE
+%     hyper_erlang                          FITHYPERERLANGMLE, shape swept;
+%                                           steps down in order when refused
+%                                           (see STEP-DOWN)
+%
+%   OPT-IN, absent unless asked for
+%     pearson3                              FITPEARSON3MLE, only if named
+%                                           in Models=. It cost ~70 min
+%                                           per fit on 1500 bouts, walking
+%                                           a ridge its own guard then
+%                                           rejects, so it is no longer
+%                                           part of a default run. Name it
+%                                           when you want to see that
+%                                           ridge -- it can outscore every
+%                                           legitimate model.
+%     beta                                  FITBETAMLE, only if UpperBound
+%                                           is supplied
+%
+%   FLATTENING. Every hyperexponential order K gets its own row and
+%   competes directly against the other families, rather than the family
+%   first picking a winner internally and only that winner being compared.
+%   Two-stage selection hides the selection that already happened inside
+%   the family; AICc and BIC compare MODELS, and a family boundary is not
+%   special. Orders that fail the mixture fitter's identifiability gating
+%   appear in the table with their reason and are barred from winning.
+%
+%   NESTING. Several library members are the same distribution, or special
+%   cases of one another, and their rows are NOT independent evidence:
+%     powerlaw_cutoff IS gamma, with alpha = 1-shape (identical logL, k,
+%       AICc, BIC -- it is fitted once and relabelled);
+%     hyperexponential K=1 IS the exponential, which is also gamma with
+%       shape 1, weibull with shape 1, erlang with shape 1, and the
+%       exponentiated Weibull with alpha=k=1;
+%     weibull IS the exponentiated Weibull with alpha=1;
+%     erlang and chisquared are both constrained gammas;
+%     hyper_erlang with every stage count 1 IS hyperexp K=Components (or
+%       K=j for a stepped-down "hyper_erlang J=j" row), so if its swept
+%       shape comes back 1 its row duplicates that one exactly;
+%     weibull_mix contains the 2-component hyperexponential as the limit of
+%       both shapes going to 1.
+%   R.Nesting spells this out, and identical log-likelihoods among those
+%   rows are a CHECK on the implementations rather than a coincidence: if
+%   hyperexponential K=1 and a shape-1 gamma disagree by more than ~1e-9,
+%   one of them is wrong.
+%
+%   COMPARABILITY. Every model is fitted with the same DistributionType,
+%   the same SamplingInterval and the same xmin, on the same retained
+%   observations, because information criteria may only be compared between
+%   fits sharing a dominating measure. A discrete log-likelihood sits
+%   roughly n*log(dt) above a continuous one, a difference of measure rather
+%   than of evidence. This is enforced, not merely documented: the options
+%   are passed to every fitter from one place.
+%
+%   MONOTONE VERSUS NON-MONOTONE HAZARDS. Most of this library has a
+%   monotone hazard, and the hyperexponential has a strictly DECREASING one
+%   at every K -- a sum of decreasing exponential terms cannot be otherwise
+%   -- so no order K will fit data whose hazard rises anywhere. Adding
+%   components to chase such a misfit is wasted: they refine a monotone
+%   shape rather than creating a hump, and the symptom is a family where
+%   K+1 buys almost nothing while the goodness-of-fit test still rejects
+%   everything. WEIBULL_MIX and HYPER_ERLANG are here for that case, the
+%   latter reaching it without leaving exponential rates by putting one
+%   branch's phases in SERIES rather than in parallel.
+%
+%   If every candidate is rejected, plot the empirical hazard before
+%   reading the ranking. A hazard that rises anywhere excludes most of this
+%   library a priori, which is a stronger and more useful statement than
+%   any AICc ordering among models that were all wrong.
+%
+%   COST. HYPER_ERLANG sweeps stage counts 1..HyperErlangMaxShape, so it
+%   costs that many fits rather than one, and a goodness-of-fit bootstrap
+%   on it re-sweeps per replicate -- deliberately, since a bootstrap
+%   replicate must get the same treatment the data got, shape selection
+%   included. Restrict Models= if that is too slow.
+%
+%   STEP-DOWN. HYPER_ERLANG is fitted at HyperErlangComponents=J, and when
+%   the data do not support J -- every swept shape rejected by its guard,
+%   usually because a branch holds none of the observations -- the fitter
+%   REFUSES rather than return an unidentified fit. The comparison then
+%   refits at J-1, J-2, ... down to 2, and the first identified order
+%   enters the table as its own row, named "hyper_erlang J=j" so it can
+%   never be read as the J-component model. The refusal is kept: R.Skipped
+%   still lists hyper_erlang, and its Reason says which orders were refused
+%   and which row the step-down produced. It stops at 2 because J=1 is the
+%   Erlang, already a row of its own, and it costs nothing unless J is
+%   refused. Two things it is NOT: a search for the best J (it stops at the
+%   first identified order, never moving for a lower AICc further down),
+%   and replayed in a bootstrap (a replicate refits at the order the data
+%   landed on). HyperErlangStepDown=false restores the bare refusal.
+%
+%   AICc VERSUS BIC. Both are reported and they will often disagree, by
+%   design: BIC's penalty is k*log(n), which at n=3400 is about 8.1 per
+%   parameter against AIC's 2, so BIC systematically prefers fewer
+%   components. Report both and say which you used. RankBy chooses which
+%   orders the table and which winner is carried into the fit test; it does
+%   not hide the other.
+%
+%   Note dAICc is measured from the best NON-DEGENERATE row, so an
+%   excluded row can show a negative dAICc. That is informative rather
+%   than wrong: it says the excluded fit reached a lower AICc than any
+%   admissible one, which is precisely why it had to be gated rather than
+%   ranked. A Pearson III whose location has slid far below xmin will do
+%   this routinely.
+%
+%   MIXTURE ORDER. AICc and BIC price a component differently -- 2 per
+%   parameter against log(n), which at n=4000 is 8.3 -- so they routinely
+%   disagree about how many exponentials a dataset supports, and neither
+%   is answering "is the extra component real". The likelihood-ratio test
+%   is, but its chi-square null does not hold for mixtures, so
+%   HYPEREXPONENTIALLRT simulates the null instead.
+%
+%   One pairwise test is not enough once three or more orders land close.
+%   Ranked first and second might be K=4 and K=3, and testing that pair
+%   alone would "support" K=4 on a rung whose own foundation, whether K=3
+%   beats K=2, was never examined. So the orders are climbed SEQUENTIALLY,
+%   K against K+1 ascending, stopping at the first non-rejection, and
+%   R.OrderLRTSupportedK is the smallest order not rejected in favour of
+%   the next (McLachlan & Peel 2000, sec. 6.4).
+%
+%   THE LADDER DOES NOT CONTROL A FAMILY-WISE ERROR RATE. Each rung is a
+%   valid test at its own alpha, but climbing several in sequence and
+%   stopping on the first acceptance inflates the overall type-I rate
+%   above that alpha, by an amount that depends on how many rungs were
+%   climbed and on their dependence. This is the standard procedure and it
+%   is reported as such: read the rungs, quote them individually, and do
+%   not present the ladder's endpoint as if it carried a single
+%   alpha-level guarantee. With a two-rung ladder the inflation is modest;
+%   with five it is not. GoFAlpha sets the per-rung level.
+%
+%   AKAIKE WEIGHTS. w_i = exp(-dAICc_i/2) / sum_j exp(-dAICc_j/2), the
+%   relative support for each model given the candidate set. These matter
+%   more than the winner's identity: if the top three split weight
+%   0.4/0.35/0.25 there is no defensible single winner, and a bare
+%   "model X won" would conceal that. Weights are computed over the
+%   non-degenerate rows only.
+%
+%   GOODNESS OF FIT. Ranking is relative; a G test asks whether the model
+%   is acceptable in absolute terms. Observations are binned (quantile
+%   edges, then pooled until every expected count reaches
+%   GoFMinExpected), and
+%
+%       G = 2 * sum_b O_b * log(O_b / E_b),   E_b = n*(Sh(lo_b) - Sh(hi_b))
+%
+%   using each fit's SurvivalHandle. With parameters estimated from
+%   UNGROUPED data the null distribution of G is not exactly chi-square: it
+%   lies between chi2(B-1-k) and chi2(B-1) (Chernoff & Lehmann 1954), so
+%   both bounds are reported. GoFBootstrap="auto" additionally runs
+%   a parametric bootstrap, which has the correct null distribution because
+%   it refits the model to each replicate and so absorbs the estimation
+%   effect that the df bounds merely bracket. It costs B refits, so "auto"
+%   spends it only where it can change the answer: when the two bounds
+%   STRADDLE GoFAlpha (pLower <= alpha < pUpper -- an outright undecided
+%   test), or when pUpper lands in 0.01 to 0.2, near enough to a boundary
+%   that the bracket's width matters. Elsewhere both bounds already agree.
+%   Pass 0 to disable, or an integer B to force it; "auto" uses B=199.
+%
+%   The verdict rule follows from the same bracket. With no bootstrap,
+%   Passed uses pLower, the conservative bound, so a model called acceptable
+%   has passed the harder of the two readings. With a bootstrap, Passed uses
+%   the bootstrap p. R.GoF.Ambiguous records whether the bounds disagreed.
+%
+%   Note that G depends on the binning. GoFBins and GoFMinExpected are
+%   recorded in R.GoF so the number is reproducible rather than an artefact
+%   of defaults, and the test has high power at large n -- on a few
+%   thousand bouts a model can be rejected for a misfit too small to
+%   matter. Read the magnitude, not only the p-value.
+%
+%   NAME-VALUE OPTIONS
+%   SamplingInterval  REQUIRED, same units as xmin.
+%   DistributionType  "discrete" (default) or "continuous", applied to all.
+%   MaxComponents     highest hyperexponential order, default 4.
+%   HyperErlangComponents  hyper-Erlang branches J, default 3.
+%   HyperErlangMaxShape    largest stage count swept, default 6.
+%   HyperErlangStepDown    true (default): refit at J-1 down to 2 when the
+%                     data refuse J. See STEP-DOWN.
+%   UpperBound        fixed upper support limit for beta, in DATA UNITS
+%                     (86400 for a 24 h recording scored in seconds).
+%                     Omit to leave beta out of the library.
+%   Models            cellstr/string array to restrict the library.
+%   RankBy            "AICc" (default) or "BIC".
+%   GoFBins           number of quantile bins before pooling, default 40.
+%   GoFMinExpected    pooling threshold on expected counts, default 5.
+%   GoFAlpha          significance level for "passes", default 0.05.
+%   GoFBootstrap      "auto" (default), 0, or a positive integer B.
+%   OrderLRT          "auto" (default), true, or false. Climbs a LADDER of
+%                     HYPEREXPONENTIALLRT tests to ask which mixture order
+%                     the data actually support -- a question no
+%                     information criterion answers. "auto" builds the
+%                     ladder over the admissible orders within
+%                     OrderLRTThreshold of the best on either criterion;
+%                     true builds it over every admissible order; false
+%                     never runs it. Each rung costs B refits of two
+%                     orders, so a three-rung ladder at B=999 is the
+%                     dominant cost of the whole comparison.
+%   OrderLRTThreshold gap, on EITHER criterion, under which "auto" fires.
+%                     Default 2, the conventional "no meaningful
+%                     difference" band.
+%   OrderLRTReplicates  B for that test, default 999, which is what a
+%                     test rather than an estimate needs -- see
+%                     HYPEREXPONENTIALLRT. The finest p-value resolvable is
+%                     1/(B+1). Lower it for exploratory runs; it is the
+%                     dominant cost of a comparison that triggers the LRT.
+%   Plot              logical, default true.
+%   RandomSeed, Verbose
+%
+%   OUTPUT
+%   R.Table        one row per candidate, ranked: Model, k, nReported, n,
+%                  LogLik, AIC, AICc, BIC, dAICc, AkaikeWeight, dBIC,
+%                  Degenerate, Reason, ParamText, ParamNames, Params,
+%                  ParamSE. The last three vary in length between rows, so
+%                  in MATLAB they are cell columns -- R.Table.Params{i} --
+%                  while Octave, which has no table type, gets the
+%                  underlying struct array and R.Table(i).Params.
+%                  NOTE k and nReported differ wherever a
+%                  constraint or an integer parameter is involved -- the
+%                  hyperexponential at K=3 reports 6 numbers (3 tau, 3 q)
+%                  but has k=5 free parameters because sum(q)=1 removes
+%                  one. The information criteria use k; do not recompute
+%                  them from numel(Params).
+%   R.Fits         one record per row, parallel to R.Table: Model,
+%                  SurvivalHandle, Refit (the reduced-start handle the
+%                  bootstrap drives), and Full, which holds the originating
+%                  fitter's own output untouched -- H.AllFits(K) for a
+%                  hyperexponential row, the whole H for every other
+%   R.Selected     the highest-ranked row that also passed the fit test,
+%                  empty if none did
+%   R.SelectedFit  that row's R.Fits record, or empty
+%   R.SelectionPath what was skipped on the way down, and why
+%   R.GoF          G, bins, df bounds, chi-square p at both, bootstrap p
+%                  and B if run, Passed
+%   R.OrderLRT     struct array, one element per rung actually climbed,
+%                  each the full HYPEREXPONENTIALLRT output; empty if the
+%                  ladder did not run. Read NegativeLRFraction on each
+%                  before its p-value.
+%   R.OrderLRTSupportedK  the smallest order not rejected in favour of the
+%                  next, i.e. what the ladder supports. NaN if no ladder
+%                  ran. This is a DIFFERENT quantity from the ranked
+%                  winner and may disagree with it.
+%   R.Skipped      candidates that could not be fitted at all, as a
+%                  struct array of Model and Reason. Empty normally. A
+%                  model listed here never entered the comparison AS
+%                  REQUESTED, which is NOT the same as losing it -- the
+%                  usual cause is a mixture whose guard rejected every
+%                  configuration, which says the data do not support that
+%                  many components. A refused hyper_erlang that stepped
+%                  down is listed here AND has a "hyper_erlang J=j" row in
+%                  the table; its Reason names that row.
+%   R.Nesting      the equivalences listed above, as text
+%   R.Figure       figure handle, or empty. Drawn even when nothing passed
+%                  the fit test, showing the top-ranked admissible
+%                  candidate and labelled REJECTED, since that is when the
+%                  curve and its residuals are most worth seeing.
+%   R.n, R.xmin, R.SamplingInterval, R.DistributionType
+%
+%   See also FITHYPEREXPONENTIALMLE, FITEXPONENTIATEDWEIBULLMLE,
+%   FITTRUNCATEDDISCRETEMLE, FITGAMMAMLE, FITPEARSON3MLE, FITBETAMLE.
+
+arguments
+    eventseries double {mustBeReal}
+    xmin (1,1) double {mustBePositive}
+    options.SamplingInterval (1,1) double = NaN
+    options.DistributionType (1,1) string {mustBeMember(options.DistributionType,["continuous","discrete"])} = "discrete"
+    options.MaxComponents (1,1) double {mustBeInteger,mustBePositive} = 4
+    options.HyperErlangComponents (1,1) double {mustBeInteger,mustBePositive} = 3
+    options.HyperErlangMaxShape (1,1) double {mustBeInteger,mustBePositive} = 6
+    options.HyperErlangStepDown (1,1) logical = true
+    options.UpperBound (1,1) double = NaN
+    options.Models = []
+    options.RankBy (1,1) string {mustBeMember(options.RankBy,["AICc","BIC"])} = "AICc"
+    options.GoFBins (1,1) double {mustBeInteger,mustBePositive} = 40
+    options.GoFMinExpected (1,1) double {mustBePositive} = 5
+    options.GoFAlpha (1,1) double {mustBePositive} = 0.05
+    options.GoFBootstrap = "auto"
+    options.OrderLRT = "auto"
+    options.OrderLRTThreshold (1,1) double {mustBeNonnegative} = 2
+    options.OrderLRTReplicates (1,1) double {mustBeInteger,mustBePositive} = 999
+    options.Plot (1,1) logical = true
+    options.RandomSeed = []
+    options.Verbose (1,1) logical = true
+end
+
+if isnan(options.SamplingInterval)
+    error('CompareBoutModels:SamplingIntervalRequired', ...
+        ['SamplingInterval is required, in the SAME UNITS as xmin. Every ' ...
+         'model is fitted with it so the information criteria stay ' ...
+         'comparable.']);
+end
+if ~isempty(options.RandomSeed)
+    % Pinned to 'twister' rather than bare rng(seed): rng keeps whatever
+    % generator is current, and a parallel worker's default generator is
+    % not the client's, so a bare call makes RandomSeed reproduce only
+    % within one execution mode. In the client this is identical to the
+    % default, so nothing changes serially.
+    rng(options.RandomSeed, 'twister');
+end
+
+dt = options.SamplingInterval;
+mode = options.DistributionType;
+common = {'SamplingInterval', dt, 'DistributionType', mode, 'Verbose', false};
+
+% ------------------------------------------------------------- the library
+cands = buildLibrary(options, common);
+rowWant = {};
+if ~isempty(options.Models)
+    want = asCellstr(options.Models);
+    % A request names either a FAMILY ("hyperexponential", "gamma") or one
+    % specific hyperexponential ORDER ("hyperexp K=2"). An order selects
+    % the family for fitting and then filters the rows it produced, and
+    % raises MaxComponents if it asks for an order above it -- otherwise
+    % naming "hyperexp K=5" under the default MaxComponents=4 would
+    % silently return nothing.
+    famWant = want;
+    for i = 1:numel(want)
+        if strncmp(want{i}, 'hyperexp K=', 11)
+            rowWant{end+1} = want{i};                            %#ok<AGROW>
+            famWant{i} = 'hyperexponential';
+            kk = sscanf(want{i}, 'hyperexp K=%d');
+            if ~isempty(kk) && kk > options.MaxComponents
+                options.MaxComponents = kk;
+                cands = buildLibrary(options, common);
+            end
+        end
+    end
+    cands = cands(ismember({cands.Name}, famWant));
+    if isempty(cands)
+        error('CompareBoutModels:NoModelsSelected', ...
+            ['None of the requested models are in the library. Valid ' ...
+             'names: hyperexponential (or "hyperexp K=n" for one order), ' ...
+             'exp_weibull, weibull, gamma, powerlaw_cutoff, powerlaw, ' ...
+             'erlang, chisquared, weibull_mix, hyper_erlang. Opt-in: ' ...
+             'pearson3 (name it explicitly), beta (needs UpperBound).']);
+    end
+end
+
+if options.Verbose
+    fprintf('CompareBoutModels: %d candidate(s), %s mode, xmin=%.6g, dt=%.6g.\n', ...
+        numel(cands), mode, xmin, dt);
+end
+
+% ------------------------------------------------------------------ fitting
+% Accumulated in cells and concatenated once, NOT grown by rows(nr)=...
+% from struct([]). struct([]) is a 0x0 struct array with no FIELDS, so the
+% first such assignment is between structures with different field sets:
+% MATLAB rejects it ("Subscripted assignment between dissimilar
+% structures") while Octave silently allows it. horzcat of structs requires
+% identical field names in identical order, which makeRow and makeRec
+% guarantee, and it behaves the same in both.
+rowsC = {}; fitsC = {}; nr = 0;
+skipC = {}; nsk = 0;          % candidates that could not be fitted at all
+heSeeds = {};                 % heSeeds{K}: the hyperexponential optimum at
+                              % order K, once fitted -- hyper_erlang's m=1
+                              % seed at J=K, including after a step-down
+for ci = 1:numel(cands)
+    c = cands(ci);
+    if options.Verbose
+        fprintf('  fitting %s ...\n', c.Name);
+    end
+    try
+        % hyper_erlang at shapes [1 1 ... 1] IS the hyperexponential at
+        % that order -- the same model, not a similar one -- and the
+        % hyperexponential rows have already been fitted by the time this
+        % candidate runs. Handing that optimum over as the m=1 starting
+        % point therefore costs nothing and starts the sweep at an answer
+        % instead of at a quantile guess. If the order was not fitted, or
+        % was degenerate, the seed is simply absent and the sweep starts
+        % cold as before.
+        xo = {};
+        if strcmp(c.Name, 'hyper_erlang')
+            xo = heSeedArgs(heSeeds, options.HyperErlangComponents);
+        end
+        out = c.Fit(eventseries, xmin, xo);
+    catch err
+        % A candidate that could not be fitted at all. Recorded rather
+        % than merely printed: with Verbose=false the model would
+        % otherwise be absent from the table with nothing in the returned
+        % struct to say why, and "not in the table" reads like "lost the
+        % comparison" when it actually means "never entered it". The
+        % commonest case is a mixture whose guard rejected every
+        % configuration, which is a finding about the data, not a
+        % malfunction.
+        %
+        % A hyper_erlang refused at J branches is then refitted at fewer
+        % (see STEP-DOWN in the header). The refusal is recorded either
+        % way; a step-down that finds an identified order hands its rows on
+        % below, under a name carrying the order it was fitted at.
+        out = [];
+        reason = err.message;
+        if strcmp(c.Name, 'hyper_erlang') && options.HyperErlangStepDown ...
+                && strcmp(err.identifier, 'FitHyperErlangMLE:NoValidFit')
+            [out, reason] = stepDownHyperErlang(c, eventseries, xmin, ...
+                options.HyperErlangComponents, heSeeds, reason);
+        end
+        nsk = nsk + 1;
+        skipC{nsk} = struct('Model', c.Name, 'Reason', reason);
+        if options.Verbose
+            fprintf('  %-22s skipped: %s\n', c.Name, reason);
+        end
+        if isempty(out), continue; end
+    end
+    for oi = 1:numel(out)
+        if ~isempty(rowWant) && strncmp(out(oi).Row.Model, 'hyperexp K=', 11) ...
+                && ~any(strcmp(out(oi).Row.Model, rowWant))
+            continue                  % an order the caller did not ask for
+        end
+        nr = nr + 1;
+        rowsC{nr} = out(oi).Row;
+        fitsC{nr} = out(oi).Fit;
+        if strncmp(out(oi).Row.Model, 'hyperexp K=', 11) ...
+                && ~out(oi).Row.Degenerate && ~isempty(out(oi).Fit.Full) ...
+                && isfield(out(oi).Fit.Full, 'Rates')
+            f = out(oi).Fit.Full;
+            K = sscanf(out(oi).Row.Model, 'hyperexp K=%d');
+            heSeeds{K} = struct('Rates', f.Rates(:).', ...
+                                'Weights', f.WeightsObserved(:).');
+        end
+        if options.Verbose
+            reportRow(rowsC{nr});
+        end
+    end
+end
+if nr > 0
+    rows = [rowsC{:}];
+    fits = [fitsC{:}];
+end
+if nsk > 0
+    R.Skipped = [skipC{:}];
+else
+    R.Skipped = struct('Model', {}, 'Reason', {});
+end
+if nr == 0
+    error('CompareBoutModels:NoFits', 'No model in the library could be fitted.');
+end
+R.n = rows(1).n;
+
+% ------------------------------------------------- ranking and the weights
+ok = ~[rows.Degenerate] & isfinite([rows.AICc]) & isfinite([rows.BIC]);
+if ~any(ok)
+    % Name them. With Models= restricted to one or two candidates this is
+    % a likely and perfectly legitimate outcome -- the requested model was
+    % excluded -- and the generic message sent the caller looking for a
+    % table that the error prevented from being returned.
+    detail = cell(1, nr);
+    for i = 1:nr
+        detail{i} = sprintf('%s (%s)', rows(i).Model, ...
+            firstNonEmpty(rows(i).Reason, 'non-finite criterion'));
+    end
+    error('CompareBoutModels:AllDegenerate', ...
+        ['Every candidate was excluded, so there is nothing to rank: %s. ' ...
+         'Widen Models=, or inspect the reasons above.'], strjoin(detail, '; '));
+end
+aicc = [rows.AICc]; bicv = [rows.BIC];
+bestA = min(aicc(ok)); bestB = min(bicv(ok));
+wraw = zeros(1, nr);
+wraw(ok) = exp(-(aicc(ok) - bestA)/2);
+for i = 1:nr
+    rows(i).dAICc = aicc(i) - bestA;
+    rows(i).dBIC  = bicv(i) - bestB;
+    rows(i).AkaikeWeight = wraw(i) / sum(wraw);
+end
+
+key = [rows.AICc];
+if strcmp(options.RankBy, "BIC"), key = [rows.BIC]; end
+key(~ok) = Inf;                       % degenerate rows rank last
+[~, order] = sort(key);
+rows = rows(order); fits = fits(order); ok = ok(order);
+
+R.Table = rowsToTable(rows);
+R.Fits = fits;
+R.Nesting = nestingNotes();
+R.xmin = xmin; R.SamplingInterval = dt; R.DistributionType = mode;
+R.RankBy = options.RankBy;
+
+% ---------------------------------- is the extra mixture component real?
+% AICc and BIC price a component differently -- 2 per parameter against
+% log(n), which at n=4000 is 8.3 -- so on real data they routinely disagree
+% about mixture order, and neither is an answer to "is it there". The
+% likelihood-ratio test is, but its chi-square null does not apply to
+% mixtures, so HYPEREXPONENTIALLRT simulates the null instead. Run here
+% only when the criteria are actually close, since it costs B refits.
+R.OrderLRT = [];
+R.OrderLRTSupportedK = NaN;
+[rungs, whyLRT] = orderLRTPlan(rows, ok, options);
+if ~isempty(rungs)
+    if options.Verbose
+        fprintf(['\n--- mixture order is unsettled: climbing the bootstrap ' ...
+            'LRT ladder ---\n']);
+        fprintf('  %s.\n', whyLRT);
+        fprintf(['  A gap that small is within the arbitrariness of the ' ...
+            'penalty itself (AIC charges 2 per parameter, BIC log(n)=%.1f), ' ...
+            'so neither criterion decides whether an extra component is\n' ...
+            '  REAL. The likelihood-ratio test does, once its null is ' ...
+            'simulated rather than assumed.\n'], log(rows(1).n));
+        fprintf(['  Testing K vs K+1 ascending, stopping at the first ' ...
+            'non-rejection: %d rung(s) at up to %d replicates each. Pass ' ...
+            'OrderLRT=false to skip.\n'], size(rungs,1), options.OrderLRTReplicates);
+    end
+    ladC = {};
+    supported = rungs(1,1);
+    for ri = 1:size(rungs,1)
+        try
+            Lr = HyperexponentialLRT(eventseries, xmin, rungs(ri,1), rungs(ri,2), ...
+                'SamplingInterval', dt, 'DistributionType', mode, ...
+                'B', options.OrderLRTReplicates, 'Verbose', options.Verbose);
+        catch err
+            if options.Verbose
+                fprintf('  rung K=%d vs K=%d skipped (%s).\n', ...
+                    rungs(ri,1), rungs(ri,2), err.message);
+            end
+            break
+        end
+        ladC{end+1} = Lr;                                          %#ok<AGROW>
+        if Lr.pValue <= options.GoFAlpha
+            supported = rungs(ri,2);      % rejected: climb to the larger order
+        else
+            break                          % first non-rejection ends the ladder
+        end
+    end
+    if ~isempty(ladC)
+        R.OrderLRT = [ladC{:}];
+        R.OrderLRTSupportedK = supported;
+    end
+end
+
+% -------------------------------------------- goodness of fit, walking down
+data = retainedData(eventseries, xmin, dt, mode);
+path = {}; sel = []; gof = [];
+for i = 1:nr
+    if ~ok(i)
+        path{end+1} = sprintf('%s: skipped, %s', rows(i).Model, rows(i).Reason); %#ok<AGROW>
+        continue
+    end
+    g = gTest(data, xmin, dt, fits(i), rows(i).k, options);
+    if g.Passed
+        sel = i; gof = g;
+        path{end+1} = sprintf('%s: ranked %d, G=%.2f p=%.4g -- accepted', ...
+            rows(i).Model, i, g.G, g.pUpper); %#ok<AGROW>
+        break
+    end
+    if isnan(g.G)
+        path{end+1} = sprintf('%s: ranked %d, %s', ...
+            rows(i).Model, i, g.Basis); %#ok<AGROW>
+    else
+        path{end+1} = sprintf('%s: ranked %d, G=%.2f p=%.4g -- rejected at alpha=%g', ...
+            rows(i).Model, i, g.G, g.pUpper, options.GoFAlpha); %#ok<AGROW>
+    end
+    if isempty(gof), gof = g; end
+end
+R.SelectionPath = path(:);
+R.GoF = gof;
+if isempty(sel)
+    R.Selected = [];
+    R.SelectedFit = [];
+    if options.Verbose
+        fprintf(['CompareBoutModels: no candidate passed the fit test at ' ...
+            'alpha=%g. R.Selected is empty; see R.SelectionPath.\n'], options.GoFAlpha);
+    end
+else
+    R.Selected = rows(sel);
+    R.SelectedFit = fits(sel);
+end
+
+% ----------------------------------------------------------------- reporting
+if options.Verbose
+    fprintf('\n%-22s %4s %12s %11s %11s %8s %7s\n', ...
+        'model','k','logL','AICc','BIC','dAICc','w');
+    for i = 1:nr
+        flag = ''; if ~ok(i), flag = '  [excluded]'; end
+        fprintf('%-22s %4d %12.2f %11.2f %11.2f %8.2f %7.3f%s\n', ...
+            rows(i).Model, rows(i).k, rows(i).LogLik, rows(i).AICc, ...
+            rows(i).BIC, rows(i).dAICc, rows(i).AkaikeWeight, flag);
+    end
+    if ~isempty(R.OrderLRT)
+        fprintf('order ladder (stop at the first non-rejection, alpha=%g):\n', ...
+            options.GoFAlpha);
+        for li = 1:numel(R.OrderLRT)
+            L = R.OrderLRT(li);
+            if L.pValue <= options.GoFAlpha, verdict = 'reject K=%d'; else, verdict = 'retain K=%d'; end
+            fprintf('  K=%d vs K=%d:  LR=%8.3f  p=%.4g   %s\n', ...
+                L.K0, L.K1, L.LR, L.pValue, sprintf(verdict, L.K0));
+        end
+        fprintf('  supported order: K=%d\n', R.OrderLRTSupportedK);
+        if numel(R.OrderLRT) > 1
+            fprintf(['  NOTE %d sequential tests: the ladder does not ' ...
+                'control a family-wise error rate, so read the rungs, not ' ...
+                'one p-value.\n'], numel(R.OrderLRT));
+        end
+    end
+    if ~isempty(sel)
+        fprintf('\nselected: %s   %s\n', rows(sel).Model, rows(sel).ParamText);
+        fprintf('fit test: G=%.3f, %d bins, chi2 p in [%.4g, %.4g]', ...
+            gof.G, gof.nBins, gof.pLower, gof.pUpper);
+        if ~isnan(gof.pBootstrap)
+            fprintf(', bootstrap p=%.4g (B=%d)', gof.pBootstrap, gof.B);
+        end
+        fprintf('\n');
+    end
+end
+
+% -------------------------------------------------------------------- plot
+R.Figure = [];
+% Plot even when NOTHING passed the fit test, using the top-ranked
+% admissible row. A blanket rejection is precisely when the curve is worth
+% seeing -- it is what tells you whether the model is close and the test is
+% merely powerful at this n, or whether it is the wrong shape entirely, and
+% the residual panel says where. Gating the plot on a pass meant the one
+% run that most needed a picture produced none. The figure labels itself
+% REJECTED so it cannot be mistaken for an accepted fit.
+if isempty(sel)
+    plotIdx = find(ok, 1);          % best admissible row, rejected or not
+else
+    plotIdx = sel;
+end
+if options.Plot && ~isempty(plotIdx) && ~isempty(gof)
+    try
+        R.Figure = plotFit(data, xmin, dt, fits(plotIdx), rows(plotIdx), ...
+            gof, options);
+    catch err
+        if options.Verbose
+            fprintf('CompareBoutModels: plotting skipped (%s).\n', err.message);
+        end
+    end
+end
+end
+
+% ========================================================================
+%                             THE LIBRARY
+% ========================================================================
+function cands = buildLibrary(options, common)
+% One entry per FAMILY. Each .Fit call returns an array of {Row, Fit}
+% records, so a family may contribute several rows -- the hyperexponential
+% contributes one per order K. Models= filters at this family level, so
+% "hyperexponential" selects every K rather than one of them.
+
+names = {}; fitters = {};
+
+mc = options.MaxComponents;
+names{end+1}   = 'hyperexponential';
+fitters{end+1} = @(d,x,xo) fitHyperCand(d, x, mc, common);
+
+names{end+1}   = 'exp_weibull';
+fitters{end+1} = @(d,x,xo) fitEWCand(d, x, common);
+
+% Engine-backed families. Column 3 holds extra options for that family.
+simple = { ...
+    'weibull',         @FitWeibullMLE,        {}; ...
+    'gamma',           @FitGammaMLE,          {}; ...
+    'powerlaw_cutoff', @FitPowerLawCutoffMLE, {}; ...
+    'powerlaw',        @FitPowerLawMLE,       {}; ...
+    'erlang',          @FitErlangMLE,         {}; ...
+    'chisquared',      @FitChiSquaredMLE,     {}; ...
+    'weibull_mix',     @FitWeibullMixtureMLE, {}; ...
+    'hyper_erlang',    @FitHyperErlangMLE, ...
+        {'Components', options.HyperErlangComponents, ...
+         'MaxShape',   options.HyperErlangMaxShape}};
+if ~isnan(options.UpperBound)
+    % Beta needs a finite upper support limit and has no sensible default:
+    % the recording length is a choice about the experiment, not about the
+    % data, so it is supplied or beta stays out of the library entirely.
+    simple(end+1,:) = {'beta', @FitBetaMLE, {'UpperBound', options.UpperBound}};
+end
+% PEARSON III IS OPT-IN, named in Models= or absent.
+%
+% It cost more than the whole rest of the library combined -- measured at
+% 516 s for THREE starts on 1500 bouts, so about 70 minutes for the
+% engine's 26 -- because its free location slides toward minus infinity
+% along a ridge where shape and location stop being separately
+% identified, and fminsearch walks that ridge to its evaluation budget on
+% every start. The fit it returns is then rejected by pearson3Guard, so
+% the row can never be selected: the default library was spending most of
+% its compute on a candidate that cannot win.
+%
+% Keeping it reachable matters, though, and not as a courtesy. On those
+% same bouts the REJECTED fit scored logL = -6828.18 against the best
+% legitimate model's -6841.39 -- the ridge outranks everything, so
+% anyone who disables the guard, or reads the AICc column without
+% checking Degenerate, would select it. Pass Models={'pearson3', ...} to
+% see that happen deliberately.
+if requestedByName(options.Models, 'pearson3')
+    simple(end+1,:) = {'pearson3', @FitPearson3MLE, {}};
+end
+for i = 1:size(simple,1)
+    nm = simple{i,1}; fh = simple{i,2}; ex = [common, simple{i,3}];
+    names{end+1}   = nm;                                        %#ok<AGROW>
+    fitters{end+1} = @(d,x,xo) fitSimpleCand(d, x, nm, fh, [ex, xo]); %#ok<AGROW>
+end
+
+% FitJ refits hyper_erlang at an explicit number of branches, for the
+% step-down. Built here rather than by appending 'Components' to .Fit's
+% options: .Fit already carries one, and MATLAB's arguments block rejects a
+% name-value pair passed twice. Empty for every other family.
+fitJs = cell(size(names));
+ih = find(strcmp(names, 'hyper_erlang'), 1);
+if ~isempty(ih)
+    fitJs{ih} = @(d,x,xo,J) fitSimpleCand(d, x, 'hyper_erlang', @FitHyperErlangMLE, ...
+        [common, {'Components', J, 'MaxShape', options.HyperErlangMaxShape}, xo]);
+end
+
+cands = struct('Name', names, 'Fit', fitters, 'FitJ', fitJs);
+end
+
+% ------------------------------------------------------------------------
+function tf = requestedByName(models, name)
+%REQUESTEDBYNAME Was this family asked for explicitly in Models=?
+% Used for the opt-in candidates. An empty Models means "the default
+% library", which is exactly what opt-in families are not part of.
+tf = false;
+if isempty(models), return; end
+nm = asCellstr(models);
+tf = any(strcmp(nm, name));
+end
+
+% ------------------------------------------------------------------------
+function xo = heSeedArgs(seeds, J)
+%HESEEDARGS The m=1 seed for hyper_erlang at J branches: the
+%hyperexponential optimum at order J if that order was fitted and
+%admissible, otherwise nothing and the sweep starts cold.
+xo = {};
+if J <= numel(seeds) && ~isempty(seeds{J})
+    xo = {'SeedRates', seeds{J}.Rates, 'SeedWeights', seeds{J}.Weights};
+end
+end
+
+% ------------------------------------------------------------------------
+function [out, reason] = stepDownHyperErlang(c, d, x, J0, seeds, reason)
+%STEPDOWNHYPERERLANG Refit a refused hyper_erlang at J0-1, J0-2, ... 2.
+% Stops at the FIRST identified order: this recovers a fit the data
+% support, it is not a search for the best one, so a lower AICc further
+% down never moves it. The rows are renamed "hyper_erlang J=j" -- the
+% order is part of the model, and a J=2 fit under the bare family name
+% would be read as the J0-branch model the data just refused. REASON
+% arrives as the refusal message and leaves saying what the step-down did.
+out = [];
+refused = {};
+for J = J0-1:-1:2
+    try
+        o = c.FitJ(d, x, heSeedArgs(seeds, J), J);
+    catch err
+        if strcmp(err.identifier, 'FitHyperErlangMLE:NoValidFit')
+            refused{end+1} = sprintf('J=%d', J);                   %#ok<AGROW>
+            continue
+        end
+        reason = sprintf('%s Step-down to J=%d failed: %s', reason, J, err.message);
+        return
+    end
+    name = sprintf('hyper_erlang J=%d', J);
+    for oi = 1:numel(o)
+        o(oi).Row.Model = name;
+        o(oi).Fit.Model = name;
+    end
+    out = o;
+    also = '';
+    if ~isempty(refused)
+        also = sprintf(' (%s also refused)', strjoin(refused, ', '));
+    end
+    reason = sprintf('%s Stepped down%s: identified at J=%d, reported as row "%s".', ...
+        reason, also, J, name);
+    return
+end
+if ~isempty(refused)
+    reason = sprintf('%s Step-down refused at %s too.', reason, strjoin(refused, ', '));
+end
+end
+
+% ------------------------------------------------------------------------
+function out = fitSimpleCand(d, x, name, fitter, extra)
+% Engine-backed families all report ParamNames/Params/ParamSE already.
+% nReported is taken from the reported vector rather than assumed equal to
+% k: the two mixtures (hyper_erlang, weibull_mix) print every weight while
+% sum(q)=1 leaves one of them determined, exactly as the hyperexponential
+% does, so they report one number more than they charge.
+H = fitter(d, x, extra{:}, 'ErrorOnNoValidFit', false);
+pn = asCellstr(H.ParamNames);
+pv = H.Params(:).';
+pse = H.ParamSE(:).';
+% A fit the engine's own guard has declared unusable must not be allowed to
+% win. The guard sets Diagnostics.GuardOK=false and warns, but leaves
+% Failed=false -- it is a statement about the fit's meaning, not about
+% whether the optimizer ran. Pearson III's location running up against xmin
+% is the case in hand: the likelihood DIVERGES there, so the reported
+% parameters sit on that divergence rather than at a maximum, and the row
+% would otherwise rank on a log-likelihood that is not a maximised one.
+[degen, reason] = guardVerdict(H);
+row = makeRow(name, H.k, numel(pv), H.n, H.LogLik, H.AIC, H.AICc, H.BIC, ...
+    degen, reason, pn, pv, pse);
+rec = makeRec(name, H.SurvivalHandle, H, @(nd) refitSimple(nd, x, fitter, extra));
+out = struct('Row', row, 'Fit', rec);
+end
+
+function s = firstNonEmpty(a, b)
+if isempty(a), s = b; else, s = a; end
+end
+
+function reportRow(r)
+%REPORTROW One line per fitted row, printed as the sweep runs rather than
+%only in the final table, so a long run shows what it is doing and what it
+%got. Parameters are shown here because a wrong SamplingInterval or xmin
+%usually announces itself in an obviously wrong time constant long before
+%the ranking is reached.
+if r.Degenerate
+    fprintf('    %-20s logL=%12.2f   [excluded: %s]\n', ...
+        r.Model, r.LogLik, r.Reason);
+else
+    fprintf('    %-20s logL=%12.2f   %s\n', r.Model, r.LogLik, r.ParamText);
+end
+end
+
+function [degen, reason] = guardVerdict(H)
+%GUARDVERDICT Combine a hard failure with a model-specific guard verdict.
+degen = H.Failed;
+reason = H.FailureReason;
+if ~isfield(H, 'Diagnostics') || ~isfield(H.Diagnostics, 'GuardOK')
+    return
+end
+if H.Diagnostics.GuardOK
+    return
+end
+degen = true;
+g = 'model-specific guard failed';
+if isfield(H.Diagnostics, 'Recommendation') && ~isempty(H.Diagnostics.Recommendation)
+    % First sentence only: the full text is in the fitter's warning and in
+    % R.Fits(i).Full.Diagnostics.Recommendation. Split on '. ' rather than
+    % '.' so a decimal point in the reported gap does not cut it short.
+    g = H.Diagnostics.Recommendation;
+    cut = strfind(g, '. ');
+    if ~isempty(cut), g = g(1:cut(1)-1); end
+end
+if isempty(reason), reason = g; else, reason = [reason '; ' g]; end
+end
+
+function r = refitSimple(nd, x, fitter, extra)
+H = fitter(nd, x, extra{:}, 'ErrorOnNoValidFit', false, 'nStarts', 4);
+r = struct('LogLik', H.LogLik, 'SurvivalHandle', H.SurvivalHandle, ...
+    'Failed', H.Failed);
+end
+
+% ------------------------------------------------------------------------
+function out = fitEWCand(d, x, common)
+H = FitExponentiatedWeibullMLE(d, x, common{:}, 'ErrorOnNoValidFit', false);
+pn  = {'lambda','k','alpha'};
+pv  = [H.Lambda, H.K, H.Alpha];
+pse = [H.LambdaSE, H.KSE, H.AlphaSE];
+% FixAlpha would drop k to 2 while still reporting three numbers (alpha
+% being pinned at 1, not estimated); nReported stays 3 either way.
+row = makeRow('exp_weibull', H.k, 3, H.n, H.LogLik, H.AIC, H.AICc, ...
+    H.k*log(H.n) - 2*H.LogLik, H.Failed, H.FailureReason, pn, pv, pse);
+rec = makeRec('exp_weibull', H.SurvivalHandle, H, @(nd) refitEW(nd, x, common));
+out = struct('Row', row, 'Fit', rec);
+end
+
+function r = refitEW(nd, x, common)
+H = FitExponentiatedWeibullMLE(nd, x, common{:}, 'ErrorOnNoValidFit', false, ...
+    'nStartsBase', 4, 'nStartsPerParameter', 2, 'maxStarts', 10);
+r = struct('LogLik', H.LogLik, 'SurvivalHandle', H.SurvivalHandle, ...
+    'Failed', H.Failed);
+end
+
+% ------------------------------------------------------------------------
+function out = fitHyperCand(d, x, mc, common)
+% One row per order. ErrorOnNoValidFit=false so that a family in which no
+% order is identifiable still returns its rows, with reasons, instead of
+% aborting the whole comparison.
+H = FitHyperexponentialMLE(d, x, common{:}, 'MaxComponents', mc, ...
+    'ErrorOnNoValidFit', false);
+acc = {};
+for K = 1:numel(H.AllFits)
+    f = H.AllFits(K);
+    name = sprintf('hyperexp K=%d', K);
+    kfree = 2*K - 1;        % K rates + K weights, less sum(q)=1
+    nrep  = 2*K;            % ...but 2K numbers are worth reporting
+    pn = hyperNames(K);
+    if ~f.Success
+        why = f.DegenerateReason;
+        if isempty(why), why = 'not fitted'; end
+        row = makeRow(name, kfree, nrep, H.n, NaN, NaN, NaN, NaN, ...
+            true, why, pn, nan(1,nrep), nan(1,nrep));
+        rec = makeRec(name, [], f, []);
+    else
+        pv  = [f.Tau(:).',   f.WeightsObserved(:).'];
+        pse = [f.TauSE(:).', f.WeightsObservedSE(:).'];
+        row = makeRow(name, kfree, nrep, f.n, f.LogLik, f.AIC, f.AICc, ...
+            kfree*log(f.n) - 2*f.LogLik, f.Degenerate, f.DegenerateReason, ...
+            pn, pv, pse);
+        rec = makeRec(name, f.SurvivalHandle, f, @(nd) refitHyper(nd, x, K, common));
+    end
+    acc{K} = struct('Row', row, 'Fit', rec);
+end
+% Concatenated once, for the same reason the caller does: growing a struct
+% array element by element is the operation whose MATLAB and Octave
+% semantics differ.
+out = [acc{:}];
+end
+
+function r = refitHyper(nd, x, K, common)
+% MaxComponents=K fits 1..K and selects; for the bootstrap we want order K
+% specifically, so read AllFits(K) rather than H.Selected.
+H = FitHyperexponentialMLE(nd, x, common{:}, 'MaxComponents', K, ...
+    'ErrorOnNoValidFit', false, 'nStartsBase', 3, ...
+    'nStartsPerComponent', 3, 'maxStarts', 12);
+f = H.AllFits(K);
+r = struct('LogLik', f.LogLik, 'SurvivalHandle', f.SurvivalHandle, ...
+    'Failed', ~f.Success);
+end
+
+function pn = hyperNames(K)
+pn = cell(1, 2*K);
+for j = 1:K, pn{j}     = sprintf('tau%d', j); end
+for j = 1:K, pn{K+j}   = sprintf('q%d',   j); end
+end
+
+% ========================================================================
+%                          ROWS AND THE TABLE
+% ========================================================================
+function row = makeRow(model, k, nrep, n, logL, aic, aicc, bic, degen, reason, pn, pv, pse)
+% Fixed field set and order, so rows from different families concatenate.
+% Params carries ALL parameters, including ones a constraint makes
+% redundant: at K=3 the hyperexponential reports three taus and all three
+% q, even though sum(q)=1 means only two q are free. k stays 5 and the
+% information criteria use k, never numel(Params) -- see the header.
+if isempty(reason), reason = ''; end
+if isempty(pn), pn = {}; end
+row = struct( ...
+    'Model',        model, ...
+    'k',            k, ...
+    'nReported',    nrep, ...
+    'n',            n, ...
+    'LogLik',       logL, ...
+    'AIC',          aic, ...
+    'AICc',         aicc, ...
+    'BIC',          bic, ...
+    'dAICc',        NaN, ...
+    'AkaikeWeight', NaN, ...
+    'dBIC',         NaN, ...
+    'Degenerate',   logical(degen), ...
+    'Reason',       reason, ...
+    'ParamText',    paramText(model, pn, pv));
+% Assigned rather than passed to struct(), which would read a cell value as
+% a request for a struct ARRAY. Stored unwrapped: a struct array's fields
+% may differ in length between elements, and only the table conversion
+% needs them boxed.
+row.ParamNames = pn(:).';
+row.Params     = pv(:).';
+row.ParamSE    = pse(:).';
+end
+
+function rec = makeRec(name, Sh, full, refit)
+rec = struct('Model', name, 'SurvivalHandle', {Sh}, 'Refit', {refit}, ...
+    'Full', {full});
+end
+
+function s = paramText(model, pn, pv)
+if isempty(pv) || ~any(isfinite(pv))
+    s = '(no fit)'; return
+end
+if strncmp(model, 'hyperexp', 8) && mod(numel(pv), 2) == 0
+    K = numel(pv)/2;
+    s = sprintf('tau=[%s], q=[%s]', ...
+        strtrim(sprintf('%.4g ', pv(1:K))), ...
+        strtrim(sprintf('%.4g ', pv(K+1:end))));
+    return
+end
+parts = cell(1, numel(pv));
+for i = 1:numel(pv)
+    if i <= numel(pn), nm = pn{i}; else, nm = sprintf('p%d', i); end
+    parts{i} = sprintf('%s=%.4g', nm, pv(i));
+end
+s = strjoin(parts, ', ');
+end
+
+function c = asCellstr(x)
+% Accepts a cellstr, a char row, or a string array, without depending on
+% the string class -- Octave has none, and the test harness runs there.
+if iscell(x)
+    c = cell(1, numel(x));
+    for i = 1:numel(x), c{i} = char(x{i}); end
+elseif ischar(x)
+    c = {x};
+else
+    c = cellstr(x);
+end
+c = c(:).';
+end
+
+function tf = isAuto(v)
+if isnumeric(v) || islogical(v), tf = false; return; end
+tf = strcmpi(char(v), 'auto');
+end
+
+function T = rowsToTable(rows)
+% Columns built explicitly rather than via struct2table. For a 1x1 struct
+% array struct2table requires every field to have the same number of ROWS,
+% and Reason is '' -- 0x0 char, zero rows -- against k's one, so any
+% single-model comparison would throw. Building the columns by hand is
+% also the only way to control their order, and it keeps the
+% variable-length parameter fields boxed as cell columns, which is what
+% table2struct unboxes again so R.Table(i).Params matches the shape
+% Octave's struct array already has.
+if ~(exist('struct2table', 'file') == 2 || exist('struct2table', 'builtin') == 5)
+    T = rows; return          % Octave: hand back the struct array
+end
+T = table();
+T.Model        = {rows.Model}.';
+T.k            = [rows.k].';
+T.nReported    = [rows.nReported].';
+T.n            = [rows.n].';
+T.LogLik       = [rows.LogLik].';
+T.AIC          = [rows.AIC].';
+T.AICc         = [rows.AICc].';
+T.BIC          = [rows.BIC].';
+T.dAICc        = [rows.dAICc].';
+T.AkaikeWeight = [rows.AkaikeWeight].';
+T.dBIC         = [rows.dBIC].';
+T.Degenerate   = [rows.Degenerate].';
+T.Reason       = {rows.Reason}.';
+T.ParamText    = {rows.ParamText}.';
+T.ParamNames   = {rows.ParamNames}.';
+T.Params       = {rows.Params}.';
+T.ParamSE      = {rows.ParamSE}.';
+end
+
+function notes = nestingNotes()
+notes = { ...
+ 'powerlaw_cutoff IS gamma with alpha = 1 - shape: same fit, logL, k, AICc, BIC.'; ...
+ 'hyperexp K=1 IS the exponential = gamma(shape 1) = weibull(shape 1) = erlang(shape 1) = exp_weibull(alpha=k=1).'; ...
+ 'weibull IS exp_weibull with alpha = 1.'; ...
+ 'erlang and chisquared are both gammas under a constraint (integer shape; scale 2, shape nu/2).'; ...
+ 'hyper_erlang CONTAINS the hyperexponential: with every stage count 1 it IS hyperexp K=Components (K=j for a stepped-down "hyper_erlang J=j" row), to the digit. If its selected shape is 1, its row and that hyperexp row are the same fit twice -- check R.Fits(i).Full.Shapes.'; ...
+ 'weibull_mix contains the 2-component hyperexponential as a limit, both shapes going to 1, though its shapes are free rather than pinned there.'; ...
+ 'Rows above are NOT independent evidence. Equal log-likelihoods among them are a check on the implementations, not a coincidence: a disagreement beyond ~1e-9 means one is wrong.'};
+end
+
+% ========================================================================
+%                        DATA AND GOODNESS OF FIT
+% ========================================================================
+function [rungs, why] = orderLRTPlan(rows, ok, options)
+%ORDERLRTPLAN Which order comparisons to run, as a LADDER of rungs.
+%
+% Testing only the top two ranked orders is not enough once three or more
+% land close together. Ranked first and second might be K=4 and K=3, and
+% testing that pair alone would "support" K=4 on a rung whose own
+% foundation -- whether K=3 beats K=2 -- was never examined.
+%
+% The standard procedure for mixture order is sequential (McLachlan & Peel
+% 2000, sec. 6.4): test K against K+1 ascending and STOP AT THE FIRST
+% NON-REJECTION, the supported order being the smallest K not rejected in
+% favour of the next. This returns the rungs; the caller climbs them and
+% stops.
+%
+% "auto" builds the ladder over the admissible orders lying within
+% OrderLRTThreshold of the best one on EITHER criterion -- the orders the
+% table is genuinely asking the reader to choose between. true builds it
+% over every admissible order, which is the honest ladder but costs a
+% bootstrap per rung. Rungs join CONSECUTIVE ENTRIES of that set, so a
+% gapped set (say K=2 and K=4 admissible, K=3 gated out) gives the rung
+% 2 vs 4, still a nested comparison and still valid.
+rungs = zeros(0, 2); why = '';
+force = false;
+if islogical(options.OrderLRT) || isnumeric(options.OrderLRT)
+    if ~options.OrderLRT, return; end
+    force = true;
+elseif ~isAuto(options.OrderLRT)
+    return
+end
+
+idx = find(ok & strncmp({rows.Model}, 'hyperexp K=', 11));
+if numel(idx) < 2, return; end
+K = zeros(1, numel(idx));
+for i = 1:numel(idx)
+    K(i) = sscanf(rows(idx(i)).Model, 'hyperexp K=%d');
+end
+
+if force
+    Ks = unique(K);
+    why = sprintf('requested with OrderLRT=true, over every admissible order');
+else
+    % rows are ranked, so idx(1) is the best admissible order
+    bestA = rows(idx(1)).AICc; bestB = rows(idx(1)).BIC;
+    thr = options.OrderLRTThreshold;
+    keep = false(1, numel(idx));
+    for i = 1:numel(idx)
+        dA = abs(rows(idx(i)).AICc - bestA);
+        dB = abs(rows(idx(i)).BIC  - bestB);
+        keep(i) = (dA <= thr) || (dB <= thr);
+    end
+    Ks = unique(K(keep));
+    if numel(Ks) < 2, return; end
+    why = sprintf(['K=%s are all within %.3g of the best on AICc or BIC, ' ...
+        'so the table cannot say which order the data support'], ...
+        strtrim(sprintf('%d ', Ks)), thr);
+end
+if numel(Ks) < 2, return; end
+Ks = sort(Ks);
+rungs = [Ks(1:end-1).', Ks(2:end).'];
+end
+
+function d = retainedData(raw, xmin, dt, mode)
+% Must reproduce the fitters' own retention rule exactly, or the expected
+% counts are computed against a different n than the likelihood used. In
+% discrete mode the support is round(t/dt) >= n_min, so filtering on raw
+% t >= xmin would wrongly drop observations in [(n_min-1/2)*dt, xmin).
+raw = raw(:);
+raw = raw(isfinite(raw) & raw > 0);
+if strcmp(mode, "discrete")
+    n_min = max(1, round(xmin / dt));
+    d = raw(round(raw / dt) >= n_min);
+else
+    d = raw(raw >= xmin);
+end
+end
+
+% ------------------------------------------------------------------------
+function g = gTest(data, xmin, dt, rec, k, options)
+isD = strcmp(options.DistributionType, "discrete");
+Sh  = rec.SurvivalHandle;
+
+[O, E, edges, n, sumP] = binAndExpect(data, xmin, dt, Sh, isD, options);
+B = numel(O);
+
+% A fit whose survival handle puts no mass on the observed range is not
+% something to compute a G statistic for. Pooling would collapse every bin
+% into one, B-1 would be 0, and G would come out as a tidy 0.00 with a NaN
+% p-value -- a broken fit looking like a perfect one. Say so instead.
+if ~(sumP > 1 - 1e-6) || B < 2
+    g = struct('G', NaN, 'nBins', B, 'dfLower', NaN, 'dfUpper', NaN, ...
+        'pLower', NaN, 'pUpper', NaN, 'Ambiguous', false, ...
+        'pBootstrap', NaN, 'B', 0, 'Passed', false, ...
+        'Basis', sprintf(['not testable: the fitted survival puts %.4g of ' ...
+            'its probability on the observed range, over %d bin(s)'], sumP, B), ...
+        'Alpha', options.GoFAlpha, 'Observed', O, 'Expected', E, ...
+        'Edges', edges(:).', 'ProbabilityMass', sumP, ...
+        'GoFBins', options.GoFBins, 'GoFMinExpected', options.GoFMinExpected);
+    return
+end
+
+G = gstat(O, E);
+
+dfUpper = B - 1;                       % Chernoff & Lehmann (1954) bounds
+dfLower = B - 1 - k;
+pUpper = chi2Upper(G, dfUpper);        % the larger, laxer p
+if dfLower > 0
+    pLower = chi2Upper(G, dfLower);    % the smaller, conservative p
+else
+    pLower = NaN;
+end
+
+alpha = options.GoFAlpha;
+ambiguous = isfinite(pLower) && pLower <= alpha && pUpper > alpha;
+
+% --- does the bootstrap earn its keep here?
+Bboot = 0;
+if isnumeric(options.GoFBootstrap)
+    Bboot = round(options.GoFBootstrap);
+elseif isAuto(options.GoFBootstrap)
+    if ambiguous || (pUpper >= 0.01 && pUpper <= 0.2)
+        Bboot = 199;
+    end
+end
+if isempty(rec.Refit), Bboot = 0; end   % nothing to refit with
+
+pBoot = NaN; nValid = 0;
+if Bboot > 0
+    if options.Verbose
+        fprintf('  bootstrap: %s, B=%d ...', rec.Model, Bboot);
+    end
+    Gb = nan(1, Bboot);
+    for b = 1:Bboot
+        try
+            sim = sampleFromSurvival(Sh, n, xmin, dt, isD);
+            rb  = rec.Refit(sim);
+            if rb.Failed || isempty(rb.SurvivalHandle), continue; end
+            [Ob, Eb] = binAndExpect(sim, xmin, dt, rb.SurvivalHandle, isD, options);
+            Gb(b) = gstat(Ob, Eb);
+        catch
+            % a replicate that will not refit is dropped, not counted
+        end
+    end
+    valid = Gb(isfinite(Gb));
+    nValid = numel(valid);
+    if nValid >= 20
+        % +1 in both places: the observed statistic is itself one draw
+        % from the null, which keeps the p-value from ever being 0.
+        pBoot = (1 + nnz(valid >= G)) / (nValid + 1);
+    end
+    if options.Verbose, fprintf(' p=%.4g (%d valid)\n', pBoot, nValid); end
+end
+
+if isfinite(pBoot)
+    passed = pBoot > alpha;
+    basis  = 'bootstrap';
+elseif isfinite(pLower)
+    passed = pLower > alpha;
+    basis  = 'chi2 at df=B-1-k (conservative bound)';
+else
+    passed = pUpper > alpha;
+    basis  = 'chi2 at df=B-1 (too few bins for the lower bound)';
+end
+
+g = struct('G', G, 'nBins', B, 'dfLower', dfLower, 'dfUpper', dfUpper, ...
+    'pLower', pLower, 'pUpper', pUpper, 'Ambiguous', ambiguous, ...
+    'pBootstrap', pBoot, 'B', nValid, 'Passed', passed, 'Basis', basis, ...
+    'Alpha', alpha, 'Observed', O, 'Expected', E, 'Edges', edges(:).', ...
+    'ProbabilityMass', sumP, 'GoFBins', options.GoFBins, ...
+    'GoFMinExpected', options.GoFMinExpected);
+end
+
+function G = gstat(O, E)
+pos = O > 0;
+G = 2 * sum(O(pos) .* log(O(pos) ./ E(pos)));
+end
+
+function p = chi2Upper(x, d)
+% P(chi2_d > x) without the Statistics toolbox: the regularized upper
+% incomplete gamma, which both MATLAB and Octave provide.
+if ~(d > 0) || ~isfinite(x) || x < 0
+    p = NaN; return
+end
+p = gammainc(x/2, d/2, 'upper');
+end
+
+% ------------------------------------------------------------------------
+function [O, E, edges, n, sumP] = binAndExpect(data, xmin, dt, Sh, isD, options)
+% Quantile bins, then pool adjacent bins until every EXPECTED count clears
+% GoFMinExpected. Pooling on expected (not observed) counts is what the
+% chi-square approximation actually requires.
+n = numel(data);
+if isD
+    xs = round(data(:) / dt);           % work on the integer grid
+    lo0 = max(1, round(xmin / dt));
+else
+    xs = data(:);
+    lo0 = xmin;
+end
+xsort = sort(xs);
+
+nb = min(options.GoFBins, max(2, floor(n / max(1, options.GoFMinExpected))));
+qs = (1:nb-1) / nb;
+eint = xsort(max(1, min(n, round(qs * n))));
+edges = unique([lo0; eint(:); Inf]);
+if numel(edges) < 3
+    edges = [lo0; Inf];                 % degenerate data: one bin
+end
+
+% Observed. Bin b is [edges(b), edges(b+1)) -- on the integer grid that is
+% the integers edges(b) .. edges(b+1)-1.
+B = numel(edges) - 1;
+O = zeros(1, B);
+for b = 1:B
+    O(b) = nnz(xs >= edges(b) & xs < edges(b+1));
+end
+
+% Expected. Both survival handles are P(T > t | T >= xmin) evaluated on the
+% grid, so the cut for integer edge e is (e-1)*dt: S there is P(N >= e).
+E = n * binProb(edges, Sh, isD, dt);
+
+% --- pool
+b = 1;
+while numel(E) > 1
+    if E(b) >= options.GoFMinExpected
+        b = b + 1;
+        if b > numel(E), break; end
+        continue
+    end
+    if b == numel(E), lo = b - 1; else, lo = b; end
+    E(lo) = E(lo) + E(lo+1);
+    O(lo) = O(lo) + O(lo+1);
+    E(lo+1) = []; O(lo+1) = []; edges(lo+1) = [];
+    b = lo;
+end
+sumP = sum(E) / n;      % should be 1; a shortfall means the handle is off
+end
+
+function p = binProb(edges, Sh, isD, dt)
+if isD
+    cuts = (edges - 1) * dt;
+else
+    cuts = edges;
+end
+fin = isfinite(cuts);
+Sv = zeros(numel(cuts), 1);
+Sv(fin) = Sh(cuts(fin));
+Sv(~fin) = 0;                  % S(Inf) = 0, and Sh may not accept Inf
+p = max(Sv(1:end-1) - Sv(2:end), 0).';
+end
+
+% ------------------------------------------------------------------------
+function s = sampleFromSurvival(Sh, n, xmin, dt, isD)
+% Inverse-CDF draw from the FITTED truncated model using only its survival
+% handle, so one sampler serves all three fitters. Both branches bisect
+% rather than tabulate: enumerating the grid until the survival is
+% negligible is unbounded work on a heavy tail (a fitted power law with
+% alpha 0.8 needs ~1e15 grid steps to reach 1e-12), while bisection costs
+% about 52 vectorized evaluations whatever the tail does.
+u = rand(n, 1);
+u(u <= 0) = eps;                        % tgt < 1 keeps the bracket valid
+tgt = 1 - u;                            % want the quantile where Sh == tgt
+
+if isD
+    % Smallest integer j with Sh(j*dt) <= tgt, i.e. F(j) >= u. Sh is a
+    % right-continuous step function on the grid, so the answer is exact.
+    nmin = max(1, round(xmin / dt));
+    hiS = nmin + 1;
+    while Sh(hiS*dt) > min(tgt) && hiS < 2^52
+        hiS = 2 * hiS;
+    end
+    lo = repmat(nmin - 1, n, 1);        % Sh(lo*dt) == 1 > tgt
+    hg = repmat(hiS, n, 1);             % Sh(hg*dt) <= tgt
+    while any(hg - lo > 1)
+        mid = floor((lo + hg) / 2);
+        above = Sh(mid * dt) > tgt;
+        lo(above)  = mid(above);
+        hg(~above) = mid(~above);
+    end
+    s = hg * dt;
+else
+    hi = 2 * xmin;
+    while Sh(hi) > min(tgt) && hi < xmin * 1e12
+        hi = 2 * hi;
+    end
+    lo = repmat(xmin, n, 1); hg = repmat(hi, n, 1);
+    for it = 1:80
+        mid = 0.5 * (lo + hg);
+        above = Sh(mid) > tgt;          % Sh decreasing: t still too small
+        lo(above)  = mid(above);
+        hg(~above) = mid(~above);
+    end
+    s = 0.5 * (lo + hg);
+end
+end
+
+% ========================================================================
+%                                 PLOT
+% ========================================================================
+function fh = plotFit(data, xmin, dt, rec, row, gof, options)
+isD = strcmp(options.DistributionType, "discrete");
+n = numel(data);
+xs = sort(data(:));
+
+% Empirical survival P(T > t). No censoring here, so this is just 1-ECDF;
+% a Kaplan-Meier estimator would reduce to the same thing.
+ux = unique(xs);
+cnt = zeros(numel(ux), 1);
+for i = 1:numel(ux), cnt(i) = nnz(xs == ux(i)); end
+Semp = 1 - cumsum(cnt) / n;
+
+rejected = isfield(gof, 'Passed') && ~gof.Passed;
+if rejected
+    tag = sprintf('REJECTED: %s', row.Model);
+else
+    tag = row.Model;
+end
+fh = figure('Name', sprintf('CompareBoutModels: %s', tag), 'Color', 'w');
+% LIGHT THEME, pinned. MATLAB R2025a+ gives a new figure the desktop's theme,
+% and a dark-mode or batch session draws it dark -- where the black data
+% curve below vanishes into the background, as it did on the per0 wake
+% bouts. Pinned on the figure before anything is drawn, so every child
+% inherits the light colours, rather than recolouring one curve. theme()
+% does not exist in Octave or before R2025a, where figures are light anyway.
+try
+    theme(fh, 'light');
+catch
+end
+
+% --- survival, log-log: where a heavy tail either is or is not straight
+subplot(2, 1, 1);
+tg = logspace(log10(xmin), log10(max(xs) * 1.5), 400).';
+if isD
+    tg = unique(round(tg / dt) * dt);
+    tg = tg(tg >= (max(1, round(xmin/dt)) - 1) * dt);
+end
+Sfit = rec.SurvivalHandle(tg);
+kp = Semp > 0;
+stairs([xmin; ux(kp)], [1; Semp(kp)], 'k-', 'LineWidth', 1.0); hold on
+plot(tg, Sfit, 'r-', 'LineWidth', 1.6);
+set(gca, 'XScale', 'log', 'YScale', 'log');
+xlabel('bout duration'); ylabel('P(T > t | T \geq xmin)');
+ttl = sprintf('%s   (n=%d, %s, dt=%g)   %s', tag, n, ...
+    options.DistributionType, dt, row.ParamText);
+if rejected
+    ttl = sprintf('%s\n[best-ranked candidate; it FAILED the fit test -- see the residuals]', ttl);
+end
+title(ttl, 'Interpreter', 'none');
+legend({'data', 'fit'}, 'Location', 'southwest'); legend boxoff
+grid on
+
+% --- Pearson residuals from the very bins the G test used, so the plot and
+% the p-value cannot disagree about where the misfit is
+subplot(2, 1, 2);
+r = (gof.Observed - gof.Expected) ./ sqrt(gof.Expected);
+bar(1:numel(r), r, 'FaceColor', [0.35 0.35 0.7], 'EdgeColor', 'none');
+hold on
+plot(xlim, [ 2  2], 'k:'); plot(xlim, [-2 -2], 'k:');
+xlabel(sprintf('G-test bin (%d bins, edges in R.GoF.Edges)', gof.nBins));
+ylabel('(O-E)/sqrt(E)');
+if isfinite(gof.pBootstrap)
+    sub = sprintf('G=%.2f, bootstrap p=%.4g (B=%d)', gof.G, gof.pBootstrap, gof.B);
+elseif isnan(gof.G)
+    sub = sprintf('not testable: %s', gof.Basis);
+else
+    sub = sprintf('G=%.2f, chi2 p in [%.4g, %.4g]', gof.G, gof.pLower, gof.pUpper);
+end
+if rejected && isfinite(gof.G) && isfinite(gof.dfLower) && gof.dfLower > 0
+    % G/df is the thing to read at large n, where the test rejects misfits
+    % far too small to matter: near 1 means the model is close and the test
+    % is merely powerful, large means it is the wrong shape.
+    sub = sprintf('%s   |   G/df = %.2f', sub, gof.G / gof.dfLower);
+end
+title(sub);
+grid on
+end

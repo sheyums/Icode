@@ -94,6 +94,8 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %       Params(2) = sigma
 %       Params(3) = shift
 
+%% Original written by Sheyum. Hardened by ChatGPT and Claude.
+
     %% Constants and default settings
 
     gapFraction       = 0.001;
