@@ -518,6 +518,7 @@ d = struct('nNonFinite', 0, 'nBelowXmin', 0, 'nAtXmin', 0, ...
     'nDistinctOnGrid', 0, 'LocationGap', NaN, 'SupportCoverage', NaN, ...
     'TailFraction', NaN, 'DataSpan', NaN, 'LocationSpanRatio', NaN, ...
     'n', 0, 'MixtureWeight', NaN, 'MixtureMinCount', NaN, ...
+    'MixtureWeightUntruncated', NaN, ...
     'GuardOK', true, ...
     'Recommendation', '');
 end
@@ -705,7 +706,7 @@ switch name
         M.sf     = @(t,th) heSF(t, th, mm);
         M.logpdf = @(t,th) heLogPdf(t, th, mm);
         M.starts = @(d,xm,ns) heStarts(d, mm, ns);
-        M.guard  = @(th,xm,o,dg) heGuard(th, mm, o, dg);
+        M.guard  = @(th,xm,o,dg) heGuard(th, mm, xm, o, dg);
 
     case 'weibull_mix'
         % TWO-COMPONENT WEIBULL MIXTURE, for a NON-MONOTONE HAZARD.
@@ -990,20 +991,65 @@ sc = [repmat(0.9, 1, J), repmat(0.7, 1, J-1)];
 st = [base; repmat(base, extra, 1) + randn(extra, 2*J-1) .* repmat(sc, extra, 1)];
 end
 
-function diag_ = heGuard(th, mm, options, diag_)
+function diag_ = heGuard(th, mm, xmin, options, diag_)
 %HEGUARD The same two failures as any mixture: a component nobody is in,
 %and two components that have become one.
+%
+% "Nobody is in it" must be judged on the OBSERVED share, not on the
+% mixing weight. These weights are UNTRUNCATED -- heSF forms
+% sum_j w_j S_j(t) and the engine divides by S(xmin) -- so a component
+% whose mass lies below the truncation point can carry a large w while
+% contributing nothing to the data. Its share of what was actually
+% RETAINED is
+%
+%       obs_j  proportional to  w_j * S_j(xmin)
+%
+% and that is the quantity its rate is estimated from. Testing min(w)
+% instead misses the case entirely: a 3-component fit at xmin=100 was
+% seen with w = [0.055, 0.809, 0.136] and rates [0.019, 0.566, 0.0074],
+% where the middle component -- the largest weight of the three -- has
+% mean 1.8 s, so S(100) = 3e-25 and it holds ZERO of the 1500
+% observations. The guard passed it, and the phantom component bought a
+% shape the data never supported. The same fit reached from a different
+% starting point sends that weight to 1e-10 instead, where min(w) does
+% catch it: the two are the same truncated law, one of them visibly
+% degenerate and one of them not, which is precisely why the test has to
+% be on the observed share.
+%
+% This is the q-versus-w distinction the hyperexponential fitter makes
+% everywhere, applied to the guard rather than to the report.
 J = numel(mm);
-q = th(J+1:end);
-diag_.MixtureWeight = min(q);
-nEff = diag_.n * min(q);
+w = th(J+1:end);
+Sx = zeros(1, J);
+for j = 1:J
+    Sx(j) = erlangSFint(th(j)*xmin, mm(j));
+end
+contrib = w(:).' .* Sx;
+total = sum(contrib);
+if ~(total > 0) || ~all(isfinite(contrib))
+    diag_.GuardOK = false;
+    diag_.MixtureWeight = 0;
+    diag_.MixtureMinCount = 0;
+    msg = ['no hyper-Erlang component retains any mass above xmin, so ' ...
+           'the truncated likelihood is not identified at all.'];
+    diag_.Recommendation = msg;
+    warning('FitTruncatedDiscreteMLE:MixtureComponentEmpty', '%s', msg);
+    return
+end
+share = contrib / total;
+diag_.MixtureWeight = min(share);               % OBSERVED share
+diag_.MixtureWeightUntruncated = min(w);        % the mixing weight
+nEff = diag_.n * min(share);
 diag_.MixtureMinCount = nEff;
 if nEff < options.MinMixtureCount
     diag_.GuardOK = false;
+    [~, jm] = min(share);
     msg = sprintf(['a hyper-Erlang component holds only %.2f of the %d ' ...
-        'observations (weight %.4g), so its rate is not estimated and the ' ...
+        'observations (observed share %.4g, mixing weight %.4g, rate ' ...
+        '%.4g at %d stage(s)), so its rate is not estimated and the ' ...
         'parameter count the information criteria charge is wrong. Drop a ' ...
-        'component, or use the shape vector that fits.'], nEff, diag_.n, min(q));
+        'component, or use the shape vector that fits.'], nEff, diag_.n, ...
+        min(share), w(jm), th(jm), mm(jm));
     diag_.Recommendation = msg;
     warning('FitTruncatedDiscreteMLE:MixtureComponentEmpty', '%s', msg);
     return
