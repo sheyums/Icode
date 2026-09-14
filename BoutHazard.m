@@ -343,6 +343,14 @@ end
 % ------------------------------------------------------------------------
 function f = plotHazard(H)
 f = figure('Color', 'w');
+% A new figure's THEME is not predictable in MATLAB R2026a: two figures
+% created moments apart in one session came out light and dark, and an
+% earlier session got the reverse. 'Color','w' does not settle it -- it
+% whitens the figure margin while the axes stay dark (axes Color 0.07,
+% XColor 0.85), so a dark data curve on a dark axes is invisible. Forced
+% before the axes exist, so children inherit it. theme() is absent in
+% Octave and pre-R2025a MATLAB, hence the try.
+try, theme(f, 'light'); catch, end %#ok<TRYNC>
 ax = axes(f); hold(ax, 'on');
 xv = H.BinCenters;
 good = isfinite(H.Hazard) & H.Hazard > 0;
