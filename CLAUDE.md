@@ -319,6 +319,16 @@ its copies of the newer fitters are UNTRACKED, so deleting them cannot be
 undone. Fix the resolution, not the files — take that folder off the path while
 working here, or refresh its copy of whatever you need.
 
+**That folder now carries `Icode_sync_stamp.txt`**, naming the commit its
+copies were synced from (`1397554`, 2026-09-14) with a SHA-256 prefix per file
+and the backup location of what was replaced. A session working from there
+should compare that file's Commit line against `git log -1` in Icode BEFORE
+trusting the copies. And note the asymmetry: `addpath('...Icode','-begin')`
+does NOT protect you, because MATLAB's current folder beats the path — the
+user's analysis scripts live in that folder, so its copies win whenever it is
+`pwd`. The only durable options are to re-sync after any `.m` change, or to
+keep one copy of each function.
+
 **In Octave they do NOT run by name.** Three of the suites call the bare
 `Fit*MLE` names, which resolve to the MATLAB originals and die on the
 `arguments` block. They need a generated test twin — see `verify_all.sh` in the
