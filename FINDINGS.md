@@ -175,12 +175,26 @@ These are choices, not results. Worth revisiting before publication.
    valid at its own alpha, but climbing several and stopping on the first
    acceptance inflates the overall type-I rate. Quote the rungs individually;
    do not present the endpoint as carrying one alpha-level guarantee.
-5. **`erlangCDFint` switches to a direct tail sum below `F = 1e-6`.** The
+5. **`HyperErlangComponents` stays at 3**, decided by the user on the
+   condition that J=3's suitability is ASSESSED per dataset rather than
+   assumed. It is: J=3 is attempted on every dataset and refused only when
+   that dataset's own fits come back unidentified, so nothing anywhere
+   encodes "J=3 does not work". On two-regime data it is refused and J=2
+   wins by 447 AICc (Octave) and 514 (MATLAB), on different draws.
+
+   What the refusal currently throws away is the assessment's result: an
+   unsupported J=3 yields NO hyper-Erlang row at all, only an `R.Skipped`
+   entry, rather than the J=2 fit that does work. The intended follow-up is
+   a step-down -- on refusal at J, refit at J-1 and report which order was
+   used and why -- so the outcome reads "J=3 unsupported (a component held
+   0.3 of 1500 bouts), fitted at J=2". Cost is paid only when J fails, so
+   data supporting 3 components is unaffected. NOT YET IMPLEMENTED.
+6. **`erlangCDFint` switches to a direct tail sum below `F = 1e-6`.** The
    threshold is a speed/accuracy trade, not a derived constant: `1 - S` has
    relative error about `eps/F`, so 1e-6 keeps that below ~1e-10 while leaving
    the slow branch rare. Lower it if a fitted range ever needs bin
    probabilities finer than that.
-6. **`B = 999`** for the LRT. A test has a decision boundary the estimate must
+7. **`B = 999`** for the LRT. A test has a decision boundary the estimate must
    resolve: the Monte Carlo error is `sqrt(p(1-p)/B)`, so a true p of 0.05 has
    a 95% interval of [0.020, 0.080] at B=199 against [0.036, 0.064] at B=999
    (Davison & Hinkley 1997, sec. 4.2). Even 999 is not tight at the boundary --
