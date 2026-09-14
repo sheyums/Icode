@@ -81,6 +81,16 @@ normalizer, reported as `Diagnostics.TailFraction`. **`SurvivalHandle`** is the
 *truncated* survival `S(t)/S(xmin)`, which is 1 at `xmin`. Different objects;
 one is a scalar, the other a curve.
 
+**`BoutHazard`: only `RiseNullP` is a test, and it depends on `NumBins`.**
+`RiseRatio` is a maximum taken after a minimum, so it is >= 1 for any curve;
+`RiseCI` bootstraps the data, not a null, and is DESCRIPTIVE only (its lower
+limit exceeded 1 on 9 of 50 no-rise datasets). A test needs
+`NullSurvivalHandle` (a fitted monotone model, e.g. a hyperexponential's
+`SurvivalHandle`) and `NullReplicates`; without them `NonMonotone` falls back
+to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
+0.010 at 16 bins and 0.068 at 20 on the same wake bouts -- so **fix the set of
+`NumBins` before looking, and report every one** (FINDINGS judgement call 8).
+
 ## Traps that have already bitten, with tests guarding them
 
 - **A mixture guard must test the OBSERVED share, not the mixing weight.**
@@ -140,6 +150,40 @@ one is a scalar, the other a curve.
   axes stay dark. Create the figure, then `try theme(fh,'light'); catch, end`
   BEFORE any axes, so children inherit (`theme` is absent in Octave and before
   R2025a). `plotFit` does this and test 23 asserts a white figure and axes.
+- **A statistical criterion is not validated by tests on single datasets —
+  calibrate it on many under a null.** `BoutHazard`'s first rise criterion
+  passed all 10 of its tests, including known-hazard laws, because they asked
+  "does it detect a rise that exists, and decline one that doesn't" on one
+  dataset each. Its error rate was never measured. Run on 50 datasets from a
+  strictly decreasing hazard, it claimed a rise in 16-20% of them. Before
+  quoting any p-value or accept/reject rule, simulate from the null it claims
+  and count how often it fires.
+- **A null replicate must pass through every data-dependent step the observed
+  statistic did.** `RiseNullP` first binned each null dataset on the OBSERVED
+  data's edges and at-risk/saturation mask, while the observed value had been
+  computed after choosing those from itself. Not exchangeable, and it pushed p
+  from 0.019 to 0.048 (16 bins) and from 0.057 to 0.173 (20 bins). A sampler one
+  grid step early, found in the same code, moved p by at most 0.012 there --
+  within Monte Carlo error -- on the real bouts with a fitted null. That is not
+  a general reprieve for discretization (next entry): measure which defect
+  matters IN THE SETTING AT HAND before fixing the one that looks worse. Fixed
+  in 2371913: each replicate runs the whole estimator on its own edges, and the
+  sampler uses `pmf(k) = S(g_k - dt) - S(g_k)`.
+- **A calibration harness must discretize its simulated data exactly as the
+  estimator's null sampler does.** Calibrating `RiseNullP` (pre-2371913) on
+  synthetic data generated with `round()` -- nearest bin -- while the null
+  sampler followed the engine's convention (a bout of k bins lies in
+  `((k-1)dt, k dt]`, i.e. `ceil`) gave min p 0.080, median 0.610, 0/40 below
+  0.05: a clean, confident "the test is conservative". Changing only the
+  harness to `ceil()` gave min 0.025, median 0.542, 3/40 below 0.05 --
+  approximately uniform. The conservatism was the HARNESS. The two traps above
+  are about the estimator; this one is about the thing it is tested with,
+  which nothing else here guards. The same half-bin question barely moved p on
+  the real bouts, so which discretization defect dominates depends on the
+  setting (a plausible, unmeasured reason: log-spaced edges follow `max(t)`,
+  which moves little across synthetic draws and a lot between a real sample
+  and a null draw). Simulate through the engine's own survival convention --
+  `sampleFromSurvival`-style inversion of `SurvivalHandle` -- not `round()`.
 - **Never floor a probability without its normalizer.** Flooring a bin
   probability at `realmin` while `S(xmin)` sat in the subnormals made `p/S`
   reach 4.5e15 — a conditional probability above 1, worth +36 log-likelihood

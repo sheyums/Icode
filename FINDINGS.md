@@ -271,14 +271,19 @@ and 0.011, about 1.5 and 1.1 standard errors of a difference between two
 999-draw estimates), and the null distributions match. Trough, peak,
 `RiseRatio` and `RiseDisjoint` are unchanged from the table above.
 
-**Open, not decided: the bin count decides the side of 0.05.** Same data, same
-null, same statistic: p = 0.010 at 16 bins, 0.068 at 20. Choosing the bin count
-after seeing these would be selecting the analysis on its outcome. Options on
-the table: report the rise as supported but bin-sensitive across a set of bin
-counts fixed IN ADVANCE, reporting every one rather than the minimum; or
-pre-specify a single count by a rule; or a statistic that does not bin. None
-has been run. The structural argument above -- no hyperexponential can hump,
-and at k = 5 the series branch buys 18.70 nats -- does not rest on this p-value.
+**The bin count decides the side of 0.05.** Same data, same null, same
+statistic: p = 0.010 at 16 bins, 0.068 at 20. Choosing the bin count after
+seeing these would be selecting the analysis on its outcome.
+
+**Decided (user, 2026-09-14): report the rise as supported but bin-sensitive,
+across a set of bin counts fixed IN ADVANCE, every count reported rather than
+the minimum.** The alternatives were one count pre-specified by a rule, or a
+statistic that does not bin. **Not yet run**: the set has not been fixed and
+the user is looking at other datasets first, so the rule applies there too
+(judgement call 8). Until it is run, quote the two measured values above as
+exactly that -- two bin counts -- not as a range. The structural argument above
+-- no hyperexponential can hump, and at k = 5 the series branch buys 18.70
+nats -- does not rest on this p-value.
 
 **`weibull_mix` fit-test bootstrap: still running.** Observed G = 50.69 on 40
 bins, df [34, 39], chi-square p in [0.0327, 0.0995]. Staged rule: 199
@@ -431,6 +436,13 @@ These are choices, not results. Worth revisiting before publication.
    a 95% interval of [0.020, 0.080] at B=199 against [0.036, 0.064] at B=999
    (Davison & Hinkley 1997, sec. 4.2). Even 999 is not tight at the boundary --
    go higher rather than report a borderline p.
+
+8. **A hazard rise is reported across a PRE-SPECIFIED set of `NumBins`,
+   every count, never the minimum p.** `BoutHazard`'s `RiseNullP` depends on
+   binning: on the per0 DD wake bouts it was 0.010 at 16 bins and 0.068 at 20.
+   Fix the set before looking at any p-value (e.g. 12/16/20/24), report all of
+   them, and call the rise bin-sensitive if they straddle alpha. Decided by the
+   user 2026-09-14; not yet applied to any dataset.
 
 ## One thing that does not transfer between implementations
 
