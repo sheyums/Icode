@@ -190,9 +190,20 @@ These are choices, not results. Worth revisiting before publication.
 
    Now: when J is refused, `CompareBoutModels` refits at J-1 down to 2 and
    the first identified order enters the table as `hyper_erlang J=j`. The
-   refusal stays in `R.Skipped`, its Reason naming that row. Paid for only
-   when J fails. `HyperErlangStepDown=false` restores the bare refusal. Still
-   no J sweep.
+   refusal stays in `R.Skipped`, its Reason naming that row.
+   `HyperErlangStepDown=false` restores the bare refusal. Still no J sweep.
+
+   **Cost, measured rather than asserted.** An earlier draft of this entry
+   said "paid for only when J fails", which is true but invites the wrong
+   inference. What J fails ON is the point: data with fewer regimes than
+   branches. Ordinary gamma(0.7, 500) at n = 300-500 SUPPORTS J=3, so the
+   step-down never fires there and costs nothing (verified two ways: an
+   Octave default-library call returns the plain `hyper_erlang` row with
+   `R.Skipped` empty, and a MATLAB A/B with the option on and off differs by
+   run-to-run noise). Where it does fire -- two-regime data -- it costs about
+   1.3 s, a second sweep at the lower order. And the row it produces is the
+   right one: the stepped-down `hyper_erlang J=2` has logL -6841.391,
+   identical to an explicit J=2 run on the same data.
 
    What this choice carries, stated so it is not rediscovered:
    - **J is now chosen after seeing the data**, and no information criterion
