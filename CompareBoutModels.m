@@ -21,7 +21,9 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %     erlang                                FITERLANGMLE
 %     chisquared                            FITCHISQUAREDMLE
 %     weibull_mix                           FITWEIBULLMIXTUREMLE
-%     hyper_erlang                          FITHYPERERLANGMLE, shape swept
+%     hyper_erlang                          FITHYPERERLANGMLE, shape swept;
+%                                           steps down in order when refused
+%                                           (see STEP-DOWN)
 %
 %   OPT-IN, absent unless asked for
 %     pearson3                              FITPEARSON3MLE, only if named
@@ -53,8 +55,9 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %       exponentiated Weibull with alpha=k=1;
 %     weibull IS the exponentiated Weibull with alpha=1;
 %     erlang and chisquared are both constrained gammas;
-%     hyper_erlang with every stage count 1 IS hyperexp K=Components, so if
-%       its swept shape comes back 1 its row duplicates that one exactly;
+%     hyper_erlang with every stage count 1 IS hyperexp K=Components (or
+%       K=j for a stepped-down "hyper_erlang J=j" row), so if its swept
+%       shape comes back 1 its row duplicates that one exactly;
 %     weibull_mix contains the 2-component hyperexponential as the limit of
 %       both shapes going to 1.
 %   R.Nesting spells this out, and identical log-likelihoods among those
@@ -91,6 +94,21 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   on it re-sweeps per replicate -- deliberately, since a bootstrap
 %   replicate must get the same treatment the data got, shape selection
 %   included. Restrict Models= if that is too slow.
+%
+%   STEP-DOWN. HYPER_ERLANG is fitted at HyperErlangComponents=J, and when
+%   the data do not support J -- every swept shape rejected by its guard,
+%   usually because a branch holds none of the observations -- the fitter
+%   REFUSES rather than return an unidentified fit. The comparison then
+%   refits at J-1, J-2, ... down to 2, and the first identified order
+%   enters the table as its own row, named "hyper_erlang J=j" so it can
+%   never be read as the J-component model. The refusal is kept: R.Skipped
+%   still lists hyper_erlang, and its Reason says which orders were refused
+%   and which row the step-down produced. It stops at 2 because J=1 is the
+%   Erlang, already a row of its own, and it costs nothing unless J is
+%   refused. Two things it is NOT: a search for the best J (it stops at the
+%   first identified order, never moving for a lower AICc further down),
+%   and replayed in a bootstrap (a replicate refits at the order the data
+%   landed on). HyperErlangStepDown=false restores the bare refusal.
 %
 %   AICc VERSUS BIC. Both are reported and they will often disagree, by
 %   design: BIC's penalty is k*log(n), which at n=3400 is about 8.1 per
@@ -173,6 +191,10 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %   SamplingInterval  REQUIRED, same units as xmin.
 %   DistributionType  "discrete" (default) or "continuous", applied to all.
 %   MaxComponents     highest hyperexponential order, default 4.
+%   HyperErlangComponents  hyper-Erlang branches J, default 3.
+%   HyperErlangMaxShape    largest stage count swept, default 6.
+%   HyperErlangStepDown    true (default): refit at J-1 down to 2 when the
+%                     data refuse J. See STEP-DOWN.
 %   UpperBound        fixed upper support limit for beta, in DATA UNITS
 %                     (86400 for a 24 h recording scored in seconds).
 %                     Omit to leave beta out of the library.
@@ -238,11 +260,13 @@ function R = CompareBoutModels(eventseries, xmin, options)
 %                  winner and may disagree with it.
 %   R.Skipped      candidates that could not be fitted at all, as a
 %                  struct array of Model and Reason. Empty normally. A
-%                  model listed here never entered the comparison, which
-%                  is NOT the same as losing it -- the usual cause is a
-%                  mixture whose guard rejected every configuration,
-%                  which says the data do not support that many
-%                  components.
+%                  model listed here never entered the comparison AS
+%                  REQUESTED, which is NOT the same as losing it -- the
+%                  usual cause is a mixture whose guard rejected every
+%                  configuration, which says the data do not support that
+%                  many components. A refused hyper_erlang that stepped
+%                  down is listed here AND has a "hyper_erlang J=j" row in
+%                  the table; its Reason names that row.
 %   R.Nesting      the equivalences listed above, as text
 %   R.Figure       figure handle, or empty. Drawn even when nothing passed
 %                  the fit test, showing the top-ranked admissible
@@ -261,6 +285,7 @@ arguments
     options.MaxComponents (1,1) double {mustBeInteger,mustBePositive} = 4
     options.HyperErlangComponents (1,1) double {mustBeInteger,mustBePositive} = 3
     options.HyperErlangMaxShape (1,1) double {mustBeInteger,mustBePositive} = 6
+    options.HyperErlangStepDown (1,1) logical = true
     options.UpperBound (1,1) double = NaN
     options.Models = []
     options.RankBy (1,1) string {mustBeMember(options.RankBy,["AICc","BIC"])} = "AICc"
@@ -344,8 +369,9 @@ end
 % guarantee, and it behaves the same in both.
 rowsC = {}; fitsC = {}; nr = 0;
 skipC = {}; nsk = 0;          % candidates that could not be fitted at all
-heSeed = [];                  % the hyperexponential optimum at the
-                              % hyper-Erlang's order, once it exists
+heSeeds = {};                 % heSeeds{K}: the hyperexponential optimum at
+                              % order K, once fitted -- hyper_erlang's m=1
+                              % seed at J=K, including after a step-down
 for ci = 1:numel(cands)
     c = cands(ci);
     if options.Verbose
@@ -361,8 +387,8 @@ for ci = 1:numel(cands)
         % was degenerate, the seed is simply absent and the sweep starts
         % cold as before.
         xo = {};
-        if strcmp(c.Name, 'hyper_erlang') && ~isempty(heSeed)
-            xo = {'SeedRates', heSeed.Rates, 'SeedWeights', heSeed.Weights};
+        if strcmp(c.Name, 'hyper_erlang')
+            xo = heSeedArgs(heSeeds, options.HyperErlangComponents);
         end
         out = c.Fit(eventseries, xmin, xo);
     catch err
@@ -374,12 +400,24 @@ for ci = 1:numel(cands)
         % commonest case is a mixture whose guard rejected every
         % configuration, which is a finding about the data, not a
         % malfunction.
-        nsk = nsk + 1;
-        skipC{nsk} = struct('Model', c.Name, 'Reason', err.message);
-        if options.Verbose
-            fprintf('  %-22s skipped: %s\n', c.Name, err.message);
+        %
+        % A hyper_erlang refused at J branches is then refitted at fewer
+        % (see STEP-DOWN in the header). The refusal is recorded either
+        % way; a step-down that finds an identified order hands its rows on
+        % below, under a name carrying the order it was fitted at.
+        out = [];
+        reason = err.message;
+        if strcmp(c.Name, 'hyper_erlang') && options.HyperErlangStepDown ...
+                && strcmp(err.identifier, 'FitHyperErlangMLE:NoValidFit')
+            [out, reason] = stepDownHyperErlang(c, eventseries, xmin, ...
+                options.HyperErlangComponents, heSeeds, reason);
         end
-        continue
+        nsk = nsk + 1;
+        skipC{nsk} = struct('Model', c.Name, 'Reason', reason);
+        if options.Verbose
+            fprintf('  %-22s skipped: %s\n', c.Name, reason);
+        end
+        if isempty(out), continue; end
     end
     for oi = 1:numel(out)
         if ~isempty(rowWant) && strncmp(out(oi).Row.Model, 'hyperexp K=', 11) ...
@@ -389,13 +427,13 @@ for ci = 1:numel(cands)
         nr = nr + 1;
         rowsC{nr} = out(oi).Row;
         fitsC{nr} = out(oi).Fit;
-        if isempty(heSeed) && strcmp(out(oi).Row.Model, ...
-                sprintf('hyperexp K=%d', options.HyperErlangComponents)) ...
+        if strncmp(out(oi).Row.Model, 'hyperexp K=', 11) ...
                 && ~out(oi).Row.Degenerate && ~isempty(out(oi).Fit.Full) ...
                 && isfield(out(oi).Fit.Full, 'Rates')
             f = out(oi).Fit.Full;
-            heSeed = struct('Rates', f.Rates(:).', ...
-                            'Weights', f.WeightsObserved(:).');
+            K = sscanf(out(oi).Row.Model, 'hyperexp K=%d');
+            heSeeds{K} = struct('Rates', f.Rates(:).', ...
+                                'Weights', f.WeightsObserved(:).');
         end
         if options.Verbose
             reportRow(rowsC{nr});
@@ -668,7 +706,18 @@ for i = 1:size(simple,1)
     fitters{end+1} = @(d,x,xo) fitSimpleCand(d, x, nm, fh, [ex, xo]); %#ok<AGROW>
 end
 
-cands = struct('Name', names, 'Fit', fitters);
+% FitJ refits hyper_erlang at an explicit number of branches, for the
+% step-down. Built here rather than by appending 'Components' to .Fit's
+% options: .Fit already carries one, and MATLAB's arguments block rejects a
+% name-value pair passed twice. Empty for every other family.
+fitJs = cell(size(names));
+ih = find(strcmp(names, 'hyper_erlang'), 1);
+if ~isempty(ih)
+    fitJs{ih} = @(d,x,xo,J) fitSimpleCand(d, x, 'hyper_erlang', @FitHyperErlangMLE, ...
+        [common, {'Components', J, 'MaxShape', options.HyperErlangMaxShape}, xo]);
+end
+
+cands = struct('Name', names, 'Fit', fitters, 'FitJ', fitJs);
 end
 
 % ------------------------------------------------------------------------
@@ -680,6 +729,58 @@ tf = false;
 if isempty(models), return; end
 nm = asCellstr(models);
 tf = any(strcmp(nm, name));
+end
+
+% ------------------------------------------------------------------------
+function xo = heSeedArgs(seeds, J)
+%HESEEDARGS The m=1 seed for hyper_erlang at J branches: the
+%hyperexponential optimum at order J if that order was fitted and
+%admissible, otherwise nothing and the sweep starts cold.
+xo = {};
+if J <= numel(seeds) && ~isempty(seeds{J})
+    xo = {'SeedRates', seeds{J}.Rates, 'SeedWeights', seeds{J}.Weights};
+end
+end
+
+% ------------------------------------------------------------------------
+function [out, reason] = stepDownHyperErlang(c, d, x, J0, seeds, reason)
+%STEPDOWNHYPERERLANG Refit a refused hyper_erlang at J0-1, J0-2, ... 2.
+% Stops at the FIRST identified order: this recovers a fit the data
+% support, it is not a search for the best one, so a lower AICc further
+% down never moves it. The rows are renamed "hyper_erlang J=j" -- the
+% order is part of the model, and a J=2 fit under the bare family name
+% would be read as the J0-branch model the data just refused. REASON
+% arrives as the refusal message and leaves saying what the step-down did.
+out = [];
+refused = {};
+for J = J0-1:-1:2
+    try
+        o = c.FitJ(d, x, heSeedArgs(seeds, J), J);
+    catch err
+        if strcmp(err.identifier, 'FitHyperErlangMLE:NoValidFit')
+            refused{end+1} = sprintf('J=%d', J);                   %#ok<AGROW>
+            continue
+        end
+        reason = sprintf('%s Step-down to J=%d failed: %s', reason, J, err.message);
+        return
+    end
+    name = sprintf('hyper_erlang J=%d', J);
+    for oi = 1:numel(o)
+        o(oi).Row.Model = name;
+        o(oi).Fit.Model = name;
+    end
+    out = o;
+    also = '';
+    if ~isempty(refused)
+        also = sprintf(' (%s also refused)', strjoin(refused, ', '));
+    end
+    reason = sprintf('%s Stepped down%s: identified at J=%d, reported as row "%s".', ...
+        reason, also, J, name);
+    return
+end
+if ~isempty(refused)
+    reason = sprintf('%s Step-down refused at %s too.', reason, strjoin(refused, ', '));
+end
 end
 
 % ------------------------------------------------------------------------
@@ -944,7 +1045,7 @@ notes = { ...
  'hyperexp K=1 IS the exponential = gamma(shape 1) = weibull(shape 1) = erlang(shape 1) = exp_weibull(alpha=k=1).'; ...
  'weibull IS exp_weibull with alpha = 1.'; ...
  'erlang and chisquared are both gammas under a constraint (integer shape; scale 2, shape nu/2).'; ...
- 'hyper_erlang CONTAINS the hyperexponential: with every stage count 1 it IS hyperexp K=Components, to the digit. If its selected shape is 1, its row and that hyperexp row are the same fit twice -- check R.Fits(i).Full.Shapes.'; ...
+ 'hyper_erlang CONTAINS the hyperexponential: with every stage count 1 it IS hyperexp K=Components (K=j for a stepped-down "hyper_erlang J=j" row), to the digit. If its selected shape is 1, its row and that hyperexp row are the same fit twice -- check R.Fits(i).Full.Shapes.'; ...
  'weibull_mix contains the 2-component hyperexponential as a limit, both shapes going to 1, though its shapes are free rather than pinned there.'; ...
  'Rows above are NOT independent evidence. Equal log-likelihoods among them are a check on the implementations, not a coincidence: a disagreement beyond ~1e-9 means one is wrong.'};
 end

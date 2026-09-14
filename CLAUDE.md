@@ -18,7 +18,7 @@ conditions on `T >= xmin`.
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. `pearson3` and `beta` are **opt-in**, not part of a default run. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
-| `test_*.m` (5 files) | 118 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
+| `test_*.m` (5 files) | 119 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
 
 ## Conventions that are not optional
@@ -69,7 +69,11 @@ bouts the REJECTED fit outscored every legitimate model (`FINDINGS.md`).
 candidates that never entered the comparison, with the reason — usually a
 mixture whose guard rejected every configuration, which is a statement about
 the data rather than a malfunction. Absent from both is a bug; absent from the
-table but present in `R.Skipped` is a finding.
+table but present in `R.Skipped` is a finding. One case is in BOTH on purpose:
+a `hyper_erlang` refused at `HyperErlangComponents=J` steps down to J-1..2,
+so the refusal stays in `R.Skipped` while the first identified order enters
+the table as `hyper_erlang J=j` — named for the order it was fitted at, never
+the bare family name. `HyperErlangStepDown=false` turns it off.
 
 **`S(xmin)`** is the *untruncated* survival at the threshold — the likelihood's
 normalizer, reported as `Diagnostics.TailFraction`. **`SurvivalHandle`** is the
@@ -153,7 +157,7 @@ one is a scalar, the other a curve.
 test_FitTruncatedDiscreteMLE      % 28
 test_FitHyperexponentialMLE       % 26
 test_FitExponentiatedWeibullMLE   % 23
-test_CompareBoutModels            % 28
+test_CompareBoutModels            % 29
 test_HyperexponentialLRT          % 13
 ```
 

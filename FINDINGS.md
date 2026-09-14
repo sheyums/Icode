@@ -182,17 +182,27 @@ These are choices, not results. Worth revisiting before publication.
    encodes "J=3 does not work". On two-regime data it is refused and J=2
    wins by 447 AICc (Octave) and 514 (MATLAB), on different draws.
 
-   The decision is to RELY ON THE REFUSAL: when the data do not support 3
-   components, `R.Skipped` says so and the user picks an order. No code
-   change, and no J sweep.
+   First decided as RELY ON THE REFUSAL, then revised by the user the next
+   morning (2026-09-14) to a **STEP-DOWN ON REFUSAL**, because relying on the
+   refusal meant an unsupported J=3 yielded no hyper-Erlang row at all --
+   only the `R.Skipped` entry -- rather than the J=2 fit that works and wins
+   comfortably, and the reader had to rerun by hand to get it.
 
-   The cost of that is worth stating, since it will come up again: an
-   unsupported J=3 yields no hyper-Erlang row at all, only the `R.Skipped`
-   entry, rather than the J=2 fit that does work and wins comfortably. A
-   step-down on refusal -- refit at J-1, report which order was used and
-   why, paid for only when J fails -- would keep the assessment's result.
-   That is an OPTION, considered and not adopted, recorded here so the
-   trade-off does not have to be rediscovered.
+   Now: when J is refused, `CompareBoutModels` refits at J-1 down to 2 and
+   the first identified order enters the table as `hyper_erlang J=j`. The
+   refusal stays in `R.Skipped`, its Reason naming that row. Paid for only
+   when J fails. `HyperErlangStepDown=false` restores the bare refusal. Still
+   no J sweep.
+
+   What this choice carries, stated so it is not rediscovered:
+   - **J is now chosen after seeing the data**, and no information criterion
+     charges for it -- the same caution as the stage count. It is mild: the
+     step fires only on a refusal, never to improve AICc, and stops at the
+     first identified order.
+   - **It is not replayed in a bootstrap.** A GoF replicate refits at the
+     order the data landed on, not by re-running the step-down.
+   - **The order is in the row name** because a J=2 fit reported as
+     `hyper_erlang` would be read as the 3-branch model the data refused.
 6. **`erlangCDFint` switches to a direct tail sum below `F = 1e-6`.** The
    threshold is a speed/accuracy trade, not a derived constant: `1 - S` has
    relative error about `eps/F`, so 1e-6 keeps that below ~1e-10 while leaving

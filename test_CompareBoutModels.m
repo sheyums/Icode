@@ -50,6 +50,7 @@ function test_CompareBoutModels()
 % 26.  hyper_erlang nests hyperexp   - same fit twice when shapes are 1
 % 27.  Rejection still plots         - the run most needing a picture
 % 28.  pearson3 is opt-in            - absent by default, named in the error
+% 29.  hyper_erlang step-down        - refused J refits lower, labelled; off restores
 
 if exist('OCTAVE_VERSION', 'builtin')
     cbm = @CompareBoutModels_oct;
@@ -839,6 +840,81 @@ try
         strjoin(bad, '; '));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 28, '', err.message);
+end
+
+%% Test 29: a refused hyper-Erlang order steps down, labelled, and says so
+%  At HyperErlangComponents=3 test 25's two-regime data refuse every shape
+%  (the third branch holds nothing), while J=2 is identified. The step-down
+%  must then (a) put exactly one row in the table, named for the order it
+%  was fitted at and never under the bare family name, (b) actually be a
+%  J-branch fit that passed its guard, (c) keep the refusal in R.Skipped
+%  with a Reason naming that row, and (d) disappear with
+%  HyperErlangStepDown=false, leaving the plain refusal.
+%
+%  The J=3 refusal is a PRECONDITION, not a claim: if it does not happen on
+%  this data the step-down is not exercised, and the test says so rather
+%  than passing vacuously. Neither the selected stage count nor the AICc
+%  is asserted.
+try
+    rng(25);
+    d = simWeibullMix2(0.70, 8, 0.55, 600, 2.2, XMIN, DT, 1500);
+    args = [BASE, {'MaxComponents', 3, 'GoFBootstrap', 0, ...
+        'Models', {'hyperexponential', 'hyper_erlang'}, ...
+        'HyperErlangComponents', 3, 'HyperErlangMaxShape', 4}];
+    Ron  = cbm(d, XMIN, args{:});
+    Roff = cbm(d, XMIN, args{:}, 'HyperErlangStepDown', false);
+    bad = {}; got = '';
+    T = tableRows(Ron.Table); nm = {T.Model};
+    sOn = Ron.Skipped(strcmp({Ron.Skipped.Model}, 'hyper_erlang'));
+    if isempty(sOn)
+        bad{end+1} = ['precondition not met: J=3 was not refused on this ' ...
+            'data, so the step-down was not exercised'];
+    else
+        i = find(strncmp(nm, 'hyper_erlang J=', 15));
+        if any(strcmp(nm, 'hyper_erlang'))
+            bad{end+1} = 'a row carries the bare name hyper_erlang after a refusal';
+        end
+        if numel(i) ~= 1
+            bad{end+1} = sprintf('%d stepped-down rows, expected 1', numel(i));
+        else
+            got = T(i).Model;
+            J = sscanf(got, 'hyper_erlang J=%d');
+            F = Ron.Fits(i).Full;
+            if ~(J == 2)
+                bad{end+1} = sprintf('stepped down to J=%d, expected 2', J);
+            end
+            if numel(F.Shapes) ~= J || ~F.Diagnostics.GuardOK || T(i).Degenerate
+                bad{end+1} = sprintf(['row %s is not an identified %d-branch fit ' ...
+                    '(shapes [%s], GuardOK=%d)'], got, J, num2str(F.Shapes), ...
+                    F.Diagnostics.GuardOK);
+            end
+            if ~strcmp(Ron.Fits(i).Model, got)
+                bad{end+1} = sprintf('R.Fits says %s, table says %s', ...
+                    Ron.Fits(i).Model, got);
+            end
+            if isempty(strfind(sOn(1).Reason, 'at 3 components')) || ...
+                    isempty(strfind(sOn(1).Reason, got))
+                bad{end+1} = sprintf(['R.Skipped Reason does not name both ' ...
+                    'the refusal and the row: "%s"'], sOn(1).Reason);
+            end
+        end
+    end
+    % switched off: no hyper_erlang row of any name, and the plain refusal
+    To = tableRows(Roff.Table);
+    if any(strncmp({To.Model}, 'hyper_erlang', 12))
+        bad{end+1} = 'HyperErlangStepDown=false still produced a hyper_erlang row';
+    end
+    sOff = Roff.Skipped(strcmp({Roff.Skipped.Model}, 'hyper_erlang'));
+    if ~isempty(sOn) && (isempty(sOff) || ...
+            isempty(strfind(sOff(1).Reason, 'identified fit')) || ...
+            ~isempty(strfind(sOff(1).Reason, 'Stepped down')))
+        bad{end+1} = 'HyperErlangStepDown=false did not leave the plain refusal';
+    end
+    [nPassed, nFailed] = rep(isempty(bad), nPassed, nFailed, 29, ...
+        sprintf('J=3 refused, reported as %s; switched off, the refusal alone', got), ...
+        strjoin(bad, '; '));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 29, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n\n', ...
