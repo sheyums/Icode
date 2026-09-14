@@ -96,15 +96,23 @@ function H = BoutHazard(eventseries, xmin, options)
 %     H.AtRisk, H.Events          n_j and d_j
 %     H.Hazard, H.Lower, H.Upper  per unit time
 %     H.ModelHazard               same bins, if SurvivalHandle was given
-%     H.TroughIndex, H.PeakIndex  minimum, and the maximum AFTER it
-%     H.RiseRatio                 h_peak / h_trough, 1 if never rises
+%     H.TroughIndex, H.PeakIndex  minimum (excluding the final bin, which
+%                                 has nothing after it), and the maximum
+%                                 after it
+%     H.RiseRatio                 h_peak / h_trough. >= 1 for ANY curve, so
+%                                 large is only meaningful against a null
 %     H.RiseCI                    bootstrap percentile interval -- DESCRIPTIVE,
 %                                 not a test; see the note in the code
 %     H.RiseNullP                 p-value against NullSurvivalHandle, the
 %                                 only calibrated statement here
 %     H.RiseNullQuantiles         median and 95th percentile of the null
 %     H.RiseDisjoint              peak's lower band above trough's upper
-%     H.NonMonotone               RiseDisjoint, or RiseCI excluding 1
+%     H.NonMonotone               RiseNullP < Alpha when a null was given --
+%                                 the only calibrated form. Falls back to
+%                                 RiseDisjoint when it was not. It is NOT
+%                                 "RiseCI excludes 1": against 50 datasets
+%                                 with a strictly decreasing hazard that
+%                                 fired 20% of the time at a nominal 5%.
 %     H.n, H.xmin, H.SamplingInterval, H.nDropped, H.nSaturated
 %
 %   See also COMPAREBOUTMODELS, FITHYPERERLANGMLE, FITHYPEREXPONENTIALMLE.
