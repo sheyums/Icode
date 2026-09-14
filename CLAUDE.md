@@ -145,18 +145,29 @@ test_CompareBoutModels -all` first: a stale copy elsewhere on the path wins
 over the repo unless you are `cd`'d into it, and that has already caused a
 "pass" that ran 24 of 27 tests.
 
-**`run('some\path\script.m')` defeats that check.** MATLAB changes into the
-script's folder for the duration, so the fitters resolve relative to THAT
-folder even though MATLAB was started in the repo — `which -all` run from the
-repo says the repo copy wins while `run()` quietly uses another one. A scratch
-script sitting beside stale copies will silently fit with them. This has
-already produced a discarded 35-minute timing, measured against a pre-fix
-engine. Either `addpath` the scratch folder and call the script by NAME, or
-open with
+**Anything that moves `pwd` away from this repo defeats that check**, and
+`run('some\path\script.m')` does exactly that: MATLAB changes into the
+script's folder for the duration. The mechanism is NOT that the script sits
+beside stale copies — the scratch folder may contain no fitters at all. It is
+that leaving the repo removes the current-folder precedence that was making the
+repo win, so resolution falls through to the MATLAB **path**, and whatever
+other copy sits on the path takes over. `which -all` run from the repo
+therefore reports the repo copy winning while `run()` quietly uses another one.
+This has already produced a discarded 35-minute timing measured against a
+pre-fix engine.
+
+Either `addpath` the scratch folder and call the script by NAME, or open with
 
     assert(isequal(fileparts(which('CompareBoutModels')), pwd))
 
 so a run against the wrong copy fails loudly instead of returning numbers.
+
+**Do not "clean up" the other copies.** The folder that shadows this one is the
+user's main analysis repo, not a pile of stale files: its
+`FitHyperexponentialMLE.m` is tracked there and called by scripts in it, and
+its copies of the newer fitters are UNTRACKED, so deleting them cannot be
+undone. Fix the resolution, not the files — take that folder off the path while
+working here, or refresh its copy of whatever you need.
 
 **In Octave they do NOT run by name.** Three of the suites call the bare
 `Fit*MLE` names, which resolve to the MATLAB originals and die on the
