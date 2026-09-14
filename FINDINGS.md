@@ -50,6 +50,76 @@ excluded, its location having run up against xmin at 299.852; note its AICc
 would have placed it third, above gamma, so the gate mattered. `K=4` and `K=5`
 were excluded as collapsed or non-identified, `K=4` with logL identical to K=3.
 
+## per0, DD, 3989 wake bouts (xmin = 2 s, dt = 1 s) — NO MODEL YET
+
+Recorded because the observation is solid even though the model is not.
+
+**The empirical hazard has two turning points**: 1.2e-2 at 2 s, falling to
+1.1e-3 by 70 s, rising to 1.65e-3 near 500 s, then falling again past 1000 s.
+Nothing in the original library can produce that shape, and the exclusion is by
+construction rather than by evidence:
+
+- A hyperexponential's hazard is **strictly decreasing at every order** — it is
+  a sum of decreasing exponentials — so no K will do. The symptom was exactly
+  that: best was K=2 with G = 77.0 on 40 bins (G/df = 2.14, p ~ 1e-4), and
+  K=3/4/5 bought 0.33 nats between them.
+- Every other family in the original library has a **monotone** hazard, and
+  `exp_weibull` allows at most **one** turning point.
+- **Mixing cannot rescue it.** `h_mix(t) = sum_i w_i(t) h_i(t)` with weights
+  shifting toward the longer-lived components, so pooling flies can only make a
+  hazard fall faster, never rise. Between-fly heterogeneity is not the
+  explanation.
+- A **PH(2)** hazard is monotone (O'Cinneide), so the smallest phase-type that
+  can hump has `sum(m_j) >= 3`.
+
+Sleep bouts show no such hump, so the asymmetry is wake-specific.
+
+`hyper_erlang` and `weibull_mix` were added for this. **Both were added AFTER
+the original library failed on these same bouts**, so any G-test p-value on a
+winner among them is optimistic — the family was chosen having seen the data.
+The hazard argument above is the defensible claim; a passing fit-test on the
+new families is not, and should be stated as such or re-tested on held-out
+flies.
+
+## Mixture weights: the guard has to see what the data see
+
+A mixture component can hold a large share of the **untruncated** weight and
+none of the observations. On synthetic humped data at `xmin = 100`, a
+3-component hyper-Erlang returned
+
+    w     = [0.055, 0.809, 0.136]     rates = [0.019, 0.566, 0.0074]
+
+The middle component carries the largest weight of the three and has mean
+1.8 s, so `S(100) = 3e-25` and its observed share is `1.5e-24` — **zero of 1500
+bouts**. A guard testing `min(w)*n` read 82.3 and passed it; the phantom
+component then bought a stage count the data never supported.
+
+Two consequences worth carrying into any mixture result:
+
+1. **Report and judge on `q`**, the observed weight `~ w_j S_j(xmin)`. This is
+   the same caution as the 240x back-transform on the sleep bouts' fast
+   component, in a form that also corrupts model *selection* rather than only
+   interpretation.
+2. **The same truncated law has several parametrizations and only some look
+   degenerate.** The fit above and one with `w = [0.288, 1.3e-10, 0.712]` have
+   identical log-likelihoods to ten digits; they are the same distribution
+   above `xmin`. Where the optimizer stops is not evidence about
+   identifiability.
+
+Correctly sized, the model was strongly preferred on that data: `hyper_erlang`
+at **J=2** gave m=4, logL = -6905.149, AICc = 13816.32 with k=3, against the
+best hyperexponential's AICc = 14263.31 — a gap of **447**. The J=3 fits had
+the *same* log-likelihood as J=2; they were J=2 plus a branch holding nothing,
+charged two extra parameters.
+
+### Stage counts are weakly identified — report the branch mean
+
+Data generated with an Erlang(3) branch are routinely fitted with m=2, in two
+independent implementations, with the survival still within 0.015 of truth. The
+**branch mean** `m/lambda` is what the data determine; the integer stage count
+is not, and no information criterion here charges for having swept over it.
+Quote `ShapeSweep` and how flat it is, not the selected integer alone.
+
 ## Judgement calls, open to revision
 
 These are choices, not results. Worth revisiting before publication.
@@ -93,3 +163,9 @@ agreement with another implementation.
 - McLachlan (1987) *Appl Statist* 36:318-324 — bootstrap LRT for mixture order
 - McLachlan & Peel (2000) *Finite Mixture Models*, ch. 6
 - Mudholkar & Srivastava (1993) — exponentiated Weibull hazard regimes
+- O'Cinneide (1990) *Stochastic Models* 6:1-57 — PH(2) hazards are monotone
+- Tijms (1994) *Stochastic Models: An Algorithmic Approach* — hyper-Erlangs are
+  dense in the distributions on [0, inf)
+- Thummler, Buchholz & Telek (2006) *IEEE Trans Dependable Secure Comput*
+  3:245-258 — EM fitting for hyper-Erlang (not used here; noted as the
+  principled alternative to the shape sweep)
