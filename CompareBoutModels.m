@@ -1369,7 +1369,17 @@ if rejected
 else
     tag = row.Model;
 end
-fh = figure('Name', sprintf('CompareBoutModels: %s', tag));
+fh = figure('Name', sprintf('CompareBoutModels: %s', tag), 'Color', 'w');
+% LIGHT THEME, pinned. MATLAB R2025a+ gives a new figure the desktop's theme,
+% and a dark-mode or batch session draws it dark -- where the black data
+% curve below vanishes into the background, as it did on the per0 wake
+% bouts. Pinned on the figure before anything is drawn, so every child
+% inherits the light colours, rather than recolouring one curve. theme()
+% does not exist in Octave or before R2025a, where figures are light anyway.
+try
+    theme(fh, 'light');
+catch
+end
 
 % --- survival, log-log: where a heavy tail either is or is not straight
 subplot(2, 1, 1);

@@ -568,12 +568,23 @@ try
         R = cbm(d, XMIN, 'SamplingInterval', DT, 'Models', {'gamma'}, ...
             'GoFBootstrap', 0, 'Plot', true, 'Verbose', false);
         % two panels: the survival curve and the Pearson residuals
-        nAx = numel(findall(R.Figure, 'Type', 'axes'));
+        ax = findall(R.Figure, 'Type', 'axes');
+        nAx = numel(ax);
         ok = ~isempty(R.Figure) && ishandle(R.Figure) && nAx >= 2;
+        % ...on a light ground whatever the desktop's theme: a dark figure
+        % hid the black data curve entirely on the per0 wake bouts
+        isLight = false; figC = NaN;
+        if ok
+            figC = get(R.Figure, 'Color');
+            axC = get(ax, 'Color'); if ~iscell(axC), axC = {axC}; end
+            isLight = isequal(figC, [1 1 1]) && all(cellfun(@(c) ...
+                (ischar(c) && strcmp(c, 'none')) || isequal(c, [1 1 1]), axC));
+        end
         if ~isempty(R.Figure) && ishandle(R.Figure), close(R.Figure); end
-        [nPassed, nFailed] = rep(ok, nPassed, nFailed, 23, ...
-            sprintf('plotFit drew a figure with %d axes', nAx), ...
-            sprintf('R.Figure empty=%d, axes=%d', isempty(R.Figure), nAx));
+        [nPassed, nFailed] = rep(ok && isLight, nPassed, nFailed, 23, ...
+            sprintf('plotFit drew %d axes on a light ground', nAx), ...
+            sprintf('R.Figure empty=%d, axes=%d, light=%d, figure Color=%s', ...
+                isempty(R.Figure), nAx, isLight, mat2str(figC)));
     end
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 23, '', err.message);

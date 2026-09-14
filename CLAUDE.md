@@ -131,6 +131,15 @@ one is a scalar, the other a curve.
   `struct2table` on a 1x1 struct with a `''` field, and it hid a false-positive
   guard because output was filtered to `[FAIL]` lines. **Anything touching
   struct arrays, tables or graphics needs a MATLAB run.**
+- **A new MATLAB figure's theme is not predictable — pin it.** In R2026a
+  batch mode, `figure('Name',..)` came out light while a `'Visible','off'`
+  figure a moment later came out dark (axes `Color` 0.07, `XColor` 0.85), and
+  another session got the opposite. `CompareBoutModels`' figure for the per0
+  wake bouts rendered dark and its black data curve was invisible.
+  `figure('Color','w')` alone does NOT fix it: the margin goes white while the
+  axes stay dark. Create the figure, then `try theme(fh,'light'); catch, end`
+  BEFORE any axes, so children inherit (`theme` is absent in Octave and before
+  R2025a). `plotFit` does this and test 23 asserts a white figure and axes.
 - **Never floor a probability without its normalizer.** Flooring a bin
   probability at `realmin` while `S(xmin)` sat in the subnormals made `p/S`
   reach 4.5e15 — a conditional probability above 1, worth +36 log-likelihood
