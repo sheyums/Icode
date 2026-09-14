@@ -167,11 +167,104 @@ w = [0.793, 0.095, 0.111]. The 240x back-transform caution that governs the
 sleep result does not bite at xmin = 2 s -- but it is a property of THIS
 threshold, not a general reprieve.
 
-**Still outstanding:** `BoutHazard` on these bouts, to put Wilson bands on the
-empirical hump. The model predicts a rise of x1.33 between 126 s and 896 s. If
-`RiseCI` excludes 1 the family-exclusion argument stands on the data alone; if
-it does not, the model still wins on likelihood but the structural claim needs
-softening.
+### The hazard with bands: `BoutHazard` on these bouts, measured
+
+MATLAB R2026a, `wakebouts_per0dd.mat` (`w_bouts`, n = 3989, xmin = 2 s,
+dt = 1 s). `Bootstrap=999`, `RandomSeed=1`, `MinAtRisk=10`, the `hyper_erlang`
+fit as `SurvivalHandle`. Rates per second, 95% Wilson bands.
+
+At 16 bins (15 kept; the one dropped is the final bin, saturated by construction):
+
+    center (s)  at risk  events   hazard     lower      upper      model
+       1.41      3989      46    1.16e-2   8.70e-3   1.55e-2   9.94e-3
+       2.45      3943      34    8.66e-3   6.20e-3   1.21e-2   9.15e-3
+       3.87      3909      69    8.91e-3   7.04e-3   1.13e-2   8.11e-3
+       6.71      3840      85    5.60e-3   4.53e-3   6.92e-3   6.40e-3
+      12.0       3755     112    4.33e-3   3.60e-3   5.20e-3   4.29e-3
+      21.2       3643      98    2.27e-3   1.86e-3   2.77e-3   2.50e-3
+      36.7       3545     125    1.80e-3   1.51e-3   2.14e-3   1.57e-3
+      63.1       3420     160    1.37e-3   1.17e-3   1.60e-3   1.33e-3
+     109.3       3260     237    1.24e-3   1.09e-3   1.41e-3   1.31e-3   <- trough
+     190.1       3023     400    1.33e-3   1.20e-3   1.46e-3   1.32e-3
+     330.8       2623     593    1.39e-3   1.28e-3   1.50e-3   1.42e-3
+     574.5       2030     844    1.67e-3   1.56e-3   1.79e-3   1.63e-3
+     997.7       1186     731    1.72e-3   1.59e-3   1.85e-3   1.71e-3   <- peak
+    1733          455     351    1.52e-3   1.35e-3   1.70e-3   1.57e-3
+    3012          104      97    1.60e-3   1.20e-3   2.02e-3   1.52e-3
+
+The fitted model's binned hazard is inside the band in every kept bin at both
+bin counts.
+
+| | 16 bins | 20 bins |
+| --- | --- | --- |
+| trough bin | 109 s, 1.237e-3 [1.089, 1.405]e-3 | 161 s, 1.258e-3 [1.116, 1.418]e-3 |
+| peak bin | 998 s, 1.717e-3 [1.591, 1.849]e-3 | 944 s, 1.732e-3 [1.596, 1.876]e-3 |
+| `RiseRatio` | 1.388 | 1.377 |
+| `RiseCI` (descriptive only) | [1.279, 1.866] | [1.317, 1.824] |
+| `RiseDisjoint` | 1 | 1 |
+| `RiseNullP` (null = hyperexp K=2 fit, 999 draws) | 0.058 | 0.156 |
+| `NonMonotone` (= `RiseNullP` < 0.05) | 0 | 0 |
+
+Before 4f49911 the trough could land on the last kept bin: at 20 bins it did
+(2850-4435 s, 35 at risk, 30 events, 1.228e-3 [0.773, 1.748]e-3), giving
+`RiseRatio` 1.000 and `NonMonotone` 0 on the same data that read 1.388 at 16
+bins. 4f49911 excludes the final bin from the trough search; the table above is
+after that fix.
+
+**The criteria, measured on data with NO rise.** 50 datasets of n = 3989
+simulated from the hyperexponential K=2 fit to these bouts (strictly decreasing
+hazard), each run through `BoutHazard` with the settings above, statistic as of
+bbccb5a (before the trough fix):
+
+| claims a rise | 16 bins | 20 bins |
+| --- | --- | --- |
+| `NonMonotone` (then `RiseDisjoint` OR `RiseCI(1)` > 1) | 10/50 | 8/50 |
+| `RiseCI(1)` > 1 | 9/50 | 5/50 |
+| `RiseDisjoint` | 3/50 | 3/50 |
+| null `RiseRatio` median / 95th pct / max | 1.117 / 1.288 / 1.331 | 1.112 / 1.378 / 1.526 |
+
+That is what retired `RiseCI` as a test in 4f49911. `RiseDisjoint` has not been
+re-measured under the new trough rule.
+
+**What `RiseNullP` measures, and why it reads high.** Two defects in its null,
+separated by a 2x2 run (999 datasets from the same K=2 fit, observed ratio as
+above, p = (1 + #null >= observed)/(M + 1)):
+
+| null datasets drawn by | binned on | 16 bins | 20 bins |
+| --- | --- | --- | --- |
+| engine convention P(T=k) = S(k-1)-S(k) | each dataset's own bins | **0.019** | **0.057** |
+| `BoutHazard`'s null sampler | each dataset's own bins | 0.019 | 0.054 |
+| engine convention | the observed data's fixed bins and keep mask | 0.047 | 0.185 |
+| `BoutHazard`'s null sampler | fixed observed bins (= `RiseNullP`) | 0.048 | 0.173 |
+
+1. **The null sampler is one grid step early** -- it starts its grid at xmin
+   and forces S = 1 there, but the engine's truncated survival is 1 at
+   xmin - dt. E[T] 610.518 s against 611.508 s; P(T=2) = 0.019666, exactly the
+   engine's P(2) + P(3); every later value equals the engine's at one step
+   higher to 2.7e-5. **It does not move the p-value** (rows 1 and 2).
+2. **Binning null replicates on the observed data's edges and keep mask does**
+   -- p rises from 0.019 to 0.048 at 16 bins and from 0.057 to 0.173 at 20
+   (rows 1 and 3). The observed statistic went through its own bin and keep
+   selection; the replicates did not, so the two are not exchangeable.
+   `RiseNullP` as shipped (0.058, 0.156) agrees with the fixed-bin rows to
+   within Monte Carlo error.
+
+Row 1 is the exchangeable version: **p = 0.019 at 16 bins, 0.057 at 20.**
+Caveat on every row: the null is the K=2 model FITTED to these bouts, used as
+if known; real use would refit it per dataset, which this does not capture.
+
+Both defects are addressed in 2371913 (own bins per replicate, sampler grid
+shift). The `RiseNullP` values in the table above (0.058, 0.156) are from
+4f49911, BEFORE that fix; `RiseNullP` at 2371913 on these bouts has not yet
+been measured, and should be checked against row 1.
+
+**`weibull_mix` fit-test bootstrap: still running.** Observed G = 50.69 on 40
+bins, df [34, 39], chi-square p in [0.0327, 0.0995]. Staged rule: 199
+replicates; stop if p < 0.02 or > 0.12, else pool 200-replicate batches under
+new seeds until the 95% Monte Carlo interval clears 0.05 (cap 4999).
+First batch (seed 2, finished 10:31): **B = 199 valid, p = 0.080, MC SE 0.019,
+95% [0.042, 0.118]** -- inside the undecided range, so pooling continues at
+~5.5 s per replicate. Not a result until the interval clears 0.05.
 
 ## Mixture weights: the guard has to see what the data see
 
