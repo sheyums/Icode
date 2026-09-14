@@ -457,9 +457,17 @@ function r = riseOf(h)
 r = NaN;
 h = h(isfinite(h));
 if numel(h) < 2, return; end
-[~, iT] = min(h(1:end-1));
-hp = max(h(iT+1:end));
-if h(iT) > 0, r = hp / h(iT); end
+% A bin with NO events has hazard exactly 0 -- a real estimate, and a
+% useless denominator. Left in, it takes the minimum and the ratio is
+% undefined; the statistic then returned NaN and the caller dropped that
+% replicate, thinning the null sample by exactly the draws with sparse
+% tails. Zero-event bins are therefore ineligible as the TROUGH while
+% staying in the curve, where they still say the hazard is low.
+cand = h(1:end-1);
+cand(cand <= 0) = Inf;
+[hmin, iT] = min(cand);
+if ~isfinite(hmin), return; end
+r = max(h(iT+1:end)) / hmin;
 end
 
 % ------------------------------------------------------------------------
