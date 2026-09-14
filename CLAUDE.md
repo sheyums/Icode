@@ -10,13 +10,15 @@ conditions on `T >= xmin`.
 
 | File | Role |
 | --- | --- |
-| `FitTruncatedDiscreteMLE.m` | **Shared engine.** One truncated likelihood, seven families in a `switch` registry (~line 530). Adding a family costs ~15 lines: `ParamNames`, `cdf`, `sf`, `logpdf`, `unpack`, `valid`, `starts`. |
+| `FitTruncatedDiscreteMLE.m` | **Shared engine.** One truncated likelihood, nine families in a `switch` registry. Adding a family costs ~15 lines: `ParamNames`, `cdf`, `sf`, `logpdf`, `unpack`, `valid`, `starts`; a mixture also needs `report`/`nReport` and a `guard`. |
 | `FitHyperexponentialMLE.m` | Mixture of exponentials, K=1..N, parametrized in **observed** weights `q`. |
 | `FitExponentiatedWeibullMLE.m` | Exponentiated Weibull; `FixAlpha=true` nests the plain Weibull. |
+| `FitHyperErlangMLE.m` | Mixture of Erlangs, shapes `[1..1 m]` swept over m. The exponential-native route to a **non-monotone hazard**. |
+| `FitWeibullMixtureMLE.m` | Two-component Weibull mixture; the other non-monotone-hazard family. |
 | `FitGammaMLE` … `FitBetaMLE` (8 files) | Thin wrappers over the engine. |
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
-| `test_*.m` (5 files) | 109 tests. Run each by name from this directory. |
+| `test_*.m` (5 files) | 117 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
 
 ## Conventions that are not optional
@@ -40,6 +42,19 @@ Check `WeightsUntruncatedReliable`.
 the free ones. Hyperexponential at K=3 reports 6 numbers but has k=5, because
 `sum(q)=1`. Information criteria use `k`. `nReported` records the difference.
 
+**`q` is the OBSERVED weight in EVERY mixture** — hyperexponential, `hyper_erlang`
+and `weibull_mix` alike. It is component *j*'s share of the bouts that were
+actually retained, `q_j ~ w_j S_j(xmin)`. The fitted weights inside
+`hyper_erlang` and `weibull_mix` are untruncated `w`; `M.report` converts them
+at output. Never print a `w` under the name `q`: one fit had `w = 0.849` on a
+component holding `2.5e-18` of the data.
+
+**`Theta` is not `Params`.** `H.Theta` is the model's natural parameter vector,
+what `M.sf`/`M.cdf`/`M.guard` are written in and the only thing safe to feed
+back into the model. `H.Params` is what gets *reported*, and for a mixture it is
+a transform of `Theta` with its own delta-method SEs. `nReport` exceeds `nPar`
+there, because `sum(q)=1` leaves one weight determined but still worth printing.
+
 **`S(xmin)`** is the *untruncated* survival at the threshold — the likelihood's
 normalizer, reported as `Diagnostics.TailFraction`. **`SurvivalHandle`** is the
 *truncated* survival `S(t)/S(xmin)`, which is 1 at `xmin`. Different objects;
@@ -47,6 +62,26 @@ one is a scalar, the other a curve.
 
 ## Traps that have already bitten, with tests guarding them
 
+- **A mixture guard must test the OBSERVED share, not the mixing weight.**
+  `min(w)*n` misses the failure it exists to catch: under left truncation a
+  component whose mass sits below `xmin` carries a large `w` and holds none of
+  the data. A 3-component fit at `xmin=100` had `w = [0.055, 0.809, 0.136]`
+  with rates `[0.019, 0.566, 0.0074]` — the LARGEST weight had mean 1.8 s, so
+  `S(100)=3e-25` and it held zero of 1500 observations. `min(w)*n` read 82.3.
+  Both `heGuard` and `weibullMixGuard` now test `w_j S_j(xmin)`, normalized.
+  The phantom component had bought a stage count the data never supported.
+- **The same truncated law has several parametrizations, and only some look
+  degenerate.** The fit above and one with `w = [0.288, 1.3e-10, 0.712]` have
+  identical log-likelihoods to ten digits — they ARE the same distribution
+  above `xmin`. Judge identifiability on what the data see, never on where the
+  optimizer happened to stop.
+- **Never pass a name-value pair twice.** Octave's generated twins parse
+  `varargin` in a loop and take the last; MATLAB's `arguments` block rejects a
+  duplicate name outright. A one-platform failure the twins cannot catch,
+  because the twins are what replace the `arguments` block.
+- **Integer-shape Erlang needs no `gammainc`.** `S = exp(-x) sum_{j<m} x^j/j!`
+  is exact, 11x faster, and more accurate in the deep tail than Octave's
+  `gammainc` (which drifts to 1.5e-3 relative at `x=0.1, m=8`).
 - **Octave is not a proxy for MATLAB.** `*_oct.m` twins are local scaffolding
   (gitignored, regenerable) used for development. Octave has accepted three
   things MATLAB rejects: growing a struct array from `struct([])`,
@@ -77,12 +112,23 @@ one is a scalar, the other a curve.
 ## Testing
 
 ```matlab
-test_FitTruncatedDiscreteMLE      % 24
+test_FitTruncatedDiscreteMLE      % 28
 test_FitHyperexponentialMLE       % 26
 test_FitExponentiatedWeibullMLE   % 23
-test_CompareBoutModels            % 24
-test_HyperexponentialLRT          % 12
+test_CompareBoutModels            % 27
+test_HyperexponentialLRT          % 13
 ```
+
+**In MATLAB, run them by name from this directory.** Check `which
+test_CompareBoutModels -all` first: a stale copy elsewhere on the path wins
+over the repo unless you are `cd`'d into it, and that has already caused a
+"pass" that ran 24 of 27 tests.
+
+**In Octave they do NOT run by name.** Three of the suites call the bare
+`Fit*MLE` names, which resolve to the MATLAB originals and die on the
+`arguments` block. They need a generated test twin — see `verify_all.sh` in the
+scratchpad. `test_CompareBoutModels` dispatches to `_oct` names itself and does
+run directly.
 
 No toolbox required — local Marsaglia-Tsang gamma sampler, and chi-square tails
 via `gammainc(...,'upper')` rather than `chi2cdf`. Engine test 20 cross-checks
