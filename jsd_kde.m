@@ -30,9 +30,10 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   P, Q              Numeric column (or row) vectors of observations.
 %                     All values must be >= min_cutoff.  Neither may be empty.
 %   Ngrid             Number of evaluation grid points (default: 512).
-%   min_cutoff        Hard lower bound of the support.  Defaults to
-%                     min([P; Q]).  Set to a known physical minimum (e.g. 0 for
-%                     positive-definite quantities) to enable bounded-support
+%   min_cutoff        Hard lower bound of the support.  Pass [], NaN, or omit
+%                     it to take the default of min([P; Q]).  Set to a known
+%                     physical minimum (e.g. 0 for positive-definite
+%                     quantities) to enable bounded-support
 %                     KDE with boundary correction.  NOTE: at its default the
 %                     cutoff coincides with the observed minimum, which selects
 %                     the unbounded estimator; bounded support is used only
@@ -43,6 +44,8 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %                     calls, so a skewed sample takes the log path unless the
 %                     transform is explicitly disabled with false.
 %   n_boot            Number of bootstrap replicates (default: 0, no bootstrap).
+%                     The replicate loop is serial; see ALGORITHM NOTES for
+%                     why it is not parallelised.
 %                     For publication-quality CI and noise correction,
 %                     1000-2000 is a reasonable choice.
 %   ci_alpha          Nominal coverage level, alpha in (0,1)
@@ -103,9 +106,46 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   Bandwidth caching.  bw_P and bw_Q are extracted via ksdensity once before
 %   any bootstrap iteration and passed explicitly to all internal ksdensity
 %   calls, eliminating O(6 * n_boot) redundant bandwidth estimations that would
-%   otherwise dominate runtime.  The bootstrap loop is a plain for-loop;
-%   replacing it with parfor (Parallel Computing Toolbox) requires no further
-%   changes.
+%   otherwise dominate runtime.  Note the statistical cost: because every
+%   replicate reuses the bandwidth chosen from the ORIGINAL sample, the
+%   bootstrap does not propagate bandwidth-selection variability, so d_CI and
+%   d_SE are narrower than a fully nonparametric bootstrap would give.
+%
+%   The bootstrap loop is SERIAL, and deliberately so.  Its six randi calls
+%   draw from the global stream in a fixed order, and that draw sequence is the
+%   reproducibility contract: it is what lets a saved d_CI be regenerated years
+%   later from the same data and rng_seed.
+%
+%   PARALLELISING THIS COSTS THAT CONTRACT.  A parfor version was written,
+%   tested and reverted.  It worked and was correct -- one independent threefry
+%   substream per replicate, created on the client and indexed by b, giving
+%   results identical across pool sizes -- but substreams necessarily draw
+%   DIFFERENT numbers from the serial sequence, so every previously saved
+%   d_CI, d_SE, d_boot, d_corr, d_corr_CI and d_corr_SE became unreproducible
+%   at the same seed.  Measured on n_boot = 1000: d was bit-identical (it is
+%   deterministic and the bootstrap never touches it) while the CI bounds moved
+%   by 0.02 and 1.65 standard deviations of the seed-to-seed spread, about as
+%   much as simply re-running at another seed.  Statistically equivalent,
+%   numerically different -- and for saved results, numerically different is
+%   what matters.  The measured speedup was only about 1.5x on two workers.
+%
+%   If that trade ever becomes worthwhile (many fly-pairs in a loop, say), the
+%   working recipe is:
+%
+%       streams = RandStream.create('threefry', 'NumStreams', n_boot, ...
+%                                   'Seed', rng_seed, 'CellOutput', true);
+%       parfor b = 1:n_boot
+%           idx = randi(streams{b}, nP, nP, 1);   % etc, per replicate
+%       end
+%
+%   What must NOT be done is a bare parfor over the existing randi calls.
+%   Seeding the global stream on the client does not seed the workers, each of
+%   which has its own, so rng_seed would silently stop reproducing anything and
+%   the onCleanup restore below would become meaningless for the draws that
+%   matter.  Measured: two parfor runs under an identical rng(42) produced
+%   different draws, while the serial loop reproduced exactly.  See chi2p.m,
+%   where a closely related mistake -- one RandStream shared across parfor
+%   workers, which duplicated surrogates -- was made in earnest and fixed.
 %
 %   Noise correction.  avg_noise_div is the ensemble mean of all n_boot noise
 %   replicates, computed after the loop rather than per-iteration.  This gives a
@@ -128,10 +168,11 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %
 % REPRODUCIBILITY
 %   Pass rng_seed (a nonnegative integer) to make the bootstrap deterministic.
-%   The global stream is seeded on entry and its previous state is restored on
-%   exit via onCleanup, including on error or Ctrl-C, so calling jsd_kde never
-%   perturbs the caller's random stream.  Omit rng_seed (default []) to draw
-%   from the current stream and leave it advanced.
+%   The bootstrap draws from the global stream, which is seeded on entry and
+%   whose previous state is restored on exit via onCleanup, including on error
+%   or Ctrl-C, so calling jsd_kde never perturbs the caller's random stream.
+%   Omit rng_seed (default []) to draw from the current stream and leave it
+%   advanced.
 %
 %   Only d is deterministic without a seed.  d_CI, d_SE, d_boot, d_corr,
 %   d_corr_CI and d_corr_SE all vary run to run, so results intended to be
@@ -159,13 +200,17 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %     distributions. IEEE Trans. Inf. Theory, 49(7), 1858-1860.
 %   Osterreicher, F. & Vajda, I. (2003). A new class of metric divergences
 %     on probability spaces. Ann. Inst. Stat. Math., 55(3), 639-653.
+%
+% Designed by Sheyum originally but math-checked, re-written and 
+% strengthened by Claude and Gemini. January-August 2026.
+%
 
 %% ------------------ Defaults & Setup ------------------
 arguments
     P           {mustBeNumeric, mustBeVector, mustBeNonempty, mustBeFinite}
     Q           {mustBeNumeric, mustBeVector, mustBeNonempty, mustBeFinite}
     Ngrid       (1,1) {mustBeInteger, mustBePositive}                       = 512
-    min_cutoff  (1,1) double                                                = NaN
+    min_cutoff  double {mustBeScalarOrEmpty}                                = NaN
     do_log_transform                                                        = []
     n_boot      (1,1) {mustBeInteger, mustBeNonnegative}                    = 0
     ci_alpha    (1,1) {mustBeInRange(ci_alpha, 0, 1, "exclusive")}          = 0.05
@@ -188,12 +233,14 @@ if ~isempty(rng_seed)
             'rng_seed must be [] or a nonnegative integer scalar.');
     end
     rng_state_in = rng;
-    cleanup_rng  = onCleanup(@() rng(rng_state_in));  %#ok<NASGU>
+    cleanup_rng  = onCleanup(@() rng(rng_state_in));
     rng(rng_seed, 'twister');
 end
 
-% Resolve data-dependent default
-if isnan(min_cutoff), min_cutoff = min([P; Q]); end
+% Resolve data-dependent default. [] and NaN both mean "use the observed
+% minimum": [] is what a caller naturally passes to skip a positional
+% argument, and the arguments block used to reject it outright.
+if isempty(min_cutoff) || isnan(min_cutoff), min_cutoff = min([P; Q]); end
 
 if any(P < min_cutoff) || any(Q < min_cutoff)
     error('jsd_kde:belowCutoff', 'Values fall below min_cutoff.');
@@ -229,7 +276,7 @@ if P_is_const || Q_is_const
 
     warning('jsd_kde:degenerateInput', ...
         ['Degenerate input (%s): KDE is undefined, returning the exact ' ...
-         'limiting distance d = %g.'], reason, d);
+        'limiting distance d = %g.'], reason, d);
 
     % Every resample of a constant sample is that same constant, so the
     % bootstrap is deterministic and the noise floor is exactly zero.  Outputs
@@ -371,6 +418,10 @@ if n_boot > 0
     divP_noise = zeros(n_boot,1);
     divQ_noise = zeros(n_boot,1);
 
+    % Serial loop, drawing from the global stream in a fixed order. Do not
+    % reorder these six randi calls or interpose others: the draw sequence IS
+    % the reproducibility contract, and any change silently invalidates
+    % bootstrap outputs saved from earlier runs at the same rng_seed.
     for b = 1:n_boot
         % Resample indices
         P_star = P_trans(randi(nP, nP, 1));
@@ -397,7 +448,7 @@ if n_boot > 0
     hi_q = 1 - ci_alpha/2;
 
     d_CI = quantile(d_boot, [lo_q, hi_q]);
-    d_SE = std(d_boot);
+    if n_boot > 1, d_SE = std(d_boot); else, d_SE = 0; end
 
     % Noise limits evaluated in Distance space at output
     noise_P = mean(sqrt(divP_noise));
