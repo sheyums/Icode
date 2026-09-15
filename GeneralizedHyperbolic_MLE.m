@@ -8,7 +8,8 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %
 % INPUTS
-%   data      : real finite numeric vector, at least two distinct values.
+%   data      : real finite numeric vector, at least two distinct values
+%               (converted to double).
 %   modelFlag : 'GH'   – fit the full 5-parameter Generalized Hyperbolic.
 %               'NIG'  – fit the 4-parameter Normal-Inverse Gaussian
 %                        (GH with lambda fixed at -0.5).
@@ -26,10 +27,17 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   The NIG model fixes lambda = -0.5.
 %
 %   Special cases of the GH family:
-%     lambda = -0.5          : Normal-Inverse Gaussian (NIG)
-%     lambda =  0.5          : Hyperbolic
-%     lambda -> 0            : approaches the Variance-Gamma limit
-%     alpha -> infinity      : approaches the Normal distribution
+%     lambda = -0.5              : Normal-Inverse Gaussian (NIG)
+%     lambda =  1                : Hyperbolic, log f = -alpha*sqrt(delta^2+(x-mu)^2)
+%                                  + beta*(x-mu) + const
+%     delta -> 0 with lambda > 0 : Variance-Gamma limit. This model is NOT
+%                                  inside the fitted family (delta has a floor):
+%                                  VG-like data can drive delta to the floor,
+%                                  and delta's lower confidence bound is then
+%                                  open (reported as 0).
+%     alpha -> infinity          : approaches the Normal distribution
+%   (Earlier versions of this header listed lambda = 0.5 as the hyperbolic and
+%   lambda -> 0 as the variance-gamma limit; both were wrong.)
 %
 % INTERNAL OPTIMIZATION COORDINATES
 %   To enforce positivity and ordering constraints without explicit bounds,
@@ -53,6 +61,11 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   had a kink there that could stall quasi-Newton optimizers.
 %
 % ESTIMATION STRATEGY
+%   0. The data are standardized, z = (data - median)/std, the model is fitted
+%      to z, and every output is mapped back exactly (the GH family is closed
+%      under location-scale maps, and logL changes by exactly -n*log(std)).
+%      The fit, its intervals and every tolerance are therefore independent
+%      of the units and location of the data.
 %   1. Grid search over a coarse (lambda, beta, delta, mu) lattice to
 %      identify promising starting regions.
 %   2. fmincon (interior-point) is launched from the best 8 grid points.
@@ -69,6 +82,13 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %      when the grid did not, or if both converged and it is better.
 %   4. The best converged solution is selected; if none converged, the
 %      best finite solution is used with a warning.
+%   5. The selected solution is polished by a derivative-free (Nelder-Mead)
+%      search within the same bounds, and replaced if that lowers the NLL.
+%      Near the Normal limit the likelihood is a long flat ridge on which the
+%      interior-point solver stops early (exitflag 2, step below tolerance);
+%      measured there (Sep 2026), it ended 0.005 nats short of the optimum.
+%      The polish is accepted only if its gain exceeds the NLL's own
+%      floating-point noise (about n*max Bessel argument*eps).
 %
 % LOG-LIKELIHOOD
 %   The GH log-density is evaluated using the scaled Bessel function
@@ -114,12 +134,25 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                        exact profile, not an approximation.
 %
 %   Root finding uses an exponentially expanding bracket search sized from the
-%   Wald standard errors, with NaN/Inf guards, followed by fzero on the located
-%   bracket and sign-only bisection as a fallback when an endpoint is infinite.
+%   Wald standard errors, followed by fzero on the located bracket, with
+%   sign-only bisection as the fallback. A non-finite profile value (besselk
+%   overflow, a failed nuisance fit) is never taken as a crossing; the search
+%   backs off toward the last finite point instead. A crossing whose refinement
+%   meets non-finite, mutually contradictory or discontinuous (cliff) profile
+%   values is rejected as an artifact of numerical breakdown. At delta's floor,
+%   where one value decides between an open and a finite bound, a value not
+%   certified below the threshold is re-fitted from every nearby cached
+%   solution with a larger Nelder-Mead budget.
+%   log(delta) is searched no lower than the estimator's own delta floor.
+%   Each profile point warm-starts its nuisance fit from the nearest point
+%   already evaluated. Any value at or past the threshold is re-checked from
+%   the MLE's nuisance values and, if still at or past it, by a derivative-free
+%   Nelder-Mead search, before it is allowed to set a bound.
 %
 % HESSIAN WARNING
 %   results.hessian is the Hessian returned by fmincon in TRANSFORMED
 %   coordinates [lambda, beta, psi, log_delta, mu] (or the NIG subset).
+%   fmincon ran on the standardized data; the matrix is mapped to data units.
 %   Standard errors derived directly from this matrix are WRONG for
 %   physical alpha and delta because those involve nonlinear transforms.
 %   To obtain physical-space standard errors, apply the delta method:
@@ -155,8 +188,9 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                   A bound is one of three things, and they mean different
 %                   things:
 %                     finite  – the profile crossed the threshold there.
-%                     +/-Inf  – the profile was evaluated all the way out and
-%                               never crossed: the likelihood is flat in that
+%                     +/-Inf  – the profile was evaluated all the way out (for
+%                               delta: down to its floor) and never crossed:
+%                               the likelihood is flat in that
 %                               direction, so the parameter is not identified
 %                               and the interval is genuinely OPEN.  This is a
 %                               result, not a failure.  For delta and alpha,
@@ -167,13 +201,15 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                   Open and unknown were previously both reported as NaN and
 %                   so could not be told apart.
 %     exitflag    – fmincon exit flag for the selected solution.
-%     output      – fmincon output struct for the selected solution.
+%     output      – fmincon output struct for the selected solution (of the
+%                   standardized problem).
 %     converged   – logical; true when exitflag > 0.  NOTE this reports only
 %                   what the optimizer said; see 'valid' for whether the
 %                   answer is usable.
 %     valid       – logical; true when the fitted parameters yield a finite,
 %                   positive density at every data point AND that density
-%                   reproduces the reported LogLike.  A run can be
+%                   reproduces the reported LogLike (to within the
+%                   log-density's floating-point noise).  A run can be
 %                   converged = true and valid = false: the optimizer stopped
 %                   cleanly at parameters where the density cannot be
 %                   evaluated.  Check this before using any result.
@@ -187,9 +223,14 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                   perfectly good while alpha, beta and delta are essentially
 %                   arbitrary; a NoGainOverNormal warning is raised.  This is
 %                   the usual explanation for a fit that looks wrong even
-%                   though every numerical check passes.
-%     delta_at_bound – logical; true when delta sits on its lower bound, i.e.
-%                   the solution is a CONSTRAINED optimum.  Profile CIs and
+%                   though every numerical check passes. In this regime even
+%                   FINITE profile bounds can be artifacts of the flat ridge:
+%                   measured (Sep 2026) on normal data, a mu lower bound of
+%                   -9244 sat where an independent profile was still 1.07
+%                   below the threshold.
+%     delta_at_bound – logical; true when delta sits on (within 1% of) its
+%                   lower bound, i.e. the solution is a CONSTRAINED
+%                   optimum.  Profile CIs and
 %                   Hessian-based standard errors assume an interior solution
 %                   and are unreliable in that case.
 %     ModelSelection – (AUTO only) string describing which model was chosen and why.
@@ -205,6 +246,20 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   GeneralizedHyperbolic_MLE:NoGainOverNormal
 %       Fit does not beat a Normal by AIC; shape parameters unidentifiable.
 %
+% KNOWN LIMITATIONS (measured, Sep 2026)
+%   - Near the Normal limit (a NoGainOverNormal warning), finite profile
+%     bounds can still be artifacts of the flat likelihood ridge; see
+%     gaussian_check below.
+%   - Upper bounds for alpha and beta many orders of magnitude above the
+%     estimate (e.g. 1.2e6 for an estimate of 8) can mark where the nuisance
+%     fits stop converging rather than a true crossing: an independent
+%     profile was still below the threshold at two such bounds. Read them as
+%     effectively open.
+%   - The profile CIs cost more than before the Sep 2026 fixes. On GH samples
+%     of n = 1000 the median fit took about 2.3 times as long (171 s versus
+%     75 s, both measured under concurrent load), mostly from searching delta
+%     down to its floor and re-checking values near the threshold.
+%
 % REQUIREMENTS
 %   Optimization Toolbox  : fmincon
 %   Statistics Toolbox    : chi2cdf, chi2inv
@@ -219,6 +274,15 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 % by Claude, Gemini and ChatGPT, Dec 2025.
 % Reparameterization, exact alpha CI, and robustness improvements: Jul 2026.
 % Updated to fmincon with bounds to prevent component collapse: Aug 2026.
+% Audited against independent ground truth and fixed (Claude Code, Sep 2026):
+% standardization; open bounds no longer read off numerical overflow; delta
+% intervals confined to the delta floor; checks that reject crossings built
+% from failed nuisance fits (non-finite, contradictory or cliff-like values);
+% warm-started and derivative-free re-checked profile fits; an absolute root
+% tolerance; interval bounds no longer swapped by sort(NaN); the
+% delta_at_bound flag; double conversion of the input; a noise-aware validity
+% check; and corrected special cases (hyperbolic, variance-gamma) in this
+% header.
 
 % ---- Validate and normalize inputs -----------------------------------------
 if nargin < 2 || isempty(modelFlag), modelFlag = 'AUTO'; end
@@ -241,7 +305,10 @@ mode = char(mode);
 
 validateattributes(data, {'numeric'}, ...
     {'vector','real','finite','nonempty'}, mfilename, 'data', 1);
-data = data(:);
+% Work in double precision whatever the input class: single data would run the
+% likelihood, the tolerances and besselk in single precision, and integer
+% classes saturate on subtraction.
+data = double(data(:));
 if numel(data) < 2
     error('GeneralizedHyperbolic_MLE:TooFewObservations', ...
         'DATA must contain at least two observations.');
@@ -308,7 +375,95 @@ end
 
 function results = fit_GH(data)
 % Fit the full 5-parameter GH model.
+results = fit_standardized(data, false);
+end
 
+function results = fit_NIG(data)
+% Fit the 4-parameter NIG model (lambda fixed at -0.5).
+results = fit_standardized(data, true);
+end
+
+function results = fit_standardized(data, isNIG)
+% Fit on z = (data - loc)/scl and map every output back to the data's units.
+%
+% WHY. The multistart grid, the optimizer and root-finder tolerances and the
+% profile step sizes are absolute numbers, so results used to depend on the
+% units of the data. Measured (Sep 2026) on one NIG sample: multiplying it by
+% 1e4 moved the reported mu interval by 17%; on a GH sample, rescaling left the
+% fit up to 3e-3 nats worse and delta 13 times different. The GH family is
+% closed under y = loc + scl*z, with logL_y = logL_z - n*log(scl), so fitting z
+% and transforming back is exact, and every output is equivariant under a
+% shift or rescaling of the data. The delta floor is a fixed fraction of
+% std(data), so it maps onto itself.
+n   = numel(data);
+loc = median(data);
+scl = std(data);
+z   = (data - loc) / scl;
+
+if isNIG
+    [theta, nll, hess, exitflag, output] = gh_multistart(z, true);
+    model = 'Normal-Inverse Gaussian (mu, lambda, alpha, beta, delta)';
+else
+    [theta, nll, hess, exitflag, output] = fit_GH_core(z);
+    model = 'Generalized Hyperbolic (mu, lambda, alpha, beta, delta)';
+end
+% Step 5 of ESTIMATION STRATEGY: derivative-free polish of the point estimate.
+% The profile deviance is measured from nll, so an nll left short of the
+% optimum also mislocates every confidence bound.
+[lbP, ubP] = theta_bounds(z, isNIG);
+[thetaP, nllP] = polish_nelder_mead(@(t) gh_nll_wrapper(t, z, isNIG), theta, lbP, ubP);
+% Accept only an improvement larger than the likelihood's own floating-point
+% noise, about n*max(Bessel argument)*eps (see NUMERICAL-VALIDITY GUARD).
+% Without this the polish slid along the flat Normal-limit ridge toward the
+% guard and kept "improvements" made of noise: measured (Sep 2026) on n = 10,
+% a 2e-5 gain at Bessel argument 6.2e9, where the noise is ~1e-5, after which
+% the fit failed its own LikelihoodInconsistent check (valid = false).
+if nllP < nll - max(1e-9, nll_noise(thetaP, z, isNIG))
+    theta = thetaP(:);
+    nll   = nllP;
+end
+ci = gh_profile_ci(theta, z, nll, isNIG, hess);
+
+[theta, hess] = unstandardize_theta(theta, hess, loc, scl, isNIG);
+nll      = nll + n*log(scl);
+ci.mu    = loc + scl*ci.mu;   % scl > 0 preserves order; no sort (NaN)
+ci.alpha = ci.alpha / scl;
+ci.beta  = ci.beta / scl;
+ci.delta = ci.delta * scl;
+
+p = theta_to_params(theta, isNIG);
+results = assemble_results(model, p, theta, nll, hess, ci, exitflag, output, data, isNIG);
+results = flag_delta_at_bound(results, data, isNIG);
+end
+
+function s = nll_noise(theta, data, isNIG)
+% Rough floating-point noise in the summed NLL at theta: each log-density
+% subtracts Bessel arguments of order ARG, so the sum carries an absolute error
+% of about n*ARG*eps. Factor 10 for margin.
+p = theta_to_params(theta, isNIG);
+arg = max([p.delta*p.gamma; p.alpha*sqrt(p.delta^2 + (data - p.mu).^2)]);
+s = 10 * numel(data) * max(arg, 1) * eps;
+end
+
+function [theta, hess] = unstandardize_theta(theta, hess, loc, scl, isNIG)
+% Map theta and its Hessian from z-units to data units, y = loc + scl*z:
+%   lambda unchanged, beta/scl, psi - log(scl), log_delta + log(scl), loc + scl*mu.
+% The map is affine with Jacobian J = diag(1, 1/scl, 1, 1, scl) in the order
+% (lambda, beta, psi, log_delta, mu), so H_y = inv(J)'*H_z*inv(J) = D*H_z*D
+% with D = diag(1, scl, 1, 1, 1/scl). NIG has no lambda entry.
+o = double(~isNIG);
+theta(1+o) = theta(1+o) / scl;
+theta(2+o) = theta(2+o) - log(scl);
+theta(3+o) = theta(3+o) + log(scl);
+theta(4+o) = loc + scl*theta(4+o);
+d = [ones(1,o), scl, 1, 1, 1/scl].';
+if isequal(size(hess), [numel(d) numel(d)])
+    hess = hess .* (d * d.');
+end
+end
+
+function [theta, nll, hess, exitflag, output] = fit_GH_core(data)
+% GH point estimate: grid multistart, then a warm start from the NIG MLE.
 % Step 1: multi-start search over a parameter grid.
 [theta, nll, hess, exitflag, output] = gh_multistart(data, false);
 
@@ -341,24 +496,6 @@ try
 catch
     % Retain the best multistart solution if the warm start crashes.
 end
-
-p  = theta_to_params(theta, false);
-ci = gh_profile_ci(theta, data, nll, false, hess);
-results = assemble_results( ...
-    'Generalized Hyperbolic (mu, lambda, alpha, beta, delta)', ...
-    p, theta, nll, hess, ci, exitflag, output, data, false);
-results = flag_delta_at_bound(results, data, false);
-end
-
-function results = fit_NIG(data)
-% Fit the 4-parameter NIG model (lambda fixed at -0.5).
-[theta, nll, hess, exitflag, output] = gh_multistart(data, true);
-p  = theta_to_params(theta, true);
-ci = gh_profile_ci(theta, data, nll, true, hess);
-results = assemble_results( ...
-    'Normal-Inverse Gaussian (mu, lambda, alpha, beta, delta)', ...
-    p, theta, nll, hess, ci, exitflag, output, data, true);
-results = flag_delta_at_bound(results, data, true);
 end
 
 % =========================================================================
@@ -589,8 +726,13 @@ function results = flag_delta_at_bound(results, data, isNIG)
 % Returning it unannounced would misrepresent a boundary solution as a fit.
 idx = 4 - double(isNIG);          % position of log_delta in theta
 mld = log(delta_lower_bound(data));
+% Tolerance in log(delta) units: 1e-2 means within 1% of the floor. fmincon's
+% interior-point algorithm never lands ON a bound, it stops strictly inside
+% one. Measured (Sep 2026) on data whose MLE is at the floor: the fit stopped
+% 1.5e-3 above it on variance-gamma data and 7.5e-4 above it on Laplace data,
+% so the old tolerance of 1e-8 reported delta_at_bound = false every time.
 results.delta_at_bound = isfinite(results.theta_hat(idx)) && ...
-    results.theta_hat(idx) <= mld + 1e-8;
+    results.theta_hat(idx) <= mld + 1e-2;
 if results.delta_at_bound
     warning('GeneralizedHyperbolic_MLE:DeltaAtBound', ...
         ['delta reached its lower bound (%.6g). This is a constrained ' ...
@@ -618,8 +760,11 @@ for it = 1:200
     end
     m  = 0.5 * (a + b);
     fm = fun(m);
-    if isnan(fm)
-        return          % cannot evaluate here; the bound is genuinely unknown
+    if ~isfinite(fm)
+        % Cannot evaluate here, so the bound is genuinely unknown. +Inf used to
+        % count as "past the boundary", which is how a numerical overflow edge
+        % was reported as a confidence bound; see find_root_robust.
+        return
     elseif fm <= 0
         a = m;          % still inside the interval
     else
@@ -727,14 +872,33 @@ for i = 1:numel(names)
         step = 2 * seT(idx);
     end
 
-    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts);
-    lo  = find_root_robust(fun, q0, -1, step);
-    hi  = find_root_robust(fun, q0,  1, step);
-
+    % One warm-start cache per parameter: each profile point starts its
+    % nuisance optimization from the solution at the nearest point evaluated.
+    cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
+    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache);
+    % log(delta) is searched no lower than the estimator's own floor: the fit
+    % may not return delta below it, so the interval must not claim support
+    % there either. Without the limit the search walked down to log(delta)
+    % ~ -700 and reported where besselk overflowed (delta ~ 1e-305) as a bound.
     if strcmp(name, 'delta')
-        ci.(name) = exp(sort([lo hi]));   % back-transform from log space
+        loLimit = log(delta_lower_bound(data));
     else
-        ci.(name) = sort([lo hi]);
+        loLimit = -Inf;
+    end
+    % The value AT the limit decides between an open bound and a finite one,
+    % so it gets a harder nuisance fit (see find_root_robust).
+    funHard = @(qq) regular_profile_dev(qq, idx, theta, data, nllMin, crit, isNIG, opts, cache, true);
+    lo  = find_root_robust(fun, q0, -1, step, loLimit, funHard);
+    hi  = find_root_robust(fun, q0,  1, step, Inf);
+
+    % lo and hi come from searches below and above the MLE, so [lo hi] is
+    % already ordered. Do NOT sort: sort moves NaN to the end, so an unknown
+    % lower bound used to push a genuine upper bound into the lower slot
+    % (delta reported as [0.2062, NaN] instead of [NaN, 0.2062]).
+    if strcmp(name, 'delta')
+        ci.(name) = exp([lo hi]);   % back-transform from log space
+    else
+        ci.(name) = [lo hi];
     end
 end
 
@@ -743,7 +907,7 @@ end
 ci.alpha = profile_alpha_ci(theta, p.alpha, data, nllMin, crit, isNIG, opts);
 end
 
-function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts)
+function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, hard)
 % Profile deviance for parameters other than alpha.
 % Fix theta(idx) = q, re-optimize the remaining parameters,
 % and return  nll_profile - nllMin - crit.
@@ -752,6 +916,14 @@ function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts)
 % point estimate. Without this the profile would be free to push delta below
 % the floor that the fit itself was forbidden to cross, so the CI could report
 % support for parameter values the estimator was never allowed to return.
+%
+% STARTS. The nuisance optimum drifts as q moves away from the MLE, and a
+% single start at the MLE's nuisance values can stall short of it. A stalled
+% optimization OVERSTATES the profile, an overstated profile crosses the
+% threshold early, and the interval comes out too narrow. So each point starts
+% from the solution at the nearest point already evaluated (CACHE), and a
+% value at or past the threshold -- the only kind that can set a bound -- is
+% re-checked from the MLE's nuisance values, keeping the lower of the two.
 mask       = true(numel(theta), 1);
 mask(idx)  = false;
 base       = theta;
@@ -762,38 +934,139 @@ obj = @(x) gh_nll_wrapper(insert_param(base, x, mask), data, isNIG);
 lb = lbFull(mask);
 ub = ubFull(mask);
 
-x0 = theta(mask);
-x0 = min(max(x0, lb), ub);   % fmincon needs a feasible start
-try
-    [~, v] = fmincon(obj, x0, [], [], [], [], lb, ub, [], opts);
-catch
-    v = Inf;
+if nargin < 10, hard = false; end
+starts = {min(max(theta(mask), lb), ub)};   % fmincon needs a feasible start
+if idx == 4 - double(isNIG)
+    % Profiling log(delta): also start from the MLE's nuisance values with
+    % psi = log(gamma) shifted by the same amount as log(delta). That keeps
+    % delta/gamma, hence the mean shift beta*delta/gamma and the scale of the
+    % variance, roughly where the data need them, instead of asking the
+    % optimizer to rediscover them from values fitted at another delta.
+    % Measured (Sep 2026), log-normal data at the delta floor: every other
+    % start stalled at +252 above the threshold where an independent profile
+    % was 1.92 below it. psi sits at position 3 - isNIG of the masked vector.
+    xm = theta(mask);
+    xm(3 - double(isNIG)) = xm(3 - double(isNIG)) + (q - theta(idx));
+    starts = [starts, {min(max(xm, lb), ub)}];
+end
+if nargin >= 9 && isKey(cache, 'Q')
+    % Warm start from the nearest evaluated point; a HARD evaluation (a value
+    % that decides between an open and a finite bound) uses the 8 nearest.
+    Q = cache('Q');  X = cache('X');
+    [~, order] = sort(abs(Q - q));
+    nWarm = 1;
+    if hard, nWarm = min(8, numel(order)); end
+    warm = arrayfun(@(j) min(max(X(:,j), lb), ub), order(1:nWarm), 'UniformOutput', false);
+    starts = [warm, starts];
+end
+[v, xbest] = multistart_nuisance(obj, starts, lb, ub, opts, nllMin + crit, hard);
+if nargin >= 9 && isfinite(v)
+    cache_store(cache, q, xbest);
 end
 d = v - nllMin - crit;
 end
 
+function [v, xbest] = multistart_nuisance(obj, starts, lb, ub, opts, vStop, hard)
+% Minimize OBJ from each start in turn, stopping as soon as one lands below
+% vStop: a value below the threshold cannot set a bound, so it needs no second
+% opinion. Returns the lowest value found (Inf if every attempt failed).
+%
+% If every fmincon start ends at or past vStop, the answer decides a bound,
+% and fmincon is not trusted with it alone. On the flat ridge near the Normal
+% limit the interior-point solver stops early (exitflag 2, step below
+% tolerance): measured (Sep 2026) at profile values 1,490-1,598 ABOVE the
+% threshold where Nelder-Mead reached 1.13 BELOW it, and those stalls laid
+% out a smooth, self-consistent false crossing that nothing else could catch.
+% So the best point found and the first (warm) start are polished by
+% derivative-free search before the value is returned.
+v = Inf;  xbest = starts{end};
+for s = 1:numel(starts)
+    try
+        [xs, vs] = fmincon(obj, starts{s}, [], [], [], [], lb, ub, [], opts);
+    catch
+        continue
+    end
+    if isfinite(vs) && vs < v
+        v = vs;  xbest = xs;
+    end
+    if v < vStop
+        return
+    end
+end
+if nargin >= 7 && hard
+    cand = [{xbest}, starts];   budget = 5000;   % every start, 5x the budget
+else
+    cand = {xbest, starts{1}};  budget = 1000;
+end
+for s = 1:numel(cand)
+    [xs, vs] = polish_nelder_mead(obj, cand{s}, lb, ub, budget);
+    if vs < v
+        v = vs;  xbest = xs;
+    end
+    if v < vStop
+        return
+    end
+end
+end
+
+function [x, v] = polish_nelder_mead(obj, x0, lb, ub, budget)
+% Derivative-free minimization of OBJ within [lb, ub], bounds imposed by
+% clamping, restarted from its own result because Nelder-Mead stalls. Returns
+% x0 unchanged (with its value) if it cannot improve on it.
+clampd = @(y) min(max(y, lb), ub);
+f = @(y) obj(clampd(y));
+x = clampd(x0);
+v = f(x);
+if ~isfinite(v), return; end
+if nargin < 5, budget = 1000; end
+o = optimset('Display', 'off', 'TolX', 1e-8, 'TolFun', 1e-8, ...
+             'MaxFunEvals', budget*numel(x), 'MaxIter', budget*numel(x));
+for r = 1:2
+    try
+        [xr, vr] = fminsearch(f, x, o);
+    catch
+        break
+    end
+    if isfinite(vr) && vr < v
+        x = clampd(xr);  v = vr;
+    else
+        break
+    end
+end
+end
+function cache_store(cache, q, x)
+% Append one evaluated profile point to a warm-start cache (a handle object).
+if isKey(cache, 'Q')
+    cache('Q') = [cache('Q'), q];
+    cache('X') = [cache('X'), x(:)];   %#ok<NASGU> containers.Map is a handle
+else
+    cache('Q') = q;
+    cache('X') = x(:);                 %#ok<NASGU> containers.Map is a handle
+end
+end
 % ---- Exact profile CI for physical alpha -----------------------------------
 
 function ci = profile_alpha_ci(theta, aHat, data, nllMin, crit, isNIG, opts)
 % Profile alpha by searching in log(alpha) space.
 % Using q = log(alpha) keeps alpha positive throughout the search and
 % makes the step size scale-invariant regardless of alpha's magnitude.
-q0  = log(aHat);
-fun = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, isNIG, opts);
-lo  = find_root_robust(fun, q0, -1, 0.1);
-hi  = find_root_robust(fun, q0,  1, 0.1);
-ci  = exp(sort([lo hi]));
+q0    = log(aHat);
+cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
+fun   = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, isNIG, opts, cache);
+lo  = find_root_robust(fun, q0, -1, 0.1, -Inf);
+hi  = find_root_robust(fun, q0,  1, 0.1,  Inf);
+ci  = exp([lo hi]);   % ordered by construction; see gh_profile_ci on sort
 end
 
-function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, isNIG, opts)
+function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, isNIG, opts, cache)
 % Profile deviance as a function of log(alpha).
 a = exp(logA);
 if ~isfinite(a) || a <= 0, d = Inf;  return;  end
-v = alpha_fixed_nll(a, theta, data, isNIG, opts);
+v = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, nllMin + crit);
 if isfinite(v), d = v - nllMin - crit;  else, d = Inf;  end
 end
 
-function nll = alpha_fixed_nll(a, theta, data, isNIG, opts)
+function nll = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, vStop)
 % Minimize NLL over all parameters except alpha, which is fixed at a.
 %
 % Reparameterize beta = a*tanh(xi), xi free in (-inf, inf).
@@ -806,11 +1079,12 @@ function nll = alpha_fixed_nll(a, theta, data, isNIG, opts)
 %   GH  : [lambda; xi; log_delta; mu]
 %
 % log_delta carries the same floor as the point estimate, so this profile
-% explores the identical feasible region (see regular_profile_dev).
+% explores the identical feasible region (see regular_profile_dev, which also
+% explains the warm start and the re-check against vStop).
 p = theta_to_params(theta, isNIG);
 
 % Convert the current beta estimate to the xi parameterization.
-% Clamp to avoid atanh(±1) = ±inf at the boundary.
+% Clamp to avoid atanh(+/-1) = +/-inf at the boundary.
 r   = max(min(p.beta/a, 1-1e-8), -1+1e-8);
 xi0 = atanh(r);
 
@@ -826,14 +1100,17 @@ else
     ub  = [ Inf;  Inf; Inf;  Inf];
     obj = @(x) alpha_core(a, x(1), x(2), x(3), x(4), data);
 end
-x0 = min(max(x0, lb), ub);   % fmincon needs a feasible start
-try
-    [~, nll] = fmincon(obj, x0, [], [], [], [], lb, ub, [], opts);
-catch
-    nll = Inf;
+starts = {min(max(x0, lb), ub)};   % fmincon needs a feasible start
+if isKey(cache, 'Q')
+    Q = cache('Q');  X = cache('X');
+    [~, j] = min(abs(Q - logA));
+    starts = [{min(max(X(:,j), lb), ub)}, starts];
+end
+[nll, xbest] = multistart_nuisance(obj, starts, lb, ub, opts, vStop);
+if isfinite(nll)
+    cache_store(cache, logA, xbest);
 end
 end
-
 function nll = alpha_core(a, lambda, xi, logDelta, mu, data)
 % NLL with alpha = a fixed and beta = a*tanh(xi).
 t          = tanh(xi);
@@ -850,37 +1127,80 @@ end
 %                         ROOT FINDER (PROFILE BOUNDARY)
 % =========================================================================
 
-function root = find_root_robust(fun, q0, direction, scale)
-% Find the root of fun in the given direction from q0 using an
-% exponentially expanding bracket search.
+function root = find_root_robust(fun, q0, direction, scale, limit, funHard)
+% Find where the profile deviance FUN crosses zero, moving from q0 in
+% DIRECTION, by an exponentially expanding bracket search that never passes
+% LIMIT (default: unbounded).
 %
 % Algorithm:
-%   1. Evaluate f0 = fun(q0).  If f0 > 1e-6, bail immediately:
-%      the profile deviance should be approximately -1.92 at the MLE,
-%      so a positive value at q0 indicates a structural problem
-%      (inconsistent nllMin/theta, failed nuisance optimization, etc.)
-%      rather than numerical noise.
-%   2. Expand the search point exponentially: current = q0 + direction*scale*1.5^k.
-%   3. Skip NaN/Inf returns (optimizer failure at extreme parameter values).
-%   4. When a sign change is detected between the last finite point and
-%      the current point, call fzero to pin down the root.
-%   5. Return NaN if no bracket is found within 31 steps (~scale * 1.9e5).
-
+%   1. Evaluate f0 = fun(q0). If it is non-finite or > 1e-6, return NaN: the
+%      deviance should be about -1.92 at the MLE, so anything else is a
+%      structural problem (inconsistent nllMin/theta, a failed nuisance
+%      optimization), not noise.
+%   2. Probe q0 + direction*scale*1.5^k, k = 0..30, clipped to LIMIT.
+%   3. A NON-FINITE value is never read as a crossing. The search backs off
+%      toward the last finite point (back_off_to_finite), because a long step
+%      can jump over a real crossing into a region that cannot be evaluated.
+%   4. At the first sign change between two FINITE values, fzero on that
+%      bracket, with sign-only bisection as the fallback. Every evaluation
+%      used to refine it is recorded, and the crossing is REJECTED if any was
+%      non-finite or they contradict a single crossing (see
+%      profile_evaluations_suspect); a rejected crossing is handled as in 5.
+%   5. No crossing: +/-Inf (OPEN) when there is positive evidence the profile
+%      stays below the threshold -- a finite value at LIMIT, finite values all
+%      the way out, or finite values at least 10*min(step, 1) standardized
+%      units from the MLE before evaluation broke down. Otherwise NaN
+%      (UNKNOWN).
+%
+% WHY A NON-FINITE VALUE IS NOT A CROSSING. For this family the density is
+% positive and finite wherever the parameters are valid, so an infinite
+% profile NLL is never the likelihood genuinely rising: it is besselk
+% overflowing or a nuisance fit failing. This routine used to treat +Inf as
+% "past the boundary" and bisect onto the point where it first appeared.
+% Measured (Sep 2026): delta intervals [2.4e-305, 0.91] on variance-gamma data
+% and [3.7e-297, 1.76] on Laplace data, where the profile is flat all the way
+% down and the honest lower bound is 0; lambda [-292.75, 292.76] on a weakly
+% identified GH sample, where 292.76 was simply where besselk gave up.
+if nargin < 5, limit = direction*Inf; end
+if nargin < 6, funHard = []; end
 root = NaN;
 f0 = fun(q0);
-% f0 should be around -1.92 at the MLE; anything positive signals trouble.
 if ~isfinite(f0) || f0 > 1e-6, return; end
 
-previous = q0;
-fp = f0;
-sawFiniteBelow = false;   % did the profile stay below the threshold throughout?
+previous     = q0;
+fp           = f0;
+farthest     = 0;       % distance of the farthest finite below-threshold probe
+reachedLimit = false;   % finite below-threshold value obtained AT the limit
+brokeDown    = false;   % any probe failed to evaluate
 for k = 0:30
     current = q0 + direction * scale * (1.5^k);
+    atLimit = direction * (current - limit) >= 0;
+    if atLimit, current = limit; end
     fc = fun(current);
-    if isnan(fc), continue; end   % skip true optimizer crashes (NaN)
-    % Inf is not skipped: it means the profile has gone to infinity, which
-    % is a valid signal that we have passed the CI boundary. fzero itself
-    % cannot cope with an infinite endpoint, so local_bisect takes over below.
+    if atLimit && ~isempty(funHard) && ~(isfinite(fc) && fc < 0)
+        % The limit decides between OPEN and a finite bound, so one failed
+        % nuisance fit must not decide it. Measured (Sep 2026) at the delta
+        % floor on log-normal data: the ordinary fit returned +252 where an
+        % independent profile was 1.92 below the threshold.
+        fcH = funHard(current);
+        if isfinite(fcH) && (~isfinite(fc) || fcH < fc)
+            fc = fcH;
+        end
+    end
+    if ~isfinite(fc)
+        brokeDown = true;
+        % The step may have jumped straight past a real crossing into a region
+        % where the profile cannot be evaluated. Measured (Sep 2026): a Wald
+        % step of 27.6 in log(delta) went from the MLE to log(delta) = 26,
+        % where every value is Inf (Bessel guard), although the profile crosses
+        % the threshold far inside that. So back off toward the last finite
+        % point until a finite value is found.
+        [previous, fp, farthest, current, fc, found] = ...
+            back_off_to_finite(fun, q0, previous, fp, farthest, current);
+        if ~found
+            break   % the evaluable region ends here without a crossing in it
+        end
+    end
     if fc >= 0 && fp <= 0
         % Sign change found: bracket is [previous, current].
         %
@@ -892,43 +1212,158 @@ for k = 0:30
         % 14.96 s inside fzero alone. A tolerance of 1e-4 of the local scale
         % leaves the bound far more accurate than the 95% interval is
         % meaningful to.
-        tolX = max(1e-10, 1e-4 * max(abs(q0), scale));
+        %
+        % The tolerance is ABSOLUTE, 1e-4 of the local step. fzero does not
+        % treat TolX as absolute: it stops once the bracket is narrower than
+        % 2*TolX*max(|b|,1), so TolX is scaled down by the bracket's
+        % magnitude here. This used to pass 1e-4*max(|q0|,scale) straight in,
+        % which at |q| ~ 1e4 is an effective tolerance of ~1e4: fzero stopped
+        % at once and returned a bracket END as the bound (a mu interval off
+        % by 17%, Sep 2026). On standardized data lambda can still reach ~50.
+        tolX  = max(1e-12, 1e-4 * scale);
+        tolFz = tolX / max([abs(previous), abs(current), 1]);
+        rec = containers.Map('KeyType', 'char', 'ValueType', 'any');
+        rec('q') = [previous, current];
+        rec('f') = [fp, fc];
+        frec = @(q) recorded_eval(fun, q, rec);
         try
-            root = fzero(fun, sort([previous current]), ...
-                optimset('TolX', tolX));
+            root = fzero(frec, sort([previous current]), optimset('TolX', tolFz));
         catch
             root = NaN;
         end
         if ~isfinite(root)
-            % fzero needs FINITE values at both bracket ends. The profile is
-            % legitimately +Inf wherever the nuisance optimization cannot be
-            % evaluated, and an earlier comment here wrongly asserted that
-            % fzero could bracket against Inf: it throws, the catch above
-            % swallows it, and the bound is reported as NaN even though the
-            % root is known to lie inside this bracket. Bisection needs only
-            % the SIGN at each end, so it succeeds exactly where fzero cannot.
-            root = local_bisect(fun, previous, current, tolX);
+            % fzero needs finite values at both bracket ends and throws
+            % otherwise; bisection needs only the sign at each midpoint.
+            root = local_bisect(frec, previous, current, tolX);
+        end
+        % A crossing is only as good as the evaluations that located it. Near a
+        % numerical breakdown the nuisance fit can return a FINITE but grossly
+        % wrong value, which fakes a crossing as readily as Inf did. Measured
+        % (Sep 2026) on a weakly identified GH sample: the lambda profile read
+        % -0.76 at 290.30 on one evaluation and +10.4 at the same point on the
+        % next, an earlier probe returned +245, and an independent profile was
+        % -0.76 throughout. So a crossing whose refinement met a non-finite or
+        % contradictory value is rejected and treated as a breakdown.
+        if profile_evaluations_suspect(rec('q'), rec('f'), direction)
+            % Credit the farthest point the refinement itself evaluated below
+            % the threshold as distance covered.
+            Qr = rec('q');  Fr = rec('f');
+            okBelow = isfinite(Fr) & Fr <= -0.1;
+            if any(okBelow)
+                farthest = max(farthest, max(abs(Qr(okBelow) - q0)));
+            end
+            root = open_or_unknown(direction, farthest, scale);
         end
         return
     end
-    if isfinite(fc) && fc < 0
-        sawFiniteBelow = true;
-    end
     previous = current;
-    fp = fc;
+    fp       = fc;
+    farthest = abs(current - q0);
+    if atLimit
+        reachedLimit = true;
+        break
+    end
 end
 
-% No bracket within the search range.  Distinguish the two reasons, because
-% they mean opposite things and used to be reported identically as NaN:
-%
-%   * The profile was evaluated successfully the whole way out and never rose
-%     to the threshold.  The likelihood is flat in this direction, so the
-%     parameter is not identified and the interval is genuinely OPEN.  Report
-%     -Inf or +Inf, which says exactly that.
-%   * Evaluation kept failing (every fc was NaN).  Nothing was learned, so the
-%     bound is unknown and NaN remains the honest answer.
-if sawFiniteBelow
+% No crossing. Open and unknown mean opposite things, so report them apart.
+% A finite below-threshold value AT the limit is open even when farthest is
+% 0, which happens when the MLE itself sits on the limit (delta on its floor).
+if reachedLimit || (farthest > 0 && ~brokeDown)
     root = direction * Inf;
+elseif farthest > 0
+    root = open_or_unknown(direction, farthest, scale);
+end
+end
+
+function root = open_or_unknown(direction, farthest, scale)
+% No usable crossing. OPEN (+/-Inf) if the profile had been evaluated below
+% the threshold at least 10*min(scale, 1) from the MLE; UNKNOWN (NaN) otherwise.
+% The profiles run on standardized data, where every coordinate is O(1), so 10
+% units is far beyond where an identified parameter crosses. The min() matters
+% because the Wald step can be absurd: measured (Sep 2026) steps of 27.6 and
+% 50.4 in log(delta) from a poor quasi-Newton Hessian, which would have
+% demanded evidence out to log(delta) = 500. Measured the other way: a lambda
+% profile still at -1.85 at 243 units from its MLE before besselk overflowed is
+% flat, not unknown.
+if farthest >= 10*min(scale, 1)
+    root = direction * Inf;
+else
+    root = NaN;
+end
+end
+
+function [previous, fp, farthest, current, fc, found] = ...
+    back_off_to_finite(fun, q0, previous, fp, farthest, current)
+% Bisect, on finiteness, between the last finite point PREVIOUS (below the
+% threshold) and a non-finite point CURRENT. Every finite value below the
+% threshold moves PREVIOUS (and FARTHEST) outward. Returns found = true, with
+% CURRENT and fc set, at the first finite value at or past the threshold: a
+% crossing bracket [previous, current]. Returns found = false once the edge of
+% the evaluable region is located to 0.1% of its distance from the MLE.
+found = false;  fc = NaN;
+lo = previous;  hi = current;
+tol = 1e-3 * max(1, abs(hi - q0));
+for it = 1:60
+    if abs(hi - lo) <= tol
+        break
+    end
+    mid = 0.5 * (lo + hi);
+    fm = fun(mid);
+    if ~isfinite(fm)
+        hi = mid;
+    elseif fm >= 0
+        current = mid;  fc = fm;  found = true;
+        return
+    else
+        lo = mid;  previous = mid;  fp = fm;  farthest = abs(mid - q0);
+    end
+end
+current = hi;
+end
+
+function v = recorded_eval(fun, q, rec)
+% Evaluate FUN at q and append (q, value) to REC, a containers.Map (a handle,
+% so the caller sees every evaluation fzero and local_bisect make).
+v = fun(q);
+rec('q') = [rec('q'), q];
+rec('f') = [rec('f'), v];   %#ok<NASGU> containers.Map is a handle
+end
+
+function bad = profile_evaluations_suspect(Q, F, direction)
+% True when the evaluations that located a crossing cannot all belong to one
+% profile crossing the threshold once: any non-finite value; a point at or
+% INSIDE another that is clearly above the threshold while the farther one is
+% clearly below it; or a CLIFF, where even the nearest positive value sits
+% more than 1 deviance unit above the threshold. Once fzero or bisection has
+% converged, the nearest positive value lies within the root tolerance and is
+% a small fraction of a unit; a larger one means the crossing never refined,
+% because the values jump -- a nuisance fit falling over, not the likelihood
+% rising. Measured (Sep 2026): -0.70 then +252 within 0.015 in log(delta)
+% beside the delta floor on log-normal data; and alpha/beta upper bounds of
+% 1.2e6, where an independent profile was still 1.30 below the threshold.
+% Rejecting is safe in one direction only, which is the right one: profile
+% evaluations over-estimate the profile, so they can make a bound too narrow
+% but never too wide. The 0.1 of slack absorbs optimizer noise at the root.
+margin = 0.1;
+bad = any(~isfinite(F));
+if bad, return; end
+s = direction * Q(:);            % larger s = farther from the MLE
+above = F(:) >= margin;
+below = F(:) <= -margin;
+pos = F(:) > 0;
+if any(pos)
+    Fp = F(pos);  Sp = s(pos);
+    [~, j] = min(Sp);
+    if Fp(j) > 1
+        bad = true;
+        return
+    end
+end
+for i = find(above).'
+    if any(below & s >= s(i))
+        bad = true;
+        return
+    end
 end
 end
 
@@ -1002,7 +1437,13 @@ if badFit
         nnz(~isfinite(results.Fit) | results.Fit <= 0), n);
 else
     llCheck = sum(log(results.Fit));
-    tol = max(1e-6, 1e-8 * abs(nll));
+    % The tolerance includes the log-density's own floating-point noise (see
+    % NUMERICAL-VALIDITY GUARD). Near the Normal limit, Bessel arguments of
+    % 1e9-1e10 are legitimate and the summed log-likelihood carries about
+    % n*arg*eps of noise; a fixed 1e-6 failed a sound fit (n = 10, argument
+    % 6.2e9, discrepancy 2e-5; Sep 2026).
+    argMax = max([p.delta*p.gamma; p.alpha*sqrt(p.delta^2 + (data - p.mu).^2)]);
+    tol = max([1e-6, 1e-8 * abs(nll), 10 * n * max(argMax, 1) * eps]);
     if ~isfinite(llCheck) || abs(llCheck + nll) > tol
         results.valid = false;
         warning('GeneralizedHyperbolic_MLE:LikelihoodInconsistent', ...
@@ -1084,7 +1525,10 @@ end
 
 function plot_results(data, results)
 % Plot histogram of data with superimposed fitted density.
-figure('Color', 'w');
+% Pin the light theme BEFORE creating axes: in R2025a and later a new figure
+% follows the desktop theme, and 'Color','w' alone can leave dark axes.
+fh = figure('Color', 'w');
+try, theme(fh, 'light'); catch, end   %#ok<NOCOMMA> theme() does not exist before R2025a
 histogram(data, 'Normalization', 'pdf', 'DisplayStyle', 'stairs', 'EdgeColor', 'k');
 hold on
 plot(results.FitX, results.FitPDF, 'r-', 'LineWidth', 2);
