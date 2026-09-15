@@ -33,6 +33,19 @@ a bout comparison, whatever its AIC.
 | `BoutHazard.m` | Life-table hazard with Wilson bands. Does NOT rank models — it decides whether a whole FAMILY can work, by asking whether the hazard rises. |
 | `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 
+**The bout-duration library is CLOSED.** The families `CompareBoutModels`
+fits are the only ones to be used for bout distributions -- the user's
+decision, 2026-09-15. By default: `hyperexponential` (K=1..N), `exp_weibull`,
+`weibull`, `gamma`, `powerlaw_cutoff`, `powerlaw`, `erlang`, `chisquared`,
+`weibull_mix`, `hyper_erlang`; `beta` and `pearson3` opt-in by name. The
+engine's registry is cheap to extend (see its row above) but that is a
+statement about the CODE, not an invitation: do not add a family, and do not
+port one in from elsewhere, unless asked for it directly. Other `*_MLE` files
+in the user's analysis folder fit noise or other quantities and are NOT
+candidates. If a dataset cannot be described by this library, that is a
+FINDING to report -- as the per0 wake bouts were, where every monotone family
+failed and the hazard said why -- not a cue to widen the library.
+
 ### Noise-distribution fitters — NOT bout fitters
 
 These fit the noise in the recorded signal, not durations. Nothing in
