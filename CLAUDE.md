@@ -381,8 +381,16 @@ to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
     - **`nllMin` must be the true optimum.** Too high an `nllMin` understates
       every deviance, so the bound crosses LATE and comes out too WIDE --
       the one-sidedness reverses. On the Normal ridge the point estimate was
-      measured 0.002-0.005 nats short of the optimum, which is exactly where
-      GH's surviving "finite bounds can be artifacts" limitation lives.
+      measured 0.002-0.005 nats short (nll 1041.9695 against 1041.9672 in the
+      final version), a small WIDENING effect. **Do not confuse it with GH's
+      surviving ridge limitation, which points the other way**: the measured
+      artifact there is a bound too NARROW -- `mu` lower `-9244` on a Normal
+      n=500 NIG fit, where the independent profile was still 1.07 BELOW
+      threshold -- caused by nuisance fits stalling on the flat ridge
+      (interior-point `exitflag 2`), which OVERstates the profile in the
+      ordinary direction and is about 500x larger than the `nllMin` effect.
+      Both conditions are live on that ridge at once, in opposite directions,
+      and the stalls are what survive.
     - **The checker must carry the SAME constraints.** An unconstrained
       checker can reach below `delta`'s floor, and then a wider bound reflects
       a larger feasible set rather than an error in the estimator.
