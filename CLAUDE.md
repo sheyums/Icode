@@ -68,7 +68,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | File | Role |
 | --- | --- |
 | `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
-| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Open, unfixed:** on a GH fit to data from the `delta -> 0` variance-gamma limit, `profile_ci.delta` returned `[2.417e-305, 0.9076]` -- an underflowed finite number where the header promises 0 or Inf for an open bound, apparently the root search walking out to `log(delta) ~ -700`. Reported by another session; the user has seen it and has not asked for a fix. Do not trust a `profile_ci` bound that is subnormal. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Icode's copy is the ORIGINAL (37cf612) and has known defects; an audited fix exists in the user's local folder, uncommitted and not here.** Two are visible without running it: the header's special cases are wrong -- the hyperbolic case is `lambda = 1`, not 0.5, and the variance-gamma limit is `delta -> 0` with `lambda > 0`, not `lambda -> 0` (standard GH parametrization: Barndorff-Nielsen 1977; Madan & Seneta 1990) -- and `profile_ci` reports open bounds as overflow edges rather than 0 or Inf, e.g. `delta` lower `2.4e-305` on variance-gamma data, `lambda` +-292.8, `alpha` 1.7e7. **Do not trust a `profile_ci` bound that is subnormal or astronomically large in this copy.** Also reported unfixed here: the profile searched below the estimator's own `delta` floor, `delta_at_bound` never fired (1e-8 tolerance against an interior-point stop 1e-3 away), the fit was not scale-equivariant, and `sort([lo hi])` with a NaN could swap the bounds. |
 
 ### Signal-level tools — fit no distribution at all
 
@@ -331,6 +331,32 @@ to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
   (`alpha = 1-shape`, bit-identical logL); `erlang` at shape 1 IS `hyperexp K=1`
   IS the exponential. `R.Nesting` lists them. Equal log-likelihoods there are an
   implementation check, not a coincidence — disagreement beyond ~1e-9 is a bug.
+- **An absolute optimizer tolerance is a units bug waiting to happen -- but
+  check where it actually bites before calling it one.** A fit that is not
+  scale-equivariant gives different answers for the same bouts scored in
+  seconds and in minutes. Two mechanisms: an absolute `TolX` on a parameter
+  carrying the data's units, and `fzero`, whose `TolX` it scales BY `|x|`, so
+  at `|mu| ~ 1e4` the effective tolerance is ~1e4 and it returns a bracket end
+  rather than a root. Measured here, on our own code:
+    - **The bout-duration suite uses no root-finder at all** -- `fzero`,
+      `fminbnd` and `fsolve` appear only in the two noise fitters -- so the
+      `fzero` mechanism cannot reach the pipeline.
+    - **The engine is structurally immune**, not lucky: every positive
+      parameter is optimized in log space (`M.unpack = @(z) exp(z)`), so
+      rescaling time shifts `z` by a constant and an absolute `TolX = 1e-10`
+      on `z` is a RELATIVE tolerance on the rate. In discrete mode, scaling
+      `x`, `xmin` and `dt` together leaves `n_min` and every bin count
+      identical, so the likelihood is invariant by construction.
+    - **`shiftlognormal_MLE` was measured, not assumed**: fitting the same
+      sample at `c` from 1e-6 to 1e6, the recovered `shift/c`, `exp(mu)/c` and
+      `sigma` agree to <= 6e-8 relative for `c >= 1e-2`, and the worst case is
+      1e-4 at `c = 1e-6`. Its `fminbnd` refinement does use an absolute
+      `TolX = 1e-8`, which is the mechanism -- but it only bites once the data
+      span shrinks to ~1e-5, which no duration in seconds, minutes, hours or
+      days reaches. Its boundary diagnostic is already relative
+      (`max(10*TolX, 1e-6*intervalWidth)`).
+  So the trap is real, the exposure here is not, and the difference took one
+  grep and one 12-decade sweep to establish rather than an argument.
 - **`chisquared` is not unit-invariant** (its scale is fixed at 2), so its fit
   depends on whether you scored in seconds or minutes. Exclude it rather than
   interpret its defeat.
