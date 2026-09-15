@@ -478,14 +478,81 @@ the data -- but it means a p-value is a property of model *plus* procedure.
 Quote it with B and the multistart settings attached, and do not expect exact
 agreement with another implementation.
 
+## The closed library, and the families a referee will ask about
+
+The bout library is fixed at the families `CompareBoutModels` fits (user's
+decision, 2026-09-15). The analysis folder holds 37 further `*_MLE` files from
+about ten years of separate work; they were inventoried read-only and nothing
+was imported. Three things came out of that worth keeping.
+
+**The engine was independently cross-validated, by accident.** Fitters written
+years earlier, by a different route, agree with the registry on the same
+simulated sample (n = 3000, xmin = 2, continuous mode) to about 1e-11:
+`ExpoMLE` = `gamma_fixedshape 1` = `hyperexp K=1` (2.6e-11) and
+`TwoExpoMLE_multiInit` with `xmax = Inf` = `hyperexp K=2` (3.8e-11). Three more
+(`GammaMLE`, `PLExpoCutMLE`, `PlMLE`) could not run for missing dependencies,
+but their log-density formulas evaluated at the registry MLE match to the same
+order. Two independent implementations of the same likelihood agreeing to ten
+digits is the strongest check available on the engine's truncated likelihood,
+and it is stronger than any of our own tests, which share its code.
+`ThreeExpoMLE_multiInit` is the one disagreement: the same model, stopping
+**0.77 nats short** of the engine's K=3. That is optimizer quality, not a
+different law -- the direction the multistart and warm-start work was meant to
+fix.
+
+**Legacy log-likelihoods are not comparable with ours, for a reason beyond
+discreteness.** None of the legacy duration fitters is discrete, which alone
+puts them on a different footing (`PoisMLE` is, but models counts). The deeper
+problem is that most condition on `[xmin, xmax]` with **`xmax` defaulting to
+`max(data)`**: the normalizer then depends on the largest observation, so the
+"likelihood" is a function of a statistic of the sample rather than of the
+data given the model. It is not comparable across samples of different size,
+let alone against a row in our table, and matching `DistributionType` would not
+repair it. With that default active, `BoundExpMLE` and the multiInit fitters
+stop being the models they otherwise equal (logL off by 1.3e-5 and 0.80).
+
+**Families with no registry equivalent, and why the hazard already answers for
+them.** The inventory names lognormal (`LogNormMLE`), generalized lognormal,
+inverse Gaussian, Nakagami, generalized Weibull, the power-law-with-log-cutoffs
+and shifted Weibull. A referee will ask about the lognormal in particular,
+since it is a standard bout-duration candidate. The answer needs no fit, and it
+rests on a fact worth stating plainly:
+
+> **Left truncation does not change the hazard.** For `t >= xmin`,
+> `h(t) = f(t)/S(t)` is identical whether or not the sub-threshold data exist --
+> the truncation factor `S(xmin)` cancels. So a hazard-shape argument applies to
+> truncated data with full force, unlike almost every other statement here.
+
+These wake bouts require **two** turning points (a minimum near 70 s, then a
+maximum near 500 s). A lognormal hazard has at most **one**, rising from 0 to a
+single maximum and decreasing to 0 thereafter (Lawless 2003, sec. 1.3); the
+inverse Gaussian likewise rises to one maximum and decreases to a positive
+limit (Chhikara & Folks 1977). One turning point cannot make two, whichever
+direction it bends -- the same exclusion already recorded for `exp_weibull`,
+which is the more interesting case because the exponentiated Weibull *does*
+admit a bathtub hazard (Mudholkar & Srivastava 1993), so the library was not
+rigged against a rise: a family that can fall and then rise was in the
+comparison and still lost.
+
+Not checked structurally: Nakagami (a gamma in `X^2`, so monotone over the
+usual range) and the generalized Weibull families, which are the ones that
+could in principle bend twice. If either is ever raised, the cheap answer is
+`BoutHazard` on the data, not a fit -- and the honest caveat is that all of
+this inherits the bin sensitivity of the rise itself (judgement call 8).
+
 ## References
 
 - Chernoff & Lehmann (1954) *Ann Math Statist* 25:579-586 — df bounds for a
   chi-square statistic with estimated parameters
+- Chhikara & Folks (1977) *Technometrics* 19:461-468 — inverse Gaussian as a
+  lifetime model; its hazard rises to one maximum, then falls to a positive
+  limit
 - Davison & Hinkley (1997) *Bootstrap Methods and their Application*, sec. 4.2
 - Day (1969) *Biometrika* 56:463-474 — unbounded mixture likelihood
 - Hartigan (1985) — mixture LRT non-regularity
 - Hurvich & Tsai (1989) *Biometrika* 76:297-307 — AICc
+- Lawless (2003) *Statistical Models and Methods for Lifetime Data*, 2nd ed.,
+  sec. 1.3 — lognormal hazard is unimodal
 - McLachlan (1987) *Appl Statist* 36:318-324 — bootstrap LRT for mixture order
 - McLachlan & Peel (2000) *Finite Mixture Models*, ch. 6
 - Mudholkar & Srivastava (1993) — exponentiated Weibull hazard regimes
