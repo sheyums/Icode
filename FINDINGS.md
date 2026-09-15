@@ -499,6 +499,20 @@ comes through `CompBrown`, adapted from Jansen et al.'s 2012 R code, and
 agreeing to ten digits is a stronger check than anything in `test_*.m`, since
 every test here shares the engine's own code.
 
+**The same principle, applied deliberately rather than by accident.** The
+`GeneralizedHyperbolic_MLE` audit (`dd7f613`) built its ground truth to share
+no code with the estimator -- a Bessel-free density by normal-GIG quadrature,
+an independent Nelder-Mead fit and profile, exact location-scale equivariance
+identities -- and found defects that a 86-test self-authored suite had passed:
+profile bounds reported at `besselk` overflow edges, nuisance fits stalling
+above the threshold and producing false finite bounds in about 10% of NIG
+n=400 fits, and a fit that was not scale-equivariant. That is a noise fitter,
+not a bout fitter, so it changes nothing here scientifically. It is recorded
+because it is the second demonstration in two days that **agreement between
+implementations that share no code is worth more than any number of tests that
+share the code they test** -- and our own `test_*.m` suites all share the
+engine's code.
+
 **Scope it carefully, though.** Every comparison ran the engine with
 `DistributionType="continuous"` and `SamplingInterval=1e-3`. The DISCRETE
 path -- the default, the one `CompareBoutModels` actually uses, and the one

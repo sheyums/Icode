@@ -68,7 +68,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | File | Role |
 | --- | --- |
 | `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
-| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Icode's copy is the ORIGINAL (37cf612) and has known defects; an audited fix exists in the user's local folder, uncommitted and not here.** Two are visible without running it: the header's special cases are wrong -- the hyperbolic case is `lambda = 1`, not 0.5, and the variance-gamma limit is `delta -> 0` with `lambda > 0`, not `lambda -> 0` (standard GH parametrization: Barndorff-Nielsen 1977; Madan & Seneta 1990) -- and `profile_ci` reports open bounds as overflow edges rather than 0 or Inf, e.g. `delta` lower `2.4e-305` on variance-gamma data, `lambda` +-292.8, `alpha` 1.7e7. **Do not trust a `profile_ci` bound that is subnormal or astronomically large in this copy.** Also reported unfixed here: the profile searched below the estimator's own `delta` floor, `delta_at_bound` never fired (1e-8 tolerance against an interior-point stop 1e-3 away), the fit was not scale-equivariant, and `sort([lo hi])` with a NaN could swap the bounds. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Audited and fixed in `dd7f613`** against ground truth that shared no code with the estimator (Bessel-free density by quadrature, independent Nelder-Mead, exact equivariance identities): open profile bounds now report 0 or Inf instead of overflow edges, the fit is scale-equivariant, and the header's special cases are corrected (hyperbolic is `lambda = 1`; the variance-gamma limit is `delta -> 0` with `lambda > 0`). Needs **Optimization Toolbox** (`fmincon`) and **Statistics Toolbox** (`chi2cdf`, `chi2inv`) -- unlike the bout suite. Three things survive the fix and are in its KNOWN LIMITATIONS: **VG data cannot be fitted inside this family at all** (`delta` has a floor, so VG-like data drive it to the floor and `delta`'s lower bound is open by construction); finite bounds near the Normal ridge can still be ridge artifacts when `NoGainOverNormal` warns; an `alpha`/`beta` upper bound orders of magnitude above the estimate (1.2e6 for an estimate of 8) marks where the nuisance fits stopped converging, so **read it as open, not as a crossing**. Costs about **2.3x** more than before -- median GH fit at n=1000 was 171 s against 75 s, both under concurrent load. |
 
 ### Signal-level tools — fit no distribution at all
 
@@ -77,6 +77,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | `chi2p.m` | Sokolove-Bushell chi-square periodogram against a block-permutation null. Makes no assumption about waveform shape, so a sharply peaked circadian profile scores on equal footing with a sinusoid. Answers *what period*, not *what distribution*. |
 | `jsd_kde.m` | Jensen-Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two empirical distributions; fits neither. Calls `ksdensity` (Statistics Toolbox). |
 | `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: reported 36 and 44 tests (measured by another session in MATLAB R2026a at 37cf612; not re-measured here). **Not independent validation** -- per the git history in the analysis repo, the suites AND the code they test were both Claude-authored (every commit touching `chi2p`, the suites, and the recent `jsd_kde` / `GeneralizedHyperbolic_MLE` edits carries a Claude co-author line). A passing suite here means self-consistency, not a second opinion. Named `stressTest_*`, so anything globbing `test_*` misses them. |
+| `stress_test_GH_MLE.m` | The GH suite: reported **94 tests** (86 original plus Section 11, 11A-11F, one guard per audit defect -- open bounds, `delta_at_bound` at the floor, unit equivariance, `single` input, the tiny-sample Normal limit). Reported by the session that ran it; NOT re-measured here, since it needs `fmincon`. Claude-written, like the code it tests, so passing is self-consistency. Named `stress_test_*`, outside both the `test_*` and `stressTest_*` patterns. |
 
 ## Analysing a new dataset
 
@@ -357,6 +358,19 @@ to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
       (`max(10*TolX, 1e-6*intervalWidth)`).
   So the trap is real, the exposure here is not, and the difference took one
   grep and one 12-decade sweep to establish rather than an argument.
+- **A profile-likelihood bound from a finite search can only be too NARROW,
+  so disagreement has a direction.** Each nuisance re-fit at a trial parameter
+  value returns something >= the true profile minimum, so the profile curve you
+  compute sits AT OR ABOVE the truth and crosses the threshold too early. An
+  independent check that reports a bound WIDER than the estimator's is
+  therefore evidence against the CHECKER -- its own optimizer found a better
+  nuisance fit, or it failed -- while one reporting a NARROWER bound indicts the
+  estimator. Use that asymmetry instead of treating the two as symmetric
+  opinions. It is what let the GH audit separate real defects (bounds reported
+  at `besselk` overflow edges; nuisance fits stalling at `exitflag 2` a
+  thousand nats above threshold, giving ~10%% of NIG n=400 fits false finite
+  `beta` bounds) from the two places where the estimator's wide bound was
+  right. The same logic applies to any profile CI here.
 - **`chisquared` is not unit-invariant** (its scale is fixed at 2), so its fit
   depends on whether you scored in seconds or minutes. Exclude it rather than
   interpret its defeat.
@@ -417,6 +431,13 @@ keep one copy of each function.
 scratchpad. `test_CompareBoutModels` dispatches to `_oct` names itself and does
 run directly.
 
-No toolbox required — local Marsaglia-Tsang gamma sampler, and chi-square tails
-via `gammainc(...,'upper')` rather than `chi2cdf`. Engine test 20 cross-checks
-against `gamcdf`/`wblcdf` and self-skips when absent, so it only runs in MATLAB.
+**The BOUT SUITE needs no toolbox** — local Marsaglia-Tsang gamma sampler, and
+chi-square tails via `gammainc(...,'upper')` rather than `chi2cdf`. Engine test
+20 cross-checks against `gamcdf`/`wblcdf` and self-skips when absent, so it only
+runs in MATLAB. (Verified: `chi2cdf`, `chi2inv`, `fmincon` and `ksdensity` appear
+in the bout files only inside comments explaining what is avoided, never as
+calls.) **That claim does NOT extend to the rest of the repo**:
+`GeneralizedHyperbolic_MLE` and its suite need the Optimization Toolbox
+(`fmincon`) and the Statistics Toolbox (`chi2cdf`, `chi2inv`), and `jsd_kde`
+needs the Statistics Toolbox (`ksdensity`). A machine that runs every bout test
+can still fail to run those three files.
