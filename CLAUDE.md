@@ -8,6 +8,18 @@ conditions on `T >= xmin`.
 
 ## Layout
 
+Two unrelated kinds of fitter live here, and they fit different physical
+quantities. The engine and its `Fit*MLE` wrappers fit **bout durations** --
+left-truncated positive times. `shiftlognormal_MLE` and
+`GeneralizedHyperbolic_MLE` fit **noise distributions** -- the recorded signal
+itself, real-valued and untruncated. A log-likelihood from one side is
+meaningless against one from the other, and not for the usual reason: it is
+not that the criteria penalise differently or the dominating measure differs,
+it is that the two are fitted to DIFFERENT DATA. Never let a noise fitter into
+a bout comparison, whatever its AIC.
+
+### Bout-duration suite
+
 | File | Role |
 | --- | --- |
 | `FitTruncatedDiscreteMLE.m` | **Shared engine.** One truncated likelihood, nine families in a `switch` registry. Adding a family costs ~15 lines: `ParamNames`, `cdf`, `sf`, `logpdf`, `unpack`, `valid`, `starts`; a mixture also needs `report`/`nReport` and a `guard`. |
@@ -20,11 +32,25 @@ conditions on `T >= xmin`.
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
 | `BoutHazard.m` | Life-table hazard with Wilson bands. Does NOT rank models — it decides whether a whole FAMILY can work, by asking whether the hazard rises. |
 | `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
-| `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
-| `GeneralizedHyperbolic_MLE.m` | GH / NIG fitter, five physical parameters, `AUTO` chooses between them by LRT and BIC. Takes a **real-valued** vector with a real location and is **untruncated** — same caveat as above, never in an AIC table with the engine's families, and not a duration fitter at all. |
-| `chi2p.m` | Sokolove–Bushell chi-square periodogram against a block-permutation null. Circadian period, not bout durations. |
-| `jsd_kde.m` | Jensen–Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two distributions; does not fit either. |
-| `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: 36 and 44 tests (MATLAB R2026a, 37cf612). Named `stressTest_*`, so nothing that globs `test_*` picks them up. |
+
+### Noise-distribution fitters — NOT bout fitters
+
+These fit the noise in the recorded signal, not durations. Nothing in
+`CompareBoutModels`, `BoutHazard` or the engine applies to them: no `xmin`, no
+`SamplingInterval`, no truncation, no hazard argument, and no shared AIC table.
+
+| File | Role |
+| --- | --- |
+| `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. |
+
+### Signal-level tools — fit no distribution at all
+
+| File | Role |
+| --- | --- |
+| `chi2p.m` | Sokolove-Bushell chi-square periodogram against a block-permutation null. Makes no assumption about waveform shape, so a sharply peaked circadian profile scores on equal footing with a sinusoid. Answers *what period*, not *what distribution*. |
+| `jsd_kde.m` | Jensen-Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two empirical distributions; fits neither. Calls `ksdensity` (Statistics Toolbox). |
+| `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: reported 36 and 44 tests (CC2's measurement, MATLAB R2026a at 37cf612; not re-measured here). Named `stressTest_*`, so anything globbing `test_*` misses them. |
 
 ## Analysing a new dataset
 
