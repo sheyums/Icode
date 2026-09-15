@@ -35,16 +35,29 @@ a bout comparison, whatever its AIC.
 
 **The bout-duration library is CLOSED.** The families `CompareBoutModels`
 fits are the only ones to be used for bout distributions -- the user's
-decision, 2026-09-15. By default: `hyperexponential` (K=1..N), `exp_weibull`,
-`weibull`, `gamma`, `powerlaw_cutoff`, `powerlaw`, `erlang`, `chisquared`,
-`weibull_mix`, `hyper_erlang`; `beta` and `pearson3` opt-in by name. The
-engine's registry is cheap to extend (see its row above) but that is a
-statement about the CODE, not an invitation: do not add a family, and do not
-port one in from elsewhere, unless asked for it directly. Other `*_MLE` files
-in the user's analysis folder fit noise or other quantities and are NOT
-candidates. If a dataset cannot be described by this library, that is a
-FINDING to report -- as the per0 wake bouts were, where every monotone family
-failed and the hazard said why -- not a cue to widen the library.
+decision, 2026-09-14 local. By default: `hyperexponential` (K=1..N),
+`exp_weibull`, `weibull`, `gamma`, `powerlaw_cutoff`, `powerlaw`, `erlang`,
+`chisquared`, `weibull_mix`, `hyper_erlang`; `beta` and `pearson3` opt-in by
+name. The engine's registry is cheap to extend (see its row above) but that is
+a statement about the CODE, not an invitation: do not add a family, and do not
+port one in from elsewhere, unless asked for it directly.
+
+The analysis folder holds about 37 further `*_MLE` files from roughly ten years
+of separate work, and **most of them DO fit durations** -- `ExpoMLE`,
+`GammaMLE`, `LogNormMLE`, the `*ExpoMLE` mixtures, `PlMLE` and others. (An
+earlier version of this file said they fit noise or other quantities. That was
+wrong; only `shiftlognormal_MLE` and `GeneralizedHyperbolic_MLE`, in the
+section below, are noise fitters.) They are not candidates for three reasons
+that have nothing to do with what quantity they fit: the user decided the
+library is closed, they are **continuous** where `CompareBoutModels` is
+discrete by default, and most condition on **`[xmin, xmax]` with `xmax`
+defaulting to `max(data)`** -- double truncation whose normalizer depends on
+the largest observation, which is a different likelihood, not a different
+parametrization of ours.
+
+If a dataset cannot be described by this library, that is a FINDING to report
+-- as the per0 wake bouts were, where every monotone family failed and the
+hazard said why -- not a cue to widen the library.
 
 ### Noise-distribution fitters — NOT bout fitters
 
@@ -55,7 +68,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | File | Role |
 | --- | --- |
 | `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
-| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Open, unfixed:** on a GH fit to data from the `delta -> 0` variance-gamma limit, `profile_ci.delta` returned `[2.417e-305, 0.9076]` -- an underflowed finite number where the header promises 0 or Inf for an open bound, apparently the root search walking out to `log(delta) ~ -700`. Reported by another session; the user has seen it and has not asked for a fix. Do not trust a `profile_ci` bound that is subnormal. |
 
 ### Signal-level tools — fit no distribution at all
 
@@ -63,7 +76,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | --- | --- |
 | `chi2p.m` | Sokolove-Bushell chi-square periodogram against a block-permutation null. Makes no assumption about waveform shape, so a sharply peaked circadian profile scores on equal footing with a sinusoid. Answers *what period*, not *what distribution*. |
 | `jsd_kde.m` | Jensen-Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two empirical distributions; fits neither. Calls `ksdensity` (Statistics Toolbox). |
-| `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: reported 36 and 44 tests (CC2's measurement, MATLAB R2026a at 37cf612; not re-measured here). Named `stressTest_*`, so anything globbing `test_*` misses them. |
+| `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: reported 36 and 44 tests (measured by another session in MATLAB R2026a at 37cf612; not re-measured here). **Not independent validation** -- per the git history in the analysis repo, the suites AND the code they test were both Claude-authored (every commit touching `chi2p`, the suites, and the recent `jsd_kde` / `GeneralizedHyperbolic_MLE` edits carries a Claude co-author line). A passing suite here means self-consistency, not a second opinion. Named `stressTest_*`, so anything globbing `test_*` misses them. |
 
 ## Analysing a new dataset
 

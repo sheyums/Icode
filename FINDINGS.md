@@ -481,64 +481,96 @@ agreement with another implementation.
 ## The closed library, and the families a referee will ask about
 
 The bout library is fixed at the families `CompareBoutModels` fits (user's
-decision, 2026-09-15). The analysis folder holds 37 further `*_MLE` files from
-about ten years of separate work; they were inventoried read-only and nothing
-was imported. Three things came out of that worth keeping.
+decision, 2026-09-14 local). The analysis folder holds about 37 further
+`*_MLE` files from roughly ten years of separate work -- a count that includes
+`fitPeriodicLocomotorModel`, which fits no distribution, `shiftlog_MLE`, an
+empty stub, and several `_V0`/`_V1` drafts. They were inventoried read-only and
+nothing was imported. Most of them DO fit durations; they are excluded by the
+user's decision and by the two mismatches below, not by what quantity they fit.
 
-**The engine was independently cross-validated, by accident.** Fitters written
-years earlier, by a different route, agree with the registry on the same
-simulated sample (n = 3000, xmin = 2, continuous mode) to about 1e-11:
+**The engine's continuous branch was independently cross-validated, by
+accident.** Fitters written years earlier, by a different route, agree with the
+registry on the same simulated sample (n = 3000, xmin = 2) to about 1e-11:
 `ExpoMLE` = `gamma_fixedshape 1` = `hyperexp K=1` (2.6e-11) and
-`TwoExpoMLE_multiInit` with `xmax = Inf` = `hyperexp K=2` (3.8e-11). Three more
-(`GammaMLE`, `PLExpoCutMLE`, `PlMLE`) could not run for missing dependencies,
-but their log-density formulas evaluated at the registry MLE match to the same
-order. Two independent implementations of the same likelihood agreeing to ten
-digits is the strongest check available on the engine's truncated likelihood,
-and it is stronger than any of our own tests, which share its code.
-`ThreeExpoMLE_multiInit` is the one disagreement: the same model, stopping
-**0.77 nats short** of the engine's K=3. That is optimizer quality, not a
-different law -- the direction the multistart and warm-start work was meant to
-fix.
+`TwoExpoMLE_multiInit` with `xmax = Inf` = `hyperexp K=2` (3.8e-11). The
+independence is real rather than nominal -- `TwoExpoMLE_multiInit`'s density
+comes through `CompBrown`, adapted from Jansen et al.'s 2012 R code, and
+`ExpoMLE` is closed-form -- and two implementations of the same likelihood
+agreeing to ten digits is a stronger check than anything in `test_*.m`, since
+every test here shares the engine's own code.
 
-**Legacy log-likelihoods are not comparable with ours, for a reason beyond
-discreteness.** None of the legacy duration fitters is discrete, which alone
-puts them on a different footing (`PoisMLE` is, but models counts). The deeper
-problem is that most condition on `[xmin, xmax]` with **`xmax` defaulting to
-`max(data)`**: the normalizer then depends on the largest observation, so the
-"likelihood" is a function of a statistic of the sample rather than of the
-data given the model. It is not comparable across samples of different size,
-let alone against a row in our table, and matching `DistributionType` would not
-repair it. With that default active, `BoundExpMLE` and the multiInit fitters
-stop being the models they otherwise equal (logL off by 1.3e-5 and 0.80).
+**Scope it carefully, though.** Every comparison ran the engine with
+`DistributionType="continuous"` and `SamplingInterval=1e-3`. The DISCRETE
+path -- the default, the one `CompareBoutModels` actually uses, and the one
+with the bin-edge CDF calls and the `erlangCDFint` branch -- was never
+exercised by any of this. Three further checks (`GammaMLE`, `PLExpoCutMLE`,
+`PlMLE`) could not be run at all for missing dependencies and were done on the
+log-density formulas instead, which assumes `gamma_incomplete(z,a)` is the
+UNNORMALIZED upper incomplete gamma; that reading was inferred from
+`GammaMLE`'s own NLL algebra with the file absent. `PlMLE` matches only as its
+`lnpx` formula -- its actual exponent comes from Clauset's `plfit` with
+`'limit'`, which probably bounds the `xmin` search rather than fixing `xmin`,
+unconfirmed because `plfit.m` is absent too.
 
-**Families with no registry equivalent, and why the hazard already answers for
-them.** The inventory names lognormal (`LogNormMLE`), generalized lognormal,
-inverse Gaussian, Nakagami, generalized Weibull, the power-law-with-log-cutoffs
-and shifted Weibull. A referee will ask about the lognormal in particular,
-since it is a standard bout-duration candidate. The answer needs no fit, and it
-rests on a fact worth stating plainly:
+**`ThreeExpoMLE_multiInit` came out 0.77 nats below the engine's K=3** on the
+same sample. Read that as a property of THAT RUN -- 10 starts, and the code's
+own box on the rates, `[1/max(x), 1/min(x)]` -- not of the code and not as
+evidence about optimizer quality in general. Widen either and it may well
+close. (An earlier version of this section presented it as optimizer quality;
+that overstated a single run, which is the trap CLAUDE.md already records
+about asserting where an optimizer lands.)
+
+**Legacy log-likelihoods are not comparable with ours, and discreteness is the
+lesser reason.** None of the legacy duration fitters is discrete (`PoisMLE` is,
+but models counts). The deeper problem is that most condition on
+`[xmin, xmax]` with **`xmax` defaulting to `max(data)`**: the normalizer then
+depends on the largest observation, so the quantity maximized is conditioned on
+a statistic of the sample. It is not comparable across samples of different
+size, let alone against a row in our table, and matching `DistributionType`
+would not repair it. With that default active, `BoundExpMLE` and the multiInit
+fitters stop being the models they otherwise equal (logL off by 1.3e-5 and
+0.80).
+
+**Families with no registry equivalent, and why the hazard answers for them.**
+The inventory names lognormal (`LogNormMLE`), generalized lognormal, inverse
+Gaussian, Nakagami, generalized Weibull, the power-law-with-log-cutoffs and
+shifted Weibull. A referee will ask about the lognormal in particular, since it
+is a standard bout-duration candidate. The answer needs no fit, and rests on a
+fact worth stating plainly:
 
 > **Left truncation does not change the hazard.** For `t >= xmin`,
 > `h(t) = f(t)/S(t)` is identical whether or not the sub-threshold data exist --
 > the truncation factor `S(xmin)` cancels. So a hazard-shape argument applies to
-> truncated data with full force, unlike almost every other statement here.
+> truncated data at full strength, unlike almost every other statement here.
 
-These wake bouts require **two** turning points (a minimum near 70 s, then a
-maximum near 500 s). A lognormal hazard has at most **one**, rising from 0 to a
-single maximum and decreasing to 0 thereafter (Lawless 2003, sec. 1.3); the
-inverse Gaussian likewise rises to one maximum and decreases to a positive
-limit (Chhikara & Folks 1977). One turning point cannot make two, whichever
-direction it bends -- the same exclusion already recorded for `exp_weibull`,
-which is the more interesting case because the exponentiated Weibull *does*
-admit a bathtub hazard (Mudholkar & Srivastava 1993), so the library was not
-rigged against a rise: a family that can fall and then rise was in the
-comparison and still lost.
+**Conditional on the rise being real** -- and `RiseNullP` crosses 0.05 with the
+bin count, 0.010 at 16 bins and 0.068 at 20, so this condition is doing real
+work (judgement call 8) -- these wake bouts require **two** turning points, a
+minimum near 70 s and then a maximum near 500 s. Counted numerically on a log
+grid in log-hazard space, with Weibull controls to confirm the counter does not
+manufacture bends:
 
-Not checked structurally: Nakagami (a gamma in `X^2`, so monotone over the
-usual range) and the generalized Weibull families, which are the ones that
-could in principle bend twice. If either is ever raised, the cheap answer is
-`BoutHazard` on the data, not a fit -- and the honest caveat is that all of
-this inherits the bin sensitivity of the rise itself (judgement call 8).
+| family | turning points | shape |
+| --- | --- | --- |
+| lognormal, `sigma` 0.25 to 3 | 1 | one maximum, always |
+| inverse Gaussian, `mu` 0.1 to 10 | 0 or 1 | increasing, or one maximum |
+| Nakagami, `m >= 0.5` | 0 | strictly increasing |
+| Nakagami, `m` = 0.2, 0.3 | 1 | bathtub, one minimum (at 0.461 for m=0.3) |
+
+One bend cannot make two, whichever way it bends, so all three are excluded --
+the same exclusion already recorded for `exp_weibull`, which remains the more
+interesting case: the exponentiated Weibull DOES admit a bathtub hazard
+(Mudholkar & Srivastava 1993), so a family able to fall and then rise was in
+the comparison and lost anyway. The library was not closed against the shape
+these data show. The lognormal and inverse Gaussian shapes are also the
+textbook results (Lawless 2003 sec. 1.3; Chhikara & Folks 1977), so the grid
+only confirms them; the Nakagami count was computed twice in two languages,
+agreeing on the m=0.3 minimum to 0.458 vs 0.461.
+
+Still unchecked: **generalized Weibull**, where the name is ambiguous (the
+Mudholkar-Kollia family is not the exponentiated Weibull already in the
+library) and the legacy `genWeibullMLE` did not run for a missing `mfun`. If it
+is ever raised, the cheap answer is `BoutHazard` on the data, not a fit.
 
 ## References
 
