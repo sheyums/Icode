@@ -21,6 +21,10 @@ conditions on `T >= xmin`.
 | `BoutHazard.m` | Life-table hazard with Wilson bands. Does NOT rank models — it decides whether a whole FAMILY can work, by asking whether the hazard rises. |
 | `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 | `shiftlognormal_MLE.m` | Pre-existing noise fitter. **Untruncated** — do not put it in an AIC table with the others. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG fitter, five physical parameters, `AUTO` chooses between them by LRT and BIC. Takes a **real-valued** vector with a real location and is **untruncated** — same caveat as above, never in an AIC table with the engine's families, and not a duration fitter at all. |
+| `chi2p.m` | Sokolove–Bushell chi-square periodogram against a block-permutation null. Circadian period, not bout durations. |
+| `jsd_kde.m` | Jensen–Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two distributions; does not fit either. |
+| `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: 36 and 44 tests (MATLAB R2026a, 37cf612). Named `stressTest_*`, so nothing that globs `test_*` picks them up. |
 
 ## Analysing a new dataset
 
