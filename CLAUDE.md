@@ -6,6 +6,38 @@ bout durations, plus a model-comparison pipeline. Everything is
 the 5-minute sleep criterion) do not exist in the data, so every likelihood
 conditions on `T >= xmin`.
 
+## Rules for every analysis
+
+These are working rules, not suggestions. They exist because the failures
+recorded in `FINDINGS.md` were not coding errors -- the code was right and the
+inference was not.
+
+1. **Read `FINDINGS.md` before analysing data or changing a fitter.** It holds
+   the results, the judgement calls, and the things that must NOT be reported.
+2. **Write `PRESPEC.md` before running any new analysis, and commit it first.**
+   A choice recorded after the fact is not a pre-specification, and a commit is
+   what makes the timing checkable by someone who was not there.
+3. **Append every result to `RESULTS_LEDGER.md`, including null results**, with
+   the date and the commit hash of the code that produced it. The ledger is
+   append-only. A file holding only the analyses that worked cannot tell you
+   how many were run.
+4. **Never widen a block or re-bin after seeing a result.** A **block** is a
+   time window -- a contiguous stretch of recording, such as a ZT range, a
+   `startZT` segment, or a set of days. If the effect is not there in the
+   window you specified, that is the finding.
+5. **When reporting a result, state the narrowest block it was computed within,
+   and what it looks like under a sample-size-matched null.** The narrowest
+   block is the smallest window the reported number was actually computed from
+   -- not the widest one that contains it. Matching the null's sample size
+   matters because almost every statistic here moves with `n`.
+
+Rule 4 is why `BoutHazard`'s bin count is fixed in advance and every value
+reported (FINDINGS judgement call 8: `RiseNullP` was 0.010 at 16 bins and 0.068
+at 20 on the same wake bouts -- picking after looking would have let either
+conclusion be written up). Rule 5 is why the hyper-Erlang p-value is called
+optimistic in FINDINGS rather than quoted plainly: the family was chosen after
+the earlier library failed on those data.
+
 ## Layout
 
 Two unrelated kinds of fitter live here, and they fit different physical
