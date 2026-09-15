@@ -68,7 +68,7 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | File | Role |
 | --- | --- |
 | `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
-| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Audited and fixed in `dd7f613`** against ground truth that shared no code with the estimator (Bessel-free density by quadrature, independent Nelder-Mead, exact equivariance identities): open profile bounds now report 0 or Inf instead of overflow edges, the fit is scale-equivariant, and the header's special cases are corrected (hyperbolic is `lambda = 1`; the variance-gamma limit is `delta -> 0` with `lambda > 0`). Needs **Optimization Toolbox** (`fmincon`) and **Statistics Toolbox** (`chi2cdf`, `chi2inv`) -- unlike the bout suite. Three things survive the fix and are in its KNOWN LIMITATIONS: **VG data cannot be fitted inside this family at all** (`delta` has a floor, so VG-like data drive it to the floor and `delta`'s lower bound is open by construction); finite bounds near the Normal ridge can still be ridge artifacts when `NoGainOverNormal` warns; an `alpha`/`beta` upper bound orders of magnitude above the estimate (1.2e6 for an estimate of 8) marks where the nuisance fits stopped converging, so **read it as open, not as a crossing**. Costs about **2.3x** more than before -- median GH fit at n=1000 was 171 s against 75 s, both under concurrent load. |
+| `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Audited and fixed in `dd7f613`** against ground truth that shared no code with the estimator (Bessel-free density by quadrature, independent Nelder-Mead, exact equivariance identities): open profile bounds now report 0 or Inf instead of overflow edges, the fit is scale-equivariant, and the header's special cases are corrected (hyperbolic is `lambda = 1`; the variance-gamma limit is `delta -> 0` with `lambda > 0`). Needs **Optimization Toolbox** (`fmincon`) and **Statistics Toolbox** (`chi2cdf`, `chi2inv`) -- unlike the bout suite. Three things survive the fix and are in its KNOWN LIMITATIONS. (i) **Exact VG (`delta = 0`) is outside the family** -- `delta` has a floor -- but VG-DISTRIBUTED DATA fit perfectly well: a true VG sample (`lambda = 1`, n=600) fitted with an interior `delta = 0.354`, and the GH density matches VG to 3.6e-5, 4e-9 and 4e-13 at `delta` of 1e-2, 1e-4 and 1e-6. VG-like data CAN drive `delta` to the floor -- at n=1000 the floored fit sat 0.022 nats from the unconstrained optimum -- and `delta_at_bound` then flags it, with an open lower bound. That openness is a MEASURED flatness of the profile down to the floor, not a consequence of construction. (ii) Finite bounds near the Normal ridge can still be ridge artifacts when `NoGainOverNormal` warns. (iii) An `alpha`/`beta` upper bound orders of magnitude above the estimate **can** mark where the nuisance fits stopped converging rather than a true crossing: at two `beta` bounds (1.2e6, 1.3e7) an independent profile was still below threshold, so those are too narrow and should be read as effectively open, while at the `alpha` bounds (1.2e6, 1.3e7, 1.16e9) the independent checker itself failed, leaving them unverified in either direction. Costs about **2.3x** more than before -- median GH fit at n=1000 was 171 s against 75 s, both under concurrent load. |
 
 ### Signal-level tools — fit no distribution at all
 
@@ -358,19 +358,34 @@ to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
       (`max(10*TolX, 1e-6*intervalWidth)`).
   So the trap is real, the exposure here is not, and the difference took one
   grep and one 12-decade sweep to establish rather than an argument.
-- **A profile-likelihood bound from a finite search can only be too NARROW,
-  so disagreement has a direction.** Each nuisance re-fit at a trial parameter
-  value returns something >= the true profile minimum, so the profile curve you
-  compute sits AT OR ABOVE the truth and crosses the threshold too early. An
-  independent check that reports a bound WIDER than the estimator's is
-  therefore evidence against the CHECKER -- its own optimizer found a better
-  nuisance fit, or it failed -- while one reporting a NARROWER bound indicts the
-  estimator. Use that asymmetry instead of treating the two as symmetric
-  opinions. It is what let the GH audit separate real defects (bounds reported
-  at `besselk` overflow edges; nuisance fits stalling at `exitflag 2` a
-  thousand nats above threshold, giving ~10%% of NIG n=400 fits false finite
-  `beta` bounds) from the two places where the estimator's wide bound was
-  right. The same logic applies to any profile CI here.
+- **A profile-likelihood bound from a finite search errs in ONE direction,
+  and that fixes which side a disagreement indicts.** The profile is
+  `p(theta) = min_eta nll(theta, eta)`. A finite nuisance search returns
+  `phat >= p`, so the computed deviance `phat - nllMin` is too LARGE, crosses
+  the threshold too EARLY, and the reported bound is too NARROW. To use that,
+  evaluate an independent profile AT the estimator's bound, where the
+  estimator's own deviance equals the threshold by construction:
+    - independent value **below** threshold: the checker found a better
+      nuisance fit, so the true bound lies further out and **the ESTIMATOR was
+      too narrow**. This was the audit's false finite `beta` bounds, on ~10% of
+      NIG n=400 fits.
+    - independent value **above** threshold: both numbers are upper bounds on
+      the same truth, so the higher one is the worse fit and **the CHECKER
+      failed**. This was GH C's `alpha` lower bound, +1.26 above threshold.
+  In terms of intervals: a checker reporting a WIDER bound indicts the
+  ESTIMATOR, a NARROWER one indicts the CHECKER. An earlier version of this
+  entry had both backwards, and the mistake is instructive -- "the estimator
+  can only err narrow" invites the conclusion that a wider independent bound
+  must be wrong, when a wider bound is precisely the signature of that error.
+  **The asymmetry needs two conditions, and both have failed here:**
+    - **`nllMin` must be the true optimum.** Too high an `nllMin` understates
+      every deviance, so the bound crosses LATE and comes out too WIDE --
+      the one-sidedness reverses. On the Normal ridge the point estimate was
+      measured 0.002-0.005 nats short of the optimum, which is exactly where
+      GH's surviving "finite bounds can be artifacts" limitation lives.
+    - **The checker must carry the SAME constraints.** An unconstrained
+      checker can reach below `delta`'s floor, and then a wider bound reflects
+      a larger feasible set rather than an error in the estimator.
 - **`chisquared` is not unit-invariant** (its scale is fixed at 2), so its fit
   depends on whether you scored in seconds or minutes. Exclude it rather than
   interpret its defeat.
@@ -437,7 +452,15 @@ chi-square tails via `gammainc(...,'upper')` rather than `chi2cdf`. Engine test
 runs in MATLAB. (Verified: `chi2cdf`, `chi2inv`, `fmincon` and `ksdensity` appear
 in the bout files only inside comments explaining what is avoided, never as
 calls.) **That claim does NOT extend to the rest of the repo**:
-`GeneralizedHyperbolic_MLE` and its suite need the Optimization Toolbox
-(`fmincon`) and the Statistics Toolbox (`chi2cdf`, `chi2inv`), and `jsd_kde`
-needs the Statistics Toolbox (`ksdensity`). A machine that runs every bout test
-can still fail to run those three files.
+three of the non-bout tools need toolboxes, each together with its own stress
+suite (verified on `origin/main` by grepping for calls outside comments):
+
+| tool | needs |
+| --- | --- |
+| `GeneralizedHyperbolic_MLE` + `stress_test_GH_MLE` | **Optimization** (`fmincon`) and **Statistics** (`chi2cdf`, `chi2inv`) |
+| `jsd_kde` + `stressTest_jsd_kde` | **Statistics** (`ksdensity`, `skewness`, `iqr`, `quantile`; the suite calls `skewness` itself) |
+| `chi2p` + `stressTest_chi2p` | **Statistics** (`chi2cdf` line 271, `chi2inv` line 347). Also `parfor` at line 309, which runs SERIALLY without the Parallel Computing Toolbox -- correct results, just slower |
+
+The two stress suites for `chi2p` and GH make no toolbox calls of their own;
+they need them through the functions they test. So a machine that runs all 129
+bout tests can still fail on six of these files.
