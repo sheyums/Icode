@@ -121,3 +121,35 @@ Notes           Purpose: decide whether wake hazards in the full datasets can be
                 Pooling flies cannot create a rise, and nothing here can say whether the rise is made
                 by scoring bursty movement into wake bouts; that needs raw activity traces.
 ```
+
+### 2026-09-15  per0 DD wake: the hazard rise at four fixed bin counts
+
+```
+Question        Does the pooled per0 DD wake hazard rise after its trough by more than a strictly
+                falling (two-exponential) hazard produces, at each of four bin counts fixed before
+                the run?
+Data            per0, constant darkness, 25 flies, 1-s bridged scoring. Perwake in
+                C:\Users\sheyu\Icode\subset_per0DDwakebouts.mat (SHA-256 039C7BC2E3C8FED1...),
+                3989 bouts, the FINDINGS data.
+Time window     The whole analysed record of each fly (2.8-4.0 days), all 25 flies pooled. That
+                pooled set is the narrowest block for every number here.
+Fixed choices   xmin 2 s, dt 1 s. BoutHazard with NumBins in {12, 16, 20, 24}, Spacing "log",
+                MinAtRisk 10, Alpha 0.05, Bootstrap 0, NullReplicates 999, RandomSeed 1. Null
+                model: FitHyperexponentialMLE on the same bouts, MaxComponents 2, discrete,
+                SamplingInterval 1, RandomSeed 1; its K = 2 SurvivalHandle as NullSurvivalHandle.
+                Code: Icode main, run from the Icode folder behind the which/pwd assert.
+Decision rule   RiseNullP < 0.05 is a rise at that bin count. All four counts: supported. Some but
+                not all: supported but bin-sensitive, the wording decided 2026-09-14. None: not
+                supported. Any count with NullDropped > 0 is reported as not computable rather
+                than given a verdict.
+Matched null    999 datasets of n = 3989 drawn from the fitted two-exponential model, each put
+                through the whole estimator on its own bin edges.
+Notes           Reinstated at Sheyum's request on 2026-09-15, having been dropped earlier the same
+                day as a FINDINGS replication; the question of whether the rise is real made the
+                few minutes worth spending. NOT blind at 16 and 20 bins, where FINDINGS already
+                records 0.010 and 0.068 at RandomSeed 1; 12 and 24 are new. Reporting every count
+                is the point of the fixed set. The null model is fitted once and used as if known.
+                This tests the rise against a falling-hazard null only: it cannot say whether the
+                rise is in the flies or is produced by scoring bursty movement into wake bouts,
+                which needs raw traces.
+```
