@@ -468,6 +468,17 @@ These are choices, not results. Worth revisiting before publication.
    user 2026-09-14; not yet applied to any dataset.
 
 
+9. **Scoring for the fuller datasets is BRIDGED** (`ironout`, 1 s), decided by the user
+   2026-09-15. A sleep bout may then be several silences of at least 300 s joined by
+   single-second movements, so sleep keeps xmin = 300 s while wake bouts start at 2 s. The
+   per0 DD data above are already scored that way. The 219-fly LD set behind the interim
+   report is NOT -- it used `bridgeWakeSeconds = 0` -- so any comparison with it needs
+   re-extraction rather than a straight read. Measured on that LD set (2026-09-11): bridging
+   merges a median 17.9% of Canton-S sleep bouts and 10.4% of per0 ones, and a one-timescale
+   fly merged at its own rate passes a second-timescale evidence line 5.8% of the time
+   against 3.6% unmerged. Real but small, so a bridged analysis carries its own simulated
+   control rather than assuming the step is harmless.
+
 ## One thing that does not transfer between implementations
 
 The bootstrap null absorbs the *estimation procedure*, not just the model. On
