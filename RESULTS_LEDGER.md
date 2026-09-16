@@ -124,3 +124,39 @@ evidence        time, 10 of the 25 flies supported two timescales. That count is
 Unchanged       The numbers and the verdict on the pre-specified question stand: p = 0.86, and the
                 unit of analysis for the fuller datasets is the fly or a hierarchical model.
 ```
+
+### 2026-09-15  per0 DD wake: the hazard rise at four fixed bin counts
+
+```
+Commit          172315b (Icode main; analysis code unchanged since 8565082)
+Script          wake_rise_fixed_bins.m, session scratch, not in the repo
+Prespec         2026-09-15 "per0 DD wake: the hazard rise at four fixed bin counts"
+Time window     The whole analysed record of each of the 25 flies (2.8-4.0 days, constant
+                darkness), pooled. That pooled set is the narrowest block here.
+n               3989 wake bouts; xmin 2 s, dt 1 s, 1-s bridged scoring.
+Result          Null K = 2 fit: tau 8.4 and 661.9 s, observed weights 0.079 and 0.921,
+                logL -29328.2460.
+                bins 12: trough 119.8 s, peak 1094.0 s, RiseRatio 1.405, null median 1.083,
+                         95th 1.210, RiseNullP 0.001
+                bins 16: trough 109.3 s, peak  997.7 s, RiseRatio 1.388, null median 1.136,
+                         95th 1.285, RiseNullP 0.010
+                bins 20: trough 161.0 s, peak  944.3 s, RiseRatio 1.376, null median 1.186,
+                         95th 1.390, RiseNullP 0.068
+                bins 24: trough 144.1 s, peak  910.0 s, RiseRatio 1.430, null median 1.235,
+                         95th 1.512, RiseNullP 0.101
+                NullDropped 0 at every count; one bin dropped and one saturated at each, as
+                expected. The values at 16 and 20 bins reproduce FINDINGS exactly.
+                The observed ratio barely moves across bin counts (1.376 to 1.430). What moves is
+                the NULL: its median climbs from 1.083 to 1.235 and its 95th percentile from 1.210
+                to 1.512, because more bins put fewer bouts in each and a spurious peak-over-trough
+                ratio grows.
+Matched null    999 datasets of n = 3989 drawn from that two-exponential fit, each put through the
+                whole estimator on its own bin edges.
+Verdict         Supported but bin-sensitive, the wording fixed on 2026-09-14: a rise at 12 and 16
+                bins, none at 20 and 24. Every count reported, not the smallest p.
+Not reportable  Do not quote 0.001 on its own. The bin sensitivity here is a loss of power rather
+                than a wobble in the data, since the observed ratio is stable while the null widens;
+                that reading is an observation from these four counts, not a separate test. The test
+                is against a falling-hazard null only: it says nothing about whether the rise is in
+                the flies or is produced by scoring bursty movement into wake bouts.
+```
