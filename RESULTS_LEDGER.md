@@ -67,3 +67,36 @@ Not reportable  The p-values after removing fly 14 are not a test of the rise in
                 quoted. Nothing here says whether the rise lives in the flies or is produced by
                 scoring bursty movement into wake bouts.
 ```
+
+### 2026-09-15  per0 DD sleep: pooled K=3 against a per-fly null
+
+```
+Commit          35ee73a358c741f6a1b7209f8b7f35a58585d7d1 (Icode main; code unchanged since 8565082)
+Script          sleep_pooled_null.m, session scratch, not in the repo
+Prespec         2026-09-15 "per0 DD sleep: pooled K=3 against a per-fly null"
+Time window     Per-fly fits: the whole analysed record of each fly (2.8-4.0 days, constant
+                darkness). The tested statistic: all 25 flies pooled.
+n               3987 sleep bouts from 25 flies; xmin 300 s, dt 1 s, 1-s bridged scoring. Per fly
+                80 to 249 bouts, median 159.
+Result          Observed logL -31626.8558 at K = 2 and -31618.4952 at K = 3, so LR = 16.72,
+                reproducing FINDINGS. The observed K = 3 fit is the FINDINGS one: tau 54.6, 1040.5
+                and 3141.2 s with observed weights 0.0496, 0.9298 and 0.0206. Fitted one fly at a
+                time, only 10 of the 25 flies supported two timescales; the other 15 came back
+                degenerate at K = 2 and entered the null with one. Pooling 25 such simulated flies
+                gave LR well ABOVE the observed value: median 26.68, 95th percentile 48.14, maximum
+                58.94 over B = 199, with no negative LR and no failed fit. p = 0.86. The slowest of
+                the three fitted components held under 5 percent of bouts in 11 percent of the
+                replicates.
+Matched null    199 pooled datasets, each with the same 25 flies at the same bout counts, every fly
+                drawn from its own fitted model. The staged rule stopped at 199 because p > 0.12.
+Verdict         The pre-specified reading is supported: differences between flies are enough to
+                produce the pooled third component, and more than enough. A pooled mixture fit on
+                these data says nothing about how many timescales an individual fly has, so the
+                fuller datasets are to be analysed fly by fly or with a hierarchical model.
+Not reportable  Not evidence that no fly has a third timescale: the test asks what pooling can
+                manufacture, not what individuals do. The null is if anything too generous, since it
+                simulates from unshrunk per-fly fits whose estimation noise widens the spread
+                between flies by an unknown amount; a hierarchical, shrunk null would be the sharper
+                comparison. The bouts are bridged, so merging sits inside both the data and the
+                per-fly fits.
+```
