@@ -100,3 +100,27 @@ Not reportable  Not evidence that no fly has a third timescale: the test asks wh
                 comparison. The bouts are bridged, so merging sits inside both the data and the
                 per-fly fits.
 ```
+
+### 2026-09-15  Correction to "per0 DD sleep: pooled K=3 against a per-fly null"
+
+```
+Commit          35ee73a358c741f6a1b7209f8b7f35a58585d7d1 (no new computation; wording only)
+Corrects        2026-09-15 "per0 DD sleep: pooled K=3 against a per-fly null", recorded in 84a5187
+What was wrong  That entry said a pooled mixture fit "says nothing about how many timescales an
+                individual fly has". Too strong, as Sheyum pointed out.
+Correct reading A pooled fit does constrain the population: K > 1 means the flies are not all one
+                exponential at a common rate. What it cannot do is attribute the extra timescales,
+                because differences between flies and structure within a fly produce the same pooled
+                distribution. On these data the third component needs nothing beyond differences
+                between flies (p = 0.86), so that component cannot be read as a third timescale in
+                any fly. One direction does carry: mixing cannot make a hazard rise, so a
+                non-monotone pooled hazard does imply non-monotone hazards in some flies. That is
+                what the wake entry rests on.
+Separate        The per-fly evidence is a different analysis from the pooled fit. Fitted one at a
+evidence        time, 10 of the 25 flies supported two timescales. That count is the fitter
+                degeneracy flag at about 160 bouts a fly, not a test, and at that bout count an
+                unresolvable second timescale and a genuine rare component look alike, as the 219-fly
+                LD work measured.
+Unchanged       The numbers and the verdict on the pre-specified question stand: p = 0.86, and the
+                unit of analysis for the fuller datasets is the fly or a hierarchical model.
+```
