@@ -127,6 +127,31 @@ censors. `dt` (`SamplingInterval`) is the recording grid. Everything conditions
 on `T >= xmin` and bins on `dt`; a wrong `dt` silently destroys resolution, and
 the grid-mismatch guard will name the spacing it detects instead.
 
+**Build `xmin` as (integer number of bins) x `dt`**, using the same
+multiplication that produced the durations, so `row >= xmin` is exact rather
+than exact-to-rounding. From the sleep/wake pipeline (change notice
+2026-09-21) that is `xmin = (floor(bridgeWakeSeconds/dt) + 1) * dt` for wake
+bouts, and `ceil(300/dt) * dt` for the 5-minute sleep criterion. `xmin` is the
+caller's to construct: `extractBoutsForModelCompetition` no longer returns one.
+
+**Nothing in this suite handles CENSORING.** The only mention of it in the repo
+is a comment in `CompareBoutModels` noting its absence, and every likelihood
+here treats each duration as observed in full. That has one known consequence
+worth knowing BEFORE a phase-conditioned fit: the pipeline assigns a bout to a
+phase by its START bin and does not clip it at the phase boundary, so a bout
+that begins inside a ZT window and ends outside it enters the fit at its full
+length, carrying out-of-phase time. **The affected bouts are the long ones** --
+a long bout is likelier to span a boundary -- so the contamination concentrates
+in exactly the tail where a hazard rise would be read. The direction of the
+resulting bias on the hazard is NOT established; do not guess it, measure it
+(and note that the per0 DD results in `FINDINGS.md` are whole-record, not
+phase-split, so they are not affected). The principled fix is to treat a
+boundary-crossing bout as right-censored at the boundary -- likelihood
+contribution `S(c)/S(xmin)` instead of a bin probability -- which needs
+censoring support added to the engine. Until then, a phase-conditioned
+duration fit is reporting on a sample it has partly mismeasured, and rule 5
+obliges you to say so.
+
 **1. Look at the hazard BEFORE fitting anything.**
 
 ```matlab
