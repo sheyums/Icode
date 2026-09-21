@@ -132,9 +132,17 @@ multiplication that produced the durations, so `row >= xmin` is exact rather
 than exact-to-rounding. From the sleep/wake pipeline (change notice
 2026-09-21) that is `xmin = (floor(bridgeWakeSeconds/dt) + 1) * dt` for wake
 bouts, and `ceil(300/dt) * dt` for the 5-minute sleep criterion. `xmin` is the
-caller's to construct: `extractBoutsForModelCompetition` no longer returns one.
+caller's to construct: the 2026-09-21 rewrite of
+`extractBoutsForModelCompetition` removed its `xmin` output. (That rewrite is
+independent of the same day's sleep=0/wake=1 recoding, which has NO bearing
+here: this suite receives durations, never a trace, so the coding is resolved
+upstream. The formula is convention-free in any case -- it follows from what
+`ironout` BRIDGES, so the shortest surviving wake bout is `bridgeBins+1` bins
+whichever digit means wake.)
 
-**Nothing in this suite handles CENSORING.** The only mention of it in the repo
+**Nothing in this suite handles CENSORING.** This is a long-standing gap, not
+a consequence of any recent pipeline change -- it was listed as an open issue
+on 2026-09-21 but has been true throughout. The only mention of it in the repo
 is a comment in `CompareBoutModels` noting its absence, and every likelihood
 here treats each duration as observed in full. That has one known consequence
 worth knowing BEFORE a phase-conditioned fit: the pipeline assigns a bout to a
