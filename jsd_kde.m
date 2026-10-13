@@ -1,4 +1,4 @@
-function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed)
+function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE, p_perm, d_perm] = jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed, n_perm, Verbose)
 % JSD_KDE  Jensen-Shannon distance between two univariate distributions
 %          estimated via kernel density estimation (KDE).
 %
@@ -6,6 +6,8 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   d = jsd_kde(P, Q)
 %   [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE] = ...
 %       jsd_kde(P, Q, Ngrid, min_cutoff, do_log_transform, n_boot, ci_alpha, rng_seed)
+%   [..., p_perm, d_perm] = jsd_kde(..., rng_seed, n_perm)
+%   ... = jsd_kde(..., n_perm, Verbose)
 %
 % DESCRIPTION
 %   Estimates the Jensen-Shannon distance (JSD; the square root of the
@@ -25,6 +27,12 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   distribution (P vs P', Q vs Q').  The mean bias is taken as an ensemble
 %   average over all n_boot replicates and subtracted as a constant scalar in
 %   divergence (squared-distance) space before the square root.
+%
+%   When n_perm > 0, a label-permutation test reports p_perm, the probability
+%   of a distance at least this large when P and Q are relabellings of one
+%   pooled sample.  This is the only output of this function that constitutes a
+%   hypothesis test; the bootstrap quantifies and de-biases d but cannot say
+%   whether it exceeds chance.  See PERMUTATION NULL.
 %
 % INPUTS
 %   P, Q              Numeric column (or row) vectors of observations.
@@ -53,6 +61,20 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   rng_seed          Nonnegative integer seed for the bootstrap, or [] to draw
 %                     from the current stream (default: []).  See
 %                     REPRODUCIBILITY below.
+%   n_perm            Number of label-permutation replicates (default: 0, no
+%                     permutation test).  Independent of n_boot: the bootstrap
+%                     quantifies uncertainty in d, the permutation test asks
+%                     whether d exceeds chance.  See PERMUTATION NULL below.
+%                     1000-5000 is reasonable; the attainable p-value is
+%                     bounded below by 1/(n_perm + 1).
+%   Verbose           Logical scalar (default: true).  When false, suppresses
+%                     the jsd_kde:logTransform announcement only.  Intended for
+%                     callers that invoke this function in a loop, where that
+%                     announcement fires on every call and drowns everything
+%                     else.  It does NOT silence any other warning: degenerate
+%                     input, a skipped permutation test and degenerate
+%                     replicate counts all still report, because those bear on
+%                     whether the returned numbers mean what they claim.
 %
 % OUTPUTS
 %   d                 Jensen-Shannon distance, scalar in [0, 1] (bits basis).
@@ -69,8 +91,21 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   d_corr            Noise-corrected JSD distance: ensemble-mean KDE bias
 %                     subtracted in divergence space, then sqrt; clamped at 0.
 %                     Returns 0 when n_boot = 0, since no noise estimate exists.
-%   d_corr_CI         Bootstrap CI on d_corr; [] if n_boot = 0.
+%   d_corr_CI         Bootstrap CI on d_corr; [] if n_boot = 0.  NOT a
+%                     hypothesis test: d_corr is clamped at 0, so when the true
+%                     distance is near zero the bootstrap distribution piles up
+%                     against that boundary and the interval loses its nominal
+%                     coverage.  "d_corr_CI excludes 0" is therefore not
+%                     evidence that P and Q differ; use p_perm for that.
 %   d_corr_SE         Bootstrap standard error of d_corr; [] if n_boot = 0.
+%                     Same boundary caveat applies -- an SE is a poor summary
+%                     of a distribution truncated at zero.
+%   p_perm            One-sided permutation p-value for H0: P and Q are drawn
+%                     from the same distribution.  NaN if n_perm = 0, and NaN
+%                     on the degenerate and zero-range early-return paths,
+%                     where no test was performed.
+%   d_perm            n_perm x 1 null distribution of the JSD distance under
+%                     label permutation; [] if n_perm = 0.
 %
 % SCALE INVARIANCE
 %   JS divergence is exactly invariant under a smooth invertible
@@ -85,6 +120,54 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %
 %   A corollary worth knowing: the log-transform offset (`shift`) cannot bias
 %   the estimand, only the smoothing, since it is part of a monotone map.
+%
+% PERMUTATION NULL
+%   The bootstrap and the permutation test answer different questions, and
+%   neither substitutes for the other.
+%
+%     noise_P/noise_Q/d_corr  estimate and remove finite-sample KDE BIAS.  Each
+%       noise term resamples ONE group against itself, so the reference
+%       distribution is that group's own shape.  This is a bias correction; it
+%       yields no p-value, and the bootstrap CI on d_corr is a CI on a
+%       boundary-clamped statistic, so its lower limit is not a hypothesis test.
+%
+%     p_perm/d_perm  estimate the NULL DISTRIBUTION of d.  The transformed
+%       samples are pooled, then re-split WITHOUT replacement into pseudo-groups
+%       of exactly nP and nQ.  Any d this produces is attributable to sampling
+%       alone, because the labels carry no information by construction.  The
+%       reference distribution is the POOLED shape, which is what H0 asserts
+%       both groups share.
+%
+%   Held fixed across replicates, and this is load-bearing: the log-transform
+%   decision, the shift, min_cutoff, min_is_observed and the evaluation grid.
+%   Permutation operates on P_trans/Q_trans, i.e. AFTER the transform, which is
+%   legitimate because a monotone map applied identically to both samples
+%   commutes with relabelling.  Re-deciding the transform per replicate would
+%   be a bug: do_log_transform auto-detects from per-sample skewness, so a null
+%   built by recursive calls into this function would silently average
+%   transformed and untransformed replicates.  Callers writing their own
+%   permutation wrapper around jsd_kde must pass do_log_transform and
+%   min_cutoff explicitly for exactly this reason.
+%
+%   Bandwidth is re-estimated per replicate, as it is in the bootstrap loop.
+%   The observed d uses bandwidths selected from samples of size nP and nQ, so
+%   a faithful null must pay the same bandwidth-selection cost at the same
+%   sizes.  Holding bandwidth fixed would understate the null precisely when
+%   one group is small, which is the case the test is most needed for.
+%
+%   What this null does and does not control for.  It controls for sample size,
+%   for size ASYMMETRY between the groups, and for the shape of the pooled
+%   distribution.  It does NOT need to control for a common rescaling of both
+%   groups: JS divergence is exactly invariant to that (see SCALE INVARIANCE),
+%   so a uniformly narrower or wider pair of samples has the same estimand.
+%   What does move d is the ratio of between-group separation to within-group
+%   spread in the TRANSFORMED coordinate, and no null can disentangle that from
+%   a genuine effect -- it is the effect.  Reporting the between-group location
+%   shift and the within-group spread alongside d is the way to tell a reader
+%   which of the two is driving a cross-condition comparison.
+%
+%   p_perm uses the add-one estimator (1 + #{d_perm >= d}) / (1 + n_perm),
+%   which is never zero and stays valid under a finite replicate count.
 %
 % ALGORITHM NOTES
 %   Units.  JSD is computed in bits (log base 2), giving JS divergence in [0,1]
@@ -103,13 +186,31 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   therefore placed just inside the support.  The estimated density tends to 0
 %   at the boundary, so no mass is lost.
 %
-%   Bandwidth caching.  bw_P and bw_Q are extracted via ksdensity once before
-%   any bootstrap iteration and passed explicitly to all internal ksdensity
-%   calls, eliminating O(6 * n_boot) redundant bandwidth estimations that would
-%   otherwise dominate runtime.  Note the statistical cost: because every
-%   replicate reuses the bandwidth chosen from the ORIGINAL sample, the
-%   bootstrap does not propagate bandwidth-selection variability, so d_CI and
-%   d_SE are narrower than a fully nonparametric bootstrap would give.
+%   Bandwidth.  bw_P and bw_Q are extracted once from the observed samples and
+%   used for the point estimate d, for sizing the grid extension, and as the
+%   fallback scale on paths where a resample carries no scale information.
+%   Inside the bootstrap and permutation loops, however, bandwidth is
+%   RE-ESTIMATED from each replicate's own data.
+%
+%   This was not always so, and the change is worth recording.  Bandwidth used
+%   to be cached across replicates, which saved O(6 * n_boot) ksdensity calls
+%   but meant no replicate ever paid the cost of choosing its own bandwidth.
+%   The bootstrap therefore did not propagate bandwidth-selection variability,
+%   leaving d_CI and d_SE narrower than a fully nonparametric bootstrap, and --
+%   more seriously -- leaving the noise floor too low, because bandwidth
+%   selection is the dominant error source exactly when a sample is small.
+%   d_corr consequently under-corrected in the regime it was most needed for:
+%   two samples drawn from the SAME lognormal at nP/nQ = 400/10 returned
+%   d_corr = 0.198 against a true value of 0, about a third of the raw
+%   inflation removed.  Re-estimation closes most of that gap at a real
+%   runtime cost, which is the trade this function now takes.  Set n_boot
+%   modestly (a few hundred) when scanning many pairs.
+%
+%   A corollary of re-estimation: a resample or pseudo-group can come out
+%   constant even though the observed sample is not, and KDE is undefined
+%   there.  Such replicates are scored by the same closed-form singular and
+%   identical limits the degenerate-input path uses, and counted in a warning,
+%   rather than letting ksdensity improvise a zero bandwidth.
 %
 %   The bootstrap loop is SERIAL, and deliberately so.  Its six randi calls
 %   draw from the global stream in a fixed order, and that draw sequence is the
@@ -177,6 +278,23 @@ function [d, d_CI, d_SE, d_boot, noise_P, noise_Q, d_corr, d_corr_CI, d_corr_SE]
 %   Only d is deterministic without a seed.  d_CI, d_SE, d_boot, d_corr,
 %   d_corr_CI and d_corr_SE all vary run to run, so results intended to be
 %   reproducible from saved output should always be generated with a seed.
+%   p_perm and d_perm are likewise stochastic.
+%
+%   The permutation loop runs strictly AFTER the bootstrap loop and draws from
+%   the same stream, so every bootstrap output is bit-for-bit unchanged at a
+%   given rng_seed whether or not n_perm is supplied.  The converse does not
+%   hold: changing n_boot shifts the stream the permutation loop inherits, so
+%   d_perm is reproducible only at a fixed (rng_seed, n_boot) pair.
+%
+%   BREAKING CHANGE, recorded here because a seed alone no longer pins these
+%   numbers.  Bandwidth is now re-estimated per replicate (see the Bandwidth
+%   note in ALGORITHM NOTES).  d, the resample draw sequence and the evaluation
+%   grid are all unchanged, so the resamples themselves are identical to those
+%   earlier versions produced -- but d_CI, d_SE, d_boot, noise_P, noise_Q,
+%   d_corr, d_corr_CI and d_corr_SE are scored with different bandwidths and so
+%   will NOT reproduce values saved by a version that cached bandwidth across
+%   replicates.  Expect the noise floor and hence d_corr to move most, and
+%   most of all at small or asymmetric sample sizes.  Only d is untouched.
 %
 % LIMITATIONS
 %   d_corr_CI is conditional on the noise floor being known exactly.  Because
@@ -215,6 +333,8 @@ arguments
     n_boot      (1,1) {mustBeInteger, mustBeNonnegative}                    = 0
     ci_alpha    (1,1) {mustBeInRange(ci_alpha, 0, 1, "exclusive")}          = 0.05
     rng_seed                                                                = []
+    n_perm      (1,1) {mustBeInteger, mustBeNonnegative}                    = 0
+    Verbose     (1,1) logical                                               = true
 end
 
 P = P(:); Q = Q(:);
@@ -298,6 +418,17 @@ if P_is_const || Q_is_const
         d_corr_CI = [];
         d_corr_SE = [];
     end
+
+    % No KDE exists on this path, so there is nothing for a permutation null to
+    % be a null OF: d came from the closed-form singular/identical limit, not
+    % from an estimate.  Report "not tested" rather than manufacturing a
+    % p-value, and say so when one was asked for.
+    p_perm = NaN; d_perm = [];
+    if n_perm > 0
+        warning('jsd_kde:permSkippedDegenerate', ...
+            ['Permutation test skipped on degenerate input (%s); ' ...
+            'p_perm returned as NaN.'], reason);
+    end
     return;
 end
 
@@ -307,12 +438,12 @@ if isempty(do_log_transform)
     skew_thresh = 0.8 + 10/sqrt(nP + nQ);
     do_log_transform = (all(P >= min_cutoff) && all(Q >= min_cutoff)) && ...
         ((skewness(P) > skew_thresh) || (skewness(Q) > skew_thresh));
-    if do_log_transform
+    if do_log_transform && Verbose
         warning('jsd_kde:logTransform', ...
             'Log-transform applied automatically (skewness P=%.2f, Q=%.2f exceeded threshold %.2f).', ...
             skewness(P), skewness(Q), skew_thresh);
     end
-elseif do_log_transform
+elseif do_log_transform && Verbose
     warning('jsd_kde:logTransform', ...
         'Log-transform applied (user-specified).');
 end
@@ -350,10 +481,13 @@ else
     Q_trans = Q;
 end
 
-% --- Bandwidth extraction (cached for bootstrap) ---
+% --- Bandwidth extraction (observed samples) ---
 % Bandwidths used for the KDE itself.  These MUST be obtained with the same
 % Support option that will be used at evaluation time, because ksdensity
 % interprets an explicit 'Bandwidth' on its internal working scale.
+% These serve the point estimate d and the grid sizing below.  Bootstrap and
+% permutation replicates do NOT reuse them -- score_pair re-estimates from each
+% replicate's own data.
 use_bounded = ~do_log_transform && ~min_is_observed;
 
 if use_bounded
@@ -404,7 +538,9 @@ grid_eval = linspace(lo, hi, Ngrid);
 
 if lo == hi
     d = 0; d_CI = []; d_SE = []; d_boot = []; noise_P = 0; noise_Q = 0;
-    d_corr = 0; d_corr_CI = []; d_corr_SE = []; return;
+    d_corr = 0; d_corr_CI = []; d_corr_SE = [];
+    p_perm = NaN; d_perm = [];   % zero-range grid: nothing to test
+    return;
 end
 
 %% ------------------ Main Computation ------------------
@@ -412,16 +548,26 @@ end
 
 %% ------------------ Optimized Bootstrap Loop ------------------
 d_CI = []; d_boot = []; d_SE = []; noise_P = 0; noise_Q = 0; d_corr = 0; d_corr_CI = []; d_corr_SE = [];
+p_perm = NaN; d_perm = [];
 
 if n_boot > 0
     div_boot   = zeros(n_boot,1);
     divP_noise = zeros(n_boot,1);
     divQ_noise = zeros(n_boot,1);
 
+    n_degen_boot = 0;
+
     % Serial loop, drawing from the global stream in a fixed order. Do not
     % reorder these six randi calls or interpose others: the draw sequence IS
     % the reproducibility contract, and any change silently invalidates
     % bootstrap outputs saved from earlier runs at the same rng_seed.
+    %
+    % Bandwidth is re-estimated inside score_pair from each resample, not
+    % inherited from the observed sample. That costs runtime and changes
+    % d_CI/d_SE/noise_*/d_corr relative to versions of this function that
+    % cached bandwidth, but it is what makes the noise floor an honest estimate
+    % of the bias in d. See the Bandwidth note in ALGORITHM NOTES. The randi
+    % sequence above is unaffected, so the resamples themselves are identical.
     for b = 1:n_boot
         % Resample indices
         P_star = P_trans(randi(nP, nP, 1));
@@ -431,9 +577,10 @@ if n_boot > 0
         Q_s1   = Q_trans(randi(nQ, nQ, 1));
         Q_s2   = Q_trans(randi(nQ, nQ, 1));
 
-        [~, div_boot(b)]   = compute_jsd_core(P_star, Q_star, grid_eval, do_log_transform, min_cutoff, min_is_observed, bw_P, bw_Q);
-        [~, divP_noise(b)] = compute_jsd_core(P_s1,   P_s2,   grid_eval, do_log_transform, min_cutoff, min_is_observed, bw_P, bw_P);
-        [~, divQ_noise(b)] = compute_jsd_core(Q_s1,   Q_s2,   grid_eval, do_log_transform, min_cutoff, min_is_observed, bw_Q, bw_Q);
+        [div_boot(b),   g1] = score_pair(P_star, Q_star, grid_eval, do_log_transform, min_cutoff, min_is_observed, use_bounded);
+        [divP_noise(b), g2] = score_pair(P_s1,   P_s2,   grid_eval, do_log_transform, min_cutoff, min_is_observed, use_bounded);
+        [divQ_noise(b), g3] = score_pair(Q_s1,   Q_s2,   grid_eval, do_log_transform, min_cutoff, min_is_observed, use_bounded);
+        n_degen_boot = n_degen_boot + double(g1 || g2 || g3);
     end
 
     % --- Noise correction applied outside the loop ---
@@ -458,7 +605,110 @@ if n_boot > 0
     d_corr     = sqrt(max(0, div_val - avg_noise_div));
     d_corr_CI  = quantile(d_boot_corr, [lo_q, hi_q]);
     d_corr_SE  = std(d_boot_corr);
+
+    if n_degen_boot > 0
+        warning('jsd_kde:bootDegenerateReplicates', ...
+            ['%d of %d bootstrap replicates drew a constant resample and ' ...
+            'were scored by the closed-form limit; d_CI and the noise floor ' ...
+            'are inflated accordingly.'], n_degen_boot, n_boot);
+    end
 end
+
+%% ------------------ Label-Permutation Null ------------------
+% Placed after the bootstrap loop on purpose: the bootstrap's draw sequence is
+% a reproducibility contract (see the comment in that loop), so the permutation
+% draws must not precede or interleave with it.  One randperm per replicate is
+% this loop's own contract.
+%
+% Cost is roughly four ksdensity calls per replicate (two for bandwidth, two
+% inside compute_jsd_core), so n_perm = 2000 is seconds-to-a-minute territory
+% for the sample sizes this function is typically given.  The bootstrap costs
+% three times that per replicate, so when both are on, n_boot usually wants to
+% be the smaller of the two.
+if n_perm > 0
+    pool     = [P_trans; Q_trans];
+    nTot     = nP + nQ;
+    div_perm = zeros(n_perm, 1);
+    n_degen  = 0;
+
+    for b = 1:n_perm
+        ix = randperm(nTot);
+        A  = pool(ix(1:nP));
+        B  = pool(ix(nP+1:nTot));
+
+        % Transform, shift, cutoff and grid all held at their observed-data
+        % values, so every replicate is scored by the same estimator as d.
+        % Bandwidth is re-estimated per pseudo-group inside score_pair, at the
+        % same group sizes as the observed statistic.
+        [div_perm(b), g] = score_pair(A, B, grid_eval, do_log_transform, ...
+            min_cutoff, min_is_observed, use_bounded);
+        n_degen = n_degen + double(g);
+    end
+
+    d_perm = sqrt(max(0, div_perm));
+
+    % Add-one estimator, compared in divergence space; the sqrt is monotone, so
+    % the ordering and hence the p-value are identical either way.
+    p_perm = (1 + sum(div_perm >= div_val)) / (1 + n_perm);
+
+    if n_degen > 0
+        warning('jsd_kde:permDegenerateReplicates', ...
+            ['%d of %d permutation replicates produced a constant pseudo-' ...
+            'group and were scored by the closed-form limit, which biases ' ...
+            'p_perm upward (conservative).'], n_degen, n_perm);
+    end
+end
+end
+
+%% ============================================================
+%  REPLICATE SCORER (shared by the bootstrap and permutation loops)
+%% ============================================================
+
+function [div, degenerate] = score_pair(A, B, grid_eval, do_log, min_cutoff, min_is_observed, use_bounded)
+%SCORE_PAIR  Divergence for one resampled or permuted pair of samples.
+%
+%   Bandwidth is estimated from A and B themselves, so each replicate pays the
+%   same bandwidth-selection cost as the observed statistic did at the same
+%   sample sizes.  This is what lets the bootstrap noise floor stand in for the
+%   bias in d; inheriting the observed sample's bandwidth understates it badly
+%   when a sample is small.  See the Bandwidth note in ALGORITHM NOTES.
+%
+%   A resample or pseudo-group can be constant even when the observed sample is
+%   not -- draw ten values from a tied-heavy sample and they can all coincide.
+%   KDE carries no scale information there, so rather than let ksdensity
+%   improvise a zero bandwidth this returns the same closed-form limits the
+%   degenerate-input path uses: 0 for coincident point masses, 1 for mutually
+%   singular ones.  DEGENERATE flags that case so callers can count and report
+%   it, since those replicates sit at the top of the scale and make any
+%   interval or p-value built from them conservative.
+
+A_const = (max(A) - min(A)) <= 10*eps(max(abs(A)));
+B_const = (max(B) - min(B)) <= 10*eps(max(abs(B)));
+
+if A_const || B_const
+    degenerate = true;
+    if A_const && B_const && abs(A(1) - B(1)) <= 10*eps(max(abs([A(1), B(1)])))
+        div = 0;   % identical point masses
+    else
+        div = 1;   % mutually singular; d = sqrt(1) = 1 on the bits basis
+    end
+    return;
+end
+
+degenerate = false;
+
+% Bandwidth MUST be obtained with the same Support option used at evaluation
+% time, because ksdensity interprets an explicit 'Bandwidth' on its internal
+% working scale.  This mirrors the observed-sample extraction above.
+if use_bounded
+    [~, ~, bwA] = ksdensity(A, 'Support', [min_cutoff, Inf]);
+    [~, ~, bwB] = ksdensity(B, 'Support', [min_cutoff, Inf]);
+else
+    [~, ~, bwA] = ksdensity(A);
+    [~, ~, bwB] = ksdensity(B);
+end
+
+[~, div] = compute_jsd_core(A, B, grid_eval, do_log, min_cutoff, min_is_observed, bwA, bwB);
 end
 
 %% ============================================================

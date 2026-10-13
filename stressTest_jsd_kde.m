@@ -17,6 +17,29 @@ function stressTest_jsd_kde
 %   so these tests inspect the warning identifier AND its text rather than
 %   assuming the message says what it should.
 %
+%   Groups 8-10 cover the later additions and are less about the auto-log
+%   decision: the label-permutation null, the exact scale invariance of JS
+%   divergence, and the per-replicate bandwidth estimation that makes the
+%   bootstrap noise floor honest at small n.
+%
+%   Two of those groups guard against specific regressions rather than generic
+%   sanity, and are worth stating plainly so they are not "simplified" away:
+%
+%     Group 9 pins the fact that rescaling BOTH samples by a common factor
+%     leaves d exactly unchanged.  This matters because it is tempting to read
+%     a larger d as evidence that two groups are "more separated" when one
+%     condition simply has narrower distributions -- that reading is wrong, and
+%     9A/9B make the invariance a test rather than a claim.  9C/9D pin what
+%     does move d: the ratio of between-group separation to within-group
+%     spread in the transformed coordinate.
+%
+%     Group 10 pins the small-n noise floor.  Bandwidth used to be cached from
+%     the observed samples and reused by every bootstrap replicate, so no
+%     replicate paid the cost of choosing its own bandwidth and the noise floor
+%     came out far too low.  Two samples drawn from the SAME distribution at
+%     nP/nQ = 400/10 then returned d_corr = 0.198 against a true value of 0.
+%     10C holds the new behaviour below that number explicitly.
+%
 %   Groups:
 %       1. Auto-log engagement and announcement
 %       2. Sample-size dependence of the threshold
@@ -25,6 +48,14 @@ function stressTest_jsd_kde
 %       5. Core estimator sanity
 %       6. Reproducibility
 %       7. Validation and degenerate input
+%       8. Permutation null
+%       9. Scale invariance
+%      10. Per-replicate bandwidth and the noise floor
+%
+%   Runtime note: groups 8 and 10 run bootstrap and permutation loops, which
+%   re-estimate bandwidth per replicate, so the suite takes tens of seconds
+%   rather than a couple.  Replicate counts here are deliberately small -- they
+%   are sized to catch regressions, not to produce publication-grade intervals.
 %
 %   See also JSD_KDE
 
@@ -199,6 +230,118 @@ check('7I: distinct constants give d = 1', ...
     runQuiet(@() jsd_kde(ones(50,1), 2*ones(50,1))) == 1, '');
 check('7J: [] and NaN min_cutoff agree', ...
     runQuiet(@() jsd_kde(X, Z, 512, [])) == runQuiet(@() jsd_kde(X, Z, 512, NaN)), '');
+fprintf('\n');
+
+%% Group 8: Permutation null
+fprintf('-- Group 8: Permutation null ------------------------\n');
+rng(21);
+Pa = skewed(400, 0.6) * 400;        % right-skewed, scaled off 1 so cutoff 0 bites
+Qa = skewed(120, 0.6) * 550;
+
+[~,~,~,~,~,~,~,~,~, pOff, dOff] = runQuiet(@() jsd_kde(Pa, Qa, 512, 0, true, 0));
+check('8A: n_perm omitted leaves p_perm NaN', isnan(pOff), sprintf('%g', pOff));
+check('8B: n_perm omitted leaves d_perm empty', isempty(dOff), '');
+
+[~,~,~,~,~,~,~,~,~, pOn, dOn] = runQuiet(@() jsd_kde(Pa, Qa, 512, 0, true, 0, 0.05, 5, 300));
+check('8C: d_perm has one entry per replicate', numel(dOn) == 300, sprintf('%d', numel(dOn)));
+check('8D: p_perm respects the add-one floor', ...
+    pOn >= 1/301 - eps && pOn <= 1, sprintf('%g', pOn));
+check('8E: d_perm lies in [0,1]', all(dOn >= 0 & dOn <= 1), '');
+
+% The nine original outputs must not shift when a permutation test is added:
+% the permutation loop draws only AFTER the bootstrap loop has finished.
+c1 = cell(1,9); c2 = cell(1,11);
+[c1{:}] = runQuiet(@() jsd_kde(Pa, Qa, 512, 0, true, 40, 0.05, 42));
+[c2{:}] = runQuiet(@() jsd_kde(Pa, Qa, 512, 0, true, 40, 0.05, 42, 200));
+check('8F: n_perm does not perturb the bootstrap outputs', ...
+    isequal(c1, c2(1:9)), 'bootstrap outputs moved');
+
+% Calibration: under H0 the p-value should be roughly uniform, so a 5% nominal
+% level must not fire far more often than 5% of the time.
+rng(23); nrep = 12; pv = zeros(nrep,1);
+for k = 1:nrep
+    A8 = skewed(250, 0.6); B8 = skewed(250, 0.6);
+    [~,~,~,~,~,~,~,~,~, pv(k)] = runQuiet(@() jsd_kde(A8, B8, 512, 0, true, 0, 0.05, [], 200));
+end
+fprintf('       H0 calibration: %d runs, median p = %.2f, frac p<=0.05 = %.2f\n', ...
+    nrep, median(pv), mean(pv <= 0.05));
+check('8G: H0 p-values are not systematically small', ...
+    median(pv) > 0.2 && mean(pv <= 0.05) <= 0.25, sprintf('median %.3f', median(pv)));
+
+rng(27);
+[dSep,~,~,~,~,~,~,~,~, pSep] = runQuiet(@() ...
+    jsd_kde(skewed(300,0.5)*400, skewed(300,0.5)*1100, 512, 0, true, 0, 0.05, [], 300));
+fprintf('       power: well-separated samples d = %.3f, p = %.4f\n', dSep, pSep);
+check('8H: well-separated samples reach the p-value floor', pSep <= 2/301, sprintf('%g', pSep));
+
+[wP, mP] = captureWarn(@() jsd_kde(ones(50,1), skewed(50,0.6), 512, 0, true, 0, 0.05, [], 50));
+check('8I: degenerate input announces the skipped test', ...
+    strcmp(wP, 'jsd_kde:permSkippedDegenerate'), wP);
+check('8J: skipped-test message says p_perm is NaN', contains(mP, 'NaN'), mP);
+[~,~,~,~,~,~,~,~,~, pDeg] = runQuiet(@() jsd_kde(ones(50,1), skewed(50,0.6), 512, 0, true, 0, 0.05, [], 50));
+check('8K: degenerate input returns p_perm = NaN', isnan(pDeg), sprintf('%g', pDeg));
+fprintf('\n');
+
+%% Group 9: Scale invariance
+% JS divergence is exactly invariant under a common monotone reparametrisation
+% (see SCALE INVARIANCE in jsd_kde). Rescaling BOTH samples by one factor must
+% therefore leave d untouched -- so "the distributions are narrower" does not by
+% itself move d. What moves it is the ratio of between-group separation to
+% within-group spread in the transformed coordinate, which 9D pins.
+fprintf('-- Group 9: Scale invariance ------------------------\n');
+rng(31);
+A9 = skewed(300, 0.6) * 400;  B9 = skewed(300, 0.6) * 660;
+d9ref  = runQuiet(@() jsd_kde(A9,       B9,       512, 0, true, 0));
+d9x10  = runQuiet(@() jsd_kde(10*A9,    10*B9,    512, 0, true, 0));
+d9x100 = runQuiet(@() jsd_kde(100*A9,   100*B9,   512, 0, true, 0));
+fprintf('       d = %.10f / %.10f / %.10f at x1 / x10 / x100\n', d9ref, d9x10, d9x100);
+check('9A: a common 10x rescaling leaves d unchanged', ...
+    abs(d9x10 - d9ref) < 1e-9, sprintf('delta %.2e', abs(d9x10 - d9ref)));
+check('9B: a common 100x rescaling leaves d unchanged', ...
+    abs(d9x100 - d9ref) < 1e-9, sprintf('delta %.2e', abs(d9x100 - d9ref)));
+
+rng(33);
+dSigma = zeros(1,4); sigmas = [0.8 0.5 0.3 0.15];
+for k = 1:4
+    % Separation fixed at 0.5 in log units; only the within-group spread moves.
+    dSigma(k) = runQuiet(@() jsd_kde(lognrnd(6, sigmas(k), 400, 1), ...
+                                     lognrnd(6.5, sigmas(k), 400, 1), 512, 0, true, 0));
+end
+fprintf('       sigma %.2f -> d %.3f;  sigma %.2f -> d %.3f\n', ...
+    sigmas(1), dSigma(1), sigmas(end), dSigma(end));
+check('9C: shrinking within-group spread at fixed separation raises d', ...
+    all(diff(dSigma) > 0), sprintf('%s', mat2str(round(dSigma,3))));
+check('9D: that rise is substantial, not marginal', ...
+    dSigma(end) - dSigma(1) > 0.3, sprintf('rise %.3f', dSigma(end)-dSigma(1)));
+fprintf('\n');
+
+%% Group 10: Per-replicate bandwidth and the noise floor
+% Bandwidth is re-estimated inside every bootstrap and permutation replicate.
+% The point of that is an honest noise floor at small n: a 10-point KDE is far
+% noisier than a 400-point one, and d_corr must know it. With bandwidth cached
+% from the observed sample this failed badly -- two samples from the SAME
+% distribution at 400/10 returned d_corr = 0.198 against a truth of 0.
+fprintf('-- Group 10: Per-replicate bandwidth ----------------\n');
+rng(37);
+P10 = skewed(400, 0.6) * 400;  Q10 = skewed(10, 0.6) * 400;   % SAME distribution
+[d10,~,~,~, nf_P, nf_Q, dc10] = runQuiet(@() jsd_kde(P10, Q10, 512, 0, true, 80, 0.05, 3));
+fprintf('       400 vs 10 from one distribution: d = %.3f, d_corr = %.3f\n', d10, dc10);
+fprintf('       noise floor: P (n=400) %.3f, Q (n=10) %.3f\n', nf_P, nf_Q);
+check('10A: the smaller sample carries the larger noise floor', ...
+    nf_Q > nf_P, sprintf('%.3f vs %.3f', nf_Q, nf_P));
+check('10B: d_corr removes most of the small-n inflation', ...
+    dc10 < 0.5 * d10, sprintf('d_corr %.3f vs d %.3f', dc10, d10));
+check('10C: d_corr stays below the old cached-bandwidth value of 0.198', ...
+    dc10 < 0.198, sprintf('%.3f', dc10));
+
+% Verbose gates the log-transform announcement and nothing else.
+[wV, ~] = captureWarn(@() jsd_kde(Pa, Qa, 512, 0, true, 0, 0.05, [], 0, false));
+check('10D: Verbose false suppresses the log-transform notice', isempty(wV), wV);
+[wT, ~] = captureWarn(@() jsd_kde(Pa, Qa, 512, 0, true, 0, 0.05, [], 0, true));
+check('10E: Verbose true still issues it', strcmp(wT, 'jsd_kde:logTransform'), wT);
+[wD, ~] = captureWarn(@() jsd_kde(ones(40,1), ones(40,1), 512, NaN, [], 0, 0.05, [], 0, false));
+check('10F: Verbose false does NOT mask degenerate input', ...
+    strcmp(wD, 'jsd_kde:degenerateInput'), wD);
 fprintf('\n');
 
 %% Summary
