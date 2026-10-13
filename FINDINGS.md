@@ -3,6 +3,46 @@
 Results and methodological decisions, kept with the code so a later session
 picks them up. Conventions and traps live in `CLAUDE.md`.
 
+## Time window for both per0 DD sections (rule 5)
+
+Rule 5 asks for the narrowest block a number was computed within, and the two
+sections below originally gave `xmin` and `dt` but never said which window the
+bouts came from. **The window is the WHOLE RECORDING**: constant darkness
+throughout, so there is no light/dark boundary to condition on, and no phase
+split was applied. Reported provenance -- 25 flies, 4-5 days each -- comes from
+the session with access to the source data; it is not verifiable from this
+repo, so treat the fly and day counts as reported rather than checked.
+
+The *whole-recording* claim itself IS checkable from the fitted models already
+in these sections, and both checks pass:
+
+- **Accounted fly-time.** The truncated branch means give a mean sleep bout of
+  1335 s (`sum q_j (xmin + tau_j)`) and a mean wake bout of 617 s, so the
+  bouts account for 3987 x 1335 + 3989 x 617 = **7.79e6 fly-seconds = 90.1
+  fly-days**. Against a reported 25 x 4-5 = 100-125 fly-days that is 72-90% of
+  the record, and the shortfall is what trimming, death detection and the
+  length filters are expected to remove. A single-phase extraction would
+  account for roughly half the record, 50-62 fly-days, which is not what the
+  numbers show.
+- **Bout counts.** Sleep and wake bouts alternate within a contiguous record,
+  so per fly the two counts differ by at most 1, bounding the difference at 25
+  across 25 flies. Observed: `|3987 - 3989| = 2`. Consistent with one common
+  window; there is no reason for two differently-thresholded sets from
+  different windows to agree that closely.
+
+**Nothing recorded here depends on a subjective phase**, and it is worth
+knowing why that is safe rather than lucky: the pre-2026-09-21 extractor
+compared against `'subj_night'` while the segmenter writes `"SubjNight"`, so a
+subjective-phase extraction returned NOTHING rather than something wrong. A
+silent empty result is the benign failure; had the tags matched loosely, the
+same bug would have produced a plausible-looking fit on the wrong bouts. Fixed
+in the new extractor, which errors and lists the tags actually present.
+
+For any FUTURE per-phase comparison, see the censoring gap in `CLAUDE.md` step
+0: boundary-spanning bouts are assigned by start bin and not clipped, and the
+engine has no censoring support, so a per-phase fit is currently reporting on
+a partly mismeasured sample.
+
 ## per0, DD, 3987 sleep bouts (xmin = 300 s, dt = 1 s)
 
 Selected model: **hyperexponential, K = 3**
