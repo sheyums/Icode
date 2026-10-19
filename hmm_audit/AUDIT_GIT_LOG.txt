@@ -1,0 +1,19 @@
+37d2684 2026-10-19 19:00:25 +0000 PRESPEC before analysis
+fd9dcc9 2026-10-19 19:11:09 +0000 Analysis scripts A, B, B13 (unplanned), C
+4cd578a 2026-10-19 19:11:09 +0000 Ledger
+468b1bb 2026-10-19 19:28:49 +0000 PRESPEC 2 before analysis
+93c1a65 2026-10-19 19:48:13 +0000 Analysis D and sss/per0 A-C; ledger appended
+7e19368 2026-10-19 19:53:42 +0000 PRESPEC 3 before analysis
+9c8c1ac 2026-10-19 20:01:05 +0000 Ledger: E abandoned; PRESPEC 4 before plotting
+a67ce2c 2026-10-19 20:01:42 +0000 Per-fly scatter; ledger
+6945a22 2026-10-19 20:01:53 +0000 Ledger correction: reason sss flies dropped
+d547702 2026-10-19 20:27:45 +0000 Ledger: bouts per window
+eb4076b 2026-10-19 20:33:34 +0000 PRESPEC 5 before pooled analysis
+fab217d 2026-10-19 20:34:40 +0000 PRESPEC 5b: LD split, before viewing PRESPEC 5 output
+0822229 2026-10-19 20:35:06 +0000 Pooled analysis scripts (PRESPEC 5, 5b)
+3d65439 2026-10-19 20:51:11 +0000 Ledger: PRESPEC 5 results
+c965ffe 2026-10-19 21:12:30 +0000 Fix LD seeding; ledger note
+eb14beb 2026-10-19 21:17:12 +0000 PRESPEC 6 heterogeneity null, before running
+def0073 2026-10-19 21:17:12 +0000 hetero.py
+7028df0 2026-10-19 21:21:19 +0000 PRESPEC 7 within-fly within-ZT two-phase test, before running
+e491142 2026-10-19 21:21:35 +0000 within_fly.py
