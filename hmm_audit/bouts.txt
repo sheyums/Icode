@@ -1,0 +1,4 @@
+CS     runs (bouts) per window: median 11, IQR 8-14, min 2; frames median 14212 | selected m: {2: 2, 3: 730, 4: 6}
+per0   runs (bouts) per window: median 15, IQR 11-18, min 2; frames median 14352 | selected m: {3: 628, 4: 2}
+fumin  runs (bouts) per window: median 6, IQR 4-10, min 2; frames median 13669 | selected m: {2: 298, 3: 1466, 4: 5}
+sss    runs (bouts) per window: median 4, IQR 2-8, min 1; frames median 12379 | selected m: {2: 241, 3: 828, 4: 3, 5: 1}

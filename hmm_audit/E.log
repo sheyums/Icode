@@ -1,0 +1,72 @@
+
+CS     H1==H2: 403 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 3  | window-mean identified set [-0.992, +0.985]
+   Yn           invariant 0.000  sign determined 0.002  median width 2.00  undefined 0  | window-mean identified set [-0.997, +0.990]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.77  undefined 3  | window-mean identified set [-1.882, +1.832]
+   Sigma=Xn+Yn  invariant 0.058  sign determined 0.000  median width 3.95  undefined 3  | window-mean identified set [-1.732, +1.715]
+   spot fly1 win1: fit: Xn -0.04 Yn +1.00 D -1.04 logL -113.6194 | maxD: Xn +0.96 Yn -0.90 D +1.86 logL -113.6194 | minD: Xn -0.97 Yn +0.90 D -1.87 logL -113.6194
+   spot fly2 win1: fit: Xn -0.87 Yn +1.00 D -1.87 logL -50.1711 | maxD: Xn +0.98 Yn -1.00 D +1.98 logL -50.1711 | minD: Xn -0.97 Yn +1.00 D -1.97 logL -50.1711
+   spot fly3 win1: fit: Xn -1.00 Yn +1.00 D -2.00 logL -95.2240 | maxD: Xn +1.00 Yn -1.00 D +2.00 logL -95.2240 | minD: Xn -1.00 Yn +1.00 D -2.00 logL -95.2240
+
+CS     H1==H3: 31 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-0.999, +0.999]
+   Yn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 0  | window-mean identified set [-0.995, +0.995]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.91  undefined 0  | window-mean identified set [-1.953, +1.953]
+   Sigma=Xn+Yn  invariant 0.097  sign determined 0.000  median width 3.20  undefined 0  | window-mean identified set [-1.299, +1.286]
+
+fumin  H1==H2: 1456 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 0  | window-mean identified set [-0.997, +0.996]
+   Yn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-1.000, +1.000]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.78  undefined 0  | window-mean identified set [-1.886, +1.885]
+   Sigma=Xn+Yn  invariant 0.021  sign determined 0.000  median width 2.72  undefined 0  | window-mean identified set [-1.332, +1.316]
+   spot fly1 win5: fit: Xn -0.55 Yn +1.00 D -1.55 logL -40.8258 | maxD: Xn +0.99 Yn -0.93 D +1.92 logL -40.8258 | minD: Xn -0.99 Yn +0.96 D -1.95 logL -40.8258
+   spot fly2 win12: fit: Xn -0.52 Yn +nan D +nan logL -9.0906 | maxD: Xn +0.88 Yn +nan D +nan logL -9.0906 | minD: Xn -0.88 Yn +nan D +nan logL -9.0906
+   spot fly3 win2: fit: Xn -0.42 Yn +1.00 D -1.42 logL -26.5060 | maxD: Xn +0.83 Yn -1.00 D +1.83 logL -26.5060 | minD: Xn -0.87 Yn +1.00 D -1.87 logL -26.5060
+
+fumin  H1==H3: 8 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-1.000, +1.000]
+   Yn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 1  | window-mean identified set [-0.997, +0.997]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.94  undefined 1  | window-mean identified set [-1.973, +1.976]
+   Sigma=Xn+Yn  invariant 0.286  sign determined 0.000  median width 1.63  undefined 1  | window-mean identified set [-0.703, +0.667]
+
+sss    H1==H2: 586 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 0  | window-mean identified set [-0.997, +0.997]
+   Yn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-1.000, +1.000]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.77  undefined 0  | window-mean identified set [-1.890, +1.889]
+   Sigma=Xn+Yn  invariant 0.036  sign determined 0.000  median width 2.84  undefined 0  | window-mean identified set [-1.376, +1.363]
+   spot fly1 win2: fit: Xn -0.42 Yn +1.00 D -1.42 logL -26.8969 | maxD: Xn +0.88 Yn -1.00 D +1.88 logL -26.8969 | minD: Xn -0.89 Yn +1.00 D -1.89 logL -26.8969
+   spot fly2 win1: fit: Xn -0.49 Yn +1.00 D -1.49 logL -43.0947 | maxD: Xn +0.93 Yn -0.97 D +1.89 logL -43.0947 | minD: Xn -0.94 Yn +0.94 D -1.88 logL -43.0947
+   spot fly3 win1: fit: Xn -0.43 Yn +nan D +nan logL -8.9520 | maxD: Xn +0.84 Yn +nan D +nan logL -8.9520 | minD: Xn -0.85 Yn +nan D +nan logL -8.9520
+
+sss    H1==H3: 7 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-1.000, +1.000]
+   Yn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 1  | window-mean identified set [-0.998, +0.998]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.95  undefined 1  | window-mean identified set [-1.957, +1.958]
+   Sigma=Xn+Yn  invariant 0.000  sign determined 0.000  median width 2.37  undefined 1  | window-mean identified set [-1.229, +1.194]
+
+per0   H1==H2: 310 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 1.99  undefined 0  | window-mean identified set [-0.993, +0.986]
+   Yn           invariant 0.000  sign determined 0.003  median width 2.00  undefined 0  | window-mean identified set [-0.993, +0.978]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.80  undefined 0  | window-mean identified set [-1.900, +1.845]
+   Sigma=Xn+Yn  invariant 0.110  sign determined 0.013  median width 3.93  undefined 0  | window-mean identified set [-1.651, +1.616]
+   spot fly1 win2: fit: Xn +0.07 Yn -0.80 D +0.87 logL -68.5570 | maxD: Xn +0.99 Yn -0.98 D +1.97 logL -68.5570 | minD: Xn -0.99 Yn +0.98 D -1.97 logL -68.5570
+   spot fly2 win2: fit: Xn +0.44 Yn +0.57 D -0.13 logL -79.0173 | maxD: Xn +0.95 Yn -0.99 D +1.94 logL -79.0173 | minD: Xn -0.97 Yn +0.99 D -1.96 logL -79.0173
+   spot fly3 win1: fit: Xn -1.00 Yn +1.00 D -2.00 logL -125.5171 | maxD: Xn +1.00 Yn -1.00 D +2.00 logL -125.5171 | minD: Xn -1.00 Yn +1.00 D -2.00 logL -125.5171
+
+per0   H1==H3: 75 windows
+   Xn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-0.999, +0.997]
+   Yn           invariant 0.000  sign determined 0.000  median width 2.00  undefined 0  | window-mean identified set [-0.996, +0.995]
+   Delta=Xn-Yn  invariant 0.000  sign determined 0.000  median width 3.99  undefined 0  | window-mean identified set [-1.976, +1.974]
+   Sigma=Xn+Yn  invariant 0.467  sign determined 0.000  median width 0.08  undefined 0  | window-mean identified set [-0.647, +0.641]
+Traceback (most recent call last):
+  File "/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/hmm_audit/analysis_E.py", line 19, in <module>
+    a,b=rates(Pq); K=(a-b)/(a+b)
+        ~~~~~^^^^
+  File "/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/hmm_audit/analysis_E.py", line 9, in rates
+    pi=stat(P); den=P[:,0,1]+P[:,0,2]
+  File "/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/hmm_audit/analysis_E.py", line 7, in stat
+    b=np.zeros((n,3)); b[:,2]=1; return np.linalg.solve(A,b)
+                                        ~~~~~~~~~~~~~~~^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/numpy/linalg/_linalg.py", line 463, in solve
+    r = gufunc(a, b, signature=signature)
+ValueError: solve: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (m,m),(m,n)->(m,n) (size 13415 is different from 3)

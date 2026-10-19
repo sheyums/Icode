@@ -1,0 +1,32 @@
+
+=== sss: 593 accepted windows, 57 flies
+  A: L1 < 1e-06: 0.988  (586)
+  A: L1 < 0.05: 0.988  (586)
+  A: L1 < 0.2: 0.988  (586)
+  A: median B rows: [[0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]
+  B: exactly-degenerate windows analysed: 586
+  B: fitted Xn_pred  median -0.470;  identified interval median [-0.997, +0.997]
+  B: fitted Yn_pred  median +1.000;  identified interval median [-1.000, +1.000]
+  B: Xn undefined in all models: 0.000; Yn: 0.000
+  B: Xn direction UNDETERMINED (interval contains 0): 1.000
+  B: Yn direction UNDETERMINED (interval contains 0): 1.000
+  B: Xn interval width median 1.995; Yn 2.000
+  spot fly1 win2: logL P -26.896860 | P' -26.896860 | Xn_pred -0.470 -> +0.997
+  spot fly2 win1: logL P -43.094730 | P' -43.094730 | Xn_pred -0.471 -> +0.997
+  spot fly3 win1: logL P -8.952032 | P' -8.952032 | Xn_pred -0.406 -> +0.996
+
+=== per0: 544 accepted windows, 25 flies
+  A: L1 < 1e-06: 0.570  (310)
+  A: L1 < 0.05: 0.599  (326)
+  A: L1 < 0.2: 0.601  (327)
+  A: median B rows: [[0.0, 1.0], [0.0, 1.0], [1.0, 0.0]]
+  B: exactly-degenerate windows analysed: 310
+  B: fitted Xn_pred  median +0.035;  identified interval median [-0.997, +0.994]
+  B: fitted Yn_pred  median +0.985;  identified interval median [-1.000, +1.000]
+  B: Xn undefined in all models: 0.000; Yn: 0.000
+  B: Xn direction UNDETERMINED (interval contains 0): 1.000
+  B: Yn direction UNDETERMINED (interval contains 0): 0.997
+  B: Xn interval width median 1.989; Yn 2.000
+  spot fly3 win1: logL P -125.517071 | P' -125.517071 | Xn_pred -1.000 -> +0.833
+  spot fly6 win1: logL P -105.063022 | P' -105.063022 | Xn_pred -1.000 -> +1.000
+  spot fly7 win1: logL P -119.261848 | P' -119.261848 | Xn_pred -0.263 -> +0.949

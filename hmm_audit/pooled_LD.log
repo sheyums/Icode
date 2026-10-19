@@ -1,0 +1,17 @@
+=== crossing fraction (bouts whose span crosses ZT0/ZT12) ===
+  CS     light sleep n= 2058 crossing 0.023
+  CS     light wake  n= 2051 crossing 0.025
+  CS     dark  sleep n= 1352 crossing 0.016
+  CS     dark  wake  n= 1362 crossing 0.039
+  per0   light sleep n= 2019 crossing 0.031
+  per0   light wake  n= 2019 crossing 0.014
+  per0   dark  sleep n= 1967 crossing 0.023
+  per0   dark  wake  n= 1969 crossing 0.010
+  fumin  light sleep n= 3180 crossing 0.010
+  fumin  light wake  n= 3162 crossing 0.046
+  fumin  dark  sleep n= 2083 crossing 0.014
+  fumin  dark  wake  n= 2107 crossing 0.080
+  sss    light sleep n=  711 crossing 0.008
+  sss    light wake  n=  736 crossing 0.095
+  sss    dark  sleep n=  775 crossing 0.012
+  sss    dark  wake  n=  786 crossing 0.062
