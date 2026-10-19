@@ -3,19 +3,20 @@ import sys; sys.path.insert(0,'/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3
 from pooled import *
 from pooled_LD import bouts_t
 from math import comb
+from em_fit import fit2g, ll1
 NMIN=300
 def LR(d,rng):
-    r1=fit(d,1,NMIN,rng,starts=3); r2=fit(d,2,NMIN,rng,starts=10); return 2*(r1.fun-r2.fun), r1, r2
+    e=d-(NMIN-1); L2,q,p=fit2g(e); return 2*(L2-ll1(e)), q, p
 def geo(rng,mean_e,n): return (NMIN-1)+rng.geometric(1/mean_e,n)
 def block_job(a):
     g,gi,fly,b,d,days=a; rng=np.random.default_rng(np.random.SeedSequence([7,gi,int(fly),b]))
-    obs,r1,r2=LR(d,rng); e=d-(NMIN-1)
+    obs,q2,p2=LR(d,rng); e=d-(NMIN-1)
     n1=[LR(geo(rng,e.mean(),len(d)).astype(float),rng)[0] for _ in range(100)]
     ud=np.unique(days); n2=[]
     for _ in range(100):
         sim=np.concatenate([geo(rng,e[days==u].mean(),np.sum(days==u)) for u in ud]).astype(float)
         n2.append(LR(sim,rng)[0])
-    q,mu=report(r2.x,2,NMIN)
+    o=np.argsort(1/p2); q=q2[o]; mu=(NMIN-1)+1/p2[o]
     return (g,int(fly),b,len(d),obs,(1+np.sum(np.array(n1)>=obs))/101,(1+np.sum(np.array(n2)>=obs))/101,q[0],mu[0],mu[1])
 def binom_p(k,n,p=0.05): return sum(comb(n,j)*p**j*(1-p)**(n-j) for j in range(k,n+1))
 if __name__=='__main__':

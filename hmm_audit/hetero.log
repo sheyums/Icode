@@ -1,0 +1,20 @@
+
+=== SLEEP ===
+CS     windows 539 (dropped 55), bouts 3320 | T1 pooled dL(K2-K1): obs   132.250  null mean   175.076 [95%: 133.203, 218.493]  p 0.9800  share explained by heterogeneity 1.32
+CS     windows 539 (dropped 55), bouts 3320 | T2 within-window overdisp: obs    -0.048  null mean    -0.133 [95%: -0.179, -0.083]  p 0.0020
+per0   windows 531 (dropped 13), bouts 3962 | T1 pooled dL(K2-K1): obs    34.301  null mean   120.604 [95%: 86.750, 158.987]  p 0.9980  share explained by heterogeneity 3.52
+per0   windows 531 (dropped 13), bouts 3962 | T2 within-window overdisp: obs    -0.227  null mean    -0.114 [95%: -0.156, -0.071]  p 1.0000
+fumin  windows 818 (dropped 521), bouts 4485 | T1 pooled dL(K2-K1): obs    28.745  null mean   154.889 [95%: 113.774, 202.104]  p 0.9960  share explained by heterogeneity 5.39
+fumin  windows 818 (dropped 521), bouts 4485 | T2 within-window overdisp: obs    -0.218  null mean    -0.145 [95%: -0.187, -0.101]  p 1.0000
+sss    windows 224 (dropped 266), bouts 1107 | T1 pooled dL(K2-K1): obs    43.769  null mean    62.172 [95%: 35.125, 93.197]  p 0.9022  share explained by heterogeneity 1.42
+sss    windows 224 (dropped 266), bouts 1107 | T2 within-window overdisp: obs    -0.071  null mean    -0.157 [95%: -0.232, -0.081]  p 0.0140
+
+=== WAKE ===
+CS     windows 536 (dropped 58), bouts 3313 | T1 pooled dL(K2-K1): obs   316.167  null mean   174.506 [95%: 131.745, 222.675]  p 0.0020  share explained by heterogeneity 0.55
+CS     windows 536 (dropped 58), bouts 3313 | T2 within-window overdisp: obs     0.318  null mean    -0.132 [95%: -0.177, -0.084]  p 0.0020
+per0   windows 530 (dropped 14), bouts 3962 | T1 pooled dL(K2-K1): obs   240.456  null mean    30.714 [95%: 16.531, 49.731]  p 0.0020  share explained by heterogeneity 0.13
+per0   windows 530 (dropped 14), bouts 3962 | T2 within-window overdisp: obs     0.014  null mean    -0.115 [95%: -0.159, -0.068]  p 0.0020
+fumin  windows 819 (dropped 534), bouts 4482 | T1 pooled dL(K2-K1): obs    86.652  null mean   204.641 [95%: 163.915, 251.309]  p 1.0000  share explained by heterogeneity 2.36
+fumin  windows 819 (dropped 534), bouts 4482 | T2 within-window overdisp: obs    -0.195  null mean    -0.145 [95%: -0.182, -0.101]  p 0.9960
+sss    windows 231 (dropped 271), bouts 1144 | T1 pooled dL(K2-K1): obs    99.672  null mean    60.964 [95%: 37.224, 83.503]  p 0.0060  share explained by heterogeneity 0.61
+sss    windows 231 (dropped 271), bouts 1144 | T2 within-window overdisp: obs     0.333  null mean    -0.156 [95%: -0.225, -0.087]  p 0.0020

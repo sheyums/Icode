@@ -15,3 +15,35 @@
   sss    light wake  n=  736 crossing 0.095
   sss    dark  sleep n=  775 crossing 0.012
   sss    dark  wake  n=  786 crossing 0.062
+
+=== P1 by phase ===
+CS     light sleep n= 2058 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-15814.1), np.float64(-15749.4), np.float64(-15748.1), np.float64(-15749.6)] | q [0.163, 0.829, 0.008] means [405.0, 1190.0, 4772.0] min branch 16.8
+CS     light wake  n= 2051 CV K=4 (AICc 3, BIC 3) | CV logL by K [np.float64(-16088.2), np.float64(-15869.0), np.float64(-15789.5), np.float64(-15789.0)] | q [0.04, 0.021, 0.74, 0.199] means [5.0, 64.0, 558.0, 2597.0] min branch 43.1
+CS     dark  sleep n= 1352 CV K=4 (AICc 2, BIC 2) | CV logL by K [np.float64(-11400.9), np.float64(-11367.0), np.float64(-11366.8), np.float64(-11366.8)] | q [0.0, 0.074, 0.817, 0.109] means [301.0, 363.0, 1942.0, 3397.0] min branch 0.0
+CS     dark  wake  n= 1362 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-10879.9), np.float64(-10795.4), np.float64(-10698.9), np.float64(-10700.0)] | q [0.056, 0.79, 0.154] means [6.0, 737.0, 3230.0] min branch 76.7
+per0   light sleep n= 2019 CV K=2 (AICc 3, BIC 2) | CV logL by K [np.float64(-16024.4), np.float64(-16008.3), np.float64(-16011.3), np.float64(-16008.7)] | q [0.052, 0.948] means [352.0, 1380.0] min branch 105.4
+per0   light wake  n= 2019 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-14984.5), np.float64(-14878.2), np.float64(-14879.9), np.float64(-14879.9)] | q [0.079, 0.921] means [11.0, 666.0] min branch 159.1
+per0   dark  sleep n= 1967 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-15640.1), np.float64(-15639.5), np.float64(-15632.6), np.float64(-15632.7)] | q [0.051, 0.882, 0.067] means [361.0, 1310.0, 2513.0] min branch 100.8
+per0   dark  wake  n= 1969 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-14589.4), np.float64(-14460.8), np.float64(-14463.2), np.float64(-14464.0)] | q [0.081, 0.919] means [9.0, 660.0] min branch 159.3
+fumin  light sleep n= 3180 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-20268.1), np.float64(-20253.3), np.float64(-20254.2), np.float64(-20254.2)] | q [0.797, 0.203] means [477.0, 662.0] min branch 646.6
+fumin  light wake  n= 3162 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-27832.2), np.float64(-27733.9), np.float64(-27729.4), np.float64(-27729.6)] | q [0.005, 0.799, 0.196] means [7.0, 1713.0, 5512.0] min branch 16.3
+fumin  dark  sleep n= 2083 CV K=4 (AICc 2, BIC 2) | CV logL by K [np.float64(-13241.5), np.float64(-13205.7), np.float64(-13204.6), np.float64(-13204.3)] | q [0.016, 0.346, 0.586, 0.052] means [313.0, 408.0, 542.0, 871.0] min branch 33.1
+fumin  dark  wake  n= 2107 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-19123.8), np.float64(-18997.5), np.float64(-18995.3), np.float64(-18995.7)] | q [0.008, 0.534, 0.458] means [8.0, 1302.0, 5488.0] min branch 16.0
+sss    light sleep n=  711 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-4609.4), np.float64(-4575.0), np.float64(-4572.0), np.float64(-4572.7)] | q [0.166, 0.663, 0.171] means [348.0, 496.0, 874.0] min branch 118.3
+sss    light wake  n=  736 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-6853.5), np.float64(-6785.3), np.float64(-6774.8), np.float64(-6775.5)] | q [0.044, 0.337, 0.62] means [34.0, 1006.0, 5941.0] min branch 32.0
+sss    dark  sleep n=  775 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-5053.0), np.float64(-5005.9), np.float64(-5006.2), np.float64(-5006.2)] | q [0.702, 0.298] means [432.0, 814.0] min branch 230.9
+sss    dark  wake  n=  786 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-7075.4), np.float64(-6986.2), np.float64(-6967.4), np.float64(-6969.1)] | q [0.039, 0.501, 0.46] means [13.0, 987.0, 5384.0] min branch 30.5
+
+=== P2 by phase ===
+CS     light pairs SW 2013 WS 2007 | rho_SW -0.021 CI [-0.065  0.02 ] p 0.3605 | rho_WS -0.032 CI [-0.077  0.013] p 0.1790 | A +0.010 CI [-0.051  0.074]
+CS     dark  pairs SW 1242 WS 1269 | rho_SW +0.126 CI [0.05  0.189] p 0.0000 | rho_WS -0.001 CI [-0.065  0.071] p 0.9705 | A +0.127 CI [0.024 0.231]
+CS     A[light]-A[dark] -0.115 CI [-0.227 -0.007]
+per0   light pairs SW 2005 WS 2006 | rho_SW +0.101 CI [0.047 0.155] p 0.0000 | rho_WS +0.091 CI [0.03 0.15] p 0.0000 | A +0.010 CI [-0.066  0.09 ]
+per0   dark  pairs SW 1929 WS 1939 | rho_SW +0.070 CI [0.02  0.125] p 0.0025 | rho_WS +0.097 CI [0.041 0.151] p 0.0005 | A -0.026 CI [-0.09  0.04]
+per0   A[light]-A[dark] +0.038 CI [-0.034  0.117]
+fumin  light pairs SW 2630 WS 2617 | rho_SW +0.028 CI [-0.011  0.07 ] p 0.1830 | rho_WS +0.007 CI [-0.027  0.04 ] p 0.7580 | A +0.022 CI [-0.034  0.079]
+fumin  dark  pairs SW 1646 WS 1611 | rho_SW +0.023 CI [-0.041  0.084] p 0.3920 | rho_WS +0.023 CI [-0.017  0.067] p 0.3995 | A +0.000 CI [-0.083  0.082]
+fumin  A[light]-A[dark] +0.023 CI [-0.074  0.117]
+sss    light pairs SW 446 WS 431 | rho_SW -0.044 CI [-0.126  0.037] p 0.3855 | rho_WS -0.037 CI [-0.157  0.08 ] p 0.4815 | A -0.007 CI [-0.159  0.147]
+sss    dark  pairs SW 589 WS 559 | rho_SW +0.041 CI [-0.046  0.136] p 0.3555 | rho_WS -0.016 CI [-0.1    0.061] p 0.7140 | A +0.057 CI [-0.06   0.189]
+sss    A[light]-A[dark] -0.065 CI [-0.27   0.128]

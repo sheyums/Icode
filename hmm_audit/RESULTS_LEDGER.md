@@ -207,3 +207,195 @@ not N312 vs N213. E was not re-run. No E result exists.
        A[fumin] - A[sss]: -0.017 CI [-0.123  0.089]
 
 ## 2026-10-19 — PRESPEC 5b run 1 CRASHED (seed bug: negative fold code as RNG seed). Only output: crossing fractions (kept in pooled_LD_crash1.log). Fix: seed offset +20 in an LD-only job function; rerun.
+
+## 2026-10-19 — PRESPEC 5b (fab217d) light/dark, pooled_LD.py run 2 (seed fix c965ffe) — SECONDARY
+    === crossing fraction (bouts whose span crosses ZT0/ZT12) ===
+      CS     light sleep n= 2058 crossing 0.023
+      CS     light wake  n= 2051 crossing 0.025
+      CS     dark  sleep n= 1352 crossing 0.016
+      CS     dark  wake  n= 1362 crossing 0.039
+      per0   light sleep n= 2019 crossing 0.031
+      per0   light wake  n= 2019 crossing 0.014
+      per0   dark  sleep n= 1967 crossing 0.023
+      per0   dark  wake  n= 1969 crossing 0.010
+      fumin  light sleep n= 3180 crossing 0.010
+      fumin  light wake  n= 3162 crossing 0.046
+      fumin  dark  sleep n= 2083 crossing 0.014
+      fumin  dark  wake  n= 2107 crossing 0.080
+      sss    light sleep n=  711 crossing 0.008
+      sss    light wake  n=  736 crossing 0.095
+      sss    dark  sleep n=  775 crossing 0.012
+      sss    dark  wake  n=  786 crossing 0.062
+    
+    === P1 by phase ===
+    CS     light sleep n= 2058 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-15814.1), np.float64(-15749.4), np.float64(-15748.1), np.float64(-15749.6)] | q [0.163, 0.829, 0.008] means [405.0, 1190.0, 4772.0] min branch 16.8
+    CS     light wake  n= 2051 CV K=4 (AICc 3, BIC 3) | CV logL by K [np.float64(-16088.2), np.float64(-15869.0), np.float64(-15789.5), np.float64(-15789.0)] | q [0.04, 0.021, 0.74, 0.199] means [5.0, 64.0, 558.0, 2597.0] min branch 43.1
+    CS     dark  sleep n= 1352 CV K=4 (AICc 2, BIC 2) | CV logL by K [np.float64(-11400.9), np.float64(-11367.0), np.float64(-11366.8), np.float64(-11366.8)] | q [0.0, 0.074, 0.817, 0.109] means [301.0, 363.0, 1942.0, 3397.0] min branch 0.0
+    CS     dark  wake  n= 1362 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-10879.9), np.float64(-10795.4), np.float64(-10698.9), np.float64(-10700.0)] | q [0.056, 0.79, 0.154] means [6.0, 737.0, 3230.0] min branch 76.7
+    per0   light sleep n= 2019 CV K=2 (AICc 3, BIC 2) | CV logL by K [np.float64(-16024.4), np.float64(-16008.3), np.float64(-16011.3), np.float64(-16008.7)] | q [0.052, 0.948] means [352.0, 1380.0] min branch 105.4
+    per0   light wake  n= 2019 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-14984.5), np.float64(-14878.2), np.float64(-14879.9), np.float64(-14879.9)] | q [0.079, 0.921] means [11.0, 666.0] min branch 159.1
+    per0   dark  sleep n= 1967 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-15640.1), np.float64(-15639.5), np.float64(-15632.6), np.float64(-15632.7)] | q [0.051, 0.882, 0.067] means [361.0, 1310.0, 2513.0] min branch 100.8
+    per0   dark  wake  n= 1969 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-14589.4), np.float64(-14460.8), np.float64(-14463.2), np.float64(-14464.0)] | q [0.081, 0.919] means [9.0, 660.0] min branch 159.3
+    fumin  light sleep n= 3180 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-20268.1), np.float64(-20253.3), np.float64(-20254.2), np.float64(-20254.2)] | q [0.797, 0.203] means [477.0, 662.0] min branch 646.6
+    fumin  light wake  n= 3162 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-27832.2), np.float64(-27733.9), np.float64(-27729.4), np.float64(-27729.6)] | q [0.005, 0.799, 0.196] means [7.0, 1713.0, 5512.0] min branch 16.3
+    fumin  dark  sleep n= 2083 CV K=4 (AICc 2, BIC 2) | CV logL by K [np.float64(-13241.5), np.float64(-13205.7), np.float64(-13204.6), np.float64(-13204.3)] | q [0.016, 0.346, 0.586, 0.052] means [313.0, 408.0, 542.0, 871.0] min branch 33.1
+    fumin  dark  wake  n= 2107 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-19123.8), np.float64(-18997.5), np.float64(-18995.3), np.float64(-18995.7)] | q [0.008, 0.534, 0.458] means [8.0, 1302.0, 5488.0] min branch 16.0
+    sss    light sleep n=  711 CV K=3 (AICc 3, BIC 2) | CV logL by K [np.float64(-4609.4), np.float64(-4575.0), np.float64(-4572.0), np.float64(-4572.7)] | q [0.166, 0.663, 0.171] means [348.0, 496.0, 874.0] min branch 118.3
+    sss    light wake  n=  736 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-6853.5), np.float64(-6785.3), np.float64(-6774.8), np.float64(-6775.5)] | q [0.044, 0.337, 0.62] means [34.0, 1006.0, 5941.0] min branch 32.0
+    sss    dark  sleep n=  775 CV K=2 (AICc 2, BIC 2) | CV logL by K [np.float64(-5053.0), np.float64(-5005.9), np.float64(-5006.2), np.float64(-5006.2)] | q [0.702, 0.298] means [432.0, 814.0] min branch 230.9
+    sss    dark  wake  n=  786 CV K=3 (AICc 3, BIC 3) | CV logL by K [np.float64(-7075.4), np.float64(-6986.2), np.float64(-6967.4), np.float64(-6969.1)] | q [0.039, 0.501, 0.46] means [13.0, 987.0, 5384.0] min branch 30.5
+    
+    === P2 by phase ===
+    CS     light pairs SW 2013 WS 2007 | rho_SW -0.021 CI [-0.065  0.02 ] p 0.3605 | rho_WS -0.032 CI [-0.077  0.013] p 0.1790 | A +0.010 CI [-0.051  0.074]
+    CS     dark  pairs SW 1242 WS 1269 | rho_SW +0.126 CI [0.05  0.189] p 0.0000 | rho_WS -0.001 CI [-0.065  0.071] p 0.9705 | A +0.127 CI [0.024 0.231]
+    CS     A[light]-A[dark] -0.115 CI [-0.227 -0.007]
+    per0   light pairs SW 2005 WS 2006 | rho_SW +0.101 CI [0.047 0.155] p 0.0000 | rho_WS +0.091 CI [0.03 0.15] p 0.0000 | A +0.010 CI [-0.066  0.09 ]
+    per0   dark  pairs SW 1929 WS 1939 | rho_SW +0.070 CI [0.02  0.125] p 0.0025 | rho_WS +0.097 CI [0.041 0.151] p 0.0005 | A -0.026 CI [-0.09  0.04]
+    per0   A[light]-A[dark] +0.038 CI [-0.034  0.117]
+    fumin  light pairs SW 2630 WS 2617 | rho_SW +0.028 CI [-0.011  0.07 ] p 0.1830 | rho_WS +0.007 CI [-0.027  0.04 ] p 0.7580 | A +0.022 CI [-0.034  0.079]
+    fumin  dark  pairs SW 1646 WS 1611 | rho_SW +0.023 CI [-0.041  0.084] p 0.3920 | rho_WS +0.023 CI [-0.017  0.067] p 0.3995 | A +0.000 CI [-0.083  0.082]
+    fumin  A[light]-A[dark] +0.023 CI [-0.074  0.117]
+    sss    light pairs SW 446 WS 431 | rho_SW -0.044 CI [-0.126  0.037] p 0.3855 | rho_WS -0.037 CI [-0.157  0.08 ] p 0.4815 | A -0.007 CI [-0.159  0.147]
+    sss    dark  pairs SW 589 WS 559 | rho_SW +0.041 CI [-0.046  0.136] p 0.3555 | rho_WS -0.016 CI [-0.1    0.061] p 0.7140 | A +0.057 CI [-0.06   0.189]
+    sss    A[light]-A[dark] -0.065 CI [-0.27   0.128]
+    Multiplicity note (written with the result): 8 genotype x phase A intervals + 4 light-dark differences were computed; one A interval (CS dark) and one difference (CS) exclude 0.
+
+## 2026-10-19 — PRESPEC 6 (eb14beb), hetero.py
+    
+    === SLEEP ===
+    CS     windows 539 (dropped 55), bouts 3320 | T1 pooled dL(K2-K1): obs   132.250  null mean   175.076 [95%: 133.203, 218.493]  p 0.9800  share explained by heterogeneity 1.32
+    CS     windows 539 (dropped 55), bouts 3320 | T2 within-window overdisp: obs    -0.048  null mean    -0.133 [95%: -0.179, -0.083]  p 0.0020
+    per0   windows 531 (dropped 13), bouts 3962 | T1 pooled dL(K2-K1): obs    34.301  null mean   120.604 [95%: 86.750, 158.987]  p 0.9980  share explained by heterogeneity 3.52
+    per0   windows 531 (dropped 13), bouts 3962 | T2 within-window overdisp: obs    -0.227  null mean    -0.114 [95%: -0.156, -0.071]  p 1.0000
+    fumin  windows 818 (dropped 521), bouts 4485 | T1 pooled dL(K2-K1): obs    28.745  null mean   154.889 [95%: 113.774, 202.104]  p 0.9960  share explained by heterogeneity 5.39
+    fumin  windows 818 (dropped 521), bouts 4485 | T2 within-window overdisp: obs    -0.218  null mean    -0.145 [95%: -0.187, -0.101]  p 1.0000
+    sss    windows 224 (dropped 266), bouts 1107 | T1 pooled dL(K2-K1): obs    43.769  null mean    62.172 [95%: 35.125, 93.197]  p 0.9022  share explained by heterogeneity 1.42
+    sss    windows 224 (dropped 266), bouts 1107 | T2 within-window overdisp: obs    -0.071  null mean    -0.157 [95%: -0.232, -0.081]  p 0.0140
+    
+    === WAKE ===
+    CS     windows 536 (dropped 58), bouts 3313 | T1 pooled dL(K2-K1): obs   316.167  null mean   174.506 [95%: 131.745, 222.675]  p 0.0020  share explained by heterogeneity 0.55
+    CS     windows 536 (dropped 58), bouts 3313 | T2 within-window overdisp: obs     0.318  null mean    -0.132 [95%: -0.177, -0.084]  p 0.0020
+    per0   windows 530 (dropped 14), bouts 3962 | T1 pooled dL(K2-K1): obs   240.456  null mean    30.714 [95%: 16.531, 49.731]  p 0.0020  share explained by heterogeneity 0.13
+    per0   windows 530 (dropped 14), bouts 3962 | T2 within-window overdisp: obs     0.014  null mean    -0.115 [95%: -0.159, -0.068]  p 0.0020
+    fumin  windows 819 (dropped 534), bouts 4482 | T1 pooled dL(K2-K1): obs    86.652  null mean   204.641 [95%: 163.915, 251.309]  p 1.0000  share explained by heterogeneity 2.36
+    fumin  windows 819 (dropped 534), bouts 4482 | T2 within-window overdisp: obs    -0.195  null mean    -0.145 [95%: -0.182, -0.101]  p 0.9960
+    sss    windows 231 (dropped 271), bouts 1144 | T1 pooled dL(K2-K1): obs    99.672  null mean    60.964 [95%: 37.224, 83.503]  p 0.0060  share explained by heterogeneity 0.61
+    sss    windows 231 (dropped 271), bouts 1144 | T2 within-window overdisp: obs     0.333  null mean    -0.156 [95%: -0.225, -0.087]  p 0.0020
+    Note (written with the result): T2 one-sided as specified; per0 and fumin SLEEP T2 fall BELOW the null 95% range (under-dispersed) — the other tail, not a pre-specified test.
+
+## 2026-10-19 — PRESPEC 7 (+amendment d4841af), within_fly.py
+    blocks analysed: {'CS': 94, 'per0': 113, 'fumin': 104, 'sss': 4} excluded (<20 bouts, >0): {'CS': 56, 'per0': 37, 'fumin': 199, 'sss': 258}
+    CS     blocks  94 | N1: 23/94 = 0.24 (binom p 1.8e-10) | N2 (PRIMARY): 10/94 = 0.11 (binom p 0.019) | sig-N2 blocks: median q_short 0.21, means 326 s / 1191 s
+    per0   blocks 113 | N1: 8/113 = 0.07 (binom p 0.2) | N2 (PRIMARY): 3/113 = 0.03 (binom p 0.93) | sig-N2 blocks: median q_short 0.10, means 303 s / 1029 s
+    fumin  blocks 104 | N1: 12/104 = 0.12 (binom p 0.0059) | N2 (PRIMARY): 1/104 = 0.01 (binom p 1) | sig-N2 blocks: median q_short 0.07, means 301 s / 463 s
+    sss    blocks   4 | N1: 2/4 = 0.50 (binom p 0.014) | N2 (PRIMARY): 1/4 = 0.25 (binom p 0.19) | sig-N2 blocks: median q_short 0.12, means 308 s / 771 s
+    
+    By ZT bin (all genotypes' blocks, descriptive): fraction p<0.05 under N2
+      ZT  0- 4: 2/66
+      ZT  4- 8: 4/62
+      ZT  8-12: 3/58
+      ZT 12-16: 2/53
+      ZT 16-20: 4/41
+      ZT 20-24: 0/35
+
+## 2026-10-19 — PRESPEC 8 (approved, d932e9e), irrev.py — RESULTS UNDER QUESTION, see 8b
+    CS     whole pairs SW 3082 WS 3147 windows 594 | PASS(all 3 bin sets) True | null pass rate 0.0020
+        3x3: D 0.0085 null 0.0012 D* 0.0073 CI [+0.0058,+0.0125] p 0.0005 | D*/h 0.0117
+        4x4: D 0.0117 null 0.0027 D* 0.0090 CI [+0.0076,+0.0181] p 0.0005 | D*/h 0.0144
+        5x5: D 0.0139 null 0.0048 D* 0.0092 CI [+0.0092,+0.0212] p 0.0005 | D*/h 0.0147
+    CS     light pairs SW 1923 WS 1889 windows 366 | PASS(all 3 bin sets) True | null pass rate 0.0025
+        3x3: D 0.0128 null 0.0021 D* 0.0107 CI [+0.0071,+0.0219] p 0.0010 | D*/h 0.0196
+        4x4: D 0.0169 null 0.0044 D* 0.0125 CI [+0.0097,+0.0263] p 0.0005 | D*/h 0.0228
+        5x5: D 0.0205 null 0.0080 D* 0.0125 CI [+0.0126,+0.0328] p 0.0005 | D*/h 0.0229
+    CS     dark  pairs SW 1159 WS 1258 windows 338 | PASS(all 3 bin sets) False | null pass rate 0.0010
+        3x3: D 0.0071 null 0.0033 D* 0.0038 CI [+0.0020,+0.0152] p 0.0585 | D*/h 0.0051
+        4x4: D 0.0139 null 0.0076 D* 0.0063 CI [+0.0047,+0.0283] p 0.0510 | D*/h 0.0085
+        5x5: D 0.0178 null 0.0128 D* 0.0050 CI [+0.0058,+0.0373] p 0.1224 | D*/h 0.0067
+    per0   whole pairs SW 3612 WS 3818 windows 544 | PASS(all 3 bin sets) False | null pass rate 0.0015
+        3x3: D 0.0028 null 0.0011 D* 0.0017 CI [+0.0010,+0.0063] p 0.0250 | D*/h 0.0033
+        4x4: D 0.0037 null 0.0023 D* 0.0014 CI [+0.0012,+0.0082] p 0.0990 | D*/h 0.0028
+        5x5: D 0.0070 null 0.0042 D* 0.0028 CI [+0.0027,+0.0140] p 0.0405 | D*/h 0.0055
+    per0   light pairs SW 1822 WS 1943 windows 318 | PASS(all 3 bin sets) False | null pass rate 0.0040
+        3x3: D 0.0042 null 0.0021 D* 0.0021 CI [+0.0009,+0.0092] p 0.0760 | D*/h 0.0042
+        4x4: D 0.0088 null 0.0047 D* 0.0041 CI [+0.0038,+0.0161] p 0.0440 | D*/h 0.0081
+        5x5: D 0.0134 null 0.0084 D* 0.0050 CI [+0.0042,+0.0266] p 0.0550 | D*/h 0.0099
+    per0   dark  pairs SW 1790 WS 1875 windows 302 | PASS(all 3 bin sets) False | null pass rate 0.0030
+        3x3: D 0.0020 null 0.0022 D* 0.0000 CI [-0.0009,+0.0074] p 0.4618 | D*/h 0.0000
+        4x4: D 0.0038 null 0.0047 D* 0.0000 CI [-0.0016,+0.0116] p 0.6227 | D*/h 0.0000
+        5x5: D 0.0139 null 0.0085 D* 0.0054 CI [+0.0028,+0.0298] p 0.0445 | D*/h 0.0104
+    fumin  whole pairs SW 4827 WS 4284 windows 1271 | PASS(all 3 bin sets) True | null pass rate 0.0020
+        3x3: D 0.0192 null 0.0009 D* 0.0184 CI [+0.0145,+0.0245] p 0.0005 | D*/h 0.0210
+        4x4: D 0.0244 null 0.0019 D* 0.0225 CI [+0.0181,+0.0320] p 0.0005 | D*/h 0.0258
+        5x5: D 0.0325 null 0.0034 D* 0.0291 CI [+0.0250,+0.0407] p 0.0005 | D*/h 0.0333
+    fumin  light pairs SW 2922 WS 2628 windows 822 | PASS(all 3 bin sets) True | null pass rate 0.0035
+        3x3: D 0.0158 null 0.0015 D* 0.0143 CI [+0.0113,+0.0215] p 0.0005 | D*/h 0.0177
+        4x4: D 0.0218 null 0.0031 D* 0.0187 CI [+0.0159,+0.0285] p 0.0005 | D*/h 0.0231
+        5x5: D 0.0265 null 0.0056 D* 0.0208 CI [+0.0192,+0.0361] p 0.0005 | D*/h 0.0257
+    fumin  dark  pairs SW 1905 WS 1656 windows 641 | PASS(all 3 bin sets) True | null pass rate 0.0035
+        3x3: D 0.0263 null 0.0023 D* 0.0240 CI [+0.0159,+0.0395] p 0.0005 | D*/h 0.0246
+        4x4: D 0.0355 null 0.0050 D* 0.0304 CI [+0.0221,+0.0540] p 0.0005 | D*/h 0.0312
+        5x5: D 0.0468 null 0.0091 D* 0.0378 CI [+0.0307,+0.0685] p 0.0005 | D*/h 0.0387
+    sss    whole pairs SW 1326 WS 1140 windows 450 | PASS(all 3 bin sets) True | null pass rate 0.0045
+        3x3: D 0.0617 null 0.0036 D* 0.0581 CI [+0.0469,+0.0798] p 0.0005 | D*/h 0.0551
+        4x4: D 0.0846 null 0.0077 D* 0.0770 CI [+0.0627,+0.1135] p 0.0005 | D*/h 0.0730
+        5x5: D 0.1261 null 0.0135 D* 0.1126 CI [+0.0967,+0.1706] p 0.0005 | D*/h 0.1068
+    sss    light pairs SW 627 WS 533 windows 266 | PASS(all 3 bin sets) True | null pass rate 0.0020
+        3x3: D 0.0700 null 0.0082 D* 0.0617 CI [+0.0452,+0.1034] p 0.0005 | D*/h 0.0508
+        4x4: D 0.1134 null 0.0163 D* 0.0970 CI [+0.0797,+0.1670] p 0.0005 | D*/h 0.0799
+        5x5: D 0.1838 null 0.0294 D* 0.1544 CI [+0.1301,+0.2851] p 0.0005 | D*/h 0.1272
+    sss    dark  pairs SW 699 WS 607 windows 245 | PASS(all 3 bin sets) True | null pass rate 0.0035
+        3x3: D 0.0554 null 0.0068 D* 0.0486 CI [+0.0322,+0.0898] p 0.0005 | D*/h 0.0533
+        4x4: D 0.0629 null 0.0146 D* 0.0483 CI [+0.0367,+0.1145] p 0.0005 | D*/h 0.0530
+        5x5: D 0.0987 null 0.0250 D* 0.0737 CI [+0.0580,+0.1766] p 0.0005 | D*/h 0.0808
+    8b check 1-2 (post hoc): last bout of each window is length-biased (e.g. CS wake mean log-dur first 6.07 / interior 5.73 / last 7.85). Window cut rule is time-asymmetric -> PRESPEC 8 D* may be an artifact. Edge-free rerun launched.
+
+## 2026-10-19 — 8b check 3 (POST HOC), irrev.py edgefree
+    CS     whole pairs SW 2554 WS 2497 windows 568 | PASS(all 3 bin sets) False | null pass rate 0.0020
+        3x3: D 0.0020 null 0.0015 D* 0.0004 CI [-0.0001,+0.0051] p 0.2589 | D*/h 0.0008
+        4x4: D 0.0044 null 0.0034 D* 0.0010 CI [-0.0001,+0.0105] p 0.2259 | D*/h 0.0018
+        5x5: D 0.0043 null 0.0061 D* 0.0000 CI [-0.0010,+0.0124] p 0.8161 | D*/h 0.0000
+    CS     light pairs SW 1596 WS 1596 windows 343 | PASS(all 3 bin sets) False | null pass rate 0.0020
+        3x3: D 0.0034 null 0.0025 D* 0.0009 CI [-0.0003,+0.0085] p 0.2319 | D*/h 0.0019
+        4x4: D 0.0071 null 0.0055 D* 0.0016 CI [+0.0009,+0.0158] p 0.2309 | D*/h 0.0034
+        5x5: D 0.0064 null 0.0098 D* 0.0000 CI [-0.0013,+0.0180] p 0.8656 | D*/h 0.0000
+    CS     dark  pairs SW 958 WS 901 windows 299 | PASS(all 3 bin sets) False | null pass rate 0.0040
+        3x3: D 0.0019 null 0.0047 D* 0.0000 CI [-0.0033,+0.0105] p 0.8656 | D*/h 0.0000
+        4x4: D 0.0064 null 0.0105 D* 0.0000 CI [-0.0041,+0.0247] p 0.8351 | D*/h 0.0000
+        5x5: D 0.0142 null 0.0180 D* 0.0000 CI [-0.0024,+0.0427] p 0.7066 | D*/h 0.0000
+    per0   whole pairs SW 3274 WS 3069 windows 541 | PASS(all 3 bin sets) False | null pass rate 0.0030
+        3x3: D 0.0015 null 0.0013 D* 0.0003 CI [-0.0005,+0.0054] p 0.2974 | D*/h 0.0005
+        4x4: D 0.0020 null 0.0027 D* 0.0000 CI [-0.0009,+0.0056] p 0.6897 | D*/h 0.0000
+        5x5: D 0.0052 null 0.0050 D* 0.0002 CI [-0.0001,+0.0132] p 0.3993 | D*/h 0.0004
+    per0   light pairs SW 1666 WS 1540 windows 292 | PASS(all 3 bin sets) False | null pass rate 0.0020
+        3x3: D 0.0021 null 0.0025 D* 0.0000 CI [-0.0015,+0.0083] p 0.4938 | D*/h 0.0000
+        4x4: D 0.0082 null 0.0055 D* 0.0027 CI [+0.0010,+0.0168] p 0.1394 | D*/h 0.0055
+        5x5: D 0.0105 null 0.0098 D* 0.0007 CI [-0.0002,+0.0268] p 0.3848 | D*/h 0.0014
+    per0   dark  pairs SW 1608 WS 1529 windows 283 | PASS(all 3 bin sets) False | null pass rate 0.0015
+        3x3: D 0.0016 null 0.0027 D* 0.0000 CI [-0.0015,+0.0078] p 0.6962 | D*/h 0.0000
+        4x4: D 0.0042 null 0.0056 D* 0.0000 CI [-0.0026,+0.0124] p 0.6692 | D*/h 0.0000
+        5x5: D 0.0131 null 0.0102 D* 0.0029 CI [+0.0020,+0.0277] p 0.1909 | D*/h 0.0057
+    fumin  whole pairs SW 3126 WS 3583 windows 1016 | PASS(all 3 bin sets) True | null pass rate 0.0020
+        3x3: D 0.0050 null 0.0012 D* 0.0038 CI [+0.0031,+0.0076] p 0.0005 | D*/h 0.0069
+        4x4: D 0.0063 null 0.0028 D* 0.0035 CI [+0.0028,+0.0115] p 0.0075 | D*/h 0.0064
+        5x5: D 0.0102 null 0.0049 D* 0.0053 CI [+0.0044,+0.0168] p 0.0050 | D*/h 0.0096
+    fumin  light pairs SW 1957 WS 2210 windows 671 | PASS(all 3 bin sets) False | null pass rate 0.0035
+        3x3: D 0.0051 null 0.0020 D* 0.0030 CI [+0.0020,+0.0089] p 0.0280 | D*/h 0.0055
+        4x4: D 0.0070 null 0.0044 D* 0.0026 CI [+0.0015,+0.0132] p 0.1039 | D*/h 0.0047
+        5x5: D 0.0105 null 0.0079 D* 0.0026 CI [+0.0022,+0.0181] p 0.1419 | D*/h 0.0048
+    fumin  dark  pairs SW 1169 WS 1373 windows 467 | PASS(all 3 bin sets) True | null pass rate 0.0010
+        3x3: D 0.0070 null 0.0033 D* 0.0037 CI [+0.0017,+0.0160] p 0.0420 | D*/h 0.0068
+        4x4: D 0.0144 null 0.0075 D* 0.0069 CI [+0.0039,+0.0295] p 0.0310 | D*/h 0.0126
+        5x5: D 0.0250 null 0.0131 D* 0.0119 CI [+0.0104,+0.0464] p 0.0110 | D*/h 0.0218
+    sss    whole pairs SW 748 WS 892 windows 299 | PASS(all 3 bin sets) False | null pass rate 0.0020
+        3x3: D 0.0102 null 0.0059 D* 0.0043 CI [-0.0011,+0.0256] p 0.1124 | D*/h 0.0080
+        4x4: D 0.0159 null 0.0124 D* 0.0035 CI [-0.0001,+0.0420] p 0.2224 | D*/h 0.0066
+        5x5: D 0.0434 null 0.0210 D* 0.0224 CI [+0.0180,+0.0783] p 0.0070 | D*/h 0.0419
+    sss    light pairs SW 331 WS 399 windows 156 | PASS(all 3 bin sets) False | null pass rate 0.0015
+        3x3: D 0.0105 null 0.0141 D* 0.0000 CI [-0.0070,+0.0445] p 0.6032 | D*/h 0.0000
+        4x4: D 0.0256 null 0.0279 D* 0.0000 CI [-0.0072,+0.0750] p 0.5142 | D*/h 0.0000
+        5x5: D 0.0616 null 0.0454 D* 0.0162 CI [+0.0104,+0.1156] p 0.1449 | D*/h 0.0292
+    sss    dark  pairs SW 417 WS 493 windows 174 | PASS(all 3 bin sets) False | null pass rate 0.0040
+        3x3: D 0.0161 null 0.0099 D* 0.0062 CI [-0.0013,+0.0392] p 0.1324 | D*/h 0.0119
+        4x4: D 0.0206 null 0.0221 D* 0.0000 CI [-0.0045,+0.0579] p 0.4943 | D*/h 0.0000
+        5x5: D 0.0606 null 0.0361 D* 0.0245 CI [+0.0205,+0.1104] p 0.0510 | D*/h 0.0470
+    Note: bootstrap CIs exclude 0 in several blocks with reversal-null p > 0.2 (e.g. CS light 4x4); the plug-in bootstrap is biased upward, so the reversal-null p, not the CI, is the test.

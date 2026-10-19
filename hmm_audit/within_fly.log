@@ -1,0 +1,13 @@
+blocks analysed: {'CS': 94, 'per0': 113, 'fumin': 104, 'sss': 4} excluded (<20 bouts, >0): {'CS': 56, 'per0': 37, 'fumin': 199, 'sss': 258}
+CS     blocks  94 | N1: 23/94 = 0.24 (binom p 1.8e-10) | N2 (PRIMARY): 10/94 = 0.11 (binom p 0.019) | sig-N2 blocks: median q_short 0.21, means 326 s / 1191 s
+per0   blocks 113 | N1: 8/113 = 0.07 (binom p 0.2) | N2 (PRIMARY): 3/113 = 0.03 (binom p 0.93) | sig-N2 blocks: median q_short 0.10, means 303 s / 1029 s
+fumin  blocks 104 | N1: 12/104 = 0.12 (binom p 0.0059) | N2 (PRIMARY): 1/104 = 0.01 (binom p 1) | sig-N2 blocks: median q_short 0.07, means 301 s / 463 s
+sss    blocks   4 | N1: 2/4 = 0.50 (binom p 0.014) | N2 (PRIMARY): 1/4 = 0.25 (binom p 0.19) | sig-N2 blocks: median q_short 0.12, means 308 s / 771 s
+
+By ZT bin (all genotypes' blocks, descriptive): fraction p<0.05 under N2
+  ZT  0- 4: 2/66
+  ZT  4- 8: 4/62
+  ZT  8-12: 3/58
+  ZT 12-16: 2/53
+  ZT 16-20: 4/41
+  ZT 20-24: 0/35

@@ -1,0 +1,48 @@
+CS     whole pairs SW 2554 WS 2497 windows 568 | PASS(all 3 bin sets) False | null pass rate 0.0020
+    3x3: D 0.0020 null 0.0015 D* 0.0004 CI [-0.0001,+0.0051] p 0.2589 | D*/h 0.0008
+    4x4: D 0.0044 null 0.0034 D* 0.0010 CI [-0.0001,+0.0105] p 0.2259 | D*/h 0.0018
+    5x5: D 0.0043 null 0.0061 D* 0.0000 CI [-0.0010,+0.0124] p 0.8161 | D*/h 0.0000
+CS     light pairs SW 1596 WS 1596 windows 343 | PASS(all 3 bin sets) False | null pass rate 0.0020
+    3x3: D 0.0034 null 0.0025 D* 0.0009 CI [-0.0003,+0.0085] p 0.2319 | D*/h 0.0019
+    4x4: D 0.0071 null 0.0055 D* 0.0016 CI [+0.0009,+0.0158] p 0.2309 | D*/h 0.0034
+    5x5: D 0.0064 null 0.0098 D* 0.0000 CI [-0.0013,+0.0180] p 0.8656 | D*/h 0.0000
+CS     dark  pairs SW 958 WS 901 windows 299 | PASS(all 3 bin sets) False | null pass rate 0.0040
+    3x3: D 0.0019 null 0.0047 D* 0.0000 CI [-0.0033,+0.0105] p 0.8656 | D*/h 0.0000
+    4x4: D 0.0064 null 0.0105 D* 0.0000 CI [-0.0041,+0.0247] p 0.8351 | D*/h 0.0000
+    5x5: D 0.0142 null 0.0180 D* 0.0000 CI [-0.0024,+0.0427] p 0.7066 | D*/h 0.0000
+per0   whole pairs SW 3274 WS 3069 windows 541 | PASS(all 3 bin sets) False | null pass rate 0.0030
+    3x3: D 0.0015 null 0.0013 D* 0.0003 CI [-0.0005,+0.0054] p 0.2974 | D*/h 0.0005
+    4x4: D 0.0020 null 0.0027 D* 0.0000 CI [-0.0009,+0.0056] p 0.6897 | D*/h 0.0000
+    5x5: D 0.0052 null 0.0050 D* 0.0002 CI [-0.0001,+0.0132] p 0.3993 | D*/h 0.0004
+per0   light pairs SW 1666 WS 1540 windows 292 | PASS(all 3 bin sets) False | null pass rate 0.0020
+    3x3: D 0.0021 null 0.0025 D* 0.0000 CI [-0.0015,+0.0083] p 0.4938 | D*/h 0.0000
+    4x4: D 0.0082 null 0.0055 D* 0.0027 CI [+0.0010,+0.0168] p 0.1394 | D*/h 0.0055
+    5x5: D 0.0105 null 0.0098 D* 0.0007 CI [-0.0002,+0.0268] p 0.3848 | D*/h 0.0014
+per0   dark  pairs SW 1608 WS 1529 windows 283 | PASS(all 3 bin sets) False | null pass rate 0.0015
+    3x3: D 0.0016 null 0.0027 D* 0.0000 CI [-0.0015,+0.0078] p 0.6962 | D*/h 0.0000
+    4x4: D 0.0042 null 0.0056 D* 0.0000 CI [-0.0026,+0.0124] p 0.6692 | D*/h 0.0000
+    5x5: D 0.0131 null 0.0102 D* 0.0029 CI [+0.0020,+0.0277] p 0.1909 | D*/h 0.0057
+fumin  whole pairs SW 3126 WS 3583 windows 1016 | PASS(all 3 bin sets) True | null pass rate 0.0020
+    3x3: D 0.0050 null 0.0012 D* 0.0038 CI [+0.0031,+0.0076] p 0.0005 | D*/h 0.0069
+    4x4: D 0.0063 null 0.0028 D* 0.0035 CI [+0.0028,+0.0115] p 0.0075 | D*/h 0.0064
+    5x5: D 0.0102 null 0.0049 D* 0.0053 CI [+0.0044,+0.0168] p 0.0050 | D*/h 0.0096
+fumin  light pairs SW 1957 WS 2210 windows 671 | PASS(all 3 bin sets) False | null pass rate 0.0035
+    3x3: D 0.0051 null 0.0020 D* 0.0030 CI [+0.0020,+0.0089] p 0.0280 | D*/h 0.0055
+    4x4: D 0.0070 null 0.0044 D* 0.0026 CI [+0.0015,+0.0132] p 0.1039 | D*/h 0.0047
+    5x5: D 0.0105 null 0.0079 D* 0.0026 CI [+0.0022,+0.0181] p 0.1419 | D*/h 0.0048
+fumin  dark  pairs SW 1169 WS 1373 windows 467 | PASS(all 3 bin sets) True | null pass rate 0.0010
+    3x3: D 0.0070 null 0.0033 D* 0.0037 CI [+0.0017,+0.0160] p 0.0420 | D*/h 0.0068
+    4x4: D 0.0144 null 0.0075 D* 0.0069 CI [+0.0039,+0.0295] p 0.0310 | D*/h 0.0126
+    5x5: D 0.0250 null 0.0131 D* 0.0119 CI [+0.0104,+0.0464] p 0.0110 | D*/h 0.0218
+sss    whole pairs SW 748 WS 892 windows 299 | PASS(all 3 bin sets) False | null pass rate 0.0020
+    3x3: D 0.0102 null 0.0059 D* 0.0043 CI [-0.0011,+0.0256] p 0.1124 | D*/h 0.0080
+    4x4: D 0.0159 null 0.0124 D* 0.0035 CI [-0.0001,+0.0420] p 0.2224 | D*/h 0.0066
+    5x5: D 0.0434 null 0.0210 D* 0.0224 CI [+0.0180,+0.0783] p 0.0070 | D*/h 0.0419
+sss    light pairs SW 331 WS 399 windows 156 | PASS(all 3 bin sets) False | null pass rate 0.0015
+    3x3: D 0.0105 null 0.0141 D* 0.0000 CI [-0.0070,+0.0445] p 0.6032 | D*/h 0.0000
+    4x4: D 0.0256 null 0.0279 D* 0.0000 CI [-0.0072,+0.0750] p 0.5142 | D*/h 0.0000
+    5x5: D 0.0616 null 0.0454 D* 0.0162 CI [+0.0104,+0.1156] p 0.1449 | D*/h 0.0292
+sss    dark  pairs SW 417 WS 493 windows 174 | PASS(all 3 bin sets) False | null pass rate 0.0040
+    3x3: D 0.0161 null 0.0099 D* 0.0062 CI [-0.0013,+0.0392] p 0.1324 | D*/h 0.0119
+    4x4: D 0.0206 null 0.0221 D* 0.0000 CI [-0.0045,+0.0579] p 0.4943 | D*/h 0.0000
+    5x5: D 0.0606 null 0.0361 D* 0.0245 CI [+0.0205,+0.1104] p 0.0510 | D*/h 0.0470

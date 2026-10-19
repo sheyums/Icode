@@ -17,3 +17,12 @@ eb14beb 2026-10-19 21:17:12 +0000 PRESPEC 6 heterogeneity null, before running
 def0073 2026-10-19 21:17:12 +0000 hetero.py
 7028df0 2026-10-19 21:21:19 +0000 PRESPEC 7 within-fly within-ZT two-phase test, before running
 e491142 2026-10-19 21:21:35 +0000 within_fly.py
+9954784 2026-10-19 22:11:34 +0000 Ledger: PRESPEC 5b results
+1f4dd8e 2026-10-19 22:11:51 +0000 PRESPEC 8 DRAFT (irreversibility), awaiting approval, not run
+d932e9e 2026-10-19 22:18:53 +0000 PRESPEC 8 approved; irrev.py
+4fcb6d1 2026-10-19 22:36:32 +0000 Ledger: PRESPEC 6
+d4841af 2026-10-19 23:24:33 +0000 PRESPEC 7 amendment: faster exact-likelihood fitter; within_fly.py updated
+3841d57 2026-10-19 23:39:12 +0000 8b post hoc robustness plan (after seeing PRESPEC 8)
+f88a04f 2026-10-19 23:39:26 +0000 irrev.py: edge-free option for 8b
+e97e960 2026-10-19 23:39:44 +0000 Ledger: PRESPEC 7, 8, 8b checks 1-2
+e9564e9 2026-10-19 23:41:46 +0000 Ledger: 8b edge-free results

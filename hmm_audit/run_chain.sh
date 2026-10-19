@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/hmm_audit
+python3 -I -W ignore within_fly.py > within_fly.log 2>&1; echo "within exit $?" > chain_status.txt
+python3 -I -W ignore irrev.py > irrev.log 2>&1; echo "irrev exit $?" >> chain_status.txt
