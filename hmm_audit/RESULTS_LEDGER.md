@@ -438,3 +438,28 @@ not N312 vs N213. E was not re-run. No E result exists.
            weights [0.3203, 0.4441, 0.1931, 0.0359, 0.0067] means(s) [1.1, 4.2, 13.8, 45.0, 207.2] | runs>=300 s assigned to components with mean<300 s: 1.000
     
     === C3: 3-state count HMM per fly x phase ===
+
+## 2026-10-20 — INTERPRETATION of PRESPEC 9 and of PRESPEC 10 C1/C2 (written after the raw entries above)
+PRESPEC 9 (edge-free within-fly two-phase test):
+- CS supported at both block sizes under the pre-set primary rule: 4 h Fisher p 0.0054 (N2; 10/82
+  blocks, binom p 0.0078) and 12 h Fisher p 0.0127 (N3; 6/50, binom p 0.038). The PRESPEC 7 CS
+  result therefore survives removal of the length-selected last bout of each window.
+- per0 and fumin not supported at either block size. sss: 4 h Fisher p 0.027 rests on 3 blocks with
+  none individually < 0.05 (uninformative); 12 h (24 blocks) Fisher p 0.97: not supported.
+- Fisher used discrete bootstrap p-values (min 1/101): approximate, as stated in the plan.
+- The short component in significant CS blocks has mean 316-326 s (q 0.14-0.20), i.e. ~20 s above the
+  300 s threshold. Working (untested) reading, from C2: it is the tail of a rest-like inactivity
+  component crossing the threshold, not a distinct sleep state.
+PRESPEC 10 C1 (movement fraction vs mid-wake, Wilcoxon across flies; 8 tests, no correction pre-set):
+- CS: lower before sleep onset in light (p 0.0012) and dark (p 3.2e-5); after waking lower in light
+  (p 6e-7) and HIGHER in dark (p 0.0046). fumin: lower before onset in light only (p 0.009); higher
+  after waking in light (p 1.1e-7); dark n.s. Six of 8 pass Bonferroni 0.05/8.
+- Model-free evidence of a quieter approach to sleep in CS; it does not distinguish a discrete
+  transitional state from gradual slowing.
+PRESPEC 10 C2 (inactivity runs of all lengths):
+- CV chose K = 5, the plan's upper limit, in all four genotype x phase groups, with CV still rising:
+  K is limited by the plan, so component structure beyond 5 is untested.
+- Fraction of >= 300 s runs assigned to components with mean < 300 s: CS light 0.181, CS dark 0.039,
+  fumin light 1.000, fumin dark 1.000 (fumin's longest component mean ~208 s). Within K <= 5, fumin's
+  count-defined "sleep" bouts are all the tail of rest-like components. Pooled across flies, so the
+  heterogeneity caveat of PRESPEC 6 applies.
