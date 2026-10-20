@@ -26,3 +26,6 @@ d4841af 2026-10-19 23:24:33 +0000 PRESPEC 7 amendment: faster exact-likelihood f
 f88a04f 2026-10-19 23:39:26 +0000 irrev.py: edge-free option for 8b
 e97e960 2026-10-19 23:39:44 +0000 Ledger: PRESPEC 7, 8, 8b checks 1-2
 e9564e9 2026-10-19 23:41:46 +0000 Ledger: 8b edge-free results
+acc2ffd 2026-10-19 23:46:08 +0000 PRESPEC 9 + within_fly9.py, before running
+ab86161 2026-10-19 23:53:22 +0000 PRESPEC 10 (count data), before analysis
+8dfb4fb 2026-10-19 23:55:02 +0000 counts_analysis.py (PRESPEC 10)

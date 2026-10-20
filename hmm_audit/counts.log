@@ -1,0 +1,21 @@
+=== C1: movement fraction around transitions minus mid-wake reference ===
+CS     pre  light flies 25 median contrast -0.0210 (IQR -0.0512..-0.0020) Wilcoxon p 0.00119
+CS     pre  dark  flies 25 median contrast -0.0461 (IQR -0.0865..-0.0271) Wilcoxon p 3.19e-05
+CS     post light flies 25 median contrast -0.0419 (IQR -0.0640..-0.0199) Wilcoxon p 5.96e-07
+CS     post dark  flies 25 median contrast +0.0379 (IQR +0.0219..+0.0663) Wilcoxon p 0.0046
+fumin  pre  light flies 49 median contrast -0.0093 (IQR -0.0360..+0.0119) Wilcoxon p 0.00913
+fumin  pre  dark  flies 53 median contrast -0.0107 (IQR -0.0440..+0.0271) Wilcoxon p 0.192
+fumin  post light flies 48 median contrast +0.0270 (IQR +0.0105..+0.0414) Wilcoxon p 1.12e-07
+fumin  post dark  flies 51 median contrast +0.0090 (IQR -0.0428..+0.0414) Wilcoxon p 0.837
+
+=== C2: inactivity runs, all lengths ===
+CS     light runs 194690 (>=300 s: 2371) | CV K=5 | CV logL [np.float64(-780249.9), np.float64(-564390.9), np.float64(-541718.3), np.float64(-539585.7), np.float64(-539315.0)]
+       weights [0.5039, 0.2724, 0.1647, 0.0438, 0.0151] means(s) [1.7, 5.4, 20.3, 98.6, 701.6] | runs>=300 s assigned to components with mean<300 s: 0.181
+CS     dark  runs 137857 (>=300 s: 2005) | CV K=5 | CV logL [np.float64(-601814.2), np.float64(-383948.0), np.float64(-356027.8), np.float64(-353213.0), np.float64(-352973.7)]
+       weights [0.4371, 0.2955, 0.1988, 0.0506, 0.018] means(s) [1.2, 3.7, 13.7, 63.8, 1190.9] | runs>=300 s assigned to components with mean<300 s: 0.039
+fumin  light runs 575151 (>=300 s: 1337) | CV K=5 | CV logL [np.float64(-1810223.0), np.float64(-1517313.8), np.float64(-1478320.8), np.float64(-1470078.2), np.float64(-1469677.8)]
+       weights [0.3034, 0.4032, 0.2278, 0.0559, 0.0098] means(s) [1.1, 3.5, 13.1, 40.9, 209.0] | runs>=300 s assigned to components with mean<300 s: 1.000
+fumin  dark  runs 619283 (>=300 s: 991) | CV K=5 | CV logL [np.float64(-1856141.4), np.float64(-1596224.9), np.float64(-1544890.9), np.float64(-1538386.4), np.float64(-1538115.2)]
+       weights [0.3203, 0.4441, 0.1931, 0.0359, 0.0067] means(s) [1.1, 4.2, 13.8, 45.0, 207.2] | runs>=300 s assigned to components with mean<300 s: 1.000
+
+=== C3: 3-state count HMM per fly x phase ===
