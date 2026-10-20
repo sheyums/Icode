@@ -399,3 +399,19 @@ not N312 vs N213. E was not re-run. No E result exists.
         4x4: D 0.0206 null 0.0221 D* 0.0000 CI [-0.0045,+0.0579] p 0.4943 | D*/h 0.0000
         5x5: D 0.0606 null 0.0361 D* 0.0245 CI [+0.0205,+0.1104] p 0.0510 | D*/h 0.0470
     Note: bootstrap CIs exclude 0 in several blocks with reversal-null p > 0.2 (e.g. CS light 4x4); the plug-in bootstrap is biased upward, so the reversal-null p, not the CI, is the test.
+
+## 2026-10-20 AUTO-APPENDED raw output — PRESPEC 9 (acc2ffd), within_fly9.py (interpretation to follow)
+    A 4h blocks: {'CS': 82, 'per0': 101, 'fumin': 99, 'sss': 3}
+    B 12h blocks: {'CS': 50, 'per0': 50, 'fumin': 84, 'sss': 24}
+    
+    === A: 4 h blocks (primary null N2) ===
+    CS     blocks  82 | FISHER (N2) p 0.00544 | N1: 23/82 (binom p 8.8e-12) | N2: 10/82 (binom p 0.0078) | sig: q_short 0.20, means 316/1220 s
+    per0   blocks 101 | FISHER (N2) p 0.772 | N1: 8/101 (binom p 0.13) | N2: 4/101 (binom p 0.75) | sig: q_short 0.10, means 303/997 s
+    fumin  blocks  99 | FISHER (N2) p 1 | N1: 11/99 (binom p 0.011) | N2: 0/99 (binom p 1)
+    sss    blocks   3 | FISHER (N2) p 0.0272 | N1: 2/3 (binom p 0.0073) | N2: 0/3 (binom p 1)
+    
+    === B: 12 h blocks (primary null N3) ===
+    CS     blocks  50 | FISHER (N3) p 0.0127 | N1: 23/50 (binom p 3.4e-17) | N2: 22/50 (binom p 5.4e-16) | N3: 6/50 (binom p 0.038) | sig: q_short 0.14, means 326/1560 s
+    per0   blocks  50 | FISHER (N3) p 0.783 | N1: 6/50 (binom p 0.038) | N2: 6/50 (binom p 0.038) | N3: 2/50 (binom p 0.72) | sig: q_short 0.15, means 361/1434 s
+    fumin  blocks  84 | FISHER (N3) p 1 | N1: 9/84 (binom p 0.025) | N2: 3/84 (binom p 0.8) | N3: 0/84 (binom p 1)
+    sss    blocks  24 | FISHER (N3) p 0.967 | N1: 6/24 (binom p 0.00096) | N2: 1/24 (binom p 0.71) | N3: 0/24 (binom p 1)

@@ -30,3 +30,4 @@ acc2ffd 2026-10-19 23:46:08 +0000 PRESPEC 9 + within_fly9.py, before running
 ab86161 2026-10-19 23:53:22 +0000 PRESPEC 10 (count data), before analysis
 8dfb4fb 2026-10-19 23:55:02 +0000 counts_analysis.py (PRESPEC 10)
 408b19e 2026-10-20 00:04:34 +0000 auto sync scripts
+969a3c0 2026-10-20 01:04:39 +0000 Ledger: PRESPEC 9 raw (auto)
