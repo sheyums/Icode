@@ -34,3 +34,4 @@ ab86161 2026-10-19 23:53:22 +0000 PRESPEC 10 (count data), before analysis
 c1dbefd 2026-10-20 04:36:30 +0000 C1/C2 raw to ledger; resumable C3 runner
 9bbfb7f 2026-10-20 04:36:51 +0000 Ledger: interpretation of PRESPEC 9 and 10 C1/C2
 bcd5a51 2026-10-20 09:09:40 +0000 C3 partial checkpoint (auto)
+00134f1 2026-10-20 09:39:44 +0000 C3 partial checkpoint (auto)
