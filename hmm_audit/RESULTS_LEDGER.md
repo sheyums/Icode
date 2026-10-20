@@ -463,3 +463,18 @@ PRESPEC 10 C2 (inactivity runs of all lengths):
   fumin light 1.000, fumin dark 1.000 (fumin's longest component mean ~208 s). Within K <= 5, fumin's
   count-defined "sleep" bouts are all the tail of rest-like components. Pooled across flies, so the
   heterogeneity caveat of PRESPEC 6 applies.
+
+## 2026-10-20 AUTO-APPENDED raw output — PRESPEC 10 C3 (counts_C3_resume.py), interpretation to follow
+    remaining jobs 148
+    CS     light flies 25 | H1 degenerate (min L1<0.05) 0.92 | median L1(H1,H2) 0.860 L1(H1,H3) 0.023 | route-unidentified (restart range>0.2) 0.12 | median restarts within 0.5 nats 1
+            median Xn +0.874 Yn +0.343 | median Xn_range 0.000 Yn_range 0.000
+            held-out log-lik per s, median over flies: K2 -0.25218 K3 -0.24681 K4 -0.18881; flies where K3>K2 0.52, K4>K3 1.00
+    CS     dark  flies 25 | H1 degenerate (min L1<0.05) 0.56 | median L1(H1,H2) 1.210 L1(H1,H3) 0.034 | route-unidentified (restart range>0.2) 0.16 | median restarts within 0.5 nats 1
+            median Xn +1.000 Yn +0.999 | median Xn_range 0.000 Yn_range 0.000
+            held-out log-lik per s, median over flies: K2 -0.19796 K3 -0.19793 K4 -0.13797; flies where K3>K2 0.68, K4>K3 1.00
+    fumin  light flies 53 | H1 degenerate (min L1<0.05) 0.23 | median L1(H1,H2) 0.951 L1(H1,H3) 0.796 | route-unidentified (restart range>0.2) 0.06 | median restarts within 0.5 nats 2
+            median Xn -0.196 Yn +0.221 | median Xn_range 0.000 Yn_range 0.001
+            held-out log-lik per s, median over flies: K2 -0.64430 K3 -0.52367 K4 -0.50509; flies where K3>K2 0.70, K4>K3 0.98
+    fumin  dark  flies 53 | H1 degenerate (min L1<0.05) 0.15 | median L1(H1,H2) 0.761 L1(H1,H3) 1.018 | route-unidentified (restart range>0.2) 0.06 | median restarts within 0.5 nats 2
+            median Xn -0.065 Yn -0.807 | median Xn_range 0.001 Yn_range 0.000
+            held-out log-lik per s, median over flies: K2 -0.69992 K3 -0.61872 K4 -0.57633; flies where K3>K2 0.77, K4>K3 0.98
