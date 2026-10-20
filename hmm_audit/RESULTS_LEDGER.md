@@ -501,3 +501,22 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
 - Bottom line for H1: counts DO separate a third emission state in fumin, and in CS give a brief-pause
   state; neither is the sleep<->wake regulator of the scored HMM. A model with separate fast
   (movement) and slow (behavioural) timescales is needed before routing can be asked again.
+
+## 2026-10-20 — PRESPEC 11 stage 1 (flatK.py), results
+    K_g: {"CS_0": 6, "CS_1": 4, "CS_2": 4, "CS_3": 4, "CS_4": 4, "CS_5": 4, "fumin_0": 4, "fumin_1": 4, "fumin_2": 4, "fumin_3": 6, "fumin_4": 4, "fumin_5": 4}
+    errors: 0
+    CS
+      ZT  0- 4: K* counts {4: 4, 5: 1, 6: 5} | median held-out gain per hour (nats) K3-2   77.6 K4-3  125.1 K5-4   -3.3 K6-5    1.9 | flies K3 within 1 nat/h of best: 0/10
+      ZT  4- 8: K* counts {4: 8, 5: 1, 6: 1} | median held-out gain per hour (nats) K3-2   -0.0 K4-3  149.6 K5-4   -4.1 K6-5   -0.7 | flies K3 within 1 nat/h of best: 0/10
+      ZT  8-12: K* counts {4: 6, 5: 1, 6: 3} | median held-out gain per hour (nats) K3-2    0.2 K4-3  148.0 K5-4   -4.7 K6-5    5.3 | flies K3 within 1 nat/h of best: 0/10
+      ZT 12-16: K* counts {4: 8, 5: 2} | median held-out gain per hour (nats) K3-2   -0.2 K4-3  301.0 K5-4   -3.4 K6-5   -0.1 | flies K3 within 1 nat/h of best: 0/10
+      ZT 16-20: K* counts {2: 1, 4: 9} | median held-out gain per hour (nats) K3-2    nan K4-3    nan K5-4    nan K6-5    nan | flies K3 within 1 nat/h of best: 0/10
+      ZT 20-24: K* counts {4: 6, 5: 3, 6: 1} | median held-out gain per hour (nats) K3-2   -0.1 K4-3  254.7 K5-4   -1.6 K6-5   -4.5 | flies K3 within 1 nat/h of best: 0/10
+    fumin
+      ZT  0- 4: K* counts {4: 5, 5: 1, 6: 4} | median held-out gain per hour (nats) K3-2  434.8 K4-3   34.2 K5-4   -6.3 K6-5    1.0 | flies K3 within 1 nat/h of best: 0/10
+      ZT  4- 8: K* counts {4: 6, 5: 3, 6: 1} | median held-out gain per hour (nats) K3-2  428.0 K4-3   45.5 K5-4   -6.5 K6-5   -3.1 | flies K3 within 1 nat/h of best: 0/10
+      ZT  8-12: K* counts {4: 4, 5: 3, 6: 3} | median held-out gain per hour (nats) K3-2  569.8 K4-3   38.2 K5-4    nan K6-5    2.8 | flies K3 within 1 nat/h of best: 0/10
+      ZT 12-16: K* counts {4: 4, 5: 1, 6: 5} | median held-out gain per hour (nats) K3-2  419.6 K4-3   48.6 K5-4   -5.8 K6-5    5.3 | flies K3 within 1 nat/h of best: 0/10
+      ZT 16-20: K* counts {4: 4, 5: 2, 6: 4} | median held-out gain per hour (nats) K3-2  449.0 K4-3   58.6 K5-4   -2.2 K6-5    6.0 | flies K3 within 1 nat/h of best: 0/10
+      ZT 20-24: K* counts {4: 5, 6: 5} | median held-out gain per hour (nats) K3-2  559.2 K4-3   45.7 K5-4   -1.1 K6-5    2.6 | flies K3 within 1 nat/h of best: 0/10
+    Note: 2 fly-bins had a held-out fold scored -inf (CS fly 23 bin 4 day 1, all K; fumin fly 7 bin 2 day 3, K=4,5): the held-out day contains a symbol the trained model gives probability 0. The plan did not anticipate this. K_g is identical whether those folds are kept (as run) or dropped for every K (checked post hoc). NaN entries in the gain table come from these two fly-bins.

@@ -1,0 +1,15 @@
+errors: 0
+CS
+  ZT  0- 4: K* counts {4: 4, 5: 1, 6: 5} | median held-out gain per hour (nats) K3-2   77.6 K4-3  125.1 K5-4   -3.3 K6-5    1.9 | flies K3 within 1 nat/h of best: 0/10
+  ZT  4- 8: K* counts {4: 8, 5: 1, 6: 1} | median held-out gain per hour (nats) K3-2   -0.0 K4-3  149.6 K5-4   -4.1 K6-5   -0.7 | flies K3 within 1 nat/h of best: 0/10
+  ZT  8-12: K* counts {4: 6, 5: 1, 6: 3} | median held-out gain per hour (nats) K3-2    0.2 K4-3  148.0 K5-4   -4.7 K6-5    5.3 | flies K3 within 1 nat/h of best: 0/10
+  ZT 12-16: K* counts {4: 8, 5: 2} | median held-out gain per hour (nats) K3-2   -0.2 K4-3  301.0 K5-4   -3.4 K6-5   -0.1 | flies K3 within 1 nat/h of best: 0/10
+  ZT 16-20: K* counts {2: 1, 4: 9} | median held-out gain per hour (nats) K3-2    nan K4-3    nan K5-4    nan K6-5    nan | flies K3 within 1 nat/h of best: 0/10
+  ZT 20-24: K* counts {4: 6, 5: 3, 6: 1} | median held-out gain per hour (nats) K3-2   -0.1 K4-3  254.7 K5-4   -1.6 K6-5   -4.5 | flies K3 within 1 nat/h of best: 0/10
+fumin
+  ZT  0- 4: K* counts {4: 5, 5: 1, 6: 4} | median held-out gain per hour (nats) K3-2  434.8 K4-3   34.2 K5-4   -6.3 K6-5    1.0 | flies K3 within 1 nat/h of best: 0/10
+  ZT  4- 8: K* counts {4: 6, 5: 3, 6: 1} | median held-out gain per hour (nats) K3-2  428.0 K4-3   45.5 K5-4   -6.5 K6-5   -3.1 | flies K3 within 1 nat/h of best: 0/10
+  ZT  8-12: K* counts {4: 4, 5: 3, 6: 3} | median held-out gain per hour (nats) K3-2  569.8 K4-3   38.2 K5-4    nan K6-5    2.8 | flies K3 within 1 nat/h of best: 0/10
+  ZT 12-16: K* counts {4: 4, 5: 1, 6: 5} | median held-out gain per hour (nats) K3-2  419.6 K4-3   48.6 K5-4   -5.8 K6-5    5.3 | flies K3 within 1 nat/h of best: 0/10
+  ZT 16-20: K* counts {4: 4, 5: 2, 6: 4} | median held-out gain per hour (nats) K3-2  449.0 K4-3   58.6 K5-4   -2.2 K6-5    6.0 | flies K3 within 1 nat/h of best: 0/10
+  ZT 20-24: K* counts {4: 5, 6: 5} | median held-out gain per hour (nats) K3-2  559.2 K4-3   45.7 K5-4   -1.1 K6-5    2.6 | flies K3 within 1 nat/h of best: 0/10

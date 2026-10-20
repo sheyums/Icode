@@ -1,2 +1,4 @@
 CV subset (0-based file index): {'CS': [0, 2, 3, 9, 11, 12, 14, 15, 16, 23], 'fumin': [1, 5, 7, 23, 25, 28, 29, 35, 36, 44]}
 flatK_stage1.jsonl remaining 120
+K_g: {'CS_0': 6, 'CS_1': 4, 'CS_2': 4, 'CS_3': 4, 'CS_4': 4, 'CS_5': 4, 'fumin_0': 4, 'fumin_1': 4, 'fumin_2': 4, 'fumin_3': 6, 'fumin_4': 4, 'fumin_5': 4}
+flatK_stage2.jsonl remaining 468
