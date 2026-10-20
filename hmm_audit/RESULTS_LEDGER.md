@@ -478,3 +478,26 @@ PRESPEC 10 C2 (inactivity runs of all lengths):
     fumin  dark  flies 53 | H1 degenerate (min L1<0.05) 0.15 | median L1(H1,H2) 0.761 L1(H1,H3) 1.018 | route-unidentified (restart range>0.2) 0.06 | median restarts within 0.5 nats 2
             median Xn -0.065 Yn -0.807 | median Xn_range 0.001 Yn_range 0.000
             held-out log-lik per s, median over flies: K2 -0.69992 K3 -0.61872 K4 -0.57633; flies where K3>K2 0.77, K4>K3 0.98
+
+## 2026-10-20 — INTERPRETATION of PRESPEC 10 C3 (3-state count HMM), written after the AUTO raw entry
+Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from C3_results.jsonl:
+  CS light : H1 [.987 .008 .002 .001] 19 s | H2 [.552 .363 .062 .007] 14 s | H3 [.999 .001 0 0] 530 s
+  CS dark  : H1 [.982 .017 0 0] 16 s       | H2 [.388 .527 .085 .007] 12 s | H3 [.999 0 0 0] 1138 s
+  fumin L  : H1 [.600 .358 .008 .004] 8 s  | H2 [.158 .595 .203 .014] 6 s  | H3 [.998 .001 0 0] 24 s
+  fumin D  : H1 [.489 .448 .038 .004] 6 s  | H2 [.122 .574 .231 .020] 5 s  | H3 [.998 .001 0 .001] 17 s
+- CS: H1 is a near-silent BRIEF-PAUSE state (P0 ~0.98, ~16-19 s dwell), nearly emission-degenerate
+  with H3 (median L1 0.02-0.03; "degenerate" < 0.05 in 92% light / 56% dark flies). Distinguished
+  from H3 mainly by dwell, so the H1/H3 equivalence ridge is near-flat; CS Xn (+0.87 light, +1.00
+  dark) and Yn are NOT considered identified.
+- fumin: H1 has its own emission signature (median L1 to H2 0.76-0.95, to H3 0.80-1.02; degenerate in
+  15-23% of flies), a LOW-ACTIVITY state. But all three states dwell for seconds (H3 17-24 s): at
+  K = 3 the model describes second-scale movement texture, not sleep/wake; fumin's H3 is not sleep.
+- Restart-spread check (pre-set criterion: range > 0.2 = route-unidentified) had little power: the
+  median number of restarts within 0.5 nats of the best was 1-2 (CS 5/25 and 10/25 flies, fumin
+  37/53 and 38/53 with >= 2). A range of 0 from one restart is not evidence of identification.
+  The pre-set "route-unidentified" fractions (0.06-0.16) are therefore NOT reported as support.
+- Held-out last day: K=4 beats K=3 in 98-100% of flies in every group; K=3 beats K=2 in only 52-77%.
+  Three states are not enough for these data, and the third state is spent on fast movement structure.
+- Bottom line for H1: counts DO separate a third emission state in fumin, and in CS give a brief-pause
+  state; neither is the sleep<->wake regulator of the scored HMM. A model with separate fast
+  (movement) and slow (behavioural) timescales is needed before routing can be asked again.
