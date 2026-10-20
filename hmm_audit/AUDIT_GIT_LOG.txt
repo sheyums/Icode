@@ -43,3 +43,4 @@ bcd5a51 2026-10-20 09:09:40 +0000 C3 partial checkpoint (auto)
 4cecd16 2026-10-20 14:47:05 +0000 PRESPEC 11 DRAFT (flat K=2..6), not approved, not run
 50e5232 2026-10-20 14:50:47 +0000 PRESPEC 11 DRAFT revised: fly x 4 h ZT bin pooled over days
 7372379 2026-10-20 14:52:33 +0000 PRESPEC 11 approved; flatK.py
+a99ee50 2026-10-20 15:22:48 +0000 flatK checkpoint (auto)
