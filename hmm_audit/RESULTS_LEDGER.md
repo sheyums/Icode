@@ -677,3 +677,23 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     - Correction to the addendum read-out: for V3 the 'truth' is each fly's own model, which a pooled model
       cannot reach; the large negative dLL there is misspecification, NOT optimizer failure. The dLL rule
       is only meaningful for V1. V3 routing errors: seed 401 small, seed 402 large (dXn -0.77).
+
+## 2026-10-21 — PRESPEC 13 amendment 2 gates V5/V6 (validate13_day.py)
+    remaining 5
+    done V5 502
+    Model is not converging.  Current: -89902.54658053443 is not greater than -89902.52316935764. Delta is -0.02341117679316085
+    done V6 601
+    done V5 501
+    done V6 602
+    done V5 503
+    V5 dXn: mean -0.001 SD 0.020 values [-0.016, 0.021, -0.01]
+    V5 dYn: mean -0.010 SD 0.072 values [-0.074, 0.067, -0.025]
+    V5 mean fitted/true kappa_S by day [1.063, 0.929, 1.056, 0.96]
+    V6 median held-out gain per fly: [4.75, 23.69]
+    V5 True V6 False => DAY-MODEL VALIDATION FAIL
+    INTERPRETATION: V5 PASS — with a day trend, routing recovered with SD 0.02 (Xn_c) and 0.07 (Yn_c), bias ~0,
+    day factors within 7%. V6 FAIL — heterogeneous flies + day trend, no T: held-out gain +4.75 (pass) and
+    +23.7 nats/h per fly (fail). Same conclusion as V2: fly heterogeneity can create a false transitional state.
+    One subset fit's logL decreased by 0.023 nats in one EM step: the numerical day-factor M-step is not exact,
+    so the day model is a generalized EM with tiny non-monotone steps; noted, not consequential here.
+    Part D is not run.
