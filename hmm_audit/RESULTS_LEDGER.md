@@ -586,3 +586,4 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
       or as a change in fast-state occupancy within the groups (cf. the pre-sleep quieting of C1).
 
 ## 2026-10-21 — status: PRESPEC 12 (6343b8d) committed; NOT run. hhmm.py not yet written (the write+synthetic test was interrupted by the user before execution). No PRESPEC 12 result exists.
+    CORRECTION: hhmm.py WAS written (64 lines, 00:36 UTC) before the interruption; its synthetic recovery test was not run (no output exists), and the model code is untested.
