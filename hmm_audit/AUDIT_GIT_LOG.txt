@@ -66,3 +66,5 @@ dc8e8de 2026-10-20 23:53:40 +0000 flatK checkpoint (auto)
 6343b8d 2026-10-21 00:35:29 +0000 PRESPEC 12 hierarchical count HMM, before running
 7bb4ef5 2026-10-21 00:37:17 +0000 Ledger: PRESPEC 12 not run (interrupted)
 0db8271 2026-10-21 00:37:30 +0000 Ledger correction: hhmm.py written, untested
+b3b43df 2026-10-21 00:38:54 +0000 PRESPEC 12: synthetic pass criteria, before test
+a62b79a 2026-10-21 00:44:57 +0000 PRESPEC 12 FAIL logged; addendum 2 replicate validation before running

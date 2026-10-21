@@ -37,3 +37,22 @@ Mean coarse dwell = Bin_c . (I - Q_c)^-1 . 1, Q_c = within-block transition matr
   share the fitted sign. Only sign-determined values are carried forward to any mapping.
 ## Validation before running on data
 Synthetic recovery on a known 3-coarse model with a genuine T (code in hhmm.py, test printed to the ledger).
+
+## Synthetic validation — pass criteria fixed before running (2026-10-21)
+Truth P3: 3 coarse x 2 fine; S (silence + rare twitch), T (sparse movement), W (pause + move); 4 days x 4 h
+of 1 s data from P3, plus truth P2 (same S and W, no T). Both fitted with hhmm.fit (6 restarts, best kept).
+PASS requires all of:
+ 1. On P3 data: fitted Xn_c and Yn_c each within 0.15 of truth and of the same sign.
+ 2. On P3 data: fitted coarse dwells (S, T, W) each within a factor 1.5 of truth.
+ 3. On P3 data: held-out (train 3 days, test day 4) gain of Nc=3 over Nc=2 > 0.
+ 4. NEGATIVE CONTROL, P2 data: held-out gain of Nc=3 over Nc=2 <= +5 nats/hour (no false transitional state).
+ 5. Structured M-step never decreases training logL (monotone EM) on both datasets.
+If any fails, the data analysis is NOT run; the failure is logged and the model is fixed first.
+
+## Addendum 2 — replicate validation, written AFTER the single-replicate test FAILED criterion 1
+The single test cannot separate bias from sampling noise (~100 coarse jumps per 4 x 4 h dataset).
+12 independent datasets from P3 (seeds 101..112), each fitted exactly as before (6 restarts, best kept).
+Reported: mean error (bias) and SD of Xn_c and Yn_c, and dwell ratios, across replicates.
+Decision rule fixed now: the data analysis may proceed only if |mean error| <= 0.10 for both Xn_c and
+Yn_c AND the 95% normal-approx. interval of the mean error contains 0. Otherwise the model or the fitting
+(restarts) must be changed first. The per-fly bootstrap (part C) is what then quantifies noise in real data.

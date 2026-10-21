@@ -587,3 +587,15 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
 
 ## 2026-10-21 — status: PRESPEC 12 (6343b8d) committed; NOT run. hhmm.py not yet written (the write+synthetic test was interrupted by the user before execution). No PRESPEC 12 result exists.
     CORRECTION: hhmm.py WAS written (64 lines, 00:36 UTC) before the interruption; its synthetic recovery test was not run (no output exists), and the model code is untested.
+
+## 2026-10-21 — PRESPEC 12 synthetic validation (b3b43df): FAIL (criterion 1)
+    == P3 (157s) truth mf [0.008, 0.181, 0.45] dwell [900.0, 120.0, 300.0] Xn_c +0.333 Yn_c +0.077
+       fitted Nc=3: mf [0.008, 0.173, 0.467] dwell [931.0, 117.0, 266.0] Xn_c +0.471 Yn_c +0.424 | restart logLs [-16393.9, -16332.7, -16331.4, -16330.9, -16322.9, -16262.5]
+       monotone EM: True | held-out gain Nc3-Nc2: +7.6 nats/h
+       criterion 1 False | 2 True | 3 True | 5 True
+    == P2 (148s) truth mf [0.008, 0.45] dwell [900.0, 300.0]
+       fitted Nc=3: mf [0.009, 0.424, 0.665] dwell [972.0, 242.0, 27.0] Xn_c -0.241 Yn_c +1.000 | restart logLs [-16553.8, -16550.6, -16256.6, -16251.3, -16250.7, -16246.4]
+       monotone EM: True | held-out gain Nc3-Nc2: -1.6 nats/h
+       criterion 4 (negative control) True | 5 True
+    SYNTHETIC VALIDATION FAIL
+    Per plan, the data analysis is NOT run.
