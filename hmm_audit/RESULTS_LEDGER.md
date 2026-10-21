@@ -728,3 +728,33 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     0.55-0.83 nats/h, ~150-200x below the fitted pipeline values). Cycle-flux sign undetermined in 71-98%.
     My prediction (minimum = 0 everywhere) was wrong for fumin/sss; H3's small 'active' emission breaks
     exact lumping. The bound is conditional on the 3-state model class.
+
+## 2026-10-21 — PRESPEC 15 E2/E3 (e23.py)
+    
+    ===== CS (25 flies) =====
+    E2 light flies 25 bouts 466 | mean D (exit - approach) -0.0094  perm p 0.0675
+          exit profile min2-10     [0.116, 0.107, 0.114, 0.125, 0.123, 0.126, 0.132, 0.134, 0.139]
+          approach profile min2-10 [0.106, 0.117, 0.132, 0.14, 0.146, 0.142, 0.141, 0.135, 0.142]
+    E2 dark  flies 25 bouts 309 | mean D (exit - approach) +0.0621  perm p 0.0005
+          exit profile min2-10     [0.227, 0.233, 0.257, 0.248, 0.246, 0.228, 0.242, 0.251, 0.23]
+          approach profile min2-10 [0.122, 0.144, 0.171, 0.188, 0.186, 0.198, 0.2, 0.202, 0.193]
+    E3 light segments 300 triples 389069 | D 0.00488 null mean 0.00006 D* 0.00482 nats/triple | p 0.0010
+    E3 dark  segments 300 triples 275430 | D 0.01195 null mean 0.00013 D* 0.01182 nats/triple | p 0.0010
+    
+    ===== fumin (53 flies) =====
+    E2 light flies 48 bouts 758 | mean D (exit - approach) +0.0153  perm p 0.0010
+          exit profile min2-10     [0.27, 0.253, 0.234, 0.22, 0.201, 0.197, 0.192, 0.189, 0.188]
+          approach profile min2-10 [0.187, 0.204, 0.2, 0.206, 0.208, 0.212, 0.196, 0.2, 0.193]
+    E2 dark  flies 51 bouts 596 | mean D (exit - approach) +0.0072  perm p 0.1109
+          exit profile min2-10     [0.315, 0.274, 0.26, 0.258, 0.233, 0.226, 0.236, 0.216, 0.212]
+          approach profile min2-10 [0.221, 0.243, 0.248, 0.244, 0.245, 0.246, 0.245, 0.236, 0.237]
+    E3 light segments 477 triples 1149754 | D 0.00418 null mean 0.00005 D* 0.00413 nats/triple | p 0.0010
+    E3 dark  segments 477 triples 1238132 | D 0.00292 null mean 0.00005 D* 0.00288 nats/triple | p 0.0010
+    INTERPRETATION: non-equilibrium is MEASURED in the count data, without any model.
+    - E2: waking and falling asleep are not mirror images. CS dark (p 0.0005): after waking activity is high at once
+      (~0.23-0.26) while the approach to sleep ramps down (0.20 -> 0.12 in the last minutes). fumin light (p 0.001):
+      a burst after waking that decays (0.27 -> 0.19) vs a flat approach with a dip before onset. CS light p 0.068,
+      fumin dark p 0.11 (not significant).
+    - E3: run-level time-irreversibility detected in all four genotype x phase groups (p <= 0.001, the smallest
+      attainable with 1000 replicates); D* 0.003-0.012 nats per run-triple. Caveat: the segment-reversal null is
+      exact only for stationary segments; a slow within-segment trend contributes little to local triple asymmetry.
