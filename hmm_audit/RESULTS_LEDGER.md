@@ -520,3 +520,67 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
       ZT 16-20: K* counts {4: 4, 5: 2, 6: 4} | median held-out gain per hour (nats) K3-2  449.0 K4-3   58.6 K5-4   -2.2 K6-5    6.0 | flies K3 within 1 nat/h of best: 0/10
       ZT 20-24: K* counts {4: 5, 6: 5} | median held-out gain per hour (nats) K3-2  559.2 K4-3   45.7 K5-4   -1.1 K6-5    2.6 | flies K3 within 1 nat/h of best: 0/10
     Note: 2 fly-bins had a held-out fold scored -inf (CS fly 23 bin 4 day 1, all K; fumin fly 7 bin 2 day 3, K=4,5): the held-out day contains a symbol the trained model gives probability 0. The plan did not anticipate this. K_g is identical whether those folds are kept (as run) or dropped for every K (checked post hoc). NaN entries in the gain table come from these two fly-bins.
+
+## 2026-10-21 — PRESPEC 11 stages 2-4 results (flatK_stage2.jsonl; summary script inline, output below)
+    records 468 with fit errors 0
+    
+    ===== CS =====
+    ZT  0- 4 K=6 flies 25 | m(60s) {0: 2, 1: 23} | m(30s) {0: 2, 1: 23} | m(300s) {0: 22, 1: 3} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [169.6, 6.4, 2.8]
+            m=1 (23 flies): macro movement fraction [0.005, 0.221] occupancy [0.565, 0.435] dwell(s) [388.0, 336.0]
+    ZT  4- 8 K=4 flies 25 | m(60s) {0: 1, 1: 24} | m(30s) {1: 25} | m(300s) {0: 23, 1: 2} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [153.2, 7.6, 0.4]
+            m=1 (24 flies): macro movement fraction [0.001, 0.14] occupancy [0.775, 0.225] dwell(s) [839.0, 206.0]
+    ZT  8-12 K=4 flies 25 | m(60s) {1: 25} | m(30s) {1: 25} | m(300s) {0: 23, 1: 2} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [128.8, 6.0, 1.5]
+            m=1 (25 flies): macro movement fraction [0.004, 0.173] occupancy [0.646, 0.354] dwell(s) [397.0, 201.0]
+    ZT 12-16 K=4 flies 25 | m(60s) {1: 25} | m(30s) {1: 24, 2: 1} | m(300s) {0: 18, 1: 7} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [260.9, 7.3, 3.7]
+            m=1 (25 flies): macro movement fraction [0.004, 0.293] occupancy [0.673, 0.327] dwell(s) [736.0, 395.0]
+    ZT 16-20 K=4 flies 25 | m(60s) {1: 25} | m(30s) {1: 25} | m(300s) {0: 13, 1: 12} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [299.4, 7.3, 1.1]
+            m=1 (25 flies): macro movement fraction [0.001, 0.256] occupancy [0.793, 0.207] dwell(s) [1620.0, 406.0]
+    ZT 20-24 K=4 flies 25 | m(60s) {1: 25} | m(30s) {1: 25} | m(300s) {0: 10, 1: 15} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [335.3, 7.4, 1.0]
+            m=1 (25 flies): macro movement fraction [0.001, 0.25] occupancy [0.831, 0.169] dwell(s) [1992.0, 473.0]
+    
+    ===== fumin =====
+    ZT  0- 4 K=4 flies 53 | m(60s) {0: 26, 1: 27} | m(30s) {0: 14, 1: 39} | m(300s) {0: 48, 1: 5} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [61.2, 3.7, 2.3]
+            m=1 (27 flies): macro movement fraction [0.019, 0.407] occupancy [0.374, 0.626] dwell(s) [188.0, 338.0]
+    ZT  4- 8 K=4 flies 53 | m(60s) {0: 30, 1: 23} | m(30s) {0: 20, 1: 33} | m(300s) {0: 49, 1: 4} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [50.5, 3.7, 2.2]
+            m=1 (23 flies): macro movement fraction [0.024, 0.367] occupancy [0.411, 0.589] dwell(s) [170.0, 350.0]
+    ZT  8-12 K=4 flies 53 | m(60s) {0: 27, 1: 26} | m(30s) {0: 14, 1: 39} | m(300s) {0: 50, 1: 3} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [58.9, 3.8, 2.4]
+            m=1 (26 flies): macro movement fraction [0.014, 0.321] occupancy [0.395, 0.605] dwell(s) [181.0, 313.0]
+    ZT 12-16 K=6 flies 53 | m(60s) {0: 27, 1: 23, 2: 3} | m(30s) {0: 16, 1: 33, 2: 3, 3: 1} | m(300s) {0: 47, 1: 6} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [59.8, 4.2, 3.0]
+            m=1 (23 flies): macro movement fraction [0.026, 0.377] occupancy [0.5, 0.5] dwell(s) [166.0, 192.0]
+            m=2 (3 flies): macro movement fraction [0.004, 0.35, 0.493] occupancy [0.283, 0.38, 0.334] dwell(s) [113.0, 1.0, 1.0]
+            routing via T (m=2, 3 flies): S->W median 0.048 [IQR 0.024-0.524] | W->S median 0.349 [IQR 0.252-0.675] | flies with >=2 near restarts: 3, median range 0.000
+    ZT 16-20 K=4 flies 53 | m(60s) {0: 38, 1: 15} | m(30s) {0: 24, 1: 29} | m(300s) {0: 49, 1: 4} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [38.8, 3.6, 2.6]
+            m=1 (15 flies): macro movement fraction [0.016, 0.436] occupancy [0.424, 0.576] dwell(s) [175.0, 286.0]
+    ZT 20-24 K=4 flies 53 | m(60s) {0: 36, 1: 17} | m(30s) {0: 25, 1: 28} | m(300s) {0: 51, 1: 2} | median restarts within 0.5 nats 1
+            median top-3 implied timescales (s): [34.6, 3.6, 2.4]
+            m=1 (17 flies): macro movement fraction [0.024, 0.445] occupancy [0.337, 0.663] dwell(s) [119.0, 289.0]
+    INTERPRETATION (written with the results):
+    - PRIMARY (pre-set): m = 2 (three metastable sets) is the most common value in NO genotype x bin.
+      CS: m = 1 in 23-25 of 25 flies in every bin -> two slow groups only: a near-silent group
+      (movement fraction 0.1-0.5%, dwell ~6.5-33 min, longest at night) and an active group (14-29%,
+      dwell ~3.5-8 min). Slowest implied timescale 2.1-5.6 min; the next is ~6-7 s (fast texture).
+      This matches the stage 1 jump at K = 4: roughly 2 slow groups x 2 fast states.
+    - fumin: m = 1 in only 15-27 of 53 flies per bin, m = 0 in the rest (slowest timescale 35-61 s,
+      at the 60 s threshold). Even the sleep/wake split is marginal at 60 s; groups dwell ~2-6 min.
+      m = 2 in 3/53 flies in ZT 12-16 only; there T and W groups dwell ~1 s, i.e. not metastable, so
+      the routing-through-T values for those 3 flies are not interpretable.
+    - Sensitivity: at 30 s the CS picture is unchanged (m = 1); at 300 s CS has m = 0 by day and
+      m = 1 in about half the flies at night.
+    - Optimizer reliability: median number of restarts within 0.5 nats of the best = 1 in every
+      group. Most restarts end in different local optima, so per-fly details (state rows, P) are
+      fragile. The count of slow modes was not checked across restarts; this should be done before
+      relying on per-fly values.
+    - For H1: in these count data, no third long-lived (>= 60 s) group appears between the sleep-like
+      and wake-like groups. A transitional process, if present, lives on the fast timescale (seconds)
+      or as a change in fast-state occupancy within the groups (cf. the pre-sleep quieting of C1).
