@@ -584,3 +584,5 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     - For H1: in these count data, no third long-lived (>= 60 s) group appears between the sleep-like
       and wake-like groups. A transitional process, if present, lives on the fast timescale (seconds)
       or as a change in fast-state occupancy within the groups (cf. the pre-sleep quieting of C1).
+
+## 2026-10-21 — status: PRESPEC 12 (6343b8d) committed; NOT run. hhmm.py not yet written (the write+synthetic test was interrupted by the user before execution). No PRESPEC 12 result exists.
