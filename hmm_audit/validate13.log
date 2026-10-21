@@ -5,3 +5,22 @@ done V2 302
 done V1 202
 done V1 203
 done V1 204
+done V1 205
+done V1 206
+done V3 401
+done V3 402
+V1 dXn: mean +0.010 SD 0.058 values [-0.002, -0.031, 0.093, -0.009, -0.059, 0.065]
+V1 dYn: mean +0.019 SD 0.064 values [-0.057, 0.036, 0.081, 0.056, 0.065, -0.064]
+V1 mean dwell ratio S,T,W [0.974, 1.02, 1.025]
+V2 median held-out gain per fly (nats/h): [8.26, 9.33]
+V1 seed 201: dLL(fit - truth) +13.4 nats -> fit >= truth (error is statistical)
+V1 seed 202: dLL(fit - truth) +1.5 nats -> fit >= truth (error is statistical)
+V1 seed 203: dLL(fit - truth) +14.4 nats -> fit >= truth (error is statistical)
+V1 seed 204: dLL(fit - truth) +21.8 nats -> fit >= truth (error is statistical)
+V1 seed 205: dLL(fit - truth) +3.2 nats -> fit >= truth (error is statistical)
+V1 seed 206: dLL(fit - truth) +25.9 nats -> fit >= truth (error is statistical)
+V3 seed 401: dLL(fit - truth) -11137.4 nats -> OPTIMIZER FAILURE
+V3 seed 402: dLL(fit - truth) -14083.5 nats -> OPTIMIZER FAILURE
+V3 seed 401: dXn -0.045 dYn +0.173 dwell ratio [0.92, 2.16, 0.98]
+V3 seed 402: dXn -0.774 dYn -0.523 dwell ratio [0.66, 4.54, 1.46]
+V1 True V2 False => VALIDATION FAIL

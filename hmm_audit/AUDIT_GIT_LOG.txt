@@ -77,3 +77,4 @@ af4b5e9 2026-10-21 15:26:36 +0000 PRESPEC 13 addendum: optimizer-vs-data check; 
 95a88fe 2026-10-21 15:56:22 +0000 PRESPEC 13 amendment 2: day covariate (user option 2), new gates V5/V6, before Part D
 8b18753 2026-10-21 16:00:18 +0000 validate13_day.py (V5, V6) queued
 6ed573e 2026-10-21 16:11:09 +0000 v13 checkpoint (auto)
+137a033 2026-10-21 16:28:17 +0000 validate13 finished (auto)
