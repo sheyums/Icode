@@ -38,3 +38,23 @@ on the replicate's own data (V3 truth = each fly's own perturbed model). Read-ou
 means the optimizer stopped BELOW the truth (optimizer failure); dLL >= -1 means the fit is at least
 as good as the truth, so any error in Xn_c/Yn_c is statistical (data), not the optimizer.
 Reported per replicate; not a pass/fail gate (the V1/V2 gates are unchanged).
+
+## Amendment 2 (2026-10-21, user decision, BEFORE Part D has run): DAY COVARIATE (option 2)
+Reason: the descriptive drift check (aging_check.log) showed systematic change across recording days.
+Model for Part D becomes hhmm_day.HHMMDay: coarse exit probabilities eps_{c,f,d} = eps_{c,f} * kappa_{c,d},
+with sum_d log kappa_{c,d} = 0 (one free day factor per coarse state per day). Shared across days:
+fine dynamics A_c, emissions, coarse jump matrix G, entry distributions. So coarse DWELLS may change by
+day; ROUTING (G, hence Xn_c, Yn_c) is assumed day-invariant and estimated from all days.
+Changes to Part D:
+- D1: a held-out DAY cannot be predicted (its kappa is unknown), so the test uses held-out FLIES: a fixed
+  20% of flies per genotype (numpy default_rng(13), sorted filenames) are held out; Nc=2 and Nc=3 fitted
+  on the rest (all days); per held-out fly gain (nats/hour, all its days). Read-out unchanged (median > 0
+  and one-sided sign test p < 0.05).
+- D2: as before on all flies, plus kappa per coarse state and day, and dwell per day.
+- D3 unchanged (fly bootstrap), using the day model.
+New validation gates for the day model (run after Part V; Part D needs V1, V2 AND V5, V6 to pass):
+- V5: P3 with day effect on S exits (kappa_S = exp([-.4,-.13,.13,.4])), 25 flies x 4 days, 3 replicates
+  (seeds 501-503): PASS iff |mean error| <= 0.10 and SD <= 0.15 for Xn_c and Yn_c, and fitted kappa_S
+  within +-25% of truth on average for every day.
+- V6: heterogeneous P2 (as V2) WITH the same day effect, 2 replicates (seeds 601, 602), held-out flies as
+  in D1: PASS iff median held-out gain Nc=3 over Nc=2 <= +5 nats/hour per fly in both.
