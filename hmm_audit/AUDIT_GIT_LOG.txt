@@ -88,3 +88,4 @@ c3a110f 2026-10-21 17:30:23 +0000 PRESPEC 14 unit test FAIL; design review draft
 c9fadde 2026-10-21 18:36:58 +0000 epr_min.py
 cbd43b5 2026-10-21 18:45:39 +0000 Step 1 results; PRESPEC 15 E2/E3 addendum + e23.py, before running E
 ea4bade 2026-10-21 18:46:17 +0000 Ledger: E2/E3 results
+22db8a3 2026-10-21 18:47:05 +0000 Review page: section 7 (E2/E3, minimum dissipation)
