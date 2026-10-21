@@ -599,3 +599,17 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
        criterion 4 (negative control) True | 5 True
     SYNTHETIC VALIDATION FAIL
     Per plan, the data analysis is NOT run.
+
+## 2026-10-21 — PRESPEC 12 addendum 2, replicate validation (12 datasets from P3): FAIL
+    Xn_c error      mean -0.120  SD 0.732  95% CI of mean [-0.534, +0.294]  values [-0.46, -0.22, 0.31, 0.35, 0.67, -1.33, -1.18, 0.67, -0.63, 0.67, 0.43, -0.7]
+    Yn_c error      mean -0.057  SD 0.574  95% CI of mean [-0.382, +0.267]  values [0.03, -0.34, 0.49, 0.09, -0.47, -0.92, -1.08, 0.92, 0.39, 0.23, 0.07, -0.1]
+    dwell ratio S   mean +0.931  SD 0.357  95% CI of mean [+0.730, +1.133]  values [1.1, 0.91, 0.9, 0.9, 1.39, 0.3, 0.31, 0.8, 1.45, 0.93, 0.95, 1.24]
+    dwell ratio T   mean +0.920  SD 0.446  95% CI of mean [+0.667, +1.172]  values [1.08, 1.06, 1.46, 1.03, 0.94, 0.04, 0.05, 0.82, 1.08, 0.91, 1.19, 1.37]
+    dwell ratio W   mean +1.139  SD 0.369  95% CI of mean [+0.930, +1.348]  values [1.39, 0.82, 0.72, 0.94, 1.16, 1.01, 2.07, 1.33, 0.91, 1.0, 0.9, 1.4]
+    REPLICATE VALIDATION FAIL
+    INTERPRETATION: bias is small (mean error Xn_c -0.12, Yn_c -0.06; both CIs contain 0) but the spread
+    is huge (SD 0.73 and 0.57 on a -1..+1 scale), even though the fitted model has exactly the true
+    structure. Two replicates (seeds 106, 107) also landed in wrong optima (T dwell 0.04-0.05x truth).
+    With 4 days x 4 h of one fly, coarse routing is NOT estimable per fly-bin. Data analysis not run.
+    Options: pool flies within genotype x bin (shared coarse parameters), better initialisation and
+    more restarts, then repeat this replicate validation at the pooled data size before any data run.
