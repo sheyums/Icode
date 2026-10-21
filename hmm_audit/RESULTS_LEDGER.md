@@ -640,3 +640,40 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     Xn_c fitted +0.194 (truth +0.333) Yn_c +0.077 (truth +0.077)
     
     [exited with code 0]
+
+## 2026-10-21 — PRESPEC 13 Part V results (validate13.py)
+    remaining 10
+    done V1 201
+    done V2 301
+    done V2 302
+    done V1 202
+    done V1 203
+    done V1 204
+    done V1 205
+    done V1 206
+    done V3 401
+    done V3 402
+    V1 dXn: mean +0.010 SD 0.058 values [-0.002, -0.031, 0.093, -0.009, -0.059, 0.065]
+    V1 dYn: mean +0.019 SD 0.064 values [-0.057, 0.036, 0.081, 0.056, 0.065, -0.064]
+    V1 mean dwell ratio S,T,W [0.974, 1.02, 1.025]
+    V2 median held-out gain per fly (nats/h): [8.26, 9.33]
+    V1 seed 201: dLL(fit - truth) +13.4 nats -> fit >= truth (error is statistical)
+    V1 seed 202: dLL(fit - truth) +1.5 nats -> fit >= truth (error is statistical)
+    V1 seed 203: dLL(fit - truth) +14.4 nats -> fit >= truth (error is statistical)
+    V1 seed 204: dLL(fit - truth) +21.8 nats -> fit >= truth (error is statistical)
+    V1 seed 205: dLL(fit - truth) +3.2 nats -> fit >= truth (error is statistical)
+    V1 seed 206: dLL(fit - truth) +25.9 nats -> fit >= truth (error is statistical)
+    V3 seed 401: dLL(fit - truth) -11137.4 nats -> OPTIMIZER FAILURE
+    V3 seed 402: dLL(fit - truth) -14083.5 nats -> OPTIMIZER FAILURE
+    V3 seed 401: dXn -0.045 dYn +0.173 dwell ratio [0.92, 2.16, 0.98]
+    V3 seed 402: dXn -0.774 dYn -0.523 dwell ratio [0.66, 4.54, 1.46]
+    V1 True V2 False => VALIDATION FAIL
+    INTERPRETATION:
+    - V1 PASS: pooling 25 flies x 4 days gives routing error SD 0.06 (vs 0.6-0.7 per fly-bin), bias ~0;
+      every fit's logL >= the truth's, so remaining error is statistical, not the optimizer.
+    - V2 FAIL: with fly-to-fly heterogeneity and NO transitional state, Nc=3 beats Nc=2 on held-out days
+      (+8.3, +9.3 nats/h per fly). Pooling heterogeneous flies CREATES a false transitional state.
+      Per the plan, Part D is not run.
+    - Correction to the addendum read-out: for V3 the 'truth' is each fly's own model, which a pooled model
+      cannot reach; the large negative dLL there is misspecification, NOT optimizer failure. The dLL rule
+      is only meaningful for V1. V3 routing errors: seed 401 small, seed 402 large (dXn -0.77).
