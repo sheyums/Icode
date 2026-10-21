@@ -81,3 +81,5 @@ af4b5e9 2026-10-21 15:26:36 +0000 PRESPEC 13 addendum: optimizer-vs-data check; 
 ebc16a6 2026-10-21 16:28:55 +0000 Ledger: PRESPEC 13 Part V results (V1 pass, V2 fail)
 d3d9322 2026-10-21 17:13:21 +0000 validate13_day finished (auto)
 7028f06 2026-10-21 17:14:01 +0000 Ledger: V5 pass, V6 fail
+7652b93 2026-10-21 17:14:41 +0000 PRESPEC 14 + hhmm_fly.py (built, untested)
+c3a110f 2026-10-21 17:30:23 +0000 PRESPEC 14 unit test FAIL; design review draft

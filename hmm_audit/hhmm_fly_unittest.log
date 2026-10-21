@@ -1,0 +1,5 @@
+898s for 3 fits | iters 300 | largest logL decrease 0.0000 nats
+true kappa_S [0.67, 0.88, 1.14, 1.49] | fitted kappa (S,T,W) [[0.92, 0.83, 0.96, 1.37], [1.07, 0.96, 0.91, 1.08], [1.01, 0.93, 0.99, 1.07]]
+Xn_c -0.624 (truth +0.333) | Yn_c -0.777 (truth +0.077) | mf [0.107, 0.499, 0.505]
+restart final logLs [-266955.5, -267131.4, -266873.7]
+

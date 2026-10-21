@@ -697,3 +697,16 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     One subset fit's logL decreased by 0.023 nats in one EM step: the numerical day-factor M-step is not exact,
     so the day model is a generalized EM with tiny non-monotone steps; noted, not consequential here.
     Part D is not run.
+
+## 2026-10-21 — PRESPEC 14 partial-pooling unit test (informal, 8 heterogeneous flies x 4 days)
+    898s for 3 fits | iters 300 | largest logL decrease 0.0000 nats
+    true kappa_S [0.67, 0.88, 1.14, 1.49] | fitted kappa (S,T,W) [[0.92, 0.83, 0.96, 1.37], [1.07, 0.96, 0.91, 1.08], [1.01, 0.93, 0.99, 1.07]]
+    Xn_c -0.624 (truth +0.333) | Yn_c -0.777 (truth +0.077) | mf [0.107, 0.499, 0.505]
+    restart final logLs [-266955.5, -267131.4, -266873.7]
+    
+    INTERPRETATION: the model as built does NOT work. Routing is wrong in sign and size (Xn_c -0.62 vs
+    +0.33; Yn_c -0.78 vs +0.08); T and W coarse states end with near-identical movement (0.499 vs 0.505),
+    so the S/T/W labels are ambiguous; fits hit the 300-iteration cap; restarts differ by up to 257 nats.
+    Likely cause: with FREE per-fly emissions, the movement signature that distinguishes T from W is no
+    longer shared, so the coarse states lose their identity (a new degeneracy). Free per-fly texture is too
+    much freedom; per-fly deviations need to be constrained (shrunk toward a shared value), i.e. design B.
