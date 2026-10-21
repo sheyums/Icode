@@ -84,3 +84,6 @@ d3d9322 2026-10-21 17:13:21 +0000 validate13_day finished (auto)
 7652b93 2026-10-21 17:14:41 +0000 PRESPEC 14 + hhmm_fly.py (built, untested)
 c3a110f 2026-10-21 17:30:23 +0000 PRESPEC 14 unit test FAIL; design review draft
 1ba29f1 2026-10-21 17:33:03 +0000 Design review page (h1_review.html) + DESIGN_REVIEW.md
+0b21bf6 2026-10-21 18:36:57 +0000 PRESPEC 15 (step 1 + E outline), before running
+c9fadde 2026-10-21 18:36:58 +0000 epr_min.py
+cbd43b5 2026-10-21 18:45:39 +0000 Step 1 results; PRESPEC 15 E2/E3 addendum + e23.py, before running E

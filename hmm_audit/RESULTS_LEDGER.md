@@ -710,3 +710,21 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     Likely cause: with FREE per-fly emissions, the movement signature that distinguishes T from W is no
     longer shared, so the coarse states lose their identity (a new degeneracy). Free per-fly texture is too
     much freedom; per-fly deviations need to be constrained (shrunk toward a shared value), i.e. design B.
+
+## 2026-10-21 — PRESPEC 15 step 1 (epr_min.py)
+    CS     H1==H2 windows  403 | EPR_min <= 1e-3 nats/h: 0.752 | median EPR_min 6.76e-29 | median fitted EPR 18.1 nats/h (fitted infinite in 2) | J range contains 0: 0.814 | median Xn,Yn at min-EPR +0.02,+0.20
+    CS     H1==H3 windows   31 | EPR_min <= 1e-3 nats/h: 0.355 | median EPR_min 7.85e-01 | median fitted EPR 26.8 nats/h (fitted infinite in 0) | J range contains 0: 0.871 | median Xn,Yn at min-EPR +0.02,-0.38
+    per0   H1==H2 windows  310 | EPR_min <= 1e-3 nats/h: 0.768 | median EPR_min 3.52e-29 | median fitted EPR 1.46 nats/h (fitted infinite in 1) | J range contains 0: 0.713 | median Xn,Yn at min-EPR +0.06,+0.28
+    per0   H1==H3 windows   75 | EPR_min <= 1e-3 nats/h: 0.200 | median EPR_min 1.46e+01 | median fitted EPR 151 nats/h (fitted infinite in 2) | J range contains 0: 0.413 | median Xn,Yn at min-EPR +0.99,-0.99
+    fumin  H1==H2 windows 1456 | EPR_min <= 1e-3 nats/h: 0.089 | median EPR_min 8.32e-01 | median fitted EPR 116 nats/h (fitted infinite in 309) | J range contains 0: 0.975 | median Xn,Yn at min-EPR +0.16,-0.03
+    fumin  H1==H3 windows    8 | EPR_min <= 1e-3 nats/h: 0.125 | median EPR_min 9.24e+00 | median fitted EPR 33.3 nats/h (fitted infinite in 1) | J range contains 0: 0.750 | median Xn,Yn at min-EPR +0.71,-0.66
+    sss    H1==H2 windows  586 | EPR_min <= 1e-3 nats/h: 0.087 | median EPR_min 5.48e-01 | median fitted EPR 118 nats/h (fitted infinite in 193) | J range contains 0: 0.956 | median Xn,Yn at min-EPR -0.25,+0.28
+    sss    H1==H3 windows    7 | EPR_min <= 1e-3 nats/h: 0.143 | median EPR_min 2.10e+00 | median fitted EPR 2.61 nats/h (fitted infinite in 0) | J range contains 0: 1.000 | median Xn,Yn at min-EPR +0.44,-0.51
+    POST HOC robustness (epr_min_check.py, written after the results): wider search unchanged:
+    fumin: 40 windows | old median EPR_min 0.478 -> wide search 0.478 nats/h | now <= 1e-3: 0 | wide/old ratio median 1.000
+    sss: 40 windows | old median EPR_min 0.692 -> wide search 0.692 nats/h | now <= 1e-3: 0 | wide/old ratio median 1.000
+    INTERPRETATION: within a 3-state description, CS and per0 data are compatible with zero dissipation in
+    ~75% of exactly-degenerate windows; fumin and sss data REQUIRE dissipation in ~91% (median minimum
+    0.55-0.83 nats/h, ~150-200x below the fitted pipeline values). Cycle-flux sign undetermined in 71-98%.
+    My prediction (minimum = 0 everywhere) was wrong for fumin/sss; H3's small 'active' emission breaks
+    exact lumping. The bound is conditional on the 3-state model class.
