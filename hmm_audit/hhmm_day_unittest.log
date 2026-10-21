@@ -1,0 +1,5 @@
+815s monotone True iters 178
+true kappa_S [0.67, 0.88, 1.14, 1.49] fitted kappa (S,T,W): [[0.71, 0.75, 1.23, 1.52], [1.12, 0.89, 1.04, 0.96], [1.19, 0.92, 0.99, 0.93]]
+Xn_c fitted +0.194 (truth +0.333) Yn_c +0.077 (truth +0.077)
+
+[exited with code 0]

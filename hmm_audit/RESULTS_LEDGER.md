@@ -633,3 +633,10 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
       fumin  movement fraction      days 2+ only: slope -0.011/day, Wilcoxon p 0.237
       fumin  sleep (min/day)        days 2+ only: slope -5.800/day, Wilcoxon p 0.315
     Reading: clear drift within the recordings. CS: sleep bouts shorten and multiply day by day (mean bout 22.4 -> 16.3 min); fumin: large day-1 -> day-2 drop in sleep, then flat. Held-out HMM scores show no significant trend (they also move with behavioural entropy, so they are a weak diagnostic).
+
+## 2026-10-21 — hhmm_day.py informal unit test (8 flies x 4 days, not a gate)
+    815s monotone True iters 178
+    true kappa_S [0.67, 0.88, 1.14, 1.49] fitted kappa (S,T,W): [[0.71, 0.75, 1.23, 1.52], [1.12, 0.89, 1.04, 0.96], [1.19, 0.92, 0.99, 0.93]]
+    Xn_c fitted +0.194 (truth +0.333) Yn_c +0.077 (truth +0.077)
+    
+    [exited with code 0]
