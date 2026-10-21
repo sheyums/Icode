@@ -62,3 +62,12 @@ def coarse_summary(m):
 def fit(S,Nc,seed,Nf=2):
     m=HHMM(Nc=Nc,Nf=Nf,random_state=seed); X=np.concatenate(S).reshape(-1,1); m.fit(X,[len(s) for s in S]); return m
 def score(m,S): return m.score(np.concatenate(S).reshape(-1,1),[len(s) for s in S])
+
+def fit_pooled(S, Nc, seed, n_sub=12, n_start=6, Nf=2):
+    """PRESPEC 13 warm start: n_start random fits on a seeded subset, best by full-data logL, then refit on all."""
+    rs=np.random.RandomState(seed); idx=rs.choice(len(S),min(n_sub,len(S)),replace=False); sub=[S[i] for i in idx]
+    cands=[fit(sub,Nc,seed*100+r,Nf) for r in range(n_start)]
+    best=max(cands,key=lambda m:score(m,S))
+    m=HHMM(Nc=Nc,Nf=Nf,n_iter=300,random_state=seed); m.init_params=''
+    m.startprob_=best.startprob_.copy(); m.transmat_=best.transmat_.copy(); m.emissionprob_=best.emissionprob_.copy(); m._struct=best._struct
+    X=np.concatenate(S).reshape(-1,1); m.fit(X,[len(s) for s in S]); return m

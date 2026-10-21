@@ -613,3 +613,23 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     With 4 days x 4 h of one fly, coarse routing is NOT estimable per fly-bin. Data analysis not run.
     Options: pool flies within genotype x bin (shared coarse parameters), better initialisation and
     more restarts, then repeat this replicate validation at the pooled data size before any data run.
+
+## 2026-10-21 — UNPLANNED, DESCRIPTIVE aging/drift check (aging_check.py), requested by user
+    (a) held-out log-lik per second at K_g, within-fly-bin centred, by held-out day (median over fly-bins)
+      CS     n=59 fly-bins | by day [-18.1, -35.8, 21.3, 22.7] nats/h | slope per day median +12.3 nats/h, Wilcoxon p 0.219
+      fumin  n=59 fly-bins | by day [-23.2, -31.2, 49.6] nats/h | slope per day median +56.1 nats/h, Wilcoxon p 0.0543
+    
+    (b) raw daily behaviour, median over flies by day | within-fly slope per day (median) and Wilcoxon p
+      CS     movement fraction      by day [0.066, 0.072, 0.064, 0.065] | slope -0.002/day, Wilcoxon p 0.107 (n=25)
+      CS     sleep (min/day)        by day [869.183, 803.433, 771.133, 799.5] | slope -21.413/day, Wilcoxon p 0.00807 (n=25)
+      CS     sleep bouts/day        by day [42.0, 43.0, 47.0, 48.0] | slope +2.100/day, Wilcoxon p 0.00807 (n=25)
+      CS     mean sleep bout (min)  by day [22.4, 19.524, 18.942, 16.334] | slope -0.970/day, Wilcoxon p 0.000103 (n=25)
+      CS     movement fraction      days 2+ only: slope -0.004/day, Wilcoxon p 0.00226
+      CS     sleep (min/day)        days 2+ only: slope -11.917/day, Wilcoxon p 0.474
+      fumin  movement fraction      by day [0.237, 0.287, 0.274] | slope +0.009/day, Wilcoxon p 0.0636 (n=53)
+      fumin  sleep (min/day)        by day [155.25, 86.517, 73.6] | slope -30.767/day, Wilcoxon p 2.77e-06 (n=53)
+      fumin  sleep bouts/day        by day [18.0, 11.0, 10.0] | slope -3.000/day, Wilcoxon p 1.59e-05 (n=53)
+      fumin  mean sleep bout (min)  by day [8.819, 7.622, 7.242] | slope -0.604/day, Wilcoxon p 0.000133 (n=53)
+      fumin  movement fraction      days 2+ only: slope -0.011/day, Wilcoxon p 0.237
+      fumin  sleep (min/day)        days 2+ only: slope -5.800/day, Wilcoxon p 0.315
+    Reading: clear drift within the recordings. CS: sleep bouts shorten and multiply day by day (mean bout 22.4 -> 16.3 min); fumin: large day-1 -> day-2 drop in sleep, then flat. Held-out HMM scores show no significant trend (they also move with behavioural entropy, so they are a weak diagnostic).

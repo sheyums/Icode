@@ -69,3 +69,7 @@ dc8e8de 2026-10-20 23:53:40 +0000 flatK checkpoint (auto)
 b3b43df 2026-10-21 00:38:54 +0000 PRESPEC 12: synthetic pass criteria, before test
 a62b79a 2026-10-21 00:44:57 +0000 PRESPEC 12 FAIL logged; addendum 2 replicate validation before running
 be0e2b9 2026-10-21 00:50:02 +0000 Ledger: replicate validation FAIL + interpretation
+e552630 2026-10-21 15:10:38 +0000 PRESPEC 13 pooled hierarchical HMM, before running
+936caf0 2026-10-21 15:11:06 +0000 fit_pooled + validate13.py
+af4b5e9 2026-10-21 15:26:36 +0000 PRESPEC 13 addendum: optimizer-vs-data check; restart validation
+14462b4 2026-10-21 15:39:59 +0000 Ledger: aging/drift check (unplanned, descriptive)
