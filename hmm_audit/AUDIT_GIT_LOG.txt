@@ -83,3 +83,4 @@ d3d9322 2026-10-21 17:13:21 +0000 validate13_day finished (auto)
 7028f06 2026-10-21 17:14:01 +0000 Ledger: V5 pass, V6 fail
 7652b93 2026-10-21 17:14:41 +0000 PRESPEC 14 + hhmm_fly.py (built, untested)
 c3a110f 2026-10-21 17:30:23 +0000 PRESPEC 14 unit test FAIL; design review draft
+1ba29f1 2026-10-21 17:33:03 +0000 Design review page (h1_review.html) + DESIGN_REVIEW.md
