@@ -1,0 +1,10 @@
+fig4 flies (bouts >= 40 min): [('CS', 'dark', 25), ('per0DD', 'whole', 17), ('per0LD', 'dark', 22), ('fumin', 'light', 52), ('sss', 'dark', 55)]
+CS      light n=25 depth_in +4.98% depth_out +4.98% (mean over flies)
+CS      dark  n=25 depth_in +7.25% depth_out -2.47% (mean over flies)
+fumin   light n=48 depth_in +1.35% depth_out -5.27% (mean over flies)
+fumin   dark  n=51 depth_in +3.61% depth_out -2.65% (mean over flies)
+per0LD  light n=27 depth_in +3.58% depth_out +1.26% (mean over flies)
+per0LD  dark  n=26 depth_in +3.32% depth_out -0.81% (mean over flies)
+per0DD  whole n=25 depth_in +5.06% depth_out +1.17% (mean over flies)
+sss     light n=46 depth_in +3.54% depth_out +4.75% (mean over flies)
+sss     dark  n=51 depth_in +1.55% depth_out +2.76% (mean over flies)

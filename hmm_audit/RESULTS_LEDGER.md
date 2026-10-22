@@ -831,3 +831,15 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     C INVALID: per-bout normalisation by the bout's own mid-wake level divides by near-zero values in quiet
       bouts (normalised approach means 1.2-3.1 with SEM up to 1.3); fits hit their bounds. The flaw is in the
       plan, not the code. tau_in/tau_out are not reported.
+
+## 2026-10-22 — figures (figs.py): fig1 per-fly D, fig2 E2 profiles (2-10 min), fig3 symmetry plane (exit depth = DESCRIPTIVE post hoc mirror of the pre-registered approach depth), fig4 average relaxation 2-20 min for bouts >= 40 min (DESCRIPTIVE replacement for the invalid PRESPEC 17 C fits, at the user's suggestion; no time constants fitted).
+    fig4 flies (bouts >= 40 min): [('CS', 'dark', 25), ('per0DD', 'whole', 17), ('per0LD', 'dark', 22), ('fumin', 'light', 52), ('sss', 'dark', 55)]
+    CS      light n=25 depth_in +4.98% depth_out +4.98% (mean over flies)
+    CS      dark  n=25 depth_in +7.25% depth_out -2.47% (mean over flies)
+    fumin   light n=48 depth_in +1.35% depth_out -5.27% (mean over flies)
+    fumin   dark  n=51 depth_in +3.61% depth_out -2.65% (mean over flies)
+    per0LD  light n=27 depth_in +3.58% depth_out +1.26% (mean over flies)
+    per0LD  dark  n=26 depth_in +3.32% depth_out -0.81% (mean over flies)
+    per0DD  whole n=25 depth_in +5.06% depth_out +1.17% (mean over flies)
+    sss     light n=46 depth_in +3.54% depth_out +4.75% (mean over flies)
+    sss     dark  n=51 depth_in +1.55% depth_out +2.76% (mean over flies)
