@@ -879,3 +879,4 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     DESCRIPTIVE): asymmetry stronger near the transition (median Delta_5: CS dark +8.3, fumin light +4.3,
     fumin dark +3.8 [ns at 2-10 min], per0LD dark +1.9, per0DD +3.4); sleepless slightly negative (-0.9;
     perm p 0.027 dark). Figures fig1-3_pm5_bridged generated; V0 figures retained.
+    User confirmation (2026-10-22): a 1 s movement between a sleep bout and a shorter pause (e.g. 301 + 1 + 100 s) is NOT bridged. Bridging rule (b) as implemented is the lab convention; no rerun needed.
