@@ -800,3 +800,34 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     (CS dark, fumin light, per0LD dark, per0DD whole) all pass Bonferroni 0.05/9. The asymmetry persists in
     arrhythmic flies in constant darkness, so it is not produced by light or circadian timing. E3: run-sequence
     irreversibility in every group and block (p <= 0.001), D* 0.0007-0.012 nats per run-triple.
+
+## 2026-10-22 — PRESPEC 17 (taper.py) results
+    CS      light flies 25 | D median -0.0044 IQR [-0.0347,+0.0145] D>0 0.48 sign p 1 | fly perm p<.05 0.04 | depth median +0.0359 rel +0.25 Wilcoxon p 6.56e-06
+             fit n=25: tau_in 100.00 min [0.46, 100.0] A_in -0.64 | tau_out 100.00 [0.68, 100.0] A_out -0.54 | dtau CI [-99.47, 99.29] dA CI [-1.35, 2.56]
+    CS      dark  flies 25 | D median +0.0560 IQR [+0.0330,+0.0960] D>0 0.92 sign p 1.94e-05 | fly perm p<.05 0.44 | depth median +0.0589 rel +0.41 Wilcoxon p 1.97e-06
+             fit n=25: tau_in 35.54 min [0.69, 100.0] A_in -1.41 | tau_out 38.91 [15.97, 100.0] A_out -2.90 | dtau CI [-97.88, 84.03] dA CI [0.68, 2.59]
+    fumin   light flies 48 | D median +0.0153 IQR [-0.0030,+0.0332] D>0 0.73 sign p 0.00209 | fly perm p<.05 0.10 | depth median +0.0052 rel +0.03 Wilcoxon p 0.0958
+             fit n=52: tau_in 100.00 min [59.07, 100.0] A_in -0.67 | tau_out 13.98 [8.67, 23.89] A_out -1.17 | dtau CI [42.45, 91.3] dA CI [0.23, 0.86]
+    fumin   dark  flies 51 | D median +0.0040 IQR [-0.0124,+0.0279] D>0 0.53 sign p 0.78 | fly perm p<.05 0.12 | depth median +0.0290 rel +0.11 Wilcoxon p 9.28e-05
+             fit n=53: tau_in 69.40 min [21.22, 100.0] A_in -0.42 | tau_out 15.82 [3.05, 31.95] A_out -0.63 | dtau CI [-5.76, 96.9] dA CI [0.01, 0.57]
+    per0LD  light flies 27 | D median +0.0068 IQR [-0.0087,+0.0388] D>0 0.63 sign p 0.248 | fly perm p<.05 0.19 | depth median +0.0200 rel +0.11 Wilcoxon p 0.00594
+             fit n=24: tau_in 100.00 min [0.38, 100.0] A_in -0.18 | tau_out 100.00 [0.74, 100.0] A_out -0.26 | dtau CI [-99.08, 99.0] dA CI [-4.67, 1.13]
+    per0LD  dark  flies 26 | D median +0.0148 IQR [+0.0067,+0.0388] D>0 0.85 sign p 0.000534 | fly perm p<.05 0.12 | depth median +0.0230 rel +0.16 Wilcoxon p 8.16e-05
+             fit n=22: tau_in 88.69 min [14.35, 100.0] A_in -1.38 | tau_out 70.55 [17.54, 100.0] A_out -1.81 | dtau CI [-76.06, 81.75] dA CI [-0.18, 1.78]
+    per0DD  whole flies 25 | D median +0.0258 IQR [+0.0100,+0.0403] D>0 0.84 sign p 0.000911 | fly perm p<.05 0.40 | depth median +0.0423 rel +0.27 Wilcoxon p 6.56e-06
+             fit n=17: tau_in 100.00 min [3.61, 100.0] A_in -1.31 | tau_out 100.00 [18.66, 100.0] A_out -1.15 | dtau CI [-66.38, 68.23] dA CI [-1.16, 0.49]
+    sss     light flies 46 | D median -0.0053 IQR [-0.0188,+0.0101] D>0 0.43 sign p 0.461 | fly perm p<.05 0.04 | depth median +0.0227 rel +0.15 Wilcoxon p 1.58e-05
+             fit n=53: tau_in 0.23 min [0.21, 100.0] A_in +5.00 | tau_out 0.73 [0.25, 100.0] A_out +0.58 | dtau CI [-99.72, 99.73] dA CI [-5.18, 5.18]
+    sss     dark  flies 51 | D median -0.0037 IQR [-0.0183,+0.0176] D>0 0.41 sign p 0.262 | fly perm p<.05 0.04 | depth median +0.0180 rel +0.13 Wilcoxon p 0.00507
+             fit n=55: tau_in 100.00 min [100.0, 100.0] A_in -0.51 | tau_out 53.03 [17.57, 100.0] A_out -0.58 | dtau CI [-0.0, 82.43] dA CI [-0.08, 0.26]
+    INTERPRETATION:
+    A (per-fly D): consistent across flies where E2 was significant: D > 0 in 92% of CS-dark flies (sign p 2e-5),
+      85% per0LD-dark (5e-4), 84% per0DD (9e-4), 73% fumin-light (0.002); individually significant in 44%, 12%,
+      40%, 10% of flies. No consistent sign in CS light, fumin dark, per0LD light, sss light/dark.
+    B (depth): activity in minutes 2-3 before sleep onset is BELOW the mid-wake level in every group (relative
+      depth 0.03-0.41; Wilcoxon p <= 0.006 except fumin light 0.096). sss DOES taper before sleep; its E2 null
+      means the start of its wake bouts is equally quiet (symmetric), not that it lacks a taper. This corrects
+      the wording 'absent in sleepless flies' used on the review page (22 Oct, section 8).
+    C INVALID: per-bout normalisation by the bout's own mid-wake level divides by near-zero values in quiet
+      bouts (normalised approach means 1.2-3.1 with SEM up to 1.3); fits hit their bounds. The flaw is in the
+      plan, not the code. tau_in/tau_out are not reported.
