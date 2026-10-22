@@ -91,3 +91,4 @@ ea4bade 2026-10-21 18:46:17 +0000 Ledger: E2/E3 results
 22db8a3 2026-10-21 18:47:05 +0000 Review page: section 7 (E2/E3, minimum dissipation)
 0031cec 2026-10-22 20:20:05 +0000 PRESPEC 16 + e23.py group/whole options, before running
 232c10b 2026-10-22 20:20:59 +0000 Ledger: PRESPEC 16 results
+43669f7 2026-10-22 20:21:31 +0000 Review page section 8
