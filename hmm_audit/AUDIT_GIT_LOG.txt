@@ -96,3 +96,4 @@ ea4bade 2026-10-21 18:46:17 +0000 Ledger: E2/E3 results
 66862e3 2026-10-22 20:25:31 +0000 taper.py
 c7e2f8a 2026-10-22 20:28:41 +0000 Ledger: PRESPEC 17 results (C invalid)
 79522c9 2026-10-22 20:30:54 +0000 Journal-style figures 1-4
+324cc82 2026-10-22 20:31:28 +0000 Review page section 9 + sss correction
