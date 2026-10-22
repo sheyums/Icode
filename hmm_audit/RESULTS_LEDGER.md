@@ -880,3 +880,72 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     fumin dark +3.8 [ns at 2-10 min], per0LD dark +1.9, per0DD +3.4); sleepless slightly negative (-0.9;
     perm p 0.027 dark). Figures fig1-3_pm5_bridged generated; V0 figures retained.
     User confirmation (2026-10-22): a 1 s movement between a sleep bout and a shorter pause (e.g. 301 + 1 + 100 s) is NOT bridged. Bridging rule (b) as implemented is the lab convention; no rerun needed.
+
+## 2026-10-23 — PRESPEC 19 (571f90b) signed cycle current (cycle.py; JSON-save bug fixed and rerun, same seed and output)
+    
+    ===== theta = 0.5  (PRIMARY) =====
+    CS      light flies 25 | c mean -0.019 [-0.080,+0.049] median -0.066 c>0 0.40 sign p 0.42 Wilcoxon p 0.46 | J -0.007/h [-0.047,+0.035] | onsets Q:A 264:534 wakings Q:A 296:550
+    CS      dark  flies 25 | c mean +0.111 [+0.069,+0.157] median +0.111 c>0 0.80 sign p 0.0041 Wilcoxon p 6.4e-05 | J +0.062/h [+0.033,+0.091] | onsets Q:A 248:530 wakings Q:A 150:580
+    fumin   light flies 49 | c mean +0.048 [+0.017,+0.078] median +0.050 c>0 0.55 sign p 0.088 Wilcoxon p 0.0024 | J +0.043/h [+0.024,+0.062] | onsets Q:A 168:825 wakings Q:A 104:911
+    fumin   dark  flies 53 | c mean +0.059 [+0.011,+0.101] median +0.083 c>0 0.68 sign p 2.5e-05 Wilcoxon p 0.00071 | J +0.024/h [+0.012,+0.037] | onsets Q:A 112:711 wakings Q:A 53:745
+    per0LD  light flies 27 | c mean +0.007 [-0.030,+0.047] median +0.016 c>0 0.56 sign p 0.56 Wilcoxon p 0.71 | J +0.007/h [-0.014,+0.027] | onsets Q:A 188:578 wakings Q:A 192:601
+    per0LD  dark  flies 27 | c mean -0.015 [-0.047,+0.017] median -0.026 c>0 0.37 sign p 0.25 Wilcoxon p 0.3 | J -0.010/h [-0.029,+0.010] | onsets Q:A 225:618 wakings Q:A 225:591
+    per0DD  whole flies 25 | c mean +0.105 [+0.051,+0.161] median +0.105 c>0 0.72 sign p 0.043 Wilcoxon p 0.0023 | J +0.066/h [+0.026,+0.105] | onsets Q:A 524:1033 wakings Q:A 379:1178
+    sss     light flies 50 | c mean -0.093 [-0.154,-0.036] median -0.068 c>0 0.28 sign p 0.032 Wilcoxon p 0.0067 | J -0.013/h [-0.029,+0.001] | onsets Q:A 125:411 wakings Q:A 174:412
+    sss     dark  flies 53 | c mean -0.029 [-0.097,+0.037] median +0.000 c>0 0.47 sign p 1 Wilcoxon p 0.57 | J -0.008/h [-0.029,+0.013] | onsets Q:A 170:531 wakings Q:A 161:491
+      sleepless vs others (Mann-Whitney on c):
+        light: sss vs CS: p 0.342
+        light: sss vs fumin: p 0.00018
+        light: sss vs per0LD: p 0.0245
+        light: sss vs per0DD(whole): p 5.42e-05
+        dark: sss vs CS: p 0.0252
+        dark: sss vs fumin: p 0.0793
+        dark: sss vs per0LD: p 0.768
+        dark: sss vs per0DD(whole): p 0.0252
+    
+    ===== theta = 0.33 =====
+    CS      light flies 25 | c mean -0.023 [-0.078,+0.035] median -0.042 c>0 0.40 sign p 0.42 Wilcoxon p 0.35 | J -0.008/h [-0.042,+0.026] | onsets Q:A 181:617 wakings Q:A 214:632
+    CS      dark  flies 25 | c mean +0.077 [+0.038,+0.116] median +0.077 c>0 0.68 sign p 0.11 Wilcoxon p 0.0023 | J +0.033/h [+0.007,+0.057] | onsets Q:A 177:601 wakings Q:A 113:617
+    fumin   light flies 49 | c mean +0.030 [+0.002,+0.059] median +0.000 c>0 0.49 sign p 0.099 Wilcoxon p 0.068 | J +0.026/h [+0.010,+0.042] | onsets Q:A 102:891 wakings Q:A 67:948
+    fumin   dark  flies 53 | c mean +0.054 [+0.030,+0.081] median +0.000 c>0 0.49 sign p 0.00054 Wilcoxon p 0.00011 | J +0.012/h [+0.005,+0.021] | onsets Q:A 66:757 wakings Q:A 30:768
+    per0LD  light flies 27 | c mean +0.019 [-0.011,+0.047] median +0.013 c>0 0.63 sign p 0.11 Wilcoxon p 0.15 | J +0.017/h [-0.002,+0.034] | onsets Q:A 128:638 wakings Q:A 120:673
+    per0LD  dark  flies 27 | c mean -0.002 [-0.028,+0.024] median -0.003 c>0 0.44 sign p 0.7 Wilcoxon p 0.82 | J -0.005/h [-0.022,+0.014] | onsets Q:A 155:688 wakings Q:A 148:668
+    per0DD  whole flies 25 | c mean +0.074 [+0.028,+0.120] median +0.066 c>0 0.72 sign p 0.023 Wilcoxon p 0.0072 | J +0.044/h [+0.016,+0.074] | onsets Q:A 385:1172 wakings Q:A 289:1268
+    sss     light flies 50 | c mean -0.063 [-0.112,-0.014] median -0.014 c>0 0.30 sign p 0.15 Wilcoxon p 0.016 | J -0.010/h [-0.022,+0.001] | onsets Q:A 72:464 wakings Q:A 115:471
+    sss     dark  flies 53 | c mean +0.014 [-0.044,+0.068] median +0.000 c>0 0.45 sign p 0.44 Wilcoxon p 0.67 | J -0.003/h [-0.020,+0.013] | onsets Q:A 114:587 wakings Q:A 96:556
+      sleepless vs others (Mann-Whitney on c):
+        light: sss vs CS: p 0.562
+        light: sss vs fumin: p 0.00319
+        light: sss vs per0LD: p 0.0107
+        light: sss vs per0DD(whole): p 0.000399
+        dark: sss vs CS: p 0.146
+        dark: sss vs fumin: p 0.351
+        dark: sss vs per0LD: p 0.373
+        dark: sss vs per0DD(whole): p 0.129
+    
+    ===== theta = 0.75 =====
+    CS      light flies 25 | c mean -0.022 [-0.071,+0.031] median -0.049 c>0 0.36 sign p 0.23 Wilcoxon p 0.22 | J -0.019/h [-0.048,+0.011] | onsets Q:A 378:420 wakings Q:A 425:421
+    CS      dark  flies 25 | c mean +0.173 [+0.110,+0.239] median +0.188 c>0 0.84 sign p 0.00091 Wilcoxon p 3.8e-05 | J +0.107/h [+0.065,+0.154] | onsets Q:A 375:403 wakings Q:A 223:507
+    fumin   light flies 49 | c mean +0.105 [+0.068,+0.143] median +0.117 c>0 0.78 sign p 6.2e-05 Wilcoxon p 1.4e-05 | J +0.077/h [+0.052,+0.102] | onsets Q:A 321:672 wakings Q:A 197:818
+    fumin   dark  flies 53 | c mean +0.150 [+0.107,+0.191] median +0.167 c>0 0.79 sign p 1.2e-06 Wilcoxon p 7.3e-07 | J +0.062/h [+0.044,+0.081] | onsets Q:A 236:587 wakings Q:A 105:693
+    per0LD  light flies 27 | c mean +0.031 [-0.019,+0.081] median +0.034 c>0 0.59 sign p 0.33 Wilcoxon p 0.28 | J +0.029/h [-0.002,+0.060] | onsets Q:A 296:470 wakings Q:A 272:521
+    per0LD  dark  flies 27 | c mean +0.009 [-0.031,+0.053] median -0.018 c>0 0.41 sign p 0.44 Wilcoxon p 0.94 | J +0.016/h [-0.012,+0.049] | onsets Q:A 344:499 wakings Q:A 310:506
+    per0DD  whole flies 25 | c mean +0.122 [+0.059,+0.182] median +0.119 c>0 0.72 sign p 0.023 Wilcoxon p 0.0025 | J +0.084/h [+0.036,+0.130] | onsets Q:A 731:826 wakings Q:A 546:1011
+    sss     light flies 50 | c mean -0.076 [-0.150,-0.008] median -0.051 c>0 0.38 sign p 0.15 Wilcoxon p 0.088 | J -0.015/h [-0.030,+0.000] | onsets Q:A 217:319 wakings Q:A 269:317
+    sss     dark  flies 53 | c mean -0.071 [-0.140,-0.002] median -0.067 c>0 0.36 sign p 0.092 Wilcoxon p 0.058 | J -0.017/h [-0.037,+0.004] | onsets Q:A 287:414 wakings Q:A 295:357
+      sleepless vs others (Mann-Whitney on c):
+        light: sss vs CS: p 0.468
+        light: sss vs fumin: p 4.57e-05
+        light: sss vs per0LD: p 0.0547
+        light: sss vs per0DD(whole): p 0.000463
+        dark: sss vs CS: p 3.75e-05
+        dark: sss vs fumin: p 9.87e-07
+        dark: sss vs per0LD: p 0.108
+        dark: sss vs per0DD(whole): p 0.000715
+    INTERPRETATION (descriptive; post hoc window): forward current (c > 0, 95% CI excludes 0) in wild type dark
+    (+0.11), fumin light (+0.05) and dark (+0.06), per0 DD (+0.11); none in wild type light or per0 LD (either half).
+    sleepless LIGHT reversed: c = -0.093 [-0.154, -0.036], negative at all three thresholds (CI excludes 0 at each);
+    sleepless dark -0.03 (ns at theta 0.33/0.5; -0.07, CI just excludes 0, at 0.75). Net rates small: |J| <= 0.07
+    cycles/h; sleepless J CIs include 0. Not independent of Fig. 3 (same window, thresholded). per0 LD dark:
+    positive Delta (graded) but c ~ 0 (binary Q/A classification loses it).
+    Figure: figures/fig5_cycle_current.{pdf,png}.
