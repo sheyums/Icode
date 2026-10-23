@@ -107,3 +107,9 @@ c7e2f8a 2026-10-22 20:28:41 +0000 Ledger: PRESPEC 17 results (C invalid)
 68918b6 2026-10-23 15:29:53 +0000 Report section 10; SCRIPTS_INDEX.md
 48138c6 2026-10-23 15:46:03 +0000 TODO.md reminders
 680c590 2026-10-23 15:48:57 +0000 PRESPEC 20: S/Q/W per-minute HMM (before running)
+eb8dd00 2026-10-23 15:51:28 +0000 PRESPEC 20 amendment A: n_eff BIC sensitivity, bootstrap LRT on flagged windows (before running)
+00c130f 2026-10-23 15:52:13 +0000 sqw_common.py, sqw_synth.py (PRESPEC 20 section 7)
+6568781 2026-10-23 15:54:21 +0000 sqw.py: fit/route/boot/lrt/mat stages (PRESPEC 20); FFBS route check on known truth
+fe0c03e 2026-10-23 15:55:04 +0000 sqw_report.py (PRESPEC 20 summaries)
+569db68 2026-10-23 16:17:50 +0000 Ledger: PRESPEC 20 synthetic validation (V1 fail, V2 pass)
+72f15b9 2026-10-23 16:17:50 +0000 sqw_power.py: synthetic steps-per-fit check (design review, no fly data)

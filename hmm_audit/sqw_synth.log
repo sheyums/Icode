@@ -1,0 +1,10 @@
+V1: BIC(n=240) best K fractions {2: np.float64(0.96), 3: np.float64(0.04), 4: np.float64(0.0)}; BIC(n_eff) {2: np.float64(0.9), 3: np.float64(0.1), 4: np.float64(0.0)}; K differs in 0.06
+  median symbol changes 52.5; H1 degenerate in 0.02
+  K=3 Xn mean -0.244 median -0.422 SD 0.751 (nan 0); Yn mean +0.246 median +0.478 SD 0.753
+  V1 PASS=False (need K=3 >= 0.70, |bias| < 0.1; truth Xn -0.3, Yn +0.4)
+V2: BIC(n=240) best K fractions {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; BIC(n_eff) {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; K differs in 0.00
+  median symbol changes 55.0; H1 degenerate in 0.24
+  K=3 Xn mean +0.031 median -0.058 SD 0.841 (nan 0); Yn mean -0.230 median -0.462 SD 0.828
+  bootstrap SD median x 0.787 y 0.766; degenerate-or-SD>=0.2 in 1.00
+  V2 PASS=True (need K=2 >= 0.80 and uninformative K=3 routing >= 0.80)
+elapsed 1497 s

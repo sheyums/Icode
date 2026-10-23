@@ -949,3 +949,11 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
     cycles/h; sleepless J CIs include 0. Not independent of Fig. 3 (same window, thresholded). per0 LD dark:
     positive Delta (graded) but c ~ 0 (binary Q/A classification loses it).
     Figure: figures/fig5_cycle_current.{pdf,png}.
+
+## PRESPEC 20 section 7 — synthetic validation of the S/Q/W per-window HMM (2026-10-23, code 00c130f)
+- V1 (true 3-state, distinct H1 emissions, Xn -0.3, Yn +0.4; 50 windows x 240 min): **FAIL.**
+  BIC chose K=2 in 96% of windows, K=3 in 4% (n_eff rule: 90% / 10%). H1 degenerate in 2% only.
+  K=3 routing per window: Xn mean -0.24, median -0.42, SD 0.75; Yn mean +0.25, median +0.48, SD 0.75.
+  Distinct emissions are not enough: one 4 h window (~50 symbol changes) cannot resolve routing or justify a third state.
+- V2 (true 2-state, no H1): PASS. K=2 in 100%; K=3 routing uninformative in 100% (bootstrap SD ~0.78).
+- Consequence, per the plan: the per-window design is not run on fly data. Design review before any fly fit.

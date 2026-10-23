@@ -85,3 +85,16 @@ floored. Group medians with fly-bootstrap intervals.
 - Figure: three panels on identical Xn-Yn axes [-1, 1]: (a) observed per fly from counts,
   Xn_obs = 2 P(Q|waking) - 1, Yn_obs = 2 P(Q|onset) - 1; (b) S/Q/W HMM, FFBS; (c) S/Q/W HMM, Viterbi.
   Plus a BIC panel (fraction of windows best at K = 2/3/4 per genotype).
+
+## Amendment A (2026-10-23, before any fitting; prompted by the user's question on BIC's n)
+With n = 240 the BIC penalty is the same in every window whatever its number of bouts, but transition parameters
+are informed by state CHANGES, not steps. So:
+- Primary rule unchanged (n = 240).
+- Sensitivity rule, pre-specified: n_eff = number of observed symbol changes in the window (minimum 2),
+  BIC_eff = -2 logL + k ln n_eff. Report how often the chosen K differs between the two rules.
+- The number of observed symbol changes is reported next to every window's BIC values; Delta-BIC is not
+  compared across windows as strength of evidence.
+- Parametric-bootstrap LRT on flagged windows only (Delta-BIC > 10 rule): up to 20 flagged windows per
+  genotype x block, chosen with seed 20; 100 replicates simulated from the K = 3 fit; each refit at K = 3 and at
+  the competing K with 10 starts; p = (1 + #{LR_rep >= LR_obs}) / 101. Descriptive.
+- The same n_eff variant is computed in the synthetic validation (section 7), reported but not a pass criterion.
