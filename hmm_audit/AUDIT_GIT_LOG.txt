@@ -115,3 +115,6 @@ fe0c03e 2026-10-23 15:55:04 +0000 sqw_report.py (PRESPEC 20 summaries)
 72f15b9 2026-10-23 16:17:50 +0000 sqw_power.py: synthetic steps-per-fit check (design review, no fly data)
 323a80e 2026-10-23 16:27:29 +0000 Ledger: steps-per-fit design check
 41ef09c 2026-10-23 16:41:11 +0000 PRESPEC 20b: per fly x light/dark S/Q/W HMM (before running)
+7d8063b 2026-10-23 16:41:29 +0000 PRESPEC 20b: V3b criterion compares with V2b (edited before running)
+f53efb8 2026-10-23 16:43:26 +0000 sqw2_common.py (phase-split batched EM), sqw2_synth.py (PRESPEC 20b section 4)
+ac79c9b 2026-10-23 16:44:21 +0000 sqw2.py: PRESPEC 20b fly-data stages (not run)

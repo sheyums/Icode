@@ -38,8 +38,8 @@ their FFBS counting, energetics formulas, comparison with the model-free c and i
   Pass: K=3 chosen in >= 70% of flies; |mean bias| < 0.1 for all four quantities; SD < 0.3.
 - **V2b** negative: 2-state truth (no H1), different light/dark rates. Pass: K=2 in >= 80% of flies.
 - **V3b** within-phase drift: 2-state truth whose sleep-exit and wake-exit rates change linearly across each
-  12 h phase by a factor 2 (no H1). Pass: K=2 in >= 80% AND the K=3 fit's H1 degenerate or its routing
-  stationary H1 occupancy < 5% in >= 80% of flies. A failure means
+  12 h phase by a factor 2 (no H1). Pass: K=2 in >= 80% of flies, and K=3 chosen in no more than 10
+  percentage points more flies than in V2b (V3b asks what drift ADDS). A failure means
   within-phase drift can manufacture H1, and fly results must be read with that caveat.
 Failures are logged, and the design is reviewed before fly data.
 
