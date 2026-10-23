@@ -106,3 +106,4 @@ c7e2f8a 2026-10-22 20:28:41 +0000 Ledger: PRESPEC 17 results (C invalid)
 2b9108c 2026-10-22 23:47:48 +0000 PRESPEC 19 results + fig5
 68918b6 2026-10-23 15:29:53 +0000 Report section 10; SCRIPTS_INDEX.md
 48138c6 2026-10-23 15:46:03 +0000 TODO.md reminders
+680c590 2026-10-23 15:48:57 +0000 PRESPEC 20: S/Q/W per-minute HMM (before running)
