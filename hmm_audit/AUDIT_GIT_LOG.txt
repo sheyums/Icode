@@ -133,3 +133,5 @@ ab5c212 2026-10-23 19:40:19 +0000 PRESPEC 20e: within-fly change of cycle direct
 d574218 2026-10-23 19:45:27 +0000 PRESPEC 20e amendment A: hidden-level framing, 6 h within-phase test if usable (before running)
 7eacf20 2026-10-23 20:11:54 +0000 Count-based J_cycle (global and per 4 h window) from posterior paths, as compute_HMM_energetics GLOBAL
 ea3ba6f 2026-10-23 20:11:54 +0000 Ledger: count-based J
+b060abb 2026-10-23 20:13:39 +0000 Per-path FFBS statistics (Jensen): E[f(N)] beside f(E[N])
+8aba740 2026-10-23 20:13:39 +0000 Ledger: Jensen check

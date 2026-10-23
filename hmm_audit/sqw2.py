@@ -48,20 +48,22 @@ def decode(pi,P,B,y,ph,seed,NP=200,pairs=False):
     zv=np.empty(T,int); zv[-1]=d.argmax()
     for t in range(T-1,0,-1): zv[t-1]=bp[t,zv[t]]
     nph=ph.max()+1; cf=np.zeros((nph,4)); cv=np.zeros((nph,4))
-    for z in Z:
-        for rt,t in sqw.runs_routes(z): cf[ph[t],NM.index(rt)]+=1
+    rp=np.zeros((NP,nph,4))                   # per-path route counts (kept so nonlinear statistics are
+    for k,z in enumerate(Z):                  # averaged per path, E[f(N)], not computed on mean counts, f(E[N]))
+        for rt,t in sqw.runs_routes(z): rp[k,ph[t],NM.index(rt)]+=1
+    cf=rp.sum(0)
     for rt,t in sqw.runs_routes(zv): cv[ph[t],NM.index(rt)]+=1
     if pairs:
-        pf=sum(pair_counts(z,ph,nph) for z in Z)/NP; pv=pair_counts(zv,ph,nph)
+        pp=np.stack([pair_counts(z,ph,nph) for z in Z]); pf=pp.mean(0); pv=pair_counts(zv,ph,nph)
         win=np.arange(T)//240; nw=T//240     # same counts, attributed to the 4 h clock window of the arrival minute
         pw=sum(pair_counts(z,win,nw) for z in Z)/NP
-        return (cf/NP).tolist(),cv.tolist(),pf.tolist(),pv.tolist(),pw.tolist()
+        return (cf/NP).tolist(),cv.tolist(),pf.tolist(),pv.tolist(),pw.tolist(),rp.astype(int).tolist(),pp.astype(int).tolist()
     return (cf/NP).tolist(),cv.tolist()
 def route_one(a):
     d,theta=a; g,i=d['g'],d['fly']; y,ph,_=seqs(g,i,theta)
-    f,v,pf,pv,pw=decode(np.array(d['pi3']),np.array(d['P3']),np.array(d['B3']),y,ph,20+1000*GROUPS.index(g)+i,pairs=True)
+    f,v,pf,pv,pw,rp,pp=decode(np.array(d['pi3']),np.array(d['P3']),np.array(d['B3']),y,ph,20+1000*GROUPS.index(g)+i,pairs=True)
     hours=[float(np.sum(ph==p))/60 for p in range(ph.max()+1)]
-    return f'{g}|{i}',dict(ffbs=f,vit=v,pairs_ffbs=pf,pairs_vit=pv,pairs_win=pw,hours=hours)
+    return f'{g}|{i}',dict(ffbs=f,vit=v,pairs_ffbs=pf,pairs_vit=pv,pairs_win=pw,hours=hours,routes_path=rp,pairs_path=pp)
 def stage_route(theta):
     R=load(theta)
     with Pool(4) as pl: out=dict(pl.map(route_one,[(d,theta) for d in R.values() if 'P3' in d]))

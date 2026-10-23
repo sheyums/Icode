@@ -1076,3 +1076,19 @@ sss     ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: -0.0
 ```
 - Count J and model J agree (Spearman +0.93 to +1.00 per block); differences are within fly-bootstrap intervals.
 - Per-window values come from a model with ONE transition matrix per 12 h phase: their ZT variation reflects data-driven posterior paths and relaxation after light switches, not a fitted time-varying matrix. Descriptive only; the 6 h fits (20c) are the model-level test.
+
+## Jensen check (user request), theta 0.5 (2026-10-23, code b060abb)
+Nonlinear statistics (Xn, Yn, c, count EPR) computed per FFBS path then averaged, E[f(N)], beside the plug-in on posterior-mean counts, f(E[N]). Per-path means are reported only for flies with the statistic defined on >= 50% of paths, so fly sets can differ slightly between columns.
+```
+CS      light | c plug-in +0.002 vs per-path mean +0.002 (paths with c defined 1.00) | Xn -0.029 vs -0.028 | Yn -0.025 vs -0.025 | EPR plug-in median 0.035 vs per-path median 0.037 /h, per-path infinite 0.00
+CS      dark  | c plug-in +0.250 vs per-path mean +0.250 (paths with c defined 1.00) | Xn -0.265 vs -0.265 | Yn +0.235 vs +0.235 | EPR plug-in median 0.291 vs per-path median 0.285 /h, per-path infinite 0.00
+fumin   light | c plug-in +0.178 vs per-path mean +0.170 (paths with c defined 0.88) | Xn -0.498 vs -0.470 | Yn -0.188 vs -0.189 | EPR plug-in median 0.139 vs per-path median 0.140 /h, per-path infinite 0.23
+fumin   dark  | c plug-in +0.335 vs per-path mean +0.335 (paths with c defined 0.85) | Xn -0.561 vs -0.562 | Yn +0.068 vs +0.068 | EPR plug-in median 0.177 vs per-path median 0.206 /h, per-path infinite 0.39
+per0LD  light | c plug-in +0.126 vs per-path mean +0.126 (paths with c defined 1.00) | Xn -0.426 vs -0.426 | Yn -0.175 vs -0.174 | EPR plug-in median 0.019 vs per-path median 0.024 /h, per-path infinite 0.07
+per0LD  dark  | c plug-in +0.144 vs per-path mean +0.144 (paths with c defined 1.00) | Xn -0.475 vs -0.475 | Yn -0.186 vs -0.186 | EPR plug-in median 0.162 vs per-path median 0.160 /h, per-path infinite 0.04
+per0DD  whole | c plug-in +0.207 vs per-path mean +0.207 (paths with c defined 1.00) | Xn -0.310 vs -0.310 | Yn +0.104 vs +0.104 | EPR plug-in median 0.206 vs per-path median 0.212 /h, per-path infinite 0.00
+sss     light | c plug-in -0.185 vs per-path mean -0.185 (paths with c defined 0.75) | Xn +0.071 vs +0.070 | Yn -0.240 vs -0.240 | EPR plug-in median 0.020 vs per-path median 0.025 /h, per-path infinite 0.31
+sss     dark  | c plug-in -0.052 vs per-path mean -0.062 (paths with c defined 0.84) | Xn -0.124 vs -0.099 | Yn -0.221 vs -0.194 | EPR plug-in median 0.048 vs per-path median 0.038 /h, per-path infinite 0.39
+```
+- c, Xn, Yn: E[f] and f(E) agree to <= 0.01 except fumin light Xn (0.03), sss dark Xn/Yn (0.03). J_cycle is linear: identical by construction.
+- Count EPR: on 23-39% of paths in fumin and sss some edge is traversed one way only, so the per-path EPR is infinite and its posterior MEAN is infinite for those flies; medians reported.

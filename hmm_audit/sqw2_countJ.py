@@ -45,3 +45,27 @@ for g in sqw.GROUPS:
     prof=np.array(prof); L2.append(f"{g:7s} ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: "+'  '.join(f"{m:+.3f} [{s:.2f}]" for m,s in zip(prof.mean(0),prof.std(0))))
     L2.append(f"{'':8s}fraction of flies with J > 0 per window: "+'  '.join(f"{v:.2f}" for v in (prof>0).mean(0)))
 print('\n'.join(L2)); open(f'sqw2_countJ_{theta}.log','a').write('\n'.join(L2)+'\n')
+# Jensen: nonlinear statistics as posterior means over paths, E[f(N)], beside the plug-in on mean counts, f(E[N]).
+# Xn, Yn, c: per path (>= 3 routes per denominator, else undefined for that path); EPR per path per hour.
+# J_cycle is linear in counts, so E[J] = J(E[N]) exactly.
+def xy(c):
+    X=(c[...,0]-c[...,1])/(c[...,0]+c[...,1]); Y=(c[...,2]-c[...,3])/(c[...,2]+c[...,3])
+    X=np.where(c[...,0]+c[...,1]>=3,X,np.nan); Y=np.where(c[...,2]+c[...,3]>=3,Y,np.nan); return X,Y
+L3=[]
+for g in sqw.GROUPS:
+    for p,bn in enumerate(['whole'] if g=='per0DD' else ['light','dark']):
+        rows=[]
+        for d in [R[k] for k in sorted(R) if k[0]==g and not R[k]['deg']]:
+            rt=RT[f"{g}|{d['fly']}"]; h=rt['hours'][p]
+            with np.errstate(all='ignore'):
+                rp=np.array(rt['routes_path'])[:,p]; X,Y=xy(rp); C=(Y-X)/2
+                Xm,Ym=xy(rp.mean(0)); Cm=(Ym-Xm)/2
+                pp=np.array(rt['pairs_path'])[:,p]; E=np.array([eprc(n,h) for n in pp]); Em=eprc(pp.mean(0),h)
+            rows.append((Cm,np.nanmean(C) if np.isfinite(C).mean()>=0.5 else np.nan,np.isfinite(C).mean(),
+                         Xm,np.nanmean(X) if np.isfinite(X).mean()>=0.5 else np.nan,Ym,np.nanmean(Y) if np.isfinite(Y).mean()>=0.5 else np.nan,
+                         Em,np.median(E),np.mean(~np.isfinite(E))))
+        r=np.array(rows,float)
+        f=lambda k:np.nanmean(r[:,k])
+        L3.append(f"{g:7s} {bn:5s} | c plug-in {f(0):+.3f} vs per-path mean {f(1):+.3f} (paths with c defined {f(2):.2f}) | Xn {f(3):+.3f} vs {f(4):+.3f} | Yn {f(5):+.3f} vs {f(6):+.3f}"
+                  f" | EPR plug-in median {np.nanmedian(np.where(np.isfinite(r[:,7]),r[:,7],np.nan)):.3f} vs per-path median {np.nanmedian(np.where(np.isfinite(r[:,8]),r[:,8],np.nan)):.3f} /h, per-path infinite {f(9):.2f}")
+print('\n'.join(L3)); open(f'sqw2_countJ_{theta}.log','a').write('\n'.join(L3)+'\n')
