@@ -1108,3 +1108,13 @@ sss     dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median
 ```
 - Finite in every fly. Group means exceed medians (right-skewed across flies). The plug-in median here includes flies that were infinite before, so it is not comparable with the earlier finite-only plug-in medians.
 - Cross-check (2026-10-23): the rule-of-3 bound equals a Python port of the user's epr_count_based.m ('bound') to 8.9e-16 over 1e5 random count matrices; min per-path bound over all real flies/phases/paths = 0.0 (EPR >= 0 now asserted in code).
+
+## POST HOC (user observation, 2026-10-23): light vs dark within fly, theta 0.5, 20b fits
+Paired per fly (non-degenerate), Wilcoxon signed-rank, dark vs light:
+- EPR lower bound (rule of 3, per-path mean): CS dark > light in 68% of flies, p 0.00063 (medians 0.041 / 0.301);
+  fumin 51%, p 0.85; per0LD 52%, p 0.27 (medians 0.030 / 0.177); sss 54%, p 0.70.
+- count J_cycle: CS 80%, p 0.00025 (median paired diff +0.18/h); fumin 53%, p 0.72; per0LD 56%, p 0.12
+  (+0.07/h); sss 61%, p 0.042 (+0.03/h).
+Reading: per0LD's light/dark difference in GROUP MEDIANS is not a consistent within-fly difference; paired, per0LD
+sits with fumin/sss, not with CS. Caveats: n = 27 (limited power); the Q threshold reference r_f is set per
+phase, so the symbol coding itself differs between light and dark. Descriptive.
