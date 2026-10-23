@@ -32,7 +32,11 @@ def stage_fit(theta,Ks):
 def load(theta):
     return {(d['g'],d['fly']):d for d in map(json.loads,open(OUTD+f'fit2_{theta}.jsonl'))}
 # ---- route counting: FFBS (200 paths) and Viterbi, attributed to the phase of the completion minute ----
-def decode(pi,P,B,y,ph,seed,NP=200):
+def pair_counts(z,ph,nph):
+    """Single-step counts N_ij on the run-compressed path, attributed to the phase of the arrival minute."""
+    ch=np.flatnonzero(np.diff(z))+1; c=np.zeros((nph,3,3))
+    np.add.at(c,(ph[ch],z[ch-1],z[ch]),1); return c
+def decode(pi,P,B,y,ph,seed,NP=200,pairs=False):
     T=len(y); E=_E(B[None],y)[:,0]; A=np.empty((T,3)); a=pi*E[0]; A[0]=a/a.sum()
     for t in range(1,T): a=(A[t-1]@P[ph[t]])*E[t]; A[t]=a/a.sum()
     rng=np.random.default_rng(seed); Z=np.empty((NP,T),int); c=np.cumsum(A[-1]); Z[:,-1]=np.searchsorted(c/c[-1],rng.random(NP))
@@ -47,11 +51,17 @@ def decode(pi,P,B,y,ph,seed,NP=200):
     for z in Z:
         for rt,t in sqw.runs_routes(z): cf[ph[t],NM.index(rt)]+=1
     for rt,t in sqw.runs_routes(zv): cv[ph[t],NM.index(rt)]+=1
+    if pairs:
+        pf=sum(pair_counts(z,ph,nph) for z in Z)/NP; pv=pair_counts(zv,ph,nph)
+        win=np.arange(T)//240; nw=T//240     # same counts, attributed to the 4 h clock window of the arrival minute
+        pw=sum(pair_counts(z,win,nw) for z in Z)/NP
+        return (cf/NP).tolist(),cv.tolist(),pf.tolist(),pv.tolist(),pw.tolist()
     return (cf/NP).tolist(),cv.tolist()
 def route_one(a):
     d,theta=a; g,i=d['g'],d['fly']; y,ph,_=seqs(g,i,theta)
-    f,v=decode(np.array(d['pi3']),np.array(d['P3']),np.array(d['B3']),y,ph,20+1000*GROUPS.index(g)+i)
-    return f'{g}|{i}',dict(ffbs=f,vit=v)
+    f,v,pf,pv,pw=decode(np.array(d['pi3']),np.array(d['P3']),np.array(d['B3']),y,ph,20+1000*GROUPS.index(g)+i,pairs=True)
+    hours=[float(np.sum(ph==p))/60 for p in range(ph.max()+1)]
+    return f'{g}|{i}',dict(ffbs=f,vit=v,pairs_ffbs=pf,pairs_vit=pv,pairs_win=pw,hours=hours)
 def stage_route(theta):
     R=load(theta)
     with Pool(4) as pl: out=dict(pl.map(route_one,[(d,theta) for d in R.values() if 'P3' in d]))

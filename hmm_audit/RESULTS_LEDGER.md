@@ -1050,3 +1050,29 @@ total variation 0.05 of H2's / H3's. Per fly: fraction of sleep-like windows vs 
 Reading: a fly's side of the diagonal is predicted almost entirely by how often its degenerate H1 copied the
 SLEEP emission row. The sign comes from the gauge choice, not from identified routing. In the S/Q/W model (20b)
 per0 shows no split (85-89% of flies c > 0). Descriptive.
+
+## ADDED AFTER 20b RESULTS (user request): count-based J_cycle, theta 0.5 (2026-10-23, code 7eacf20)
+Definition as compute_HMM_energetics.m GLOBAL: J_cycle = N32 - N23 on the run-compressed hidden sequence, per hour; here averaged over 200 FFBS whole-record paths (no window seams), counts attributed to the phase / 4 h window of the arrival minute (window counts sum to the global counts, asserted). Sign: + = forward A->Q->S->A. Model J = stationary flux of the phase's fitted matrix, same sign convention.
+```
+CS      light n 25 | model J +0.020 [-0.024,+0.067] | count J_cycle (FFBS) +0.030 [-0.016,+0.076] | (Viterbi) +0.027 cycles/h | Spearman(model, count) +0.99 | same sign 0.96 | count EPR (FFBS) median 0.035 /h, infinite 0.00
+CS      dark  n 25 | model J +0.217 [+0.155,+0.284] | count J_cycle (FFBS) +0.205 [+0.143,+0.271] | (Viterbi) +0.203 cycles/h | Spearman(model, count) +0.99 | same sign 1.00 | count EPR (FFBS) median 0.291 /h, infinite 0.00
+fumin   light n 53 | model J +0.131 [+0.084,+0.177] | count J_cycle (FFBS) +0.129 [+0.082,+0.180] | (Viterbi) +0.131 cycles/h | Spearman(model, count) +0.98 | same sign 0.87 | count EPR (FFBS) median 0.139 /h, infinite 0.17
+fumin   dark  n 53 | model J +0.127 [+0.089,+0.166] | count J_cycle (FFBS) +0.136 [+0.100,+0.178] | (Viterbi) +0.128 cycles/h | Spearman(model, count) +0.99 | same sign 0.92 | count EPR (FFBS) median 0.177 /h, infinite 0.34
+per0LD  light n 27 | model J +0.101 [+0.051,+0.156] | count J_cycle (FFBS) +0.109 [+0.058,+0.164] | (Viterbi) +0.109 cycles/h | Spearman(model, count) +0.93 | same sign 0.89 | count EPR (FFBS) median 0.019 /h, infinite 0.04
+per0LD  dark  n 27 | model J +0.187 [+0.116,+0.256] | count J_cycle (FFBS) +0.181 [+0.111,+0.250] | (Viterbi) +0.160 cycles/h | Spearman(model, count) +1.00 | same sign 1.00 | count EPR (FFBS) median 0.162 /h, infinite 0.04
+per0DD  whole n 23 | model J +0.247 [+0.154,+0.353] | count J_cycle (FFBS) +0.246 [+0.159,+0.343] | (Viterbi) +0.239 cycles/h | Spearman(model, count) +1.00 | same sign 1.00 | count EPR (FFBS) median 0.206 /h, infinite 0.00
+sss     light n 54 | model J -0.056 [-0.083,-0.031] | count J_cycle (FFBS) -0.056 [-0.084,-0.031] | (Viterbi) -0.050 cycles/h | Spearman(model, count) +0.94 | same sign 0.70 | count EPR (FFBS) median 0.020 /h, infinite 0.28
+sss     dark  n 54 | model J -0.016 [-0.041,+0.011] | count J_cycle (FFBS) -0.018 [-0.045,+0.007] | (Viterbi) -0.019 cycles/h | Spearman(model, count) +0.99 | same sign 0.87 | count EPR (FFBS) median 0.048 /h, infinite 0.35
+CS      ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: -0.062 [0.12]  +0.058 [0.20]  +0.094 [0.21]  +0.178 [0.18]  +0.202 [0.21]  +0.236 [0.21]
+        fraction of flies with J > 0 per window: 0.28  0.56  0.60  0.84  0.84  0.84
+fumin   ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.087 [0.22]  +0.143 [0.22]  +0.157 [0.27]  +0.245 [0.27]  +0.115 [0.19]  +0.049 [0.12]
+        fraction of flies with J > 0 per window: 0.58  0.60  0.74  0.77  0.62  0.45
+per0LD  ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.137 [0.16]  +0.079 [0.19]  +0.111 [0.20]  +0.085 [0.19]  +0.236 [0.22]  +0.223 [0.25]
+        fraction of flies with J > 0 per window: 0.93  0.67  0.70  0.59  0.85  0.85
+per0DD  ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.260 [0.26]  +0.243 [0.25]  +0.228 [0.29]  +0.253 [0.31]  +0.278 [0.31]  +0.211 [0.28]
+        fraction of flies with J > 0 per window: 0.87  0.83  0.78  0.78  0.87  0.91
+sss     ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: -0.052 [0.14]  -0.065 [0.12]  -0.050 [0.12]  -0.004 [0.12]  -0.005 [0.15]  -0.045 [0.16]
+        fraction of flies with J > 0 per window: 0.22  0.11  0.15  0.31  0.37  0.26
+```
+- Count J and model J agree (Spearman +0.93 to +1.00 per block); differences are within fly-bootstrap intervals.
+- Per-window values come from a model with ONE transition matrix per 12 h phase: their ZT variation reflects data-driven posterior paths and relaxation after light switches, not a fitted time-varying matrix. Descriptive only; the 6 h fits (20c) are the model-level test.

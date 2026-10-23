@@ -131,3 +131,5 @@ a0f2284 2026-10-23 19:24:34 +0000 run_20d.sh
 8da5a94 2026-10-23 19:37:35 +0000 PRESPEC 20d amendment: report sign disagreement between hidden and observable current (before running)
 ab5c212 2026-10-23 19:40:19 +0000 PRESPEC 20e: within-fly change of cycle direction (before running); sqw5.py null
 d574218 2026-10-23 19:45:27 +0000 PRESPEC 20e amendment A: hidden-level framing, 6 h within-phase test if usable (before running)
+7eacf20 2026-10-23 20:11:54 +0000 Count-based J_cycle (global and per 4 h window) from posterior paths, as compute_HMM_energetics GLOBAL
+ea3ba6f 2026-10-23 20:11:54 +0000 Ledger: count-based J
