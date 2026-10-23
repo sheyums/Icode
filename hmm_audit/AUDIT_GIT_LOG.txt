@@ -114,3 +114,4 @@ fe0c03e 2026-10-23 15:55:04 +0000 sqw_report.py (PRESPEC 20 summaries)
 569db68 2026-10-23 16:17:50 +0000 Ledger: PRESPEC 20 synthetic validation (V1 fail, V2 pass)
 72f15b9 2026-10-23 16:17:50 +0000 sqw_power.py: synthetic steps-per-fit check (design review, no fly data)
 323a80e 2026-10-23 16:27:29 +0000 Ledger: steps-per-fit design check
+41ef09c 2026-10-23 16:41:11 +0000 PRESPEC 20b: per fly x light/dark S/Q/W HMM (before running)
