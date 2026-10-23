@@ -145,3 +145,4 @@ e1f30dc 2026-10-23 20:44:50 +0000 verify_ref.py: reference module reproduces pip
 442461b 2026-10-23 20:45:47 +0000 Golden test vectors G1-G6 for the MATLAB port
 84f1235 2026-10-23 20:45:59 +0000 sync_push: also copy golden/ and figures/
 681c963 2026-10-23 20:47:33 +0000 PORTING_GUIDE.md; SCRIPTS_INDEX points to sqw_ref
+421ce0c 2026-10-23 21:42:00 +0000 Ledger: 20b bootstrap

@@ -1,0 +1,9 @@
+CS      light: flies 5 | SD Xn median 0.118 [0.11-0.19] | SD Yn median 0.124 [0.08-0.22] | bias Xn +0.004 Yn -0.014 | flies with undefined values 0
+CS      dark : flies 5 | SD Xn median 0.125 [0.10-0.22] | SD Yn median 0.156 [0.11-0.17] | bias Xn -0.004 Yn +0.027 | flies with undefined values 0
+fumin   light: flies 5 | SD Xn median 0.174 [0.15-0.55] | SD Yn median 0.247 [0.17-0.38] | bias Xn -0.034 Yn +0.010 | flies with undefined values 1
+fumin   dark : flies 5 | SD Xn median 0.525 [0.14-0.69] | SD Yn median 0.338 [0.14-0.70] | bias Xn +0.076 Yn +0.048 | flies with undefined values 0
+per0LD  light: flies 5 | SD Xn median 0.171 [0.09-0.20] | SD Yn median 0.165 [0.11-0.24] | bias Xn -0.016 Yn +0.022 | flies with undefined values 0
+per0LD  dark : flies 5 | SD Xn median 0.150 [0.11-0.28] | SD Yn median 0.210 [0.10-0.24] | bias Xn +0.014 Yn -0.016 | flies with undefined values 0
+per0DD  whole: flies 5 | SD Xn median 0.136 [0.07-0.27] | SD Yn median 0.148 [0.09-0.17] | bias Xn -0.027 Yn +0.015 | flies with undefined values 0
+sss     light: flies 5 | SD Xn median 0.369 [0.22-0.83] | SD Yn median 0.241 [0.21-0.37] | bias Xn +0.027 Yn -0.059 | flies with undefined values 0
+sss     dark : flies 5 | SD Xn median 0.468 [0.19-0.74] | SD Yn median 0.411 [0.24-0.71] | bias Xn +0.018 Yn +0.039 | flies with undefined values 0

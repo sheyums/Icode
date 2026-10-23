@@ -1118,3 +1118,17 @@ Paired per fly (non-degenerate), Wilcoxon signed-rank, dark vs light:
 Reading: per0LD's light/dark difference in GROUP MEDIANS is not a consistent within-fly difference; paired, per0LD
 sits with fumin/sss, not with CS. Caveats: n = 27 (limited power); the Q threshold reference r_f is set per
 phase, so the symbol coding itself differs between light and dark. Descriptive.
+
+## PRESPEC 20b section 3 — parametric bootstrap, 5 flies per genotype, 30 replicates (2026-10-23, code b060abb)
+```
+CS      light: flies 5 | SD Xn median 0.118 [0.11-0.19] | SD Yn median 0.124 [0.08-0.22] | bias Xn +0.004 Yn -0.014 | flies with undefined values 0
+CS      dark : flies 5 | SD Xn median 0.125 [0.10-0.22] | SD Yn median 0.156 [0.11-0.17] | bias Xn -0.004 Yn +0.027 | flies with undefined values 0
+fumin   light: flies 5 | SD Xn median 0.174 [0.15-0.55] | SD Yn median 0.247 [0.17-0.38] | bias Xn -0.034 Yn +0.010 | flies with undefined values 1
+fumin   dark : flies 5 | SD Xn median 0.525 [0.14-0.69] | SD Yn median 0.338 [0.14-0.70] | bias Xn +0.076 Yn +0.048 | flies with undefined values 0
+per0LD  light: flies 5 | SD Xn median 0.171 [0.09-0.20] | SD Yn median 0.165 [0.11-0.24] | bias Xn -0.016 Yn +0.022 | flies with undefined values 0
+per0LD  dark : flies 5 | SD Xn median 0.150 [0.11-0.28] | SD Yn median 0.210 [0.10-0.24] | bias Xn +0.014 Yn -0.016 | flies with undefined values 0
+per0DD  whole: flies 5 | SD Xn median 0.136 [0.07-0.27] | SD Yn median 0.148 [0.09-0.17] | bias Xn -0.027 Yn +0.015 | flies with undefined values 0
+sss     light: flies 5 | SD Xn median 0.369 [0.22-0.83] | SD Yn median 0.241 [0.21-0.37] | bias Xn +0.027 Yn -0.059 | flies with undefined values 0
+sss     dark : flies 5 | SD Xn median 0.468 [0.19-0.74] | SD Yn median 0.411 [0.24-0.71] | bias Xn +0.018 Yn +0.039 | flies with undefined values 0
+```
+- Bias is small everywhere (|median| <= 0.08). Per-fly precision splits by genotype: CS, per0LD, per0DD SD 0.12-0.21; fumin dark and sss light/dark SD 0.34-0.53 (few sleep transitions). Group means over 53-57 flies remain usable (SE ~ SD/sqrt(n) ~ 0.05-0.07), but per-fly routing in fumin and sss is too noisy for per-fly claims (relevant to 20e flips).
