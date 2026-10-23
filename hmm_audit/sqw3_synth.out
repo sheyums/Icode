@@ -1,0 +1,9 @@
+V1c: best K {2: np.float64(0.0), 3: np.float64(1.0), 4: np.float64(0.0)}; H1 degenerate 0.00
+   Xn mean -0.268 -0.335 +0.187 +0.197 SD 0.237 0.223 0.281 0.323
+   Yn mean +0.444 +0.469 -0.133 -0.014 SD 0.163 0.324 0.414 0.377
+   V1c PASS=False
+V2c: best K {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; H1 degenerate 0.35
+   Xn mean -0.415 -0.088 -0.001 -0.035 SD 0.820 0.886 0.930 0.900
+   Yn mean +0.198 +0.014 -0.310 -0.143 SD 0.816 0.826 0.756 0.871
+   V2c PASS=True
+elapsed 1783 s

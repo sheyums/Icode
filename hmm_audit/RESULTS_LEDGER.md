@@ -1153,3 +1153,17 @@ within-phase adequacy: fraction of 4 h windows outside the fitted model's 95% pr
 ```
 - Day split: no group-level change in any block (all intervals include 0). Per-fly c in the two halves is uncorrelated (Spearman -0.13 to +0.25, all ns); sign-flip fractions 0.14-0.70 must be judged against the 20e no-change null.
 - Adequacy: per0DD fits within band (<= 0.04). CS: W fraction outside band in 30-31% of ZT 0-8 windows (within-light-phase structure the 12 h model averages). per0LD: 20-31% at ZT 0-4 only (lights-on). fumin: 44-58% at ZT 0-4 and 15-26% elsewhere. sss: 23-35% at all ZT (not time-of-day specific: between-day / overdispersion). The 12 h homogeneous-phase assumption is violated most at lights-on and in fumin/sss generally.
+
+## PRESPEC 20c step 1 — 6 h blocks, synthetic (2026-10-23, code fd88bf6)
+```
+V1c: best K {2: 0.0, 3: 1.0, 4: 0.0}; H1 degenerate 0.00
+   Xn mean -0.268 -0.335 +0.187 +0.197 SD 0.237 0.223 0.281 0.323
+   Yn mean +0.444 +0.469 -0.133 -0.014 SD 0.163 0.324 0.414 0.377
+   V1c PASS=False
+V2c: best K {2: 1.0, 3: 0.0, 4: 0.0}; H1 degenerate 0.35
+   Xn mean -0.415 -0.088 -0.001 -0.035 SD 0.820 0.886 0.930 0.900
+   Yn mean +0.198 +0.014 -0.310 -0.143 SD 0.816 0.826 0.756 0.871
+   V2c PASS=True
+elapsed 1783 s
+```
+- V1c FAIL on precision: K=3 chosen 100%, biases <= 0.09, but SD exceeds 0.3 in 3 of 8 quantities (Yn blocks 2-4: 0.32-0.41; Xn block 4: 0.32). As extrapolated: 6 h blocks are borderline on this truth. V2c PASS. Per the plan, steps 2-3 proceed; the usable verdict per genotype comes from step 2.
