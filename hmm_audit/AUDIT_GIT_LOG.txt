@@ -128,3 +128,4 @@ e7788bc 2026-10-23 19:23:59 +0000 PRESPEC 20d: reversible null and per-fly atten
 d9b5eb5 2026-10-23 19:24:34 +0000 sqw4.py (PRESPEC 20d)
 a0f2284 2026-10-23 19:24:34 +0000 run_20d.sh
 5882e4c 2026-10-23 19:33:13 +0000 Ledger: post hoc, old per0 split explained by H1 degeneracy side
+8da5a94 2026-10-23 19:37:35 +0000 PRESPEC 20d amendment: report sign disagreement between hidden and observable current (before running)

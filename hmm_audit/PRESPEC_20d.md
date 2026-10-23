@@ -36,3 +36,10 @@ candidate: per0LD), the model's circulation there is not supported by the data.
 
 ## Not included
 EPR against the model-free irreversibility bound (E3) needs E3 per hour (TODO.md); a separate plan.
+
+## Amendment (2026-10-23, before 20d runs; user remark that hidden and observed currents may legitimately differ)
+Added to (b)'s report, no change to any test: per genotype x phase, the fraction of simulated records in which
+c_true and c_obs_min have OPPOSITE signs, and the same per fly (fraction of its 20 replicates). Reading: the
+model is judged only by whether its SIMULATED observable current matches the REAL observable current (same
+level). A hidden current differing from the observable one in size or sign is a result about coarse-graining,
+not a model failure.

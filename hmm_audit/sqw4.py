@@ -76,6 +76,8 @@ def stage_b():
             gm=np.nanmean(so,0); lo,hi=np.percentile(gm,[2.5,97.5]); rm=np.nanmean(real)
             band=np.nanpercentile(so,[2.5,97.5],axis=1); out=np.mean([(x<a or x>b) for x,a,b in zip(real,band[0],band[1]) if np.isfinite(x)])
             cm=np.nanmean([cXY(np.array(RT[f"{g}|{r['fly']}"]['ffbs'][p])) for r in Rg])
+            opp=np.nanmean(np.where(np.isfinite(st)&np.isfinite(so),np.sign(st)!=np.sign(so),np.nan))
+            L.append(f"{'':13s} simulated records with opposite signs of c_true and c_obs_min: {opp:.2f}")
             L.append(f"{g:7s} {bn:5s}: real c_obs_min {rm:+.3f}; simulated group mean {np.mean(gm):+.3f} [{lo:+.3f},{hi:+.3f}] -> {'consistent' if lo<=rm<=hi else 'INCONSISTENT'}; "
                      f"flies outside own 95% band {out:.2f}; sim c_true {np.nanmean(st):+.3f} / sim c_obs {np.nanmean(so):+.3f} = {np.nanmean(st)/np.nanmean(so):.2f}; real c_model {cm:+.3f} / c_obs {rm:+.3f} = {cm/rm:.2f}")
     open('sqw4_b.log','w').write('\n'.join(L)+'\n'); print('\n'.join(L))
