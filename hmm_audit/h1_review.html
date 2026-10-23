@@ -362,4 +362,26 @@ flowchart LR
   </div>
   <p style="font-size:.88rem;color:var(--fg2)">The figures are vector PDFs (and 300 dpi PNGs) set at journal widths: 7.0 in double column for figures 1, 2 and 4, 3.4 in single column for figure 3. They are in <code>hmm_audit/figures/</code> on the GitHub branch.</p>
 </section>
+
+<section>
+  <div class="eyebrow">10 · Signed cycle current, and what H1 is (23 Oct)</div>
+  <h2>Measured circulation through quiet wake, and why H1 looked like wake</h2>
+  <p>Each sleep onset and each waking is classed by the fly's activity in the 1–5 minutes next to it: quiet wake (Q, below half the fly's mid-wake activity) or active wake (A). The normalised cycle bias is <b>c = P(Q | onset) − P(Q | waking)</b>. Positive c means forward circulation A → Q → S → A: flies settle into sleep through quiet wake and wake straight into activity.</p>
+  <figure><img src="figures/fig5_cycle_current.png" alt="Cycle current by genotype"><figcaption><b>Fig. 5.</b> (a) The observable cycle. (b) Cycle bias c and (c) net current J (cycles per hour) per genotype and light/dark, mean ± 95% fly-bootstrap interval. Grey dots are individual flies; triangles are the alternative Q thresholds (0.33, 0.75). Blue: interval above 0 (forward). Orange: below 0 (reverse). The window was chosen after inspection, so these are descriptive.</figcaption></figure>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Group</th><th>c, light</th><th>c, dark</th><th>Reading</th></tr></thead>
+    <tbody>
+      <tr><td>Wild type</td><td class="num">−0.02</td><td class="num">+0.11 [+0.07, +0.16]</td><td>forward at night</td></tr>
+      <tr><td>fumin</td><td class="num">+0.05 [+0.02, +0.08]</td><td class="num">+0.06 [+0.01, +0.10]</td><td>forward</td></tr>
+      <tr><td>per0 LD</td><td class="num">+0.01</td><td class="num">−0.02</td><td>none detected</td></tr>
+      <tr><td>per0 DD</td><td colspan="2" class="num">+0.11 [+0.05, +0.16] (whole record)</td><td>forward without light or clock</td></tr>
+      <tr><td>sleepless</td><td class="num">−0.09 [−0.15, −0.04]</td><td class="num">−0.03</td><td>reverse in the light, at all three thresholds</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="callout"><h3>The link to Xn and Yn</h3><p>With A ↔ H2, S ↔ H3 and Q ↔ H1: P(Q | onset) = (1 + Yn)/2 and P(Q | waking) = (1 + Xn)/2, so <b>c = (Yn − Xn)/2</b>. In the original (Xn, Yn) scatter the diagonal is the time-reversible line, and c is half the distance from it. The scored 3-state fits put every genotype well above the diagonal (wild type +0.33, per0 +0.21, fumin +0.70, sleepless +0.68). The direction agrees for wild type, per0 and fumin, but the size is several times too large, and the sign is wrong for sleepless. That is what the non-identifiability predicts.</p></div>
+    <div class="callout"><h3>Why H1 was degenerate</h3><p>The 5-minute rule labels every inactivity shorter than 5 minutes as wake. Quiet wake therefore emits "wake" in the scored trace, exactly like active wake, so H1 and H2 become identical in emissions. The movement counts restore the feature that distinguishes H1. Reading H1 as quiet wake is an interpretation, supported by this argument and by the count-HMM results.</p></div>
+  </div>
+  <div class="callout"><h3>Planned next</h3><p>(1) A three-panel figure on identical Xn–Yn axes: observed routes from counts, then scored-HMM FFBS with ranges, then Viterbi. (2) Re-code the observations as S, Q, W per 1-minute bin and refit the 3-state HMM with free 3 × 3 emissions, with an identifiability check and synthetic validation first. If H1 is identified there, the paper's energetics become quantities the data determine. The S/Q/W sequences will also be exported in the R-cell format for the MATLAB pipeline (its emission matrix needs extending from 3 × 2 to 3 × 3).</p></div>
+</section>
 </div>
