@@ -1,0 +1,15 @@
+day split CS      light: flies 25 | c_pred first -0.010 second +0.011 | change +0.021 [-0.085,+0.131] | Spearman -0.07 (p 0.76) | sign flips 0.44
+day split CS      dark : flies 25 | c_pred first +0.237 second +0.312 | change +0.075 [-0.043,+0.198] | Spearman +0.14 (p 0.51) | sign flips 0.16
+day split fumin   light: flies 49 | c_pred first +0.146 second +0.185 | change +0.039 [-0.096,+0.172] | Spearman +0.05 (p 0.71) | sign flips 0.37
+day split fumin   dark : flies 47 | c_pred first +0.253 second +0.267 | change +0.015 [-0.147,+0.167] | Spearman +0.01 (p 0.95) | sign flips 0.51
+day split per0LD  light: flies 27 | c_pred first +0.122 second +0.171 | change +0.049 [-0.097,+0.185] | Spearman -0.09 (p 0.65) | sign flips 0.44
+day split per0LD  dark : flies 27 | c_pred first +0.141 second +0.122 | change -0.019 [-0.134,+0.081] | Spearman +0.11 (p 0.58) | sign flips 0.33
+day split per0DD  whole: flies 22 | c_pred first +0.232 second +0.208 | change -0.024 [-0.137,+0.089] | Spearman +0.25 (p 0.26) | sign flips 0.14
+day split sss     light: flies 42 | c_pred first -0.111 second -0.073 | change +0.039 [-0.107,+0.192] | Spearman +0.12 (p 0.44) | sign flips 0.45
+day split sss     dark : flies 46 | c_pred first -0.016 second -0.134 | change -0.117 [-0.284,+0.051] | Spearman -0.13 (p 0.39) | sign flips 0.70
+within-phase adequacy: fraction of 4 h windows outside the fitted model's 95% predictive band, by ZT window (0-4..20-24); columns Q, W, S fraction, symbol changes; ~0.05 expected
+  CS      ZT0-4: 0.07 0.31 0.08 0.09 | ZT4-8: 0.13 0.30 0.17 0.14 | ZT8-12: 0.14 0.08 0.07 0.11 | ZT12-16: 0.05 0.04 0.06 0.07 | ZT16-20: 0.01 0.01 0.01 0.01 | ZT20-24: 0.09 0.06 0.05 0.10
+  fumin   ZT0-4: 0.47 0.58 0.19 0.44 | ZT4-8: 0.11 0.19 0.08 0.17 | ZT8-12: 0.16 0.14 0.05 0.15 | ZT12-16: 0.24 0.26 0.09 0.26 | ZT16-20: 0.19 0.23 0.02 0.26 | ZT20-24: 0.24 0.27 0.02 0.25
+  per0LD  ZT0-4: 0.20 0.31 0.22 0.19 | ZT4-8: 0.09 0.11 0.07 0.14 | ZT8-12: 0.12 0.08 0.03 0.10 | ZT12-16: 0.15 0.09 0.08 0.18 | ZT16-20: 0.15 0.08 0.06 0.06 | ZT20-24: 0.12 0.07 0.08 0.10
+  per0DD  ZT0-4: 0.02 0.00 0.00 0.00 | ZT4-8: 0.02 0.01 0.00 0.03 | ZT8-12: 0.02 0.00 0.00 0.01 | ZT12-16: 0.04 0.01 0.00 0.00 | ZT16-20: 0.02 0.01 0.00 0.00 | ZT20-24: 0.02 0.01 0.00 0.01
+  sss     ZT0-4: 0.23 0.24 0.08 0.23 | ZT4-8: 0.25 0.27 0.09 0.28 | ZT8-12: 0.24 0.35 0.14 0.26 | ZT12-16: 0.26 0.30 0.12 0.24 | ZT16-20: 0.23 0.31 0.11 0.25 | ZT20-24: 0.28 0.27 0.09 0.18
