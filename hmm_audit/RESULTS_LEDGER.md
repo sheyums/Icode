@@ -1107,3 +1107,4 @@ sss     light | EPR 95% lower bound (rule of 3), per-path posterior mean: median
 sss     dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.044 /h, mean 0.086 | paths needing substitution 0.39 | plug-in on mean counts, median 0.032 /h | flies 54
 ```
 - Finite in every fly. Group means exceed medians (right-skewed across flies). The plug-in median here includes flies that were infinite before, so it is not comparable with the earlier finite-only plug-in medians.
+- Cross-check (2026-10-23): the rule-of-3 bound equals a Python port of the user's epr_count_based.m ('bound') to 8.9e-16 over 1e5 random count matrices; min per-path bound over all real flies/phases/paths = 0.0 (EPR >= 0 now asserted in code).

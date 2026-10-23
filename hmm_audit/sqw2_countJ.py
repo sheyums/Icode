@@ -81,6 +81,7 @@ def eprc_lb(N,h):
             if b==0: b=min(3.0,a); sub=True
             elif a==0: a=min(3.0,b); sub=True
             e+=(a-b)*np.log(a/b)
+    assert e>=0, 'EPR bound negative: impossible'   # invariant, not agreement (epr_count_based.m)
     return e/h,sub
 L4=[]
 for g in sqw.GROUPS:

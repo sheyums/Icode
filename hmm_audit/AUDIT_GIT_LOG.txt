@@ -137,3 +137,5 @@ b060abb 2026-10-23 20:13:39 +0000 Per-path FFBS statistics (Jensen): E[f(N)] bes
 8aba740 2026-10-23 20:13:39 +0000 Ledger: Jensen check
 4403df1 2026-10-23 20:16:53 +0000 Rule-of-3 95% lower bound on count EPR, per path
 052f1d3 2026-10-23 20:16:53 +0000 Ledger: rule-of-3 EPR bound
+f2fbfa1 2026-10-23 20:22:34 +0000 countJ: assert EPR bound >= 0; matches epr_count_based.m 'bound' to 1e-15
+9aab428 2026-10-23 20:22:34 +0000 Ledger: bound cross-check
