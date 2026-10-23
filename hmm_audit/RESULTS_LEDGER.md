@@ -1092,3 +1092,18 @@ sss     dark  | c plug-in -0.052 vs per-path mean -0.062 (paths with c defined 0
 ```
 - c, Xn, Yn: E[f] and f(E) agree to <= 0.01 except fumin light Xn (0.03), sss dark Xn/Yn (0.03). J_cycle is linear: identical by construction.
 - Count EPR: on 23-39% of paths in fumin and sss some edge is traversed one way only, so the per-path EPR is infinite and its posterior MEAN is infinite for those flies; medians reported.
+
+## Rule-of-3 EPR lower bound (user suggestion), theta 0.5 (2026-10-23, code 4403df1)
+Zero count b in pair (a, b) -> b* = min(3, a): (a-b) ln(a/b) is minimised over b in [0, 3] there, so the result is a 95% LOWER BOUND per term, not an estimate. Per path, then averaged over the 200 FFBS paths.
+```
+CS      light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.041 /h, mean 0.067 | paths needing substitution 0.00 | plug-in on mean counts, median 0.035 /h | flies 25
+CS      dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.301 /h, mean 0.380 | paths needing substitution 0.00 | plug-in on mean counts, median 0.291 /h | flies 25
+fumin   light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.108 /h, mean 0.257 | paths needing substitution 0.23 | plug-in on mean counts, median 0.085 /h | flies 53
+fumin   dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.143 /h, mean 0.272 | paths needing substitution 0.39 | plug-in on mean counts, median 0.146 /h | flies 53
+per0LD  light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.030 /h, mean 0.165 | paths needing substitution 0.07 | plug-in on mean counts, median 0.020 /h | flies 27
+per0LD  dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.177 /h, mean 0.279 | paths needing substitution 0.04 | plug-in on mean counts, median 0.159 /h | flies 27
+per0DD  whole | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.208 /h, mean 0.415 | paths needing substitution 0.00 | plug-in on mean counts, median 0.206 /h | flies 23
+sss     light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.031 /h, mean 0.103 | paths needing substitution 0.31 | plug-in on mean counts, median 0.024 /h | flies 54
+sss     dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.044 /h, mean 0.086 | paths needing substitution 0.39 | plug-in on mean counts, median 0.032 /h | flies 54
+```
+- Finite in every fly. Group means exceed medians (right-skewed across flies). The plug-in median here includes flies that were infinite before, so it is not comparable with the earlier finite-only plug-in medians.

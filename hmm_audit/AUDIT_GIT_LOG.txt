@@ -135,3 +135,5 @@ d574218 2026-10-23 19:45:27 +0000 PRESPEC 20e amendment A: hidden-level framing,
 ea3ba6f 2026-10-23 20:11:54 +0000 Ledger: count-based J
 b060abb 2026-10-23 20:13:39 +0000 Per-path FFBS statistics (Jensen): E[f(N)] beside f(E[N])
 8aba740 2026-10-23 20:13:39 +0000 Ledger: Jensen check
+4403df1 2026-10-23 20:16:53 +0000 Rule-of-3 95% lower bound on count EPR, per path
+052f1d3 2026-10-23 20:16:53 +0000 Ledger: rule-of-3 EPR bound

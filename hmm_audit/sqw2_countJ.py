@@ -69,3 +69,28 @@ for g in sqw.GROUPS:
         L3.append(f"{g:7s} {bn:5s} | c plug-in {f(0):+.3f} vs per-path mean {f(1):+.3f} (paths with c defined {f(2):.2f}) | Xn {f(3):+.3f} vs {f(4):+.3f} | Yn {f(5):+.3f} vs {f(6):+.3f}"
                   f" | EPR plug-in median {np.nanmedian(np.where(np.isfinite(r[:,7]),r[:,7],np.nan)):.3f} vs per-path median {np.nanmedian(np.where(np.isfinite(r[:,8]),r[:,8],np.nan)):.3f} /h, per-path infinite {f(9):.2f}")
 print('\n'.join(L3)); open(f'sqw2_countJ_{theta}.log','a').write('\n'.join(L3)+'\n')
+# Rule of 3 (user suggestion): a pair (a, b) with b = 0 means the reverse rate is <= 3 counts at 95% (Poisson
+# zero-count upper bound). The term f(a,b) = (a-b) ln(a/b) is minimised over b in [0, 3] at b* = min(3, a)
+# (f falls to 0 at b = a), so substituting b* gives a 95% LOWER BOUND on that term -- a bound, not an estimate.
+def eprc_lb(N,h):
+    e=0.0; sub=False
+    for i in range(3):
+        for j in range(i+1,3):
+            a,b=float(N[i][j]),float(N[j][i])
+            if a==0 and b==0: continue
+            if b==0: b=min(3.0,a); sub=True
+            elif a==0: a=min(3.0,b); sub=True
+            e+=(a-b)*np.log(a/b)
+    return e/h,sub
+L4=[]
+for g in sqw.GROUPS:
+    for p,bn in enumerate(['whole'] if g=='per0DD' else ['light','dark']):
+        rows=[]
+        for d in [R[k] for k in sorted(R) if k[0]==g and not R[k]['deg']]:
+            rt=RT[f"{g}|{d['fly']}"]; h=rt['hours'][p]; pp=np.array(rt['pairs_path'])[:,p]
+            lb=[eprc_lb(n,h) for n in pp]; plug=eprc_lb(pp.mean(0),h)[0]
+            rows.append((np.mean([x for x,_ in lb]),np.mean([s for _,s in lb]),plug))
+        r=np.array(rows)
+        L4.append(f"{g:7s} {bn:5s} | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies {np.median(r[:,0]):.3f} /h, mean {r[:,0].mean():.3f}"
+                  f" | paths needing substitution {r[:,1].mean():.2f} | plug-in on mean counts, median {np.median(r[:,2]):.3f} /h | flies {len(r)}")
+print('\n'.join(L4)); open(f'sqw2_countJ_{theta}.log','a').write('\n'.join(L4)+'\n')
