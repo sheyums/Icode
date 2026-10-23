@@ -124,3 +124,6 @@ fd88bf6 2026-10-23 17:05:00 +0000 sqw3.py: PRESPEC 20c stages (not run)
 bc7c342 2026-10-23 17:31:31 +0000 sqw2_report.py (PRESPEC 20b summaries)
 c1f397b 2026-10-23 19:08:18 +0000 Ledger: PRESPEC 20b primary results (theta 0.5)
 ab8ffe2 2026-10-23 19:08:18 +0000 run_20bc.sh driver
+e7788bc 2026-10-23 19:23:59 +0000 PRESPEC 20d: reversible null and per-fly attenuation check (before running)
+d9b5eb5 2026-10-23 19:24:34 +0000 sqw4.py (PRESPEC 20d)
+a0f2284 2026-10-23 19:24:34 +0000 run_20d.sh
