@@ -6,3 +6,5 @@ python3 sqw4.py b > sqw4_b.out 2>&1
 echo 20d_done > stage_d.status
 python3 sqw5.py > sqw5.out 2>&1
 echo 20e_null_done > stage_e.status
+python3 sqw5.py within6 > sqw5_within6.out 2>&1
+echo 20e_done > stage_e.status

@@ -23,3 +23,17 @@ Per fly, c in each 6 h block; fraction of flies whose sign differs between block
 (realistic-truth) SDs. Reported with 20c's USABLE verdict per genotype.
 ## Order
 After PRESPEC 20d. Section 1's null costs ~2-3 h (all flies, 8 replicates).
+
+## Amendment A (2026-10-23, before any 20e or 20c result exists; user: ask the question at the HIDDEN level)
+- 20e already works at the hidden level: c_pred is computed from the fitted hidden transition matrix. For a
+  3-state stationary chain, sign(c_pred) = sign(forward cycle affinity ln[P21 P13 P32 / (P12 P31 P23)])
+  = sign(hidden cycle flux J) (algebra: Yn > Xn iff P_{2->1} P_{1->3} P_{3->2} > P_{3->1} P_{1->2} P_{2->3}, H indices).
+  Checked on the 20b fits: identical signs in 292 of 301 fly-phases; the other 9 have a numerically zero cycle
+  edge (|J| ~ 1e-17, infinite affinity), i.e. no cycle. A sign flip of c_pred IS a flip of the hidden J.
+  Fly-blocks with |J| < 1e-12 are classed "no cycle" and excluded from flip counts (counted and reported).
+  J (cycles/h) is reported beside c.
+- Section 3 becomes a TEST for each genotype that 20c step 2 judges USABLE (descriptive otherwise):
+  no-change null within each phase: 8 records per fly simulated from its 20b fit (P_light for blocks 1-2,
+  P_dark for 3-4), refitted with the 6 h model (K = 3, 10 starts); per fly null flip probability between blocks
+  1-2 and between blocks 3-4; observed flip count vs Poisson-binomial, one-sided. Also reported, descriptively,
+  flips across the light-dark boundaries (2-3, 4-1).
