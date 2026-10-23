@@ -957,3 +957,10 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
   Distinct emissions are not enough: one 4 h window (~50 symbol changes) cannot resolve routing or justify a third state.
 - V2 (true 2-state, no H1): PASS. K=2 in 100%; K=3 routing uninformative in 100% (bootstrap SD ~0.78).
 - Consequence, per the plan: the per-window design is not run on fly data. Design review before any fly fit.
+
+## Design check after V1 failure — steps per fit (2026-10-23, code 72f15b9; synthetic only, V1 truth, 30 reps, 10 starts)
+- n   240 (1 windows): K=3 chosen 0.17, K=2 0.83, K=4 0.00; Xn mean -0.087 SD 0.830; Yn mean +0.405 SD 0.596; degenerate 0.00
+- n   960 (4 windows): K=3 chosen 0.70, K=2 0.30, K=4 0.00; Xn mean -0.212 SD 0.403; Yn mean +0.358 SD 0.384; degenerate 0.00
+- n  2880 (12 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.355 SD 0.177; Yn mean +0.414 SD 0.229; degenerate 0.00
+- n  5760 (24 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.300 SD 0.121; Yn mean +0.402 SD 0.165; degenerate 0.00
+- SD falls roughly as 1/sqrt(n). Routing SD < 0.2 needs ~2880 steps (48 h of minutes). n=240 gave K=3 in 17% here vs 4% in V1 (different seeds/starts): sampling variation.

@@ -1,0 +1,4 @@
+n   240 (1 windows): K=3 chosen 0.17, K=2 0.83, K=4 0.00; Xn mean -0.087 SD 0.830; Yn mean +0.405 SD 0.596; degenerate 0.00
+n   960 (4 windows): K=3 chosen 0.70, K=2 0.30, K=4 0.00; Xn mean -0.212 SD 0.403; Yn mean +0.358 SD 0.384; degenerate 0.00
+n  2880 (12 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.355 SD 0.177; Yn mean +0.414 SD 0.229; degenerate 0.00
+n  5760 (24 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.300 SD 0.121; Yn mean +0.402 SD 0.165; degenerate 0.00
