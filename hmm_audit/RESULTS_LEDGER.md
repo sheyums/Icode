@@ -1038,3 +1038,15 @@ sss: flies 57 | best K (n=T) 2:0.05 3:0.95 4:0.00 | (n_eff) 2:0.05 3:0.91 4:0.04
 - Sign convention: J and affinity are computed for the cycle H1->H2->H3, i.e. Q->A->S, which is the REVERSE of the forward cycle A->Q->S. Negative J = forward circulation, consistent with positive c.
 - Infinite EPR (a transition zero in one direction only) in 21-46% of fumin and sss flies: reported, not floored.
 - Not yet run: bootstrap, day split, adequacy, theta 0.33/0.75.
+
+## POST HOC (user question, 2026-10-23): why did the scored S/W HMM split per0 flies into two groups?
+Scored .mat data, accepted windows (common.py). H1 called wake-like / sleep-like if its emission row is within
+total variation 0.05 of H2's / H3's. Per fly: fraction of sleep-like windows vs mean (Yn_pred - Xn_pred).
+- per0 (25 flies, 544 windows): H1 wake-like 0.60, sleep-like 0.32, distinct 0.08. Flies with Yn-Xn > 0: 0.52.
+  Spearman(fraction sleep-like, Yn-Xn) = -0.94, p 2.5e-12. Sleep-like windows: median Yn-Xn -1.59 (43% > 0);
+  wake-like windows: median 0.00 (56% > 0).
+- CS: sleep-like 0.27, rho -0.83 (p 3e-7), but sleep-like windows stay mostly positive (median +0.45), 88% of flies > 0.
+- fumin, sss: H1 wake-like in 99% of windows; 100% of flies > 0.
+Reading: a fly's side of the diagonal is predicted almost entirely by how often its degenerate H1 copied the
+SLEEP emission row. The sign comes from the gauge choice, not from identified routing. In the S/Q/W model (20b)
+per0 shows no split (85-89% of flies c > 0). Descriptive.
