@@ -140,3 +140,8 @@ b060abb 2026-10-23 20:13:39 +0000 Per-path FFBS statistics (Jensen): E[f(N)] bes
 f2fbfa1 2026-10-23 20:22:34 +0000 countJ: assert EPR bound >= 0; matches epr_count_based.m 'bound' to 1e-15
 9aab428 2026-10-23 20:22:34 +0000 Ledger: bound cross-check
 a7c4142 2026-10-23 20:26:46 +0000 Ledger: post hoc light vs dark within fly
+8f07e46 2026-10-23 20:39:43 +0000 sqw_ref.py reference module; sqw4 c_obs_min excludes missing minutes (fixed before 20d runs)
+e1f30dc 2026-10-23 20:44:50 +0000 verify_ref.py: reference module reproduces pipeline (symbols, EM, FFBS, Viterbi, signs)
+442461b 2026-10-23 20:45:47 +0000 Golden test vectors G1-G6 for the MATLAB port
+84f1235 2026-10-23 20:45:59 +0000 sync_push: also copy golden/ and figures/
+681c963 2026-10-23 20:47:33 +0000 PORTING_GUIDE.md; SCRIPTS_INDEX points to sqw_ref

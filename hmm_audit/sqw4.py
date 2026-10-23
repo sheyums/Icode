@@ -20,7 +20,7 @@ def route_counts(z,ph,nph):
     for rt,t in sqw.runs_routes(z): c[ph[t],NM.index(rt)]+=1
     return c
 def c_obs_min(y,ph,nph):
-    t=np.arange(1,len(y)); on=t[(y[:-1]<2)&(y[1:]==2)]; wk=t[(y[:-1]==2)&(y[1:]<2)]; out=[]
+    t=np.arange(1,len(y)); on=t[(y[:-1]>=0)&(y[:-1]<2)&(y[1:]==2)]; wk=t[(y[:-1]==2)&(y[1:]>=0)&(y[1:]<2)]   # missing (-1) is not wake; out=[]
     for p in range(nph):
         o=on[ph[on]==p]; w=wk[ph[wk]==p]
         out.append(np.mean(y[o-1]==0)-np.mean(y[w]==0) if len(o) and len(w) else np.nan)

@@ -1,0 +1,19 @@
+PASS S/Q/W symbols identical for 187/187 flies
+PASS em_step x25 == batched EM update (max diff 5.3e-15)
+PASS em_fit CS fly 3 logL -1991.295686 == stored -1991.295686
+PASS em_fit sss fly 7 logL -1602.330246 == stored -1602.330246
+PASS CS 3: FFBS route counts == pipeline
+PASS CS 3: FFBS pair counts == pipeline
+PASS CS 3: Viterbi route counts == pipeline
+PASS CS 3 phase 0: sign c_pred -0.094 == sign J_model -0.1245 == sign A -0.400
+PASS CS 3 phase 1: sign c_pred +0.274 == sign J_model +0.2640 == sign A +1.138
+PASS fumin 10: FFBS route counts == pipeline
+PASS fumin 10: FFBS pair counts == pipeline
+PASS fumin 10: Viterbi route counts == pipeline
+PASS fumin 10 phase 0: no cycle (|J| 5.2e-15, A +inf) -- sign test not applicable
+PASS fumin 10 phase 1: sign c_pred +0.593 == sign J_model +0.0903 == sign A +141.944
+PASS per0DD 2: FFBS route counts == pipeline
+PASS per0DD 2: FFBS pair counts == pipeline
+PASS per0DD 2: Viterbi route counts == pipeline
+PASS per0DD 2 phase 0: sign c_pred -1.000 == sign J_model -1.8261 == sign A -425.740
+ALL PASS

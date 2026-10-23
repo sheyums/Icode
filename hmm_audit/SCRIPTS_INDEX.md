@@ -1,5 +1,7 @@
 # Script index — for converting the analysis to MATLAB
 
+**For the S/Q/W analysis (PRESPEC 19-20e), port `sqw_ref.py` following `PORTING_GUIDE.md`, tested against `golden/`.** The table below is provenance.
+
 Python 3.13; packages: numpy, scipy, matplotlib, hmmlearn 0.3.3, scikit-learn.
 Every script hard-codes the session scratchpad path
 `/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/...` for its data folder
@@ -25,6 +27,18 @@ including failures. Use them as the specification when porting.
 | `cycle.py` | 19 | Signed cycle current: Q/A classification at each transition (theta = 0.33/0.5/0.75 x fly mid-wake activity), c = P(Q|onset) - P(Q|waking), J per hour, bootstrap CIs, sign/Wilcoxon/Mann-Whitney. Imports `v18.py`. | `cycle.json`, `cycle.log` |
 | `fig_cycle.py` | 19 | Figure 5 (cycle diagram, c, J). | `figures/fig5_cycle_current.*` |
 | `epr_min.py` | 15 | Minimum and maximum EPR and cycle flux over the equal-likelihood family of the scored 3-state model. | `epr_min.json`, `epr_min.log` |
+
+## S/Q/W HMM (PRESPEC 20-20e)
+
+| Script | Plan | What it computes |
+|---|---|---|
+| `sqw_ref.py` | 19-20e | REFERENCE implementation, one function per step (port this) |
+| `verify_ref.py`, `make_golden.py` | -- | checks sqw_ref against the pipeline; writes `golden/` test vectors |
+| `sqw.py`, `sqw_common.py`, `sqw_synth.py`, `sqw_power.py` | 20 | per-window design (failed V1), steps-per-fit check |
+| `sqw2_common.py`, `sqw2.py`, `sqw2_synth.py`, `sqw2_report.py`, `sqw2_countJ.py` | 20b | per fly x light/dark fits, routing, count J, Jensen, rule-of-3 bound |
+| `sqw3.py` | 20c | 6 h blocks |
+| `sqw4.py` | 20d | reversible null, attenuation |
+| `sqw5.py` | 20e | across-day and within-day direction flips |
 
 ## Scored-HMM audit (identifiability, decoders)
 

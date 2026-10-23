@@ -3,6 +3,7 @@
 S=/tmp/claude-0/-home-user-Icode/1f385af9-cc34-5eb3-921b-4648ebd049a8/scratchpad/hmm_audit
 cd /home/user/Icode || exit 1
 for f in $S/*; do case "$f" in *.npy|*/__pycache__|*.status) ;; *) [ -f "$f" ] && cp "$f" hmm_audit/ ;; esac; done
+for d in golden figures; do [ -d $S/$d ] && mkdir -p hmm_audit/$d && cp $S/$d/* hmm_audit/$d/; done
 (cd $S && git log --format='%h %ci %s' --reverse) > hmm_audit/AUDIT_GIT_LOG.txt
 git add hmm_audit
 git diff --cached --quiet && exit 0
