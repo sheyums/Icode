@@ -24,8 +24,8 @@ def within6_one(d):
     return f"{d['g']}|{d['fly']}",out
 def stage_within6():
     usable=[l.split(':')[0] for l in open('sqw3_realistic.log') if 'USABLE=True' in l]
-    print('USABLE genotypes:',usable,flush=True)
-    R=sqw2.load(0.5); jobs=[d for d in R.values() if d['g'] in usable and not d['deg']]
+    print('USABLE genotypes:',usable,'(null run for all three; 20e amendment B)',flush=True)
+    R=sqw2.load(0.5); jobs=[d for d in R.values() if d['g'] in ('CS','per0LD','fumin') and not d['deg']]
     with Pool(4) as pl: res=dict(pl.map(within6_one,jobs,chunksize=1))
     json.dump(res,open(sqw.OUTD+'e_within6_null.json','w'))
 if __name__=='__main__' and len(sys.argv)>1 and sys.argv[1]=='within6': stage_within6()

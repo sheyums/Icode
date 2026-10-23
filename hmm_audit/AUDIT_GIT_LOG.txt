@@ -148,3 +148,4 @@ e1f30dc 2026-10-23 20:44:50 +0000 verify_ref.py: reference module reproduces pip
 421ce0c 2026-10-23 21:42:00 +0000 Ledger: 20b bootstrap
 6ba1679 2026-10-23 22:20:37 +0000 Ledger: 20b day split and adequacy
 c77f4f9 2026-10-23 22:49:58 +0000 Ledger: 20c synthetic (V1c fail on SD, V2c pass)
+6176cf4 2026-10-23 23:03:42 +0000 PRESPEC 20e amendment B: group-level Wilcoxon/Friedman tests of change across the day; null for all 3 genotypes (before running)
