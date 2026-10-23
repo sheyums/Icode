@@ -1,0 +1,11 @@
+truth light Xn -0.300 Yn +0.400; dark Xn +0.200 Yn -0.100
+V1b: best K (n=T) {2: np.float64(0.0), 3: np.float64(1.0), 4: np.float64(0.0)}; (n_eff) {2: np.float64(0.0), 3: np.float64(1.0), 4: np.float64(0.0)}; disagree 0.00; H1 degenerate 0.00; median changes 1149.0; max EM iters 1000
+   xl mean -0.272 SD 0.238; yl mean +0.409 SD 0.200; xd mean +0.186 SD 0.272; yd mean -0.105 SD 0.230
+   V1b PASS=True
+V2b: best K (n=T) {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; (n_eff) {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; disagree 0.00; H1 degenerate 0.25; median changes 1288.5; max EM iters 1000
+   xl mean -0.440 SD 0.718; yl mean -0.330 SD 0.714; xd mean -0.127 SD 0.786; yd mean -0.269 SD 0.754
+V3b: best K (n=T) {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; (n_eff) {2: np.float64(1.0), 3: np.float64(0.0), 4: np.float64(0.0)}; disagree 0.00; H1 degenerate 0.50; median changes 1282.0; max EM iters 1000
+   xl mean -0.130 SD 0.781; yl mean -0.149 SD 0.902; xd mean -0.102 SD 0.818; yd mean +0.224 SD 0.808
+   V2b PASS=True
+   V3b PASS=True
+elapsed 2824 s

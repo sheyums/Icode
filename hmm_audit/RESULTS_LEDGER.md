@@ -964,3 +964,17 @@ Median emission rows (P of count 0,1,2,>=3) and median mean dwell, computed from
 - n  2880 (12 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.355 SD 0.177; Yn mean +0.414 SD 0.229; degenerate 0.00
 - n  5760 (24 windows): K=3 chosen 1.00, K=2 0.00, K=4 0.00; Xn mean -0.300 SD 0.121; Yn mean +0.402 SD 0.165; degenerate 0.00
 - SD falls roughly as 1/sqrt(n). Routing SD < 0.2 needs ~2880 steps (48 h of minutes). n=240 gave K=3 in 17% here vs 4% in V1 (different seeds/starts): sampling variation.
+
+## PRESPEC 20b section 4 — synthetic validation, per fly x light/dark (2026-10-23, code f53efb8)
+- truth light Xn -0.300 Yn +0.400; dark Xn +0.200 Yn -0.100
+- V1b: best K (n=T) {2: 0.0, 3: 1.0, 4: 0.0}; (n_eff) {2: 0.0, 3: 1.0, 4: 0.0}; disagree 0.00; H1 degenerate 0.00; median changes 1149.0; max EM iters 1000
+-    xl mean -0.272 SD 0.238; yl mean +0.409 SD 0.200; xd mean +0.186 SD 0.272; yd mean -0.105 SD 0.230
+-    V1b PASS=True
+- V2b: best K (n=T) {2: 1.0, 3: 0.0, 4: 0.0}; (n_eff) {2: 1.0, 3: 0.0, 4: 0.0}; disagree 0.00; H1 degenerate 0.25; median changes 1288.5; max EM iters 1000
+-    xl mean -0.440 SD 0.718; yl mean -0.330 SD 0.714; xd mean -0.127 SD 0.786; yd mean -0.269 SD 0.754
+- V3b: best K (n=T) {2: 1.0, 3: 0.0, 4: 0.0}; (n_eff) {2: 1.0, 3: 0.0, 4: 0.0}; disagree 0.00; H1 degenerate 0.50; median changes 1282.0; max EM iters 1000
+-    xl mean -0.130 SD 0.781; yl mean -0.149 SD 0.902; xd mean -0.102 SD 0.818; yd mean +0.224 SD 0.808
+-    V2b PASS=True
+-    V3b PASS=True
+- elapsed 2824 s
+- All three PASS. Routing SD per phase 0.20-0.27 at 2880 min/phase, matching the steps-per-fit check. Note: the batched EM loop hit its 1000-iteration cap in some fits (the cap counts until the slowest of 20 starts converges); results kept as specified.
