@@ -1337,3 +1337,17 @@ Section 3: within phase, 6 h blocks (block pairs 1-2 = ZT0-6 vs 6-12, 3-4 = ZT12
   fumin   blocks 3-4 (descriptive): flies 21 | observed flips 4 (0.19) | expected 4.6 | one-sided p 0.716 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
 ```
 - Smallest p becomes 0.059 (per0LD ZT0-6 vs 6-12) and 0.100 (per0LD light across days); conclusions unchanged (no excess flips anywhere). Other limitation: the null is simulated from each fly's FITTED parameters (parametric bootstrap), so it inherits their estimation error.
+
+## POST HOC (user question, 2026-10-24): EPR vs J_cycle, genotype x phase medians
+Narrowest block: one fly's 12 h phase (all days); medians over flies, 95% bootstrap CI of the median. J count-based (forward +), EPR = rule-of-3 lower bound per path, path-averaged. Code fig_epr_j.py; figure figures/fig6_epr_vs_j.*
+```
+CS      light n 25 | J median +0.020 [-0.018,+0.088] | EPR median 0.041 [0.024,0.078] | EPR/|J| 1.99
+CS      dark  n 25 | J median +0.201 [+0.095,+0.264] | EPR median 0.301 [0.065,0.389] | EPR/|J| 1.50
+fumin   light n 53 | J median +0.099 [+0.037,+0.155] | EPR median 0.108 [0.046,0.253] | EPR/|J| 1.09
+fumin   dark  n 53 | J median +0.109 [+0.070,+0.147] | EPR median 0.143 [0.071,0.223] | EPR/|J| 1.31
+per0LD  light n 27 | J median +0.047 [+0.029,+0.109] | EPR median 0.030 [0.021,0.126] | EPR/|J| 0.64
+per0LD  dark  n 27 | J median +0.197 [+0.056,+0.257] | EPR median 0.177 [0.063,0.226] | EPR/|J| 0.90
+per0DD  whole n 23 | J median +0.233 [+0.139,+0.298] | EPR median 0.208 [0.077,0.365] | EPR/|J| 0.89
+sss     light n 54 | J median -0.007 [-0.045,+0.000] | EPR median 0.031 [0.015,0.048] | EPR/|J| 4.39
+sss     dark  n 54 | J median -0.012 [-0.041,+0.000] | EPR median 0.044 [0.020,0.072] | EPR/|J| 3.51
+```
