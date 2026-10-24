@@ -1,5 +1,5 @@
 # Reminders (open items)
-- [ ] Paper Methods (user, 2026-10-23): tracked changes in the user's MaterialsMethod_V6_Claude_tracked.docx once 20c-20e are final; replace the HMM, routing, observability (P_min drop), EPR sections; flag sections resting on per-window binary-model matrices (energy landscape, synthetic lesion, sleep deprivation, Onsager L, per0 subgroups). Keep the document's style and equation numbering.
+- [x] (draft delivered 2026-10-24 as MaterialsMethod_V7_Claude_tracked.docx; text in methods_text.json, builder build_tracked.py; the .docx itself is not in the repo) Paper Methods (user, 2026-10-23): tracked changes in the user's MaterialsMethod_V6_Claude_tracked.docx once 20c-20e are final; replace the HMM, routing, observability (P_min drop), EPR sections; flag sections resting on per-window binary-model matrices (energy landscape, synthetic lesion, sleep deprivation, Onsager L, per0 subgroups). Keep the document's style and equation numbering.
 
 - [ ] **Threshold-free S/Q/W HMM** (user request, 2026-10-23): after the thresholded S/Q/W thread is complete,
       fit a version without the Q/W threshold: each wake minute carries its number of active seconds (0-60) and

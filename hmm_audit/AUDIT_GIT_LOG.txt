@@ -156,3 +156,4 @@ c77f4f9 2026-10-23 22:49:58 +0000 Ledger: 20c synthetic (V1c fail on SD, V2c pas
 93508b2 2026-10-24 03:56:27 +0000 Ledger: theta sensitivity
 a171bda 2026-10-24 04:04:01 +0000 sqw4: fix c_obs_min (my earlier edit commented out out=[]); stage b rerun
 b32634d 2026-10-24 04:05:14 +0000 Ledger: 20d
+460edd1 2026-10-24 06:10:29 +0000 Methods V7 tracked-changes text and builder (docx not committed)
