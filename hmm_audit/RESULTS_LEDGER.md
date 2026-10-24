@@ -1230,3 +1230,13 @@ fumin (NOT usable: descriptive): flies 53 | best K 2:0.11 3:0.89 4:0.00 | H1 deg
 - CS: circulation is ~0 in the light blocks and forward in both dark blocks; within-fly change across the day is significant (Friedman p 0.0005; ZT6-12 -> 12-18 +0.25, adj p 0.0007; ZT18-24 -> 0-6 -0.29, adj p 0.0075). No block has a significant NEGATIVE group direction, so the pre-stated rule for a direction REVERSAL is not met: the magnitude switches on and off, the direction does not reverse.
 - per0LD: forward in ZT0-6, 12-18 and 18-24 (adj p <= 0.048), strongest at ZT18-24; no significant within-fly change (Friedman p 0.08).
 - fumin (not usable; descriptive): 34 of 53 flies excluded as 'no cycle' in at least one block; remaining 19 forward in all blocks; no within-fly change.
+
+## PRESPEC 20b theta sensitivity, K = 3 only (2026-10-24, code b060abb)
+Full logs: sqw2_0.33.log, sqw2_0.75.log, sqw2_countJ_0.33.log, sqw2_countJ_0.75.log. c_model (FFBS) group means, theta 0.33 / 0.5 / 0.75:
+- CS light -0.02 / +0.00 / +0.02 (ns all); CS dark +0.22 / +0.25 / +0.31
+- fumin light +0.16 / +0.18 / +0.29; fumin dark +0.24 / +0.34 / +0.48
+- per0LD light +0.11 / +0.13 / +0.12; per0LD dark +0.13 / +0.14 / +0.16
+- per0DD +0.18 / +0.21 / +0.24
+- sss light -0.11 / -0.19 / -0.22; sss dark -0.08 / -0.05 / -0.06 (interval excludes 0 only at 0.33)
+- Count J_cycle (cycles/h) has the same sign pattern at all three theta; H1 non-degenerate in the same flies at all theta.
+- Reading: every DIRECTION is unchanged across theta; magnitudes grow with theta (a higher threshold labels more wake as Q). The sss light reversal holds at all three. Model-free c is consistent in sign wherever its interval excludes 0 (CS dark, fumin, per0DD, sss light at all theta).

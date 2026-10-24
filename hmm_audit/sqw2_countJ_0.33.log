@@ -1,0 +1,37 @@
+CS      light n 25 | model J +0.001 [-0.042,+0.045] | count J_cycle (FFBS) +0.012 [-0.033,+0.057] | (Viterbi) +0.007 cycles/h | Spearman(model, count) +0.98 | same sign 0.96 | count EPR (FFBS) median 0.022 /h, infinite 0.00
+CS      dark  n 25 | model J +0.182 [+0.126,+0.244] | count J_cycle (FFBS) +0.169 [+0.113,+0.229] | (Viterbi) +0.167 cycles/h | Spearman(model, count) +0.98 | same sign 1.00 | count EPR (FFBS) median 0.194 /h, infinite 0.00
+fumin   light n 53 | model J +0.110 [+0.068,+0.150] | count J_cycle (FFBS) +0.107 [+0.067,+0.154] | (Viterbi) +0.098 cycles/h | Spearman(model, count) +0.98 | same sign 0.91 | count EPR (FFBS) median 0.084 /h, infinite 0.25
+fumin   dark  n 53 | model J +0.104 [+0.070,+0.140] | count J_cycle (FFBS) +0.113 [+0.082,+0.148] | (Viterbi) +0.111 cycles/h | Spearman(model, count) +0.97 | same sign 0.85 | count EPR (FFBS) median 0.083 /h, infinite 0.23
+per0LD  light n 27 | model J +0.084 [+0.041,+0.130] | count J_cycle (FFBS) +0.093 [+0.051,+0.138] | (Viterbi) +0.077 cycles/h | Spearman(model, count) +0.98 | same sign 0.89 | count EPR (FFBS) median 0.023 /h, infinite 0.04
+per0LD  dark  n 27 | model J +0.168 [+0.102,+0.236] | count J_cycle (FFBS) +0.160 [+0.092,+0.232] | (Viterbi) +0.165 cycles/h | Spearman(model, count) +0.99 | same sign 0.96 | count EPR (FFBS) median 0.094 /h, infinite 0.04
+per0DD  whole n 23 | model J +0.197 [+0.118,+0.275] | count J_cycle (FFBS) +0.196 [+0.120,+0.272] | (Viterbi) +0.207 cycles/h | Spearman(model, count) +0.99 | same sign 1.00 | count EPR (FFBS) median 0.162 /h, infinite 0.04
+sss     light n 54 | model J -0.037 [-0.060,-0.016] | count J_cycle (FFBS) -0.037 [-0.061,-0.015] | (Viterbi) -0.037 cycles/h | Spearman(model, count) +0.96 | same sign 0.69 | count EPR (FFBS) median 0.019 /h, infinite 0.20
+sss     dark  n 54 | model J -0.013 [-0.037,+0.013] | count J_cycle (FFBS) -0.016 [-0.043,+0.009] | (Viterbi) -0.008 cycles/h | Spearman(model, count) +0.97 | same sign 0.80 | count EPR (FFBS) median 0.037 /h, infinite 0.26
+CS      ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: -0.083 [0.12]  +0.050 [0.20]  +0.070 [0.23]  +0.109 [0.18]  +0.166 [0.22]  +0.232 [0.18]
+        fraction of flies with J > 0 per window: 0.32  0.60  0.60  0.80  0.84  0.84
+fumin   ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.084 [0.23]  +0.105 [0.19]  +0.131 [0.24]  +0.197 [0.22]  +0.106 [0.17]  +0.037 [0.10]
+        fraction of flies with J > 0 per window: 0.60  0.62  0.68  0.75  0.57  0.42
+per0LD  ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.137 [0.13]  +0.037 [0.16]  +0.107 [0.16]  +0.077 [0.20]  +0.215 [0.23]  +0.189 [0.25]
+        fraction of flies with J > 0 per window: 0.96  0.56  0.70  0.63  0.81  0.81
+per0DD  ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: +0.197 [0.26]  +0.218 [0.20]  +0.191 [0.24]  +0.206 [0.29]  +0.189 [0.30]  +0.176 [0.22]
+        fraction of flies with J > 0 per window: 0.83  0.83  0.78  0.78  0.83  0.83
+sss     ZT0-4..20-24 count J (cycles/h), mean over flies [SD across flies]: -0.041 [0.13]  -0.045 [0.09]  -0.024 [0.09]  -0.010 [0.13]  -0.000 [0.14]  -0.039 [0.16]
+        fraction of flies with J > 0 per window: 0.24  0.19  0.22  0.26  0.22  0.19
+CS      light | c plug-in -0.016 vs per-path mean -0.016 (paths with c defined 1.00) | Xn -0.135 vs -0.135 | Yn -0.166 vs -0.166 | EPR plug-in median 0.022 vs per-path median 0.020 /h, per-path infinite 0.01
+CS      dark  | c plug-in +0.217 vs per-path mean +0.217 (paths with c defined 1.00) | Xn -0.349 vs -0.349 | Yn +0.085 vs +0.085 | EPR plug-in median 0.194 vs per-path median 0.195 /h, per-path infinite 0.00
+fumin   light | c plug-in +0.156 vs per-path mean +0.156 (paths with c defined 0.89) | Xn -0.601 vs -0.600 | Yn -0.314 vs -0.314 | EPR plug-in median 0.084 vs per-path median 0.086 /h, per-path infinite 0.30
+fumin   dark  | c plug-in +0.237 vs per-path mean +0.237 (paths with c defined 0.91) | Xn -0.670 vs -0.671 | Yn -0.215 vs -0.215 | EPR plug-in median 0.083 vs per-path median 0.064 /h, per-path infinite 0.29
+per0LD  light | c plug-in +0.114 vs per-path mean +0.114 (paths with c defined 1.00) | Xn -0.512 vs -0.512 | Yn -0.283 vs -0.284 | EPR plug-in median 0.023 vs per-path median 0.024 /h, per-path infinite 0.05
+per0LD  dark  | c plug-in +0.131 vs per-path mean +0.131 (paths with c defined 1.00) | Xn -0.576 vs -0.576 | Yn -0.314 vs -0.315 | EPR plug-in median 0.094 vs per-path median 0.095 /h, per-path infinite 0.04
+per0DD  whole | c plug-in +0.182 vs per-path mean +0.182 (paths with c defined 1.00) | Xn -0.354 vs -0.354 | Yn +0.009 vs +0.009 | EPR plug-in median 0.162 vs per-path median 0.163 /h, per-path infinite 0.04
+sss     light | c plug-in -0.111 vs per-path mean -0.092 (paths with c defined 0.73) | Xn -0.106 vs -0.106 | Yn -0.270 vs -0.258 | EPR plug-in median 0.019 vs per-path median 0.020 /h, per-path infinite 0.26
+sss     dark  | c plug-in -0.076 vs per-path mean -0.076 (paths with c defined 0.81) | Xn -0.254 vs -0.254 | Yn -0.406 vs -0.406 | EPR plug-in median 0.037 vs per-path median 0.036 /h, per-path infinite 0.33
+CS      light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.039 /h, mean 0.064 | paths needing substitution 0.01 | plug-in on mean counts, median 0.022 /h | flies 25
+CS      dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.200 /h, mean 0.298 | paths needing substitution 0.00 | plug-in on mean counts, median 0.194 /h | flies 25
+fumin   light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.074 /h, mean 0.188 | paths needing substitution 0.30 | plug-in on mean counts, median 0.064 /h | flies 53
+fumin   dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.082 /h, mean 0.204 | paths needing substitution 0.29 | plug-in on mean counts, median 0.082 /h | flies 53
+per0LD  light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.032 /h, mean 0.151 | paths needing substitution 0.05 | plug-in on mean counts, median 0.025 /h | flies 27
+per0LD  dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.117 /h, mean 0.289 | paths needing substitution 0.04 | plug-in on mean counts, median 0.100 /h | flies 27
+per0DD  whole | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.178 /h, mean 0.330 | paths needing substitution 0.04 | plug-in on mean counts, median 0.174 /h | flies 23
+sss     light | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.024 /h, mean 0.085 | paths needing substitution 0.26 | plug-in on mean counts, median 0.016 /h | flies 54
+sss     dark  | EPR 95% lower bound (rule of 3), per-path posterior mean: median over flies 0.045 /h, mean 0.079 | paths needing substitution 0.33 | plug-in on mean counts, median 0.031 /h | flies 54

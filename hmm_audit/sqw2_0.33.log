@@ -1,0 +1,45 @@
+  light (non-degenerate flies 25) Xn_pred -0.084 [-0.228,+0.071]  Yn_pred -0.103 [-0.226,+0.020]  c_pred -0.009 [-0.054,+0.034]
+        ffbs Xn -0.135 [-0.276,+0.018]  Yn -0.166 [-0.290,-0.038]  c_model -0.016 [-0.070,+0.030]
+        vit  Xn -0.137 [-0.264,-0.002]  Yn -0.180 [-0.277,-0.074]  c_model -0.022 [-0.085,+0.031]
+        model-free c -0.023 [-0.076,+0.033]; Spearman(c_obs, c_model ffbs) +0.51 p 0.0097 n 25
+        energetics: infinite EPR in 0.00 of flies; finite median EPR 0.020 nats/h, J +0.0065 cycles/h, affinity +0.02
+  dark  (non-degenerate flies 25) Xn_pred -0.373 [-0.475,-0.257]  Yn_pred +0.071 [-0.039,+0.185]  c_pred +0.222 [+0.159,+0.288]
+        ffbs Xn -0.349 [-0.446,-0.236]  Yn +0.085 [-0.025,+0.202]  c_model +0.217 [+0.157,+0.279]
+        vit  Xn -0.341 [-0.458,-0.220]  Yn +0.100 [-0.011,+0.220]  c_model +0.220 [+0.157,+0.290]
+        model-free c +0.077 [+0.037,+0.114]; Spearman(c_obs, c_model ffbs) +0.47 p 0.019 n 25
+        energetics: infinite EPR in 0.00 of flies; finite median EPR 0.189 nats/h, J -0.2020 cycles/h, affinity -1.05
+  light (non-degenerate flies 53) Xn_pred -0.452 [-0.596,-0.290]  Yn_pred -0.197 [-0.346,-0.050]  c_pred +0.127 [+0.062,+0.187]
+        ffbs Xn -0.601 [-0.697,-0.490]  Yn -0.314 [-0.433,-0.197]  c_model +0.156 [+0.098,+0.213]
+        vit  Xn -0.640 [-0.730,-0.544]  Yn -0.404 [-0.490,-0.308]  c_model +0.125 [+0.060,+0.181]
+        model-free c +0.030 [+0.003,+0.059]; Spearman(c_obs, c_model ffbs) +0.21 p 0.16 n 46
+        energetics: infinite EPR in 0.28 of flies; finite median EPR 0.088 nats/h, J -0.0813 cycles/h, affinity -0.69
+  dark  (non-degenerate flies 53) Xn_pred -0.613 [-0.724,-0.488]  Yn_pred -0.181 [-0.324,-0.019]  c_pred +0.216 [+0.145,+0.290]
+        ffbs Xn -0.670 [-0.757,-0.562]  Yn -0.215 [-0.351,-0.064]  c_model +0.237 [+0.164,+0.313]
+        vit  Xn -0.707 [-0.790,-0.611]  Yn -0.266 [-0.398,-0.130]  c_model +0.228 [+0.155,+0.304]
+        model-free c +0.054 [+0.030,+0.080]; Spearman(c_obs, c_model ffbs) +0.20 p 0.18 n 48
+        energetics: infinite EPR in 0.30 of flies; finite median EPR 0.115 nats/h, J -0.0900 cycles/h, affinity -1.12
+  light (non-degenerate flies 27) Xn_pred -0.517 [-0.623,-0.405]  Yn_pred -0.293 [-0.453,-0.112]  c_pred +0.112 [+0.053,+0.174]
+        ffbs Xn -0.512 [-0.616,-0.404]  Yn -0.283 [-0.446,-0.110]  c_model +0.114 [+0.055,+0.175]
+        vit  Xn -0.547 [-0.656,-0.430]  Yn -0.334 [-0.492,-0.166]  c_model +0.106 [+0.039,+0.183]
+        model-free c +0.019 [-0.007,+0.046]; Spearman(c_obs, c_model ffbs) +0.28 p 0.15 n 27
+        energetics: infinite EPR in 0.07 of flies; finite median EPR 0.027 nats/h, J -0.0667 cycles/h, affinity -0.29
+  dark  (non-degenerate flies 27) Xn_pred -0.582 [-0.654,-0.499]  Yn_pred -0.317 [-0.416,-0.217]  c_pred +0.132 [+0.074,+0.199]
+        ffbs Xn -0.576 [-0.653,-0.492]  Yn -0.314 [-0.411,-0.212]  c_model +0.131 [+0.071,+0.197]
+        vit  Xn -0.658 [-0.728,-0.587]  Yn -0.390 [-0.497,-0.286]  c_model +0.134 [+0.075,+0.196]
+        model-free c -0.002 [-0.027,+0.024]; Spearman(c_obs, c_model ffbs) -0.04 p 0.84 n 27
+        energetics: infinite EPR in 0.04 of flies; finite median EPR 0.096 nats/h, J -0.1670 cycles/h, affinity -0.66
+  whole (non-degenerate flies 23) Xn_pred -0.389 [-0.477,-0.294]  Yn_pred -0.018 [-0.150,+0.127]  c_pred +0.186 [+0.110,+0.275]
+        ffbs Xn -0.354 [-0.440,-0.255]  Yn +0.009 [-0.122,+0.152]  c_model +0.182 [+0.111,+0.263]
+        vit  Xn -0.426 [-0.528,-0.314]  Yn +0.001 [-0.131,+0.149]  c_model +0.213 [+0.120,+0.315]
+        model-free c +0.064 [+0.017,+0.110]; Spearman(c_obs, c_model ffbs) +0.64 p 0.00093 n 23
+        energetics: infinite EPR in 0.04 of flies; finite median EPR 0.164 nats/h, J -0.2125 cycles/h, affinity -0.78
+  light (non-degenerate flies 54) Xn_pred +0.029 [-0.154,+0.217]  Yn_pred -0.156 [-0.359,+0.047]  c_pred -0.083 [-0.153,-0.017]
+        ffbs Xn -0.106 [-0.305,+0.094]  Yn -0.270 [-0.480,-0.036]  c_model -0.111 [-0.181,-0.040]
+        vit  Xn -0.084 [-0.277,+0.124]  Yn -0.287 [-0.500,-0.060]  c_model -0.119 [-0.195,-0.044]
+        model-free c -0.063 [-0.112,-0.020]; Spearman(c_obs, c_model ffbs) +0.28 p 0.093 n 36
+        energetics: infinite EPR in 0.43 of flies; finite median EPR 0.084 nats/h, J +0.0535 cycles/h, affinity +0.94
+  dark  (non-degenerate flies 54) Xn_pred -0.125 [-0.312,+0.074]  Yn_pred -0.339 [-0.510,-0.166]  c_pred -0.107 [-0.193,-0.028]
+        ffbs Xn -0.254 [-0.426,-0.076]  Yn -0.406 [-0.555,-0.257]  c_model -0.076 [-0.151,-0.005]
+        vit  Xn -0.333 [-0.518,-0.136]  Yn -0.435 [-0.577,-0.282]  c_model -0.056 [-0.132,+0.013]
+        model-free c +0.014 [-0.038,+0.070]; Spearman(c_obs, c_model ffbs) +0.27 p 0.084 n 43
+        energetics: infinite EPR in 0.44 of flies; finite median EPR 0.063 nats/h, J +0.0346 cycles/h, affinity +0.55
