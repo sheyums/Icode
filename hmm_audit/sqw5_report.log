@@ -1,0 +1,15 @@
+Section 1: across days (first vs second half), hidden-level c_pred; no-change null 8 replicates per fly
+  CS      light: flies 25 (excluded 0) | observed flips 11 (0.44) | expected under no change 10.6 (0.42) | one-sided p 0.507
+  CS      dark : flies 24 (excluded 1) | observed flips 4 (0.17) | expected under no change 4.6 (0.19) | one-sided p 0.746
+  fumin   light: flies 36 (excluded 17) | observed flips 11 (0.31) | expected under no change 7.3 (0.20) | one-sided p 0.0658
+  fumin   dark : flies 30 (excluded 23) | observed flips 8 (0.27) | expected under no change 6.5 (0.22) | one-sided p 0.306
+  per0LD  light: flies 27 (excluded 0) | observed flips 12 (0.44) | expected under no change 8.1 (0.30) | one-sided p 0.0508
+  per0LD  dark : flies 27 (excluded 0) | observed flips 9 (0.33) | expected under no change 7.1 (0.26) | one-sided p 0.24
+  per0DD  whole: flies 22 (excluded 0) | observed flips 3 (0.14) | expected under no change 3.6 (0.16) | one-sided p 0.784
+  sss     light: flies 20 (excluded 34) | observed flips 6 (0.30) | expected under no change 5.6 (0.28) | one-sided p 0.517
+  sss     dark : flies 22 (excluded 32) | observed flips 10 (0.45) | expected under no change 8.3 (0.38) | one-sided p 0.276
+Section 2: light vs dark within fly (12 h fits), descriptive
+  CS      flies 25 | opposite signs light vs dark 0.48 | expected from estimation noise if each fly's light and dark values were its true ones ~0.50 (rough: c SD 0.08/0.10, normal approx.) | Spearman light-dark -0.14 p 0.5
+  fumin   flies 48 | opposite signs light vs dark 0.40 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.18/0.32, normal approx.) | Spearman light-dark -0.06 p 0.7
+  per0LD  flies 27 | opposite signs light vs dark 0.22 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.12/0.13, normal approx.) | Spearman light-dark -0.32 p 0.11
+  sss     flies 37 | opposite signs light vs dark 0.27 | expected from estimation noise if each fly's light and dark values were its true ones ~0.47 (rough: c SD 0.22/0.31, normal approx.) | Spearman light-dark +0.19 p 0.27

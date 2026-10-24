@@ -1281,3 +1281,24 @@ sss     dark : real c_obs_min -0.068; simulated group mean -0.035 [-0.092,+0.011
 - (b) CONSISTENT in all 9 genotype x phase blocks: each fly's fitted model reproduces the real minute-level observable current (group means inside the simulated 95% range; 0-10% of flies outside their own band). Attenuation hidden/observable ~1.6-2.0 in simulation, matching the real ratio (1.6-1.8) wherever the current is not near 0. So the model's larger circulation is what coarse-graining of its own hidden dynamics predicts.
 - per0LD: the minute-level observable current is +0.075 / +0.082 (light/dark) and the model reproduces it. The earlier per0LD disagreement was with the PRESPEC 19 +-5 min transit classification (c ~ 0), a different observable.
 - Hidden and observable current have opposite signs in 6-26% of simulated single records (most in weak blocks: CS light, sss).
+
+## PRESPEC 20e sections 1-2 — direction changes across days; light vs dark (2026-10-24, code 1d59b73)
+```
+Section 1: across days (first vs second half), hidden-level c_pred; no-change null 8 replicates per fly
+  CS      light: flies 25 (excluded 0) | observed flips 11 (0.44) | expected under no change 10.6 (0.42) | one-sided p 0.507
+  CS      dark : flies 24 (excluded 1) | observed flips 4 (0.17) | expected under no change 4.6 (0.19) | one-sided p 0.746
+  fumin   light: flies 36 (excluded 17) | observed flips 11 (0.31) | expected under no change 7.3 (0.20) | one-sided p 0.0658
+  fumin   dark : flies 30 (excluded 23) | observed flips 8 (0.27) | expected under no change 6.5 (0.22) | one-sided p 0.306
+  per0LD  light: flies 27 (excluded 0) | observed flips 12 (0.44) | expected under no change 8.1 (0.30) | one-sided p 0.0508
+  per0LD  dark : flies 27 (excluded 0) | observed flips 9 (0.33) | expected under no change 7.1 (0.26) | one-sided p 0.24
+  per0DD  whole: flies 22 (excluded 0) | observed flips 3 (0.14) | expected under no change 3.6 (0.16) | one-sided p 0.784
+  sss     light: flies 20 (excluded 34) | observed flips 6 (0.30) | expected under no change 5.6 (0.28) | one-sided p 0.517
+  sss     dark : flies 22 (excluded 32) | observed flips 10 (0.45) | expected under no change 8.3 (0.38) | one-sided p 0.276
+Section 2: light vs dark within fly (12 h fits), descriptive
+  CS      flies 25 | opposite signs light vs dark 0.48 | expected from estimation noise if each fly's light and dark values were its true ones ~0.50 (rough: c SD 0.08/0.10, normal approx.) | Spearman light-dark -0.14 p 0.5
+  fumin   flies 48 | opposite signs light vs dark 0.40 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.18/0.32, normal approx.) | Spearman light-dark -0.06 p 0.7
+  per0LD  flies 27 | opposite signs light vs dark 0.22 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.12/0.13, normal approx.) | Spearman light-dark -0.32 p 0.11
+  sss     flies 37 | opposite signs light vs dark 0.27 | expected from estimation noise if each fly's light and dark values were its true ones ~0.47 (rough: c SD 0.22/0.31, normal approx.) | Spearman light-dark +0.19 p 0.27
+```
+- Section 1: no block shows more sign flips between the first and second half of the recording than estimation noise predicts (smallest one-sided p: per0LD light 0.051, fumin light 0.066; 9 tests, none significant after Holm). Reading as pre-stated: at ~2 days per half, these data cannot distinguish a fly that changes direction across days from one that does not. fumin and sss lose 17-34 flies to 'no cycle' in a half.
+- Section 2 (descriptive): the 'expected' column adds bootstrap noise around already-noisy estimates and so overstates the noise-only rate; read only as a rough reference. per0LD and sss have fewer light/dark sign disagreements (0.22, 0.27) than that reference (0.41, 0.47); CS and fumin match it.
