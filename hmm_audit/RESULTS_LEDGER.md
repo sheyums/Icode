@@ -1167,3 +1167,31 @@ V2c: best K {2: 1.0, 3: 0.0, 4: 0.0}; H1 degenerate 0.35
 elapsed 1783 s
 ```
 - V1c FAIL on precision: K=3 chosen 100%, biases <= 0.09, but SD exceeds 0.3 in 3 of 8 quantities (Yn blocks 2-4: 0.32-0.41; Xn block 4: 0.32). As extrapolated: 6 h blocks are borderline on this truth. V2c PASS. Per the plan, steps 2-3 proceed; the usable verdict per genotype comes from step 2.
+
+## PRESPEC 20c step 2 — realistic truths, 6 h blocks (2026-10-24, code fd88bf6)
+```
+CS fly 6: K=3 chosen 1.00; Xn SD 0.26 0.25 0.31 0.32; Yn SD 0.19 0.35 0.27 0.26; Xn bias +0.06 +0.08 +0.01 +0.09; Yn bias +0.09 +0.05 +0.02 +0.01
+CS fly 8: K=3 chosen 1.00; Xn SD 0.17 0.22 0.30 0.32; Yn SD 0.23 0.24 0.28 0.37; Xn bias +0.02 +0.06 +0.05 +0.25; Yn bias +0.06 -0.00 +0.01 -0.00
+CS fly 11: K=3 chosen 1.00; Xn SD 0.27 0.18 0.16 0.16; Yn SD 0.24 0.15 0.21 0.29; Xn bias +0.00 -0.03 -0.10 -0.08; Yn bias -0.04 -0.06 -0.01 -0.00
+CS fly 14: K=3 chosen 1.00; Xn SD 0.21 0.24 0.29 0.18; Yn SD 0.17 0.20 0.27 0.27; Xn bias -0.06 +0.05 -0.04 +0.00; Yn bias -0.02 +0.03 +0.06 -0.03
+CS fly 17: K=3 chosen 1.00; Xn SD 0.20 0.26 0.23 0.21; Yn SD 0.20 0.19 0.34 0.25; Xn bias -0.02 +0.12 -0.14 +0.02; Yn bias +0.01 +0.02 -0.01 +0.00
+CS: median SD over flies (Xn blocks 1-4, Yn blocks 1-4) 0.21 0.24 0.29 0.21 0.20 0.20 0.27 0.27 -> USABLE=True
+per0LD fly 6: K=3 chosen 0.90; Xn SD 0.48 0.28 0.23 0.17; Yn SD 0.27 0.37 0.32 0.23; Xn bias +0.12 +0.07 -0.00 +0.06; Yn bias +0.09 -0.01 -0.08 -0.09
+per0LD fly 11: K=3 chosen 1.00; Xn SD 0.18 0.21 0.17 0.15; Yn SD 0.21 0.22 0.15 0.16; Xn bias -0.03 -0.01 -0.07 -0.01; Yn bias +0.05 +0.09 +0.03 -0.03
+per0LD fly 14: K=3 chosen 1.00; Xn SD 0.21 0.21 0.17 0.16; Yn SD 0.19 0.21 0.19 0.21; Xn bias -0.06 -0.01 -0.02 -0.04; Yn bias +0.01 +0.04 +0.02 +0.01
+per0LD fly 23: K=3 chosen 0.95; Xn SD 0.19 0.29 0.14 0.18; Yn SD 0.29 0.29 0.24 0.27; Xn bias -0.03 -0.02 +0.01 +0.01; Yn bias +0.03 +0.05 -0.00 +0.05
+per0LD fly 24: K=3 chosen 1.00; Xn SD 0.23 0.21 0.26 0.15; Yn SD 0.27 0.22 0.21 0.16; Xn bias -0.03 +0.04 +0.04 +0.07; Yn bias +0.03 -0.05 -0.04 -0.03
+per0LD: median SD over flies (Xn blocks 1-4, Yn blocks 1-4) 0.21 0.21 0.17 0.16 0.27 0.22 0.21 0.21 -> USABLE=True
+fumin fly 10: K=3 chosen 0.45; Xn SD 0.38 0.28 0.84 0.91; Yn SD 0.53 0.73 0.86 0.47; Xn bias -0.18 -0.15 +0.11 +0.22; Yn bias -0.36 -0.50 -0.54 -0.12
+fumin fly 33: K=3 chosen 1.00; Xn SD 0.46 0.40 0.48 0.44; Yn SD 0.49 0.49 0.40 0.76; Xn bias -0.03 +0.04 +0.03 +0.04; Yn bias -0.10 +0.09 +0.05 +0.23
+fumin fly 40: K=3 chosen 1.00; Xn SD 0.36 0.37 0.25 0.16; Yn SD 0.38 0.34 0.58 0.66; Xn bias -0.02 -0.06 -0.09 -0.18; Yn bias -0.08 +0.05 +0.26 -0.15
+fumin fly 44: K=3 chosen 0.50; Xn SD 0.88 0.66 0.85 0.78; Yn SD 0.21 0.69 0.33 0.64; Xn bias -0.12 -0.45 -0.20 -0.29; Yn bias +0.09 +0.44 -0.12 -0.30
+fumin fly 45: K=3 chosen 1.00; Xn SD 0.25 0.26 0.51 0.56; Yn SD 0.24 0.20 0.65 0.69; Xn bias +0.16 +0.07 +0.02 +0.09; Yn bias +0.06 -0.01 -0.08 -0.11
+fumin: median SD over flies (Xn blocks 1-4, Yn blocks 1-4) 0.38 0.37 0.51 0.56 0.38 0.49 0.58 0.66 -> USABLE=False
+
+Cycle direction precision, realistic truths (20 replicates per fly, 5 flies per genotype), per 6 h block:
+CS      c SD median 0.15 0.17 0.20 0.18 | correct sign mean 0.76 0.72 0.84 0.79 | c bias median +0.015 -0.015 +0.045 -0.014 | true |c| median 0.17 0.17 0.24 0.24
+per0LD  c SD median 0.18 0.15 0.14 0.13 | correct sign mean 0.73 0.66 0.93 0.96 | c bias median +0.031 +0.024 -0.007 -0.011 | true |c| median 0.07 0.07 0.21 0.21
+fumin   c SD median 0.31 0.34 0.43 0.47 | correct sign mean 0.66 0.63 0.68 0.57 | c bias median -0.033 +0.026 +0.044 +0.015 | true |c| median 0.25 0.25 0.38 0.38
+```
+- USABLE: CS (median SD 0.20-0.29), per0LD (0.16-0.27). NOT usable: fumin (0.37-0.66; K=3 chosen in only 45-50% of replicates for 2 of 5 flies; biases up to 0.5).
