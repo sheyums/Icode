@@ -1351,3 +1351,19 @@ per0DD  whole n 23 | J median +0.233 [+0.139,+0.298] | EPR median 0.208 [0.077,0
 sss     light n 54 | J median -0.007 [-0.045,+0.000] | EPR median 0.031 [0.015,0.048] | EPR/|J| 4.39
 sss     dark  n 54 | J median -0.012 [-0.041,+0.000] | EPR median 0.044 [0.020,0.072] | EPR/|J| 3.51
 ```
+
+## POST HOC (user question, 2026-10-24): EPR vs J, hidden vs observable
+Observable = same counting on run-compressed S/Q/W minute symbols (Q<->H1, W<->H2, S<->H3); figure figures/fig6b_epr_vs_j_hidden_vs_obs.*; code fig_epr_j_obs.py. Medians over flies, 95% bootstrap CI.
+```
+block | hidden J, EPR | observable J, EPR | ratio hidden/observable (J, EPR)
+CS      light | +0.020 0.041 | +0.062 [+0.000,+0.125] 0.038 [0.013,0.072] | J 0.33, EPR 1.06
+CS      dark  | +0.201 0.301 | +0.167 [+0.104,+0.188] 0.116 [0.054,0.189] | J 1.21, EPR 2.58
+fumin   light | +0.099 0.108 | +0.083 [+0.042,+0.167] 0.058 [0.045,0.189] | J 1.19, EPR 1.85
+fumin   dark  | +0.109 0.143 | +0.083 [+0.042,+0.125] 0.093 [0.046,0.150] | J 1.31, EPR 1.54
+per0LD  light | +0.047 0.030 | +0.062 [+0.000,+0.146] 0.012 [0.003,0.060] | J 0.75, EPR 2.57
+per0LD  dark  | +0.197 0.177 | +0.167 [+0.083,+0.208] 0.073 [0.045,0.140] | J 1.18, EPR 2.43
+per0DD  whole | +0.233 0.208 | +0.177 [+0.139,+0.271] 0.113 [0.081,0.213] | J 1.32, EPR 1.84
+sss     light | -0.007 0.031 | +0.000 [-0.042,+0.000] 0.009 [0.001,0.035] | J nan, EPR 3.30
+sss     dark  | -0.012 0.044 | +0.000 [-0.042,+0.000] 0.029 [0.012,0.036] | J nan, EPR 1.51
+```
+- Observable EPR is 1.5-3.3x below hidden (coarse-graining loses irreversibility, as expected); observable J is 1.2-1.3x below hidden in the driven blocks. Observable medians are discrete (integer counts / hours).
