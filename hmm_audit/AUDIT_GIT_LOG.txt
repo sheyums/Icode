@@ -164,3 +164,4 @@ b08f693 2026-10-24 08:06:38 +0000 Ledger: 20e sections 1-2
 8a907a2 2026-10-24 22:56:07 +0000 Fig 6: EPR vs J_cycle medians (post hoc)
 06cb929 2026-10-24 23:04:14 +0000 Fig 6b: hidden vs observable EPR-J
 836b5eb 2026-10-24 23:51:29 +0000 PRESPEC 20f: hidden vs observable EPR with calibration (before running); sqw6.py
+18b3947 2026-10-24 23:54:00 +0000 Ledger: 20f hidden vs observable EPR, estimator bias found
