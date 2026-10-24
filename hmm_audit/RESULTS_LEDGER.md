@@ -1315,3 +1315,25 @@ Section 3: within phase, 6 h blocks (block pairs 1-2 = ZT0-6 vs 6-12, 3-4 = ZT12
 ```
 - No excess of within-phase sign flips survives correction: per0LD ZT0-6 vs 6-12 has p 0.034 uncorrected (14 flips vs 9.7 expected), Holm over the 4 tests in usable genotypes gives 0.14; CS ZT12-18 vs 18-24 p 0.071.
 - Bias check: on the no-change null replicates the within-phase Wilcoxon test was significant in 0/8 (CS, both phases), 0/8 and 1/8 (per0LD), consistent with no estimator-made block differences. Limitation: this null holds the matrix fixed WITHIN a phase, so it checks the within-phase comparisons only; the CS light-to-dark changes (ZT6-12 -> 12-18, ZT18-24 -> 0-6) rest on the realistic-truth bias (<= 0.05 in c) against effects of 0.25-0.29.
+
+## POST HOC (user question, 2026-10-24): how the 'expected flips' were made, and a sensitivity
+- Method (as PRESPEC 20e): per fly, 8 records simulated from its whole-record fitted model (no change by construction), split identically, refitted at K=3 (10 starts); p_f = fraction of the 8 replicates whose two halves (or blocks) differ in sign; expected = sum of p_f; p-value = upper tail of the Poisson-binomial(p_f) at the observed count.
+- Weakness found: with 8 replicates, p_f = 0 in 56 of 233 fly-phases (true p_f could be up to ~0.3), and 4 of those flies did flip; a p_f of 0 makes the test anti-conservative. Sensitivity with p_f smoothed as (flips + 0.5)/(n + 1):
+```
+  CS      light: flies 25 (excluded 0) | observed flips 11 (0.44) | expected under no change 10.8 (0.43) | one-sided p 0.544
+  CS      dark : flies 24 (excluded 1) | observed flips 4 (0.17) | expected under no change 5.4 (0.23) | one-sided p 0.855
+  fumin   light: flies 36 (excluded 17) | observed flips 11 (0.31) | expected under no change 8.6 (0.24) | one-sided p 0.206
+  fumin   dark : flies 30 (excluded 23) | observed flips 8 (0.27) | expected under no change 7.7 (0.26) | one-sided p 0.52
+  per0LD  light: flies 27 (excluded 0) | observed flips 12 (0.44) | expected under no change 8.7 (0.32) | one-sided p 0.0998
+  per0LD  dark : flies 27 (excluded 0) | observed flips 9 (0.33) | expected under no change 7.8 (0.29) | one-sided p 0.365
+  per0DD  whole: flies 22 (excluded 0) | observed flips 3 (0.14) | expected under no change 4.4 (0.20) | one-sided p 0.886
+  sss     light: flies 20 (excluded 34) | observed flips 6 (0.30) | expected under no change 6.2 (0.31) | one-sided p 0.636
+  sss     dark : flies 22 (excluded 32) | observed flips 10 (0.45) | expected under no change 8.7 (0.39) | one-sided p 0.343
+  CS      blocks 1-2 (test): flies 24 | observed flips 9 (0.38) | expected 9.7 | one-sided p 0.703 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  CS      blocks 3-4 (test): flies 25 | observed flips 8 (0.32) | expected 5.9 | one-sided p 0.189 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 1-2 (test): flies 26 | observed flips 14 (0.54) | expected 10.1 | one-sided p 0.0585 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 3-4 (test): flies 26 | observed flips 9 (0.35) | expected 9.1 | one-sided p 0.6 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
+  fumin   blocks 1-2 (descriptive): flies 35 | observed flips 12 (0.34) | expected 10.8 | one-sided p 0.378 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  fumin   blocks 3-4 (descriptive): flies 21 | observed flips 4 (0.19) | expected 4.6 | one-sided p 0.716 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
+```
+- Smallest p becomes 0.059 (per0LD ZT0-6 vs 6-12) and 0.100 (per0LD light across days); conclusions unchanged (no excess flips anywhere). Other limitation: the null is simulated from each fly's FITTED parameters (parametric bootstrap), so it inherits their estimation error.
