@@ -1240,3 +1240,44 @@ Full logs: sqw2_0.33.log, sqw2_0.75.log, sqw2_countJ_0.33.log, sqw2_countJ_0.75.
 - sss light -0.11 / -0.19 / -0.22; sss dark -0.08 / -0.05 / -0.06 (interval excludes 0 only at 0.33)
 - Count J_cycle (cycles/h) has the same sign pattern at all three theta; H1 non-degenerate in the same flies at all theta.
 - Reading: every DIRECTION is unchanged across theta; magnitudes grow with theta (a higher threshold labels more wake as Q). The sss light reversal holds at all three. Model-free c is consistent in sign wherever its interval excludes 0 (CS dark, fumin, per0DD, sss light at all theta).
+
+## PRESPEC 20d — reversible null and per-fly attenuation (2026-10-24, code a171bda; stage b rerun after fixing a bug I introduced in c_obs_min, which crashed it; no result had been produced)
+```
+rev light: true c +0.000 EPR 0.000/h | c_pred +0.024 [-0.037,+0.083] | c_ffbs +0.024 [-0.035,+0.084] | fitted EPR median 0.031 95th pct 0.255 /h (inf 0.00)
+rev dark: true c +0.000 EPR 0.000/h | c_pred -0.015 [-0.085,+0.048] | c_ffbs -0.017 [-0.078,+0.045] | fitted EPR median 0.029 95th pct 0.327 /h (inf 0.00)
+V1b light: true c +0.350 EPR 0.478/h | c_pred +0.387 [+0.351,+0.425] | c_ffbs +0.387 [+0.352,+0.421] | fitted EPR median 0.635 95th pct 1.198 /h (inf 0.00)
+V1b dark: true c -0.150 EPR 0.081/h | c_pred -0.156 [-0.222,-0.096] | c_ffbs -0.155 [-0.220,-0.095] | fitted EPR median 0.083 95th pct 0.500 /h (inf 0.00)
+(a) PASS=True
+   fly EPR CS light: fraction above reversible-null 95th pct (0.255/h): 0.00 (n 25)
+   fly EPR CS dark: fraction above reversible-null 95th pct (0.327/h): 0.40 (n 25)
+   fly EPR fumin light: fraction above reversible-null 95th pct (0.255/h): 0.45 (n 53)
+   fly EPR fumin dark: fraction above reversible-null 95th pct (0.327/h): 0.55 (n 53)
+   fly EPR per0LD light: fraction above reversible-null 95th pct (0.255/h): 0.22 (n 27)
+   fly EPR per0LD dark: fraction above reversible-null 95th pct (0.327/h): 0.26 (n 27)
+   fly EPR per0DD whole: fraction above reversible-null 95th pct (0.255/h): 0.39 (n 23)
+   fly EPR sss light: fraction above reversible-null 95th pct (0.255/h): 0.37 (n 54)
+   fly EPR sss dark: fraction above reversible-null 95th pct (0.327/h): 0.43 (n 54)
+
+              simulated records with opposite signs of c_true and c_obs_min: 0.19
+CS      light: real c_obs_min +0.019; simulated group mean +0.007 [-0.014,+0.026] -> consistent; flies outside own 95% band 0.04; sim c_true +0.006 / sim c_obs +0.007 = 0.84; real c_model +0.002 / c_obs +0.019 = 0.10
+              simulated records with opposite signs of c_true and c_obs_min: 0.06
+CS      dark : real c_obs_min +0.152; simulated group mean +0.160 [+0.118,+0.202] -> consistent; flies outside own 95% band 0.00; sim c_true +0.258 / sim c_obs +0.160 = 1.61; real c_model +0.250 / c_obs +0.152 = 1.64
+              simulated records with opposite signs of c_true and c_obs_min: 0.21
+fumin   light: real c_obs_min +0.157; simulated group mean +0.120 [+0.063,+0.160] -> consistent; flies outside own 95% band 0.10; sim c_true +0.165 / sim c_obs +0.120 = 1.37; real c_model +0.178 / c_obs +0.157 = 1.13
+              simulated records with opposite signs of c_true and c_obs_min: 0.14
+fumin   dark : real c_obs_min +0.207; simulated group mean +0.193 [+0.111,+0.248] -> consistent; flies outside own 95% band 0.02; sim c_true +0.313 / sim c_obs +0.193 = 1.62; real c_model +0.335 / c_obs +0.207 = 1.61
+              simulated records with opposite signs of c_true and c_obs_min: 0.18
+per0LD  light: real c_obs_min +0.075; simulated group mean +0.058 [+0.042,+0.079] -> consistent; flies outside own 95% band 0.07; sim c_true +0.118 / sim c_obs +0.058 = 2.02; real c_model +0.126 / c_obs +0.075 = 1.68
+              simulated records with opposite signs of c_true and c_obs_min: 0.10
+per0LD  dark : real c_obs_min +0.082; simulated group mean +0.083 [+0.061,+0.105] -> consistent; flies outside own 95% band 0.04; sim c_true +0.145 / sim c_obs +0.083 = 1.74; real c_model +0.144 / c_obs +0.082 = 1.77
+              simulated records with opposite signs of c_true and c_obs_min: 0.07
+per0DD  whole: real c_obs_min +0.114; simulated group mean +0.125 [+0.103,+0.146] -> consistent; flies outside own 95% band 0.04; sim c_true +0.217 / sim c_obs +0.125 = 1.75; real c_model +0.207 / c_obs +0.114 = 1.82
+              simulated records with opposite signs of c_true and c_obs_min: 0.24
+sss     light: real c_obs_min -0.111; simulated group mean -0.082 [-0.153,-0.013] -> consistent; flies outside own 95% band 0.04; sim c_true -0.165 / sim c_obs -0.082 = 2.02; real c_model -0.185 / c_obs -0.111 = 1.67
+              simulated records with opposite signs of c_true and c_obs_min: 0.26
+sss     dark : real c_obs_min -0.068; simulated group mean -0.035 [-0.092,+0.011] -> consistent; flies outside own 95% band 0.09; sim c_true -0.059 / sim c_obs -0.035 = 1.67; real c_model -0.052 / c_obs -0.068 = 0.77
+```
+- (a) PASS: on a detailed-balance truth the fitted c is 0 within +-0.03 (c_pred and FFBS, both phases); the pipeline does not manufacture circulation. EPR noise floor at this record length: median 0.03, 95th percentile 0.26-0.33 nats/h; flies above it: CS dark 40%, fumin 45-55%, sss 37-43%, per0LD 22-26%, per0DD 39%, CS light 0%.
+- (b) CONSISTENT in all 9 genotype x phase blocks: each fly's fitted model reproduces the real minute-level observable current (group means inside the simulated 95% range; 0-10% of flies outside their own band). Attenuation hidden/observable ~1.6-2.0 in simulation, matching the real ratio (1.6-1.8) wherever the current is not near 0. So the model's larger circulation is what coarse-graining of its own hidden dynamics predicts.
+- per0LD: the minute-level observable current is +0.075 / +0.082 (light/dark) and the model reproduces it. The earlier per0LD disagreement was with the PRESPEC 19 +-5 min transit classification (c ~ 0), a different observable.
+- Hidden and observable current have opposite signs in 6-26% of simulated single records (most in weak blocks: CS light, sss).

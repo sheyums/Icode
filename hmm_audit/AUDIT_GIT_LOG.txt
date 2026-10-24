@@ -154,3 +154,5 @@ c77f4f9 2026-10-23 22:49:58 +0000 Ledger: 20c synthetic (V1c fail on SD, V2c pas
 64bb252 2026-10-24 02:42:46 +0000 sqw3_report.py: 20c step 3 and 20e amendment B tests
 1c3142b 2026-10-24 02:42:46 +0000 Ledger: 20c fly fits, 20e amendment B tests
 93508b2 2026-10-24 03:56:27 +0000 Ledger: theta sensitivity
+a171bda 2026-10-24 04:04:01 +0000 sqw4: fix c_obs_min (my earlier edit commented out out=[]); stage b rerun
+b32634d 2026-10-24 04:05:14 +0000 Ledger: 20d
