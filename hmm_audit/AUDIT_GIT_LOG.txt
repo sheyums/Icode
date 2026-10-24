@@ -151,3 +151,5 @@ c77f4f9 2026-10-23 22:49:58 +0000 Ledger: 20c synthetic (V1c fail on SD, V2c pas
 6176cf4 2026-10-23 23:03:42 +0000 PRESPEC 20e amendment B: group-level Wilcoxon/Friedman tests of change across the day; null for all 3 genotypes (before running)
 63750e4 2026-10-23 23:14:40 +0000 TODO: Methods as tracked changes in v6 docx
 4d01ee5 2026-10-24 01:48:42 +0000 Ledger: 20c realistic truths (CS, per0LD usable; fumin not)
+64bb252 2026-10-24 02:42:46 +0000 sqw3_report.py: 20c step 3 and 20e amendment B tests
+1c3142b 2026-10-24 02:42:46 +0000 Ledger: 20c fly fits, 20e amendment B tests

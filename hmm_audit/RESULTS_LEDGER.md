@@ -1195,3 +1195,38 @@ per0LD  c SD median 0.18 0.15 0.14 0.13 | correct sign mean 0.73 0.66 0.93 0.96 
 fumin   c SD median 0.31 0.34 0.43 0.47 | correct sign mean 0.66 0.63 0.68 0.57 | c bias median -0.033 +0.026 +0.044 +0.015 | true |c| median 0.25 0.25 0.38 0.38
 ```
 - USABLE: CS (median SD 0.20-0.29), per0LD (0.16-0.27). NOT usable: fumin (0.37-0.66; K=3 chosen in only 45-50% of replicates for 2 of 5 flies; biases up to 0.5).
+
+## PRESPEC 20c step 3 + PRESPEC 20e amendment B — 6 h blocks, fly fits and group tests (2026-10-24, code 64bb252)
+Narrowest block: one fly's minutes in one 6 h ZT block pooled over its days (shared emissions, 4 matrices). Bias check (ii) of amendment B (no-change null) not yet run.
+```
+CS (USABLE): flies 25 | best K 2:0.00 3:1.00 4:0.00 | H1 degenerate 0.00
+   flies used 24 (no-cycle excluded 1)
+   ZT0-6    c_pred -0.021 [-0.079,+0.039] (c>0 in 0.42) | count J -0.041 [-0.100,+0.017] /h
+   ZT6-12   c_pred +0.033 [-0.026,+0.089] (c>0 in 0.71) | count J +0.112 [+0.037,+0.192] /h
+   ZT12-18  c_pred +0.274 [+0.182,+0.367] (c>0 in 0.92) | count J +0.204 [+0.131,+0.284] /h
+   ZT18-24  c_pred +0.205 [+0.104,+0.302] (c>0 in 0.75) | count J +0.196 [+0.103,+0.287] /h
+   one-sample Wilcoxon c vs 0 (Holm): ZT0-6 p 0.51 adj 0.51 | ZT6-12 p 0.18 adj 0.36 | ZT12-18 p 8.3e-06 adj 3.3e-05 | ZT18-24 p 0.00096 adj 0.0029
+   Friedman chi2 17.80 p 0.00048 | adjacent within-fly Wilcoxon (Holm): ZT0-6->ZT6-12 d +0.041 p 0.21 adj 0.42 | ZT6-12->ZT12-18 d +0.254 p 0.00018 adj 0.0007 | ZT12-18->ZT18-24 d -0.014 p 0.26 adj 0.42 | ZT18-24->ZT0-6 d -0.294 p 0.0025 adj 0.0075
+   'group direction changes across the day' (amendment B rule): False
+per0LD (USABLE): flies 27 | best K 2:0.19 3:0.81 4:0.00 | H1 degenerate 0.00
+   flies used 25 (no-cycle excluded 2)
+   ZT0-6    c_pred +0.092 [+0.021,+0.163] (c>0 in 0.68) | count J +0.105 [+0.040,+0.178] /h
+   ZT6-12   c_pred +0.072 [-0.019,+0.160] (c>0 in 0.60) | count J +0.091 [+0.012,+0.175] /h
+   ZT12-18  c_pred +0.085 [+0.011,+0.156] (c>0 in 0.72) | count J +0.109 [+0.025,+0.191] /h
+   ZT18-24  c_pred +0.204 [+0.126,+0.286] (c>0 in 0.84) | count J +0.279 [+0.162,+0.394] /h
+   one-sample Wilcoxon c vs 0 (Holm): ZT0-6 p 0.016 adj 0.048 | ZT6-12 p 0.13 adj 0.13 | ZT12-18 p 0.017 adj 0.048 | ZT18-24 p 0.0001 adj 0.00041
+   Friedman chi2 6.74 p 0.081 | adjacent within-fly Wilcoxon (Holm): ZT0-6->ZT6-12 d +0.033 p 0.92 adj 1 | ZT6-12->ZT12-18 d -0.026 p 0.96 adj 1 | ZT12-18->ZT18-24 d +0.082 p 0.055 adj 0.22 | ZT18-24->ZT0-6 d -0.113 p 0.055 adj 0.22
+   'group direction changes across the day' (amendment B rule): False
+fumin (NOT usable: descriptive): flies 53 | best K 2:0.11 3:0.89 4:0.00 | H1 degenerate 0.00
+   flies used 19 (no-cycle excluded 34)
+   ZT0-6    c_pred +0.172 [+0.067,+0.275] (c>0 in 0.63) | count J +0.146 [+0.034,+0.271] /h
+   ZT6-12   c_pred +0.164 [+0.018,+0.281] (c>0 in 0.79) | count J +0.244 [+0.118,+0.378] /h
+   ZT12-18  c_pred +0.289 [+0.150,+0.425] (c>0 in 0.84) | count J +0.207 [+0.113,+0.318] /h
+   ZT18-24  c_pred +0.213 [+0.030,+0.404] (c>0 in 0.68) | count J +0.155 [+0.060,+0.262] /h
+   one-sample Wilcoxon c vs 0 (Holm): ZT0-6 p 0.012 adj 0.025 | ZT6-12 p 0.0046 adj 0.014 | ZT12-18 p 0.0012 adj 0.0047 | ZT18-24 p 0.03 adj 0.03
+   Friedman chi2 4.07 p 0.25 | adjacent within-fly Wilcoxon (Holm): ZT0-6->ZT6-12 d +0.001 p 0.71 adj 1 | ZT6-12->ZT12-18 d +0.035 p 0.24 adj 0.97 | ZT12-18->ZT18-24 d -0.017 p 0.95 adj 1 | ZT18-24->ZT0-6 d -0.149 p 0.86 adj 1
+   'group direction changes across the day' (amendment B rule): False
+```
+- CS: circulation is ~0 in the light blocks and forward in both dark blocks; within-fly change across the day is significant (Friedman p 0.0005; ZT6-12 -> 12-18 +0.25, adj p 0.0007; ZT18-24 -> 0-6 -0.29, adj p 0.0075). No block has a significant NEGATIVE group direction, so the pre-stated rule for a direction REVERSAL is not met: the magnitude switches on and off, the direction does not reverse.
+- per0LD: forward in ZT0-6, 12-18 and 18-24 (adj p <= 0.048), strongest at ZT18-24; no significant within-fly change (Friedman p 0.08).
+- fumin (not usable; descriptive): 34 of 53 flies excluded as 'no cycle' in at least one block; remaining 19 forward in all blocks; no within-fly change.
