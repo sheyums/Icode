@@ -1302,3 +1302,16 @@ Section 2: light vs dark within fly (12 h fits), descriptive
 ```
 - Section 1: no block shows more sign flips between the first and second half of the recording than estimation noise predicts (smallest one-sided p: per0LD light 0.051, fumin light 0.066; 9 tests, none significant after Holm). Reading as pre-stated: at ~2 days per half, these data cannot distinguish a fly that changes direction across days from one that does not. fumin and sss lose 17-34 flies to 'no cycle' in a half.
 - Section 2 (descriptive): the 'expected' column adds bootstrap noise around already-noisy estimates and so overstates the noise-only rate; read only as a rough reference. per0LD and sss have fewer light/dark sign disagreements (0.22, 0.27) than that reference (0.41, 0.47); CS and fumin match it.
+
+## PRESPEC 20e section 3 + amendment B bias check — 6 h within-phase flips (2026-10-24, code 1d59b73)
+```
+Section 3: within phase, 6 h blocks (block pairs 1-2 = ZT0-6 vs 6-12, 3-4 = ZT12-18 vs 18-24)
+  CS      blocks 1-2 (test): flies 24 | observed flips 9 (0.38) | expected 9.4 | one-sided p 0.661 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  CS      blocks 3-4 (test): flies 25 | observed flips 8 (0.32) | expected 5.1 | one-sided p 0.0712 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 1-2 (test): flies 26 | observed flips 14 (0.54) | expected 9.7 | one-sided p 0.0342 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 3-4 (test): flies 26 | observed flips 9 (0.35) | expected 8.6 | one-sided p 0.512 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
+  fumin   blocks 1-2 (descriptive): flies 35 | observed flips 12 (0.34) | expected 10.0 | one-sided p 0.246 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  fumin   blocks 3-4 (descriptive): flies 21 | observed flips 4 (0.19) | expected 3.7 | one-sided p 0.539 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
+```
+- No excess of within-phase sign flips survives correction: per0LD ZT0-6 vs 6-12 has p 0.034 uncorrected (14 flips vs 9.7 expected), Holm over the 4 tests in usable genotypes gives 0.14; CS ZT12-18 vs 18-24 p 0.071.
+- Bias check: on the no-change null replicates the within-phase Wilcoxon test was significant in 0/8 (CS, both phases), 0/8 and 1/8 (per0LD), consistent with no estimator-made block differences. Limitation: this null holds the matrix fixed WITHIN a phase, so it checks the within-phase comparisons only; the CS light-to-dark changes (ZT6-12 -> 12-18, ZT18-24 -> 0-6) rest on the realistic-truth bias (<= 0.05 in c) against effects of 0.25-0.29.

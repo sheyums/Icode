@@ -13,3 +13,10 @@ Section 2: light vs dark within fly (12 h fits), descriptive
   fumin   flies 48 | opposite signs light vs dark 0.40 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.18/0.32, normal approx.) | Spearman light-dark -0.06 p 0.7
   per0LD  flies 27 | opposite signs light vs dark 0.22 | expected from estimation noise if each fly's light and dark values were its true ones ~0.41 (rough: c SD 0.12/0.13, normal approx.) | Spearman light-dark -0.32 p 0.11
   sss     flies 37 | opposite signs light vs dark 0.27 | expected from estimation noise if each fly's light and dark values were its true ones ~0.47 (rough: c SD 0.22/0.31, normal approx.) | Spearman light-dark +0.19 p 0.27
+Section 3: within phase, 6 h blocks (block pairs 1-2 = ZT0-6 vs 6-12, 3-4 = ZT12-18 vs 18-24)
+  CS      blocks 1-2 (test): flies 24 | observed flips 9 (0.38) | expected 9.4 | one-sided p 0.661 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  CS      blocks 3-4 (test): flies 25 | observed flips 8 (0.32) | expected 5.1 | one-sided p 0.0712 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 1-2 (test): flies 26 | observed flips 14 (0.54) | expected 9.7 | one-sided p 0.0342 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  per0LD  blocks 3-4 (test): flies 26 | observed flips 9 (0.35) | expected 8.6 | one-sided p 0.512 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8
+  fumin   blocks 1-2 (descriptive): flies 35 | observed flips 12 (0.34) | expected 10.0 | one-sided p 0.246 | bias check: null-replicate Wilcoxon p<0.05 in 0.00 of 8
+  fumin   blocks 3-4 (descriptive): flies 21 | observed flips 4 (0.19) | expected 3.7 | one-sided p 0.539 | bias check: null-replicate Wilcoxon p<0.05 in 0.12 of 8

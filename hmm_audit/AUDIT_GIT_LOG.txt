@@ -159,3 +159,4 @@ b32634d 2026-10-24 04:05:14 +0000 Ledger: 20d
 460edd1 2026-10-24 06:10:29 +0000 Methods V7 tracked-changes text and builder (docx not committed)
 1d59b73 2026-10-24 08:06:38 +0000 sqw5_report.py: 20e sections 1-2
 b08f693 2026-10-24 08:06:38 +0000 Ledger: 20e sections 1-2
+5c50529 2026-10-24 11:03:00 +0000 Ledger: 20e section 3
