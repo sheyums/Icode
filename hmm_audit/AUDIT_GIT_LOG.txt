@@ -174,3 +174,4 @@ a75afb5 2026-10-25 03:42:52 +0000 Figs 6/6b with estimator-bias caveat; 20f read
 1196c82 2026-10-25 19:19:07 +0000 Methods V7: theta/r_f implementation details; round-trip section
 a1c4540 2026-10-25 19:19:35 +0000 Methods V7: theta robustness sentence made exact
 64dd6eb 2026-10-25 19:54:06 +0000 sqw_ref: observable pair counts and round-trip functions; per-fly round-trip table; golden G7; guide/index updated
+09ee066 2026-10-25 20:09:16 +0000 PRESPEC 20h: dwell-time distributions (before running)
