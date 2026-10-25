@@ -246,3 +246,61 @@ Common plotting style (all figures):
 - CS: c = 4.48, exponent 1.76, quadratic better.
 - fumin: a = 2.23, linear better.
 - sss: c = 6.44.
+
+---------------------------------------------------------------------------------------------------------------
+
+## H. Onsager conductance L per genotype (Fig. 12; post hoc, user request)
+
+### H1. Points
+- The same per-fly x phase points as G1: J = count J_cycle, path mean; EPR = rule-of-three bound, path mean.
+- Same exclusions as G1.
+
+### H2. Fit (the user's Methods Eq. 25 scheme)
+1. Per genotype, regress EPR on J^2 by ordinary least squares THROUGH THE ORIGIN:
+   - slope s = sum(J^2 * EPR) / sum(J^4);
+   - L = 1/s.
+2. Standard error of s: sqrt( RSS / (n - 1) / sum(J^4) ), with df = n - 1.
+3. L's standard error: SE_L = L^2 * SE_s.
+4. 95% interval for s: s +- t(0.975, n-1) * SE_s. Invert it for L; the bounds swap.
+5. R^2 through the origin = 1 - RSS / sum(EPR^2).
+6. Do the fit three ways: pooled over phases (main), light only, dark only. per0DD has one phase; plot it with the
+   dark points.
+
+### H3. Intervals that respect the fly as the unit
+- Fly bootstrap: resample flies with replacement, 2000 times, keeping both phases of a fly together; refit L each
+  time; 2.5 and 97.5 percentiles.
+- Genotype vs CS: bootstrap the difference in L (independent resamples of each genotype, 4000 each); two-sided
+  p = 2 * min(P(diff <= 0), P(diff >= 0)).
+- The Wald z-test on s, with Benjamini-Hochberg over the 4 contrasts, can be reported alongside. It treats a
+  fly's two phases as independent and therefore overstates significance (per0DD vs CS: Wald p ~ 1e-13,
+  bootstrap p = 0.065).
+
+### H4. Sensitivity
+- Refit with EPR - 0.02 (the calibrated estimator offset, PRESPEC 20f; negative values set to 0).
+- L changes by 1-6%; report it, but don't plot it.
+
+### H5. Layout (7.0 x 2.8 in, width ratio 1 : 1.4)
+- (a) Pooled phases.
+  - x = genotype in the order CS, per0LD, per0DD, fumin, sss.
+  - y = L, axis from 0.
+  - Filled marker in genotype colour, with fit 95% CI error bars (capsize 2.5).
+  - The fly-bootstrap interval as a thin dotted vertical line just to the right of each marker.
+- (b) By phase.
+  - Light (open marker) at x - 0.12, dark (filled) at x + 0.12; per0DD at x.
+  - Error bars = fit 95% CI.
+- y label: "Onsager conductance L (cycles^2 nats^-1 h^-1)".
+- Footnote: "EPR = J^2/L fitted through the origin per genotype (per-fly points, hidden states). Bars: 95% CI from
+  the fit; dotted: fly bootstrap."
+
+### H6. Check (ledger, Onsager L entry)
+| genotype | L | fly-bootstrap CI |
+|---|---|---|
+| CS | 0.215 | 0.171-0.229 |
+| per0LD | 0.245 | 0.226-0.271 |
+| per0DD | 0.330 | 0.203-0.361 |
+| fumin | 0.237 | 0.171-0.274 |
+| sss | 0.144 | 0.119-0.178 |
+
+- By phase: CS light 0.297, CS dark 0.213.
+- Bootstrap vs CS: sss p 0.008, per0LD p 0.011.
+- Code: `onsager_L.py`.
