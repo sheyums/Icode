@@ -1435,3 +1435,73 @@ Full output: sqw7.log (observed + pre-specified hidden, theta 0.33/0.5/0.75), sq
 - Observed: direct A->S->A is the most common round trip in every genotype and phase (48-81% at theta 0.5; still the largest at 0.33 and 0.75, 33-88%). Forward > reverse: CS dark (0.24 vs 0.11, Holm 0.008), fumin light/dark, per0DD (Holm <= 0.018); sss light reverse > forward (0.19 vs 0.12, ns at bout level); per0LD ns.
 - Hidden (matched): forward is the single most common round trip in CS dark (38%), fumin dark (38%), per0DD (35%); forward > reverse in CS dark, fumin, per0LD, per0DD (Holm <= 0.036); reverse > forward in sss light (Holm 0.005). Which type is most common depends on theta and on the hidden definition; forward-minus-reverse is robust.
 - Independence: joint minus product of marginals is within +-0.04 everywhere and mostly ns; entry and exit routes of a bout are close to independent.
+
+## PRESPEC 20h — dwell times, observed and hidden (2026-10-25, code 64dd6eb)
+Library: sqw_ref.py section 10 (runs_censored, km_survival, life_table_hazard, geometric_survival, DWELL_EDGES). A run cut at a phase boundary is censored there; its remainder in the next phase is NOT counted as a new run (its start is unobserved). Figures 9, 9s, 10, 10s. Geometric overlay in Fig 10 weighted by each fly's decoded run count (first draft weighted flies equally, which mismatched the pooled KM; corrected before reporting).
+```
+obs CS      light S    runs  1777 (censored 0.00) | per-fly KM median 14 min | hazard bins outside model 95% band 0.90 of 10 | h per bin: 0.000 0.000 0.000 0.088 0.070 0.058 0.059 0.057 0.041 0.020 - - -
+obs CS      light wake runs  1822 (censored 0.05) | per-fly KM median 10 min | hazard bins outside model 95% band 0.80 of 10 | h per bin: 0.081 0.086 0.083 0.073 0.068 0.053 0.042 0.024 0.020 0.020 - - -
+obs CS      light Q    runs  5893 (censored 0.00) | per-fly KM median 2 min | hazard bins outside model 95% band 0.33 of 6 | h per bin: 0.475 0.398 0.418 0.349 0.391 0.300 - - - - - - -
+obs CS      light W    runs  5888 (censored 0.01) | per-fly KM median 2 min | hazard bins outside model 95% band 1.00 of 8 | h per bin: 0.275 0.320 0.280 0.240 0.191 0.131 0.112 0.054 - - - - -
+hid CS      light H1 runs per path summed over flies  4026.0 | model mean dwell 1/(1-P_ii): median over flies 3.1 min [IQR 2.6-3.5] | decoded KM median 2 min
+hid CS      light H2 runs per path summed over flies  3763.1 | model mean dwell 1/(1-P_ii): median over flies 6.4 min [IQR 4.3-8.3] | decoded KM median 3 min
+hid CS      light H3 runs per path summed over flies  1739.3 | model mean dwell 1/(1-P_ii): median over flies 20.4 min [IQR 16.3-23.7] | decoded KM median 14 min
+obs CS      dark  S    runs  1354 (censored 0.03) | per-fly KM median 27 min | hazard bins outside model 95% band 0.45 of 11 | h per bin: 0.000 0.000 0.000 0.044 0.032 0.029 0.031 0.033 0.026 0.023 0.024 - -
+obs CS      dark  wake runs  1321 (censored 0.05) | per-fly KM median 12 min | hazard bins outside model 95% band 0.78 of 9 | h per bin: 0.061 0.060 0.054 0.056 0.071 0.088 0.062 0.052 0.055 - - - -
+obs CS      dark  Q    runs  3469 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.17 of 6 | h per bin: 0.498 0.420 0.369 0.368 0.341 0.256 - - - - - - -
+obs CS      dark  W    runs  3333 (censored 0.01) | per-fly KM median 3 min | hazard bins outside model 95% band 0.62 of 8 | h per bin: 0.268 0.244 0.233 0.213 0.162 0.112 0.128 0.097 - - - - -
+hid CS      dark  H1 runs per path summed over flies  2285.6 | model mean dwell 1/(1-P_ii): median over flies 3.2 min [IQR 2.8-3.6] | decoded KM median 2 min
+hid CS      dark  H2 runs per path summed over flies  2053.8 | model mean dwell 1/(1-P_ii): median over flies 7.2 min [IQR 5.4-11.9] | decoded KM median 5 min
+hid CS      dark  H3 runs per path summed over flies  1328.0 | model mean dwell 1/(1-P_ii): median over flies 35.9 min [IQR 30.0-49.0] | decoded KM median 27 min
+obs fumin   light S    runs   956 (censored 0.02) | per-fly KM median 7 min | hazard bins outside model 95% band 1.00 of 7 | h per bin: 0.000 0.000 0.000 0.191 0.196 0.160 0.168 - - - - - -
+obs fumin   light wake runs   976 (censored 0.08) | per-fly KM median 28 min | hazard bins outside model 95% band 0.69 of 13 | h per bin: 0.015 0.014 0.029 0.029 0.030 0.029 0.023 0.023 0.016 0.010 0.006 0.005 0.005
+obs fumin   light Q    runs  7501 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.50 of 6 | h per bin: 0.538 0.438 0.434 0.374 0.346 0.301 - - - - - - -
+obs fumin   light W    runs  7867 (censored 0.01) | per-fly KM median 3 min | hazard bins outside model 95% band 0.60 of 10 | h per bin: 0.234 0.216 0.205 0.205 0.161 0.095 0.052 0.044 0.032 0.026 - - -
+hid fumin   light H1 runs per path summed over flies  4574.7 | model mean dwell 1/(1-P_ii): median over flies 3.6 min [IQR 2.4-9.2] | decoded KM median 2 min
+hid fumin   light H2 runs per path summed over flies  4793.9 | model mean dwell 1/(1-P_ii): median over flies 9.1 min [IQR 5.6-26.9] | decoded KM median 5 min
+hid fumin   light H3 runs per path summed over flies   978.4 | model mean dwell 1/(1-P_ii): median over flies 9.2 min [IQR 7.3-10.6] | decoded KM median 8 min
+obs fumin   dark  S    runs   647 (censored 0.00) | per-fly KM median 7 min | hazard bins outside model 95% band 1.00 of 7 | h per bin: 0.000 0.000 0.000 0.200 0.210 0.226 0.167 - - - - - -
+obs fumin   dark  wake runs   667 (censored 0.15) | per-fly KM median 33 min | hazard bins outside model 95% band 0.77 of 13 | h per bin: 0.009 0.011 0.014 0.021 0.024 0.028 0.024 0.012 0.008 0.004 0.003 0.002 0.001
+obs fumin   dark  Q    runs  7171 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.40 of 5 | h per bin: 0.590 0.493 0.475 0.474 0.441 - - - - - - - -
+obs fumin   dark  W    runs  7505 (censored 0.01) | per-fly KM median 4 min | hazard bins outside model 95% band 0.64 of 11 | h per bin: 0.179 0.176 0.177 0.172 0.134 0.089 0.048 0.039 0.027 0.014 0.008 - -
+hid fumin   dark  H1 runs per path summed over flies  4448.6 | model mean dwell 1/(1-P_ii): median over flies 2.9 min [IQR 2.2-4.3] | decoded KM median 2 min
+hid fumin   dark  H2 runs per path summed over flies  4671.6 | model mean dwell 1/(1-P_ii): median over flies 12.8 min [IQR 7.8-28.5] | decoded KM median 5 min
+hid fumin   dark  H3 runs per path summed over flies   643.7 | model mean dwell 1/(1-P_ii): median over flies 8.2 min [IQR 6.8-9.0] | decoded KM median 7 min
+obs per0LD  light S    runs  1601 (censored 0.03) | per-fly KM median 22 min | hazard bins outside model 95% band 0.64 of 11 | h per bin: 0.000 0.000 0.000 0.055 0.058 0.044 0.040 0.030 0.024 0.021 0.016 - -
+obs per0LD  light wake runs  1616 (censored 0.03) | per-fly KM median 10 min | hazard bins outside model 95% band 0.58 of 12 | h per bin: 0.074 0.053 0.069 0.069 0.080 0.067 0.049 0.036 0.021 0.006 0.011 0.015 -
+obs per0LD  light Q    runs  4256 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.50 of 6 | h per bin: 0.517 0.447 0.399 0.401 0.311 0.213 - - - - - - -
+obs per0LD  light W    runs  4531 (censored 0.01) | per-fly KM median 2 min | hazard bins outside model 95% band 0.78 of 9 | h per bin: 0.317 0.273 0.229 0.191 0.141 0.104 0.063 0.045 0.037 - - - -
+hid per0LD  light H1 runs per path summed over flies  2648.4 | model mean dwell 1/(1-P_ii): median over flies 4.0 min [IQR 2.7-5.6] | decoded KM median 2 min
+hid per0LD  light H2 runs per path summed over flies  2712.8 | model mean dwell 1/(1-P_ii): median over flies 7.6 min [IQR 4.3-15.8] | decoded KM median 4 min
+hid per0LD  light H3 runs per path summed over flies  1583.6 | model mean dwell 1/(1-P_ii): median over flies 31.3 min [IQR 18.3-40.5] | decoded KM median 18 min
+obs per0LD  dark  S    runs  2011 (censored 0.04) | per-fly KM median 18 min | hazard bins outside model 95% band 0.64 of 11 | h per bin: 0.000 0.000 0.000 0.066 0.054 0.043 0.046 0.045 0.030 0.028 0.034 - -
+obs per0LD  dark  wake runs  1998 (censored 0.02) | per-fly KM median 8 min | hazard bins outside model 95% band 0.56 of 9 | h per bin: 0.065 0.073 0.087 0.095 0.093 0.074 0.058 0.046 0.049 - - - -
+obs per0LD  dark  Q    runs  4507 (censored 0.00) | per-fly KM median 2 min | hazard bins outside model 95% band 0.40 of 5 | h per bin: 0.485 0.395 0.420 0.395 0.414 - - - - - - - -
+obs per0LD  dark  W    runs  5014 (censored 0.00) | per-fly KM median 2 min | hazard bins outside model 95% band 0.88 of 8 | h per bin: 0.366 0.337 0.309 0.281 0.199 0.140 0.083 0.085 - - - - -
+hid per0LD  dark  H1 runs per path summed over flies  2959.6 | model mean dwell 1/(1-P_ii): median over flies 3.5 min [IQR 2.8-4.1] | decoded KM median 3 min
+hid per0LD  dark  H2 runs per path summed over flies  3169.3 | model mean dwell 1/(1-P_ii): median over flies 5.0 min [IQR 3.5-7.3] | decoded KM median 3 min
+hid per0LD  dark  H3 runs per path summed over flies  1992.6 | model mean dwell 1/(1-P_ii): median over flies 24.0 min [IQR 19.3-34.7] | decoded KM median 17 min
+obs per0DD  whole S    runs  3227 (censored 0.00) | per-fly KM median 21 min | hazard bins outside model 95% band 0.82 of 11 | h per bin: 0.000 0.000 0.000 0.050 0.042 0.046 0.056 0.050 0.037 0.033 0.018 - -
+obs per0DD  whole wake runs  3231 (censored 0.00) | per-fly KM median 9 min | hazard bins outside model 95% band 0.78 of 9 | h per bin: 0.076 0.063 0.075 0.080 0.090 0.094 0.090 0.091 0.060 - - - -
+obs per0DD  whole Q    runs  6374 (censored 0.00) | per-fly KM median 2 min | hazard bins outside model 95% band 0.33 of 6 | h per bin: 0.452 0.381 0.392 0.376 0.330 0.282 - - - - - - -
+obs per0DD  whole W    runs  6392 (censored 0.00) | per-fly KM median 2 min | hazard bins outside model 95% band 0.14 of 7 | h per bin: 0.334 0.296 0.260 0.239 0.235 0.182 0.196 - - - - - -
+hid per0DD  whole H1 runs per path summed over flies  4327.3 | model mean dwell 1/(1-P_ii): median over flies 3.4 min [IQR 2.9-4.0] | decoded KM median 3 min
+hid per0DD  whole H2 runs per path summed over flies  3819.2 | model mean dwell 1/(1-P_ii): median over flies 5.8 min [IQR 5.1-7.7] | decoded KM median 4 min
+hid per0DD  whole H3 runs per path summed over flies  3182.5 | model mean dwell 1/(1-P_ii): median over flies 25.4 min [IQR 19.5-33.1] | decoded KM median 20 min
+obs sss     light S    runs   443 (censored 0.01) | per-fly KM median 7 min | hazard bins outside model 95% band 0.86 of 7 | h per bin: 0.000 0.000 0.000 0.201 0.180 0.158 0.093 - - - - - -
+obs sss     light wake runs   493 (censored 0.18) | per-fly KM median 76 min | hazard bins outside model 95% band 0.31 of 13 | h per bin: 0.026 0.015 0.018 0.015 0.016 0.019 0.013 0.008 0.007 0.006 0.004 0.002 0.002
+obs sss     light Q    runs  6943 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.50 of 6 | h per bin: 0.614 0.490 0.444 0.353 0.277 0.207 - - - - - - -
+obs sss     light W    runs  7100 (censored 0.01) | per-fly KM median 4 min | hazard bins outside model 95% band 0.82 of 11 | h per bin: 0.200 0.189 0.172 0.139 0.115 0.085 0.065 0.050 0.026 0.017 0.025 - -
+hid sss     light H1 runs per path summed over flies  3480.9 | model mean dwell 1/(1-P_ii): median over flies 3.2 min [IQR 2.0-7.9] | decoded KM median 2 min
+hid sss     light H2 runs per path summed over flies  3543.7 | model mean dwell 1/(1-P_ii): median over flies 19.0 min [IQR 10.7-54.6] | decoded KM median 7 min
+hid sss     light H3 runs per path summed over flies   467.2 | model mean dwell 1/(1-P_ii): median over flies 8.8 min [IQR 7.3-10.2] | decoded KM median 8 min
+obs sss     dark  S    runs   594 (censored 0.02) | per-fly KM median 7 min | hazard bins outside model 95% band 0.86 of 7 | h per bin: 0.000 0.000 0.000 0.235 0.213 0.123 0.088 - - - - - -
+obs sss     dark  wake runs   591 (censored 0.14) | per-fly KM median 51 min | hazard bins outside model 95% band 0.62 of 13 | h per bin: 0.025 0.030 0.027 0.034 0.026 0.019 0.017 0.011 0.009 0.005 0.004 0.005 0.003
+obs sss     dark  Q    runs  8617 (censored 0.00) | per-fly KM median 1 min | hazard bins outside model 95% band 0.67 of 6 | h per bin: 0.563 0.487 0.461 0.392 0.324 0.165 - - - - - - -
+obs sss     dark  W    runs  8862 (censored 0.01) | per-fly KM median 4 min | hazard bins outside model 95% band 0.60 of 10 | h per bin: 0.217 0.213 0.190 0.175 0.138 0.117 0.080 0.049 0.027 0.021 - - -
+hid sss     dark  H1 runs per path summed over flies  5172.8 | model mean dwell 1/(1-P_ii): median over flies 3.2 min [IQR 2.4-7.6] | decoded KM median 2 min
+hid sss     dark  H2 runs per path summed over flies  5214.0 | model mean dwell 1/(1-P_ii): median over flies 10.1 min [IQR 6.6-18.1] | decoded KM median 5 min
+hid sss     dark  H3 runs per path summed over flies   593.1 | model mean dwell 1/(1-P_ii): median over flies 7.8 min [IQR 6.9-10.1] | decoded KM median 7 min
+```
+- Observed: the fitted model captures the broad scale of every run type but misfits the shape: hazard bins outside the model's 95% band in 14-100% of bins (median ~0.6). Structural: S runs < 5 min are impossible in the data (sleep criterion) but predicted by the model; fumin and sss sleep runs end faster at long durations than predicted; long wake and active-wake runs are heavier-tailed than predicted in several blocks. Quiet-wake (Q) runs are fitted best.
+- Hidden: mean dwell 1/(1-P_ii), fly medians: H1 2.9-4.0 min in every genotype and phase; H2 5-19 min; H3 20-36 min in CS/per0, 8-9 min in fumin/sss. Decoded dwell distributions match the run-weighted geometric curves (expected, circular).

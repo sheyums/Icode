@@ -451,3 +451,51 @@ def round_trip_stats(counts, hours):
     prod = np.stack([qi * (1 - qo), (1 - qi) * qo, (1 - qi) * (1 - qo), qi * qo], 1)
     return dict(n=float(n.mean()), frac=Fr.mean(0), rate=C.mean(0) / hours, p_q_entry=float(qi.mean()),
                 p_q_exit=float(qo.mean()), dependence=(Fr - prod).mean(0), frac_paths_used=float(ok.mean()))
+
+# ---------------------------------------------------------------------------------------------------------
+# 10. Dwell times (PRESPEC 20h): runs with censoring, Kaplan-Meier, life-table hazard
+# ---------------------------------------------------------------------------------------------------------
+DWELL_EDGES = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 721]   # minutes, fixed in PRESPEC 20h
+
+def runs_censored(seq, ph, values, nph, censor_at_phase=True):
+    """Runs of any value in `values` (e.g. {2} for S, {0, 1} for wake) on a 1-min sequence. Returns, per phase of the
+    run's first minute, arrays (durations in minutes, event flags). A run is censored (event 0) where it is cut by a
+    phase boundary (if censor_at_phase), a missing minute (-1) or the end of the record; event 1 = it ended in a
+    different valid value."""
+    s = np.asarray(seq); ph = np.asarray(ph); inr = np.isin(s, list(values)); out = [([], []) for _ in range(nph)]
+    T = len(s); t = 0
+    while t < T:
+        if not inr[t]: t += 1; continue
+        p = ph[t]; u = t + 1
+        while u < T and inr[u] and not (censor_at_phase and ph[u] != p): u += 1
+        event = int(u < T and s[u] >= 0 and not inr[u])
+        out[p][0].append(u - t); out[p][1].append(event); t = u
+        if u < T and inr[u]:            # cut at the phase boundary: the remainder starts a new (left-truncated) run
+            while u < T and inr[u]: u += 1
+            t = u                       # the remainder is not counted as a new run (its start is not observed)
+    return [(np.array(d, int), np.array(e, int)) for d, e in out]
+
+def km_survival(d, e, w=None):
+    """Kaplan-Meier survival of durations d (integer minutes) with event flags e and optional weights w.
+    Returns (t, S(t)) at the distinct durations; S(t) = P(duration > t)."""
+    d = np.asarray(d); e = np.asarray(e); w = np.ones(len(d)) if w is None else np.asarray(w, float)
+    ts = np.unique(d); S = []; s = 1.0
+    for t in ts:
+        risk = w[d >= t].sum(); ev = w[(d == t) & (e == 1)].sum()
+        if risk > 0: s *= 1 - ev / risk
+        S.append(s)
+    return ts, np.array(S)
+
+def life_table_hazard(d, e, edges=DWELL_EDGES, w=None):
+    """Per-minute hazard in bins [lo, hi): events / minutes at risk. A run of length d is at risk at minutes 1..d.
+    Returns (events, at_risk_minutes, n_runs_at_risk) per bin."""
+    d = np.asarray(d); e = np.asarray(e); w = np.ones(len(d)) if w is None else np.asarray(w, float)
+    ev, ex, nr = [], [], []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        ex.append((w * np.clip(np.minimum(d, hi - 1) - lo + 1, 0, None)).sum())
+        ev.append((w * ((e == 1) & (d >= lo) & (d < hi))).sum()); nr.append((w * (d >= lo)).sum())
+    return np.array(ev), np.array(ex), np.array(nr)
+
+def geometric_survival(p_stay, t):
+    """P(dwell > t) for a hidden state with self-transition probability p_stay (per minute): p_stay ** t."""
+    return np.asarray(p_stay, float) ** np.asarray(t, float)
