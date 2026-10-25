@@ -1505,3 +1505,5 @@ hid sss     dark  H3 runs per path summed over flies   593.1 | model mean dwell 
 ```
 - Observed: the fitted model captures the broad scale of every run type but misfits the shape: hazard bins outside the model's 95% band in 14-100% of bins (median ~0.6). Structural: S runs < 5 min are impossible in the data (sleep criterion) but predicted by the model; fumin and sss sleep runs end faster at long durations than predicted; long wake and active-wake runs are heavier-tailed than predicted in several blocks. Quiet-wake (Q) runs are fitted best.
 - Hidden: mean dwell 1/(1-P_ii), fly medians: H1 2.9-4.0 min in every genotype and phase; H2 5-19 min; H3 20-36 min in CS/per0, 8-9 min in fumin/sss. Decoded dwell distributions match the run-weighted geometric curves (expected, circular).
+
+- 2026-10-25: user will plot observed dwell times from data only in the paper (distribution modelling to be done in the user's MATLAB bout library). Added figures/fig9_dwell_observed_data.* (data only); fig9_dwell_observed.* (with model overlay) kept as a supplementary diagnostic.

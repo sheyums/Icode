@@ -9,7 +9,7 @@ NAME={'CS':'CS','fumin':'$fmn$','per0LD':'$per^0$ LD','per0DD':'$per^0$ DD','sss
 ROWS=[('light',[('CS','light'),('per0LD','light'),('fumin','light'),('sss','light')]),
       ('dark / DD',[('CS','dark'),('per0LD','dark'),('per0DD','whole'),('fumin','dark'),('sss','dark')])]
 E=np.array(R.DWELL_EDGES); mid=np.sqrt(E[:-1]*np.maximum(E[1:]-1,E[:-1]))
-# ---- Fig 9 ----
+# ---- Fig 9 with fitted-model overlay (supplementary diagnostic) ----
 fig,axs=plt.subplots(2,4,figsize=(7.0,3.9),sharex=True,sharey=True)
 for r,(rn,blocks) in enumerate(ROWS):
     for c,nm in enumerate(['S','wake','Q','W']):
@@ -25,6 +25,21 @@ for r,(rn,blocks) in enumerate(ROWS):
 for g in COL: axs[0,3].plot([],[],color=COL[g],lw=1.2,label=NAME[g])
 axs[0,3].plot([],[],color=INK,lw=0.7,ls=(0,(2,1.5)),label='fitted model'); axs[0,3].legend(frameon=False,fontsize=6,loc='lower left')
 fig.tight_layout(pad=0.4); fig.savefig('figures/fig9_dwell_observed.pdf'); fig.savefig('figures/fig9_dwell_observed.png',dpi=300); plt.close(fig)
+# ---- Fig 9 (data only, for the paper) ----
+fig,axs=plt.subplots(2,4,figsize=(7.0,3.9),sharex=True,sharey=True)
+for r,(rn,blocks) in enumerate(ROWS):
+    for c,nm in enumerate(['S','wake','Q','W']):
+        ax=axs[r,c]
+        for g,bn in blocks:
+            s=S[f'obs|{g}|{bn}|{nm}']; t=np.array(s['t']); y=np.array(s['S'])
+            ax.step(t,np.maximum(y,1e-4),where='post',color=COL[g],lw=1.0)
+        ax.set_xscale('log'); ax.set_yscale('log'); ax.set_ylim(1e-3,1.05); ax.set_xlim(1,720)
+        if r==0: ax.set_title({'S':'sleep (S)','wake':'wake (Q or W)','Q':'quiet wake (Q)','W':'active wake (W)'}[nm],fontsize=8)
+        if c==0: ax.set_ylabel(f'{rn}\nP(run > t)')
+        if r==1: ax.set_xlabel('t (min)')
+for g in COL: axs[0,3].plot([],[],color=COL[g],lw=1.2,label=NAME[g])
+axs[0,3].legend(frameon=False,fontsize=6,loc='lower left')
+fig.tight_layout(pad=0.4); fig.savefig('figures/fig9_dwell_observed_data.pdf'); fig.savefig('figures/fig9_dwell_observed_data.png',dpi=300); plt.close(fig)
 # ---- Fig 9s: hazards with model band ----
 B=[(g,bn) for _,bl in ROWS for g,bn in bl]
 fig,axs=plt.subplots(len(B),4,figsize=(7.0,11),sharex=True)
