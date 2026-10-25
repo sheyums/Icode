@@ -113,6 +113,18 @@
      "text": "For the 6-hour design, the per-fly routing difference *c*_{b} = (*F*_{W→S} − *F*_{S→W})/2 in block *b*, whose sign is the direction of *J*_{cycle}, was tested against zero in each block by a one-sample Wilcoxon signed-rank test (Holm-corrected over the four blocks). Change across the day was tested by a Friedman test over the four blocks, followed by Wilcoxon signed-rank tests on within-fly differences between adjacent blocks (Holm-corrected). A change of direction was claimed only if two blocks had significant group directions of opposite sign that also differed significantly within flies. Changes across days were assessed by refitting the first and second halves of each fly's recording separately. Whether more flies changed sign than expected from estimation noise alone was tested against each fly's sign-flip probability under a no-change null: 8 records were simulated from the fly's whole-record model, split and refitted in the same way, and the observed number of flips was compared with the resulting Poisson-binomial distribution. The same no-change simulations, analysed with the within-phase Wilcoxon tests, were used to verify that the 6-hour estimator does not by itself create differences between blocks."
     }
    ]
+  },
+  {
+   "anchor": "with degrees of freedom",
+   "op": "after",
+   "paras": [
+    {
+     "text": "In the S/Q/W analysis, entropy production and cycle flux were related per fly and light phase rather than per genotype mean. Each point is one fly in one phase: *J*_{cycle} is the count-based flux (Eq. 20) averaged over the posterior paths, and EPR is the rule-of-three bound (Entropy production rate) computed on each path and averaged. Fly–phases with no cycle (|*J*| < 10^{-12}) or without a Q/W reference were excluded. For each genotype, light and dark phases pooled, two descriptions were compared by least squares with a free intercept *b*: constant cycle affinity, EPR = *b* + *a*|*J*_{cycle}|, with *a* the typical affinity in nats per cycle; and linear response, EPR = *b* + *J*_{cycle}^{2}/*L*. The free intercept absorbs the additive offset of the count estimator (≈ 0.01–0.025 nats h^{-1}, Validation item vii) and is not given a physical interpretation. Both descriptions have two parameters and were compared by their residual sums of squares. The exponent *n* of EPR ∝ |*J*_{cycle}|^{n} was estimated as the slope of ln(EPR − 0.02) on ln|*J*_{cycle}| over points with |*J*_{cycle}| ≥ 0.05 cycles h^{-1} and EPR ≥ 0.05 nats h^{-1}; *n* ≈ 1 indicates constant affinity and *n* ≈ 2 linear response."
+    },
+    {
+     "text": "The Onsager conductance was then estimated as in Eq. (25), by ordinary least squares of EPR on *J*_{cycle}^{2} through the origin, per genotype, both pooled over phases and per phase, with *L* = 1/slope, its standard error by error propagation and its 95% interval by inverting the interval of the slope. Because the light and dark points of a fly are not independent, intervals were also obtained by a bootstrap over flies (2000 resamples, each fly's phases kept together), and genotypes were compared with the control by the bootstrap distribution of the difference in *L*; the Wald test on the slope is reported alongside but overstates significance for this reason. Subtracting the calibrated estimator offset (0.02 nats h^{-1}) before the fit changed *L* by 2–6% (16% in *fumin* for the slope with free intercept) and did not change the ordering of genotypes. For a single edge with one-way traffic *N* (transitions h^{-1}) and net current *J*, the Schnakenberg term is *J* ln[(*N* + *J*/2)/(*N* − *J*/2)] ≈ *J*^{2}/*N* when *J* ≪ *N*; a quadratic relation between EPR and *J*_{cycle} therefore indicates net currents that are small relative to the back-and-forth traffic on each edge, even when the summed cycle affinity is of order one nat per cycle."
+    }
+   ]
   }
  ],
  "comments": [
@@ -158,7 +170,7 @@
   },
   {
    "anchor": "Onsager linear response and thermodynamic conductance",
-   "text": "Fitted to EPR_obs under the P_min 'drop' rule on binary-model counts; the header of epr_count_based.m shows the fmn/sss comparison with wt reverses under the bound. Redo with the S/Q/W rule-of-three bound or drop."
+   "text": "The original fit used EPR_obs under the P_min 'drop' rule on binary-model counts. Redone for the S/Q/W model (new paragraphs at the end of this section): per-fly points, rule-of-three bound, linear vs quadratic comparison, L through the origin with fit and fly-bootstrap intervals. Consider replacing the old genotype-level description with the new one."
   },
   {
    "anchor": "Detection of routing subgroups within per0",

@@ -185,3 +185,4 @@ b99b021 2026-10-25 22:02:26 +0000 PRESPEC 20j: per-fly EPR vs J, linear vs quadr
 48e2ac8 2026-10-25 22:03:16 +0000 20j per-fly EPR vs J: results, Fig 11
 27b7a01 2026-10-25 22:06:14 +0000 FIGURE_RECIPES: Fig 11
 8515c4e 2026-10-25 22:15:54 +0000 Onsager L per genotype (post hoc), Fig 12
+3ba7871 2026-10-25 22:16:32 +0000 Methods V7: per-fly EPR vs J and J^2, Onsager L (S/Q/W)
