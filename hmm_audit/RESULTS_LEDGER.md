@@ -1547,3 +1547,39 @@ slope a (M1, both phases) minus CS, bootstrap 95% CI:
 - Pooled phases: quadratic (EPR = b + cJ^2) fits better than linear for CS, per0LD, per0DD, sss (bootstrap share linear-better 0.01-0.30); linear better for fumin (0.96). Power-law exponents 1.4-1.8 (CIs 1.1-2.3), all excluding 1 except where few points. Linear fits need negative intercepts (-0.05 to -0.32 nats/h, unphysical); quadratic intercepts +0.02-0.04 (CS, per0LD, sss) match the estimator offset (20f); fumin +0.12, per0DD +0.09.
 - c = 1/L: CS 4.5 [4.1,5.7], per0LD 4.0 [3.5,4.3], per0DD 2.8 [2.6,5.3], fumin 3.6 [3.1,5.1], sss 6.4 [5.0,8.1] (descriptive; the pre-stated genotype contrast was on a, all ns).
 - Interpretation note: for each edge with one-way traffic N and net current J, ln((N+J/2)/(N-J/2)) ~ J/N, so count EPR ~ J^2 / N when J << N. A quadratic relation therefore means the net current is small compared with the back-and-forth traffic on each edge (near-linear response per edge), even though the summed cycle affinity is ~1 nat/cycle. This corrects my earlier remark that A ~ 1 places the data outside linear response: that holds for the whole cycle, not per edge. J and EPR share counts, so errors are correlated.
+
+## POST HOC (user request, 2026-10-25): Onsager conductance L per genotype, EPR = J^2/L through the origin (user's Methods Eq. 25 scheme), per-fly hidden points of 20j. Code onsager_L.py; figures/fig12_onsager_L.*
+```
+both phases CS      n  50 | 1/L = 4.66 +- 0.14 | L = 0.215 +- 0.006 (95% CI 0.203-0.228; fly bootstrap 0.171-0.229) | R2(origin) 0.96 | L with offset subtracted 0.220
+both phases per0LD  n  54 | 1/L = 4.08 +- 0.12 | L = 0.245 +- 0.007 (95% CI 0.231-0.261; fly bootstrap 0.226-0.271) | R2(origin) 0.95 | L with offset subtracted 0.252
+both phases per0DD  n  23 | 1/L = 3.03 +- 0.17 | L = 0.330 +- 0.018 (95% CI 0.296-0.373; fly bootstrap 0.203-0.361) | R2(origin) 0.94 | L with offset subtracted 0.335
+both phases fumin   n  96 | 1/L = 4.21 +- 0.19 | L = 0.237 +- 0.011 (95% CI 0.218-0.260; fly bootstrap 0.171-0.274) | R2(origin) 0.84 | L with offset subtracted 0.243
+both phases sss     n  84 | 1/L = 6.92 +- 0.28 | L = 0.144 +- 0.006 (95% CI 0.134-0.157; fly bootstrap 0.119-0.178) | R2(origin) 0.88 | L with offset subtracted 0.153
+   both phases: per0LD vs CS Wald z -3.11 p 0.0019 BH 0.0025
+   both phases: per0DD vs CS Wald z -7.43 p 1.1e-13 BH 4.5e-13
+   both phases: fumin vs CS Wald z -1.91 p 0.056 BH 0.056
+   both phases: sss vs CS Wald z +7.31 p 2.7e-13 BH 5.4e-13
+light       CS      n  25 | 1/L = 3.36 +- 0.32 | L = 0.297 +- 0.029 (95% CI 0.248-0.371; fly bootstrap 0.212-0.366) | R2(origin) 0.82 | L with offset subtracted 0.354
+light       per0LD  n  27 | 1/L = 4.24 +- 0.27 | L = 0.236 +- 0.015 (95% CI 0.208-0.271; fly bootstrap 0.158-0.304) | R2(origin) 0.90 | L with offset subtracted 0.243
+light       fumin   n  46 | 1/L = 3.77 +- 0.20 | L = 0.265 +- 0.014 (95% CI 0.239-0.298; fly bootstrap 0.192-0.319) | R2(origin) 0.88 | L with offset subtracted 0.272
+light       sss     n  37 | 1/L = 6.82 +- 0.39 | L = 0.147 +- 0.008 (95% CI 0.131-0.166; fly bootstrap 0.115-0.195) | R2(origin) 0.89 | L with offset subtracted 0.153
+   light: per0LD vs CS Wald z +2.08 p 0.038 BH 0.056
+   light: fumin vs CS Wald z +1.06 p 0.29 BH 0.29
+   light: sss vs CS Wald z +6.78 p 1.2e-11 BH 3.6e-11
+dark        CS      n  25 | 1/L = 4.70 +- 0.19 | L = 0.213 +- 0.008 (95% CI 0.197-0.231; fly bootstrap 0.163-0.227) | R2(origin) 0.96 | L with offset subtracted 0.217
+dark        per0LD  n  27 | 1/L = 4.01 +- 0.11 | L = 0.249 +- 0.007 (95% CI 0.236-0.264; fly bootstrap 0.234-0.277) | R2(origin) 0.98 | L with offset subtracted 0.257
+dark        per0DD  n  23 | 1/L = 3.03 +- 0.17 | L = 0.330 +- 0.018 (95% CI 0.296-0.373; fly bootstrap 0.202-0.360) | R2(origin) 0.94 | L with offset subtracted 0.335
+dark        fumin   n  50 | 1/L = 4.99 +- 0.32 | L = 0.200 +- 0.013 (95% CI 0.178-0.230; fly bootstrap 0.126-0.244) | R2(origin) 0.83 | L with offset subtracted 0.206
+dark        sss     n  47 | 1/L = 7.24 +- 0.43 | L = 0.138 +- 0.008 (95% CI 0.123-0.157; fly bootstrap 0.108-0.163) | R2(origin) 0.86 | L with offset subtracted 0.151
+   dark: per0LD vs CS Wald z -3.21 p 0.0013 BH 0.0018
+   dark: per0DD vs CS Wald z -6.65 p 2.9e-11 BH 1.2e-10
+   dark: fumin vs CS Wald z +0.77 p 0.44 BH 0.44
+   dark: sss vs CS Wald z +5.37 p 8e-08 BH 1.6e-07
+fly-bootstrap comparison with CS (pooled phases), L difference and 95% CI, two-sided bootstrap p:
+   per0LD  dL +0.030 [+0.008,+0.077] p 0.011
+   per0DD  dL +0.115 [-0.007,+0.167] p 0.0645
+   fumin   dL +0.023 [-0.047,+0.076] p 0.447
+   sss     dL -0.070 [-0.101,-0.020] p 0.008
+   per0DD - per0LD dL [-0.044,+0.123] p 0.179
+```
+- OLS error bars and Wald tests treat a fly's light and dark points as independent; the fly bootstrap is the honest interval and gives wider, asymmetric CIs. By bootstrap (pooled phases): sss L lower than CS (p 0.008), per0LD higher (p 0.011), per0DD higher but ns (p 0.065; one fly with J ~ 0.95 dominates), fumin ns. Subtracting the 0.02 estimator offset raises L by 2-6%.
