@@ -183,3 +183,4 @@ a4981c5 2026-10-25 21:18:56 +0000 20i sensitivity: results hold
 99d6f40 2026-10-25 21:57:04 +0000 Partial observation for wake minutes without a Q/W reference: sqw_ref (-2 = wake of unknown type), porting guide section, golden G9
 b99b021 2026-10-25 22:02:26 +0000 PRESPEC 20j: per-fly EPR vs J, linear vs quadratic (before running)
 48e2ac8 2026-10-25 22:03:16 +0000 20j per-fly EPR vs J: results, Fig 11
+27b7a01 2026-10-25 22:06:14 +0000 FIGURE_RECIPES: Fig 11

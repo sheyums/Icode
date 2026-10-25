@@ -213,3 +213,36 @@ Common plotting style (all figures):
   Use the matched definition.
 - **Reporting nonlinear statistics computed on path-averaged counts** (Jensen). Compute on each path, then
   average.
+
+---------------------------------------------------------------------------------------------------------------
+
+## G. Per-fly EPR vs J_cycle, linear vs quadratic (Fig. 11; PRESPEC 20j)
+
+### G1. Points
+- One point per fly x phase:
+  - J = count J_cycle averaged over 200 posterior paths;
+  - EPR = rule-of-three bound per path, averaged (as D1).
+- Exclude:
+  - degenerate flies;
+  - fly-phases with no cycle (|J_model| < 1e-12);
+  - fly-phases without a Q/W reference (PRESPEC 20i).
+- Light: open marker. Dark / DD: filled.
+
+### G2. Fits per genotype (both phases pooled), unweighted least squares with a free intercept
+- M1: EPR = b + a|J|.
+- M2: EPR = b + cJ^2. c = 1/L in the user's Onsager notation.
+- Compare by residual sum of squares (same number of parameters).
+- Exponent: least-squares slope of log(EPR - 0.02) on log|J|, using points with |J| >= 0.05 and EPR >= 0.05.
+- 95% CIs: bootstrap over flies, 2000 resamples, keeping both of a fly's phases together.
+
+### G3. Layout
+- 2 x 3 panels.
+  - (a) All genotypes overlaid.
+  - (b)-(f) One genotype each, with the M1 fit (solid) and the M2 fit (dashed) over the data range; legend gives a
+    and c.
+- Title of each panel: n points and the exponent.
+
+### G4. Check
+- CS: c = 4.48, exponent 1.76, quadratic better.
+- fumin: a = 2.23, linear better.
+- sss: c = 6.44.
