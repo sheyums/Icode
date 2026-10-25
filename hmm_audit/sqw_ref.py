@@ -19,6 +19,7 @@ DAY = 86400          # seconds
 HALF = 43200         # lights off at ZT12 (LD 12:12)
 MIN_SLEEP = 300      # 5-minute sleep criterion, seconds
 Q, W, S = 0, 1, 2
+WAKE_UNKNOWN = -2   # a wake minute whose Q/W type is unknown (no reference r_f): partial observation, see PORTING_GUIDE
 
 # ---------------------------------------------------------------------------------------------------------
 # 1. Data and sleep scoring
@@ -72,11 +73,12 @@ def wake_reference(events, phase=None, min_events=3):
 # ---------------------------------------------------------------------------------------------------------
 # 2. Observable S/Q/W sequence (PRESPEC 20 section 1)
 # ---------------------------------------------------------------------------------------------------------
-def sqw_symbols(x, theta=0.5, light_dark=True, full_days=True):
+def sqw_symbols(x, theta=0.5, light_dark=True, full_days=True, unknown_wake=-1):
     """1-minute symbols. S if >= 30 of the minute's 60 s lie in a (bridged) sleep bout; otherwise a wake minute,
     Q if its active fraction < theta * r_f(block of the minute), else W. r_f is computed per light/dark block
     (light_dark=True) or for the whole record (False, e.g. per0 in DD). A wake minute whose block has no
-    reference gets -1 (missing). If full_days, the sequence is truncated to whole days (1440 min).
+    reference gets `unknown_wake`: -1 (missing, as in all analyses run so far) or WAKE_UNKNOWN = -2 (recommended:
+    'wake of unknown type', likelihood P(Q|H) + P(W|H); see PORTING_GUIDE section 4). If full_days, the sequence is truncated to whole days (1440 min).
     Returns (y, refs) with refs = {'light': r, 'dark': r} or {'whole': r}."""
     x = np.asarray(x); nm = len(x) // 60; x = x[:nm * 60]
     sl = np.zeros(len(x), bool)
@@ -91,7 +93,7 @@ def sqw_symbols(x, theta=0.5, light_dark=True, full_days=True):
     for m in np.flatnonzero(ssec < 30):
         r = refs['whole'] if not light_dark else (refs['light'] if (m * 60) % DAY < HALF else refs['dark'])
         if np.isnan(r):
-            y[m] = -1
+            y[m] = unknown_wake
         elif act[m] < theta * r:
             y[m] = Q
     if full_days:
@@ -111,8 +113,9 @@ def phases(T, scheme='12h'):
 # 3. HMM: shared emissions B (K x 3), phase-specific transitions P (nP x K x K), initial pi (K)
 # ---------------------------------------------------------------------------------------------------------
 def emission_lik(B, y):
-    """E[t, k] = B[k, y_t]; missing symbols (y < 0) contribute 1."""
-    E = B[:, np.clip(y, 0, 2)].T.copy(); E[np.asarray(y) < 0] = 1.0; return E
+    """E[t, k] = B[k, y_t]; missing symbols (-1) contribute 1; WAKE_UNKNOWN (-2) contributes B[k, Q] + B[k, W]."""
+    y = np.asarray(y); E = B[:, np.clip(y, 0, 2)].T.copy(); E[y == -1] = 1.0
+    E[y == WAKE_UNKNOWN] = (B[:, Q] + B[:, W])[None, :]; return E
 
 def forward(pi, P, B, y, ph):
     """Scaled forward pass. Returns (alpha_hat (T x K), c (T)), with log-likelihood = sum(log c)."""
@@ -140,7 +143,12 @@ def em_step(pi, P, B, y, ph):
         Xi = (A[idx-1].T @ R[idx]) * P[p]
         P2[p] = Xi / np.maximum(Xi.sum(1, keepdims=True), 1e-300)
     onehot = np.stack([(y == v) for v in range(3)], 1).astype(float)
-    Bn = G.T @ onehot; B2 = Bn / np.maximum(Bn.sum(1, keepdims=True), 1e-300)
+    Bn = G.T @ onehot
+    u = y == WAKE_UNKNOWN
+    if u.any():                    # split each unknown-wake minute between Q and W in proportion to B
+        g = G[u].sum(0); qw = B[:, Q] + B[:, W]; qw = np.where(qw > 0, qw, 1.0)
+        Bn[:, Q] += g * B[:, Q] / qw; Bn[:, W] += g * B[:, W] / qw
+    B2 = Bn / np.maximum(Bn.sum(1, keepdims=True), 1e-300)
     return G[0].copy(), P2, B2, float(np.log(c).sum())
 
 def em_fit(y, ph, nP, K, starts=20, seed=20, maxit=1000, tol=1e-7):
@@ -156,8 +164,11 @@ def em_fit(y, ph, nP, K, starts=20, seed=20, maxit=1000, tol=1e-7):
     B = rng.dirichlet(np.ones(3), (Sn, K)); ll_old = np.full(Sn, -np.inf); T = len(y)
     idx = [np.flatnonzero(ph[1:] == p) + 1 for p in range(nP)]
     onehot = np.stack([(y == v) for v in range(3)], 1).astype(float)
+    u = y == WAKE_UNKNOWN
     def Eb(B):
-        E = B[:, :, np.clip(y, 0, 2)].transpose(2, 0, 1).copy(); E[y < 0] = 1.0; return E
+        E = B[:, :, np.clip(y, 0, 2)].transpose(2, 0, 1).copy(); E[y == -1] = 1.0
+        if u.any(): E[u] = (B[:, :, Q] + B[:, :, W])[None]
+        return E
     def fwd(pi, P, E):
         A = np.empty((T, Sn, K)); c = np.empty((T, Sn)); a = pi * E[0]; c[0] = a.sum(1); A[0] = a / c[0][:, None]
         for t in range(1, T):
@@ -172,7 +183,11 @@ def em_fit(y, ph, nP, K, starts=20, seed=20, maxit=1000, tol=1e-7):
         for p in range(nP):
             Xi = np.einsum('tsk,tsl->skl', A[idx[p]-1], R[idx[p]]) * P[:, p]
             P[:, p] = Xi / np.maximum(Xi.sum(2, keepdims=True), 1e-300)
-        Bn = np.einsum('tsk,tv->skv', G, onehot); B = Bn / np.maximum(Bn.sum(2, keepdims=True), 1e-300)
+        Bn = np.einsum('tsk,tv->skv', G, onehot)
+        if u.any():
+            gq = G[u].sum(0); qw = B[:, :, Q] + B[:, :, W]; qw = np.where(qw > 0, qw, 1.0)
+            Bn[:, :, Q] += gq * B[:, :, Q] / qw; Bn[:, :, W] += gq * B[:, :, W] / qw
+        B = Bn / np.maximum(Bn.sum(2, keepdims=True), 1e-300)
         pi = G[0]
         if np.all(ll - ll_old < tol * np.abs(ll)):
             break

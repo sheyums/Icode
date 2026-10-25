@@ -91,3 +91,11 @@ dump('G8_dwell.json',dict(seq=s8,ph=p8,edges=R.DWELL_EDGES,
     hazard=dict(d=[3,2,1,4,7,15],e=[1,0,1,1,1,0],edges=[1,2,3,5,8,13,21],out=R.life_table_hazard([3,2,1,4,7,15],[1,0,1,1,1,0],[1,2,3,5,8,13,21])),
     geometric=dict(p=0.9,t=[0,1,5],out=R.geometric_survival(0.9,[0,1,5]))))
 print('G8 written')
+# G9: partial observation (wake of unknown type, -2)
+g3=json.load(open(os.path.join(OUT,'G3_hmm.json'))); y9=np.array(g3['y']); ph9=np.array(g3['ph'])
+y9[100:160]=np.where(y9[100:160]!=2,R.WAKE_UNKNOWN,2); y9[400:430]=np.where(y9[400:430]!=2,R.WAKE_UNKNOWN,2)
+pi9,P9,B9=np.array(g3['pi']),np.array(g3['P']),np.array(g3['B'])
+a,b,c,d=R.em_step(pi9,P9,B9,y9,ph9)
+dump('G9_wake_unknown.json',dict(note='inputs: G3 parameters; y = G3 symbols with wake minutes 100-159 and 400-429 recoded -2 (wake of unknown type; MATLAB 4)',
+    y=y9,ph=ph9,loglik=R.loglik(pi9,P9,B9,y9,ph9),em_step=dict(pi=a,P=b,B=c,loglik_input=d),viterbi=R.viterbi(pi9,P9,B9,y9,ph9)))
+print('G9 written')

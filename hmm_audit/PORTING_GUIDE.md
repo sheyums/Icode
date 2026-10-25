@@ -80,9 +80,12 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
 
 - **Indices.** Python and the golden files are 0-based. MATLAB: add 1 to states (H1 = 1, H2 = 2, H3 = 3), to
   phases, and to every time index or bout start.
-  - Symbols: Python Q = 0, W = 1, S = 2, missing = -1. The `.mat` export and the suggested MATLAB coding are
-    1 = Q, 2 = W, 3 = S, with **0 = missing**.
+  - Symbols: Python Q = 0, W = 1, S = 2, missing = -1, wake of unknown type = -2 (`WAKE_UNKNOWN`). The `.mat`
+    export and the suggested MATLAB coding are 1 = Q, 2 = W, 3 = S, with **0 = missing** and **4 = wake of unknown
+    type**.
   - A missing minute contributes emission likelihood 1 and is NOT a wake minute in `cObsMinutes`.
+  - A wake-of-unknown-type minute contributes P(Q | H) + P(W | H); see "Wake minutes without a Q/W reference"
+    below.
 - **Time.** Count files start at ZT0, one sample per second.
   - Minute m covers seconds [60m, 60m + 60).
   - Light = ZT 0-12. For minutes the test is `mod(60*m, 86400) < 43200`; for a second s it is
@@ -128,6 +131,29 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
   - S if >= 30 s of the minute lie in a sleep bout.
   - Otherwise Q if the active fraction < theta * r_f (strict).
   - Otherwise W.
+- **Wake minutes without a Q/W reference (RECOMMENDED handling: partial observation).**
+  - **When it happens.** A phase whose fly has fewer than 3 qualifying wake bouts (>= 10 min, between two sleep
+    bouts) has no reference r_f, so its wake minutes cannot be called Q or W. Seen in 15 fly-phases: fumin 4,
+    sss 11, mostly flies awake through most of a phase.
+  - **What the analyses so far did.** Coded those minutes as missing (-1, likelihood 1 for every state).
+  - **Why that is wrong in principle.** It discards the fact that the minute is NOT sleep. The decoder then places
+    H3 there whenever the dynamics allow, which produced spurious H3 visits < 5 min in fumin and sss.
+  - **Recommended.** Code them as wake of unknown type (Python -2, MATLAB 4):
+    `sqw_symbols(..., unknown_wake=WAKE_UNKNOWN)`. Emission likelihood for state H is P(Q | H) + P(W | H). In the
+    EM emission update, each such minute's posterior weight gamma(H) is split between Q and W in proportion to
+    P(Q | H) and P(W | H), so the minute counts toward wake but not toward either type.
+  - **Implementation.** `emission_lik`, `em_step` and `em_fit` in `sqw_ref.py`. Checked:
+    - with no -2 minutes, results are bit-identical to before (golden G3 unchanged);
+    - with -2 minutes, the batched `em_fit` equals iterated `em_step` (differences ~1e-15) and the likelihood never
+      decreases over 30 EM steps;
+    - golden G9 holds the test case.
+  - **Downstream.**
+    - Runs: for wake runs include -2 in the set, `runs_censored(y, ph, {0, 1, -2}, ...)`; Q-only and W-only runs
+      are cut (censored) at a -2 minute.
+    - `observable_pair_counts` and `c_obs_minutes` skip -2, as they skip -1.
+  - **Not yet applied to the fly results.** Applying it needs refits of the affected flies (12 fumin/sss flies).
+    A sensitivity check excluding those fly-phases (PRESPEC 20i) left every result unchanged, so the conclusions
+    do not depend on it; a final rerun or the MATLAB version should use it.
 - **EM.**
   - Batched Baum-Welch with scaled forward-backward.
   - Transition expected counts are split by phase of arrival; emissions are pooled over phases.
