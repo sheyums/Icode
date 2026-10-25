@@ -1522,3 +1522,28 @@ sss   dark  excluding 1 fly-phases     | c_model -0.069 [-0.150,+0.010] (n 44) |
 ```
 - All results HOLD: signs and significance unchanged (fumin forward; sss light reversed; sss dark ns). Observed round trips are identical by construction (they need r_f).
 - Noted: coding those minutes as fully missing discards the fact that they are NOT sleep; the correct partial-observation likelihood would be P(Q|H)+P(W|H). Not applied (would need refits); reported to the user.
+
+## PRESPEC 20j — per-fly EPR vs J (hidden), linear vs quadratic (2026-10-25, code b99b021); Fig 11
+```
+CS      both phases n  50 | M1 EPR = -0.158 + 2.46|J|  a CI [1.54,2.99] RSS 1.147 | M2 EPR = +0.035 + 4.48J^2  c CI [4.09,5.65] RSS 0.334 | better: quadratic (M2) (bootstrap share M1 better 0.01) | exponent n 1.76 [1.46,2.10] (n pts 31)
+CS      light       n  25 | M1 EPR = +0.003 + 0.65|J|  a CI [0.48,0.81] RSS 0.020 | M2 EPR = +0.028 + 2.60J^2  c CI [1.96,3.65] RSS 0.023 | better: linear (M1) (bootstrap share M1 better 0.73) | exponent n 0.91 [0.32,1.46] (n pts 12)
+CS      dark        n  25 | M1 EPR = -0.217 + 2.80|J|  a CI [1.81,3.35] RSS 0.604 | M2 EPR = +0.077 + 4.36J^2  c CI [3.90,5.59] RSS 0.219 | better: quadratic (M2) (bootstrap share M1 better 0.23) | exponent n 1.71 [1.33,2.12] (n pts 19)
+fumin   both phases n  96 | M1 EPR = -0.084 + 2.23|J|  a CI [1.92,2.46] RSS 1.355 | M2 EPR = +0.115 + 3.63J^2  c CI [3.10,5.08] RSS 2.109 | better: linear (M1) (bootstrap share M1 better 0.96) | exponent n 1.40 [1.20,1.56] (n pts 66)
+fumin   light       n  46 | M1 EPR = -0.088 + 2.11|J|  a CI [1.75,2.36] RSS 0.466 | M2 EPR = +0.107 + 3.29J^2  c CI [2.75,4.59] RSS 0.706 | better: linear (M1) (bootstrap share M1 better 0.77) | exponent n 1.39 [1.23,1.55] (n pts 32)
+fumin   dark        n  50 | M1 EPR = -0.090 + 2.43|J|  a CI [2.01,2.73] RSS 0.772 | M2 EPR = +0.112 + 4.30J^2  c CI [3.66,7.26] RSS 1.178 | better: linear (M1) (bootstrap share M1 better 0.72) | exponent n 1.42 [1.09,1.74] (n pts 34)
+per0LD  both phases n  54 | M1 EPR = -0.082 + 1.87|J|  a CI [1.43,2.18] RSS 0.900 | M2 EPR = +0.023 + 3.95J^2  c CI [3.49,4.25] RSS 0.350 | better: quadratic (M2) (bootstrap share M1 better 0.01) | exponent n 1.60 [1.36,1.82] (n pts 31)
+per0LD  light       n  27 | M1 EPR = -0.048 + 1.81|J|  a CI [1.11,2.33] RSS 0.335 | M2 EPR = +0.033 + 4.03J^2  c CI [3.02,5.22] RSS 0.242 | better: quadratic (M2) (bootstrap share M1 better 0.37) | exponent n 1.47 [1.03,1.95] (n pts 11)
+per0LD  dark        n  27 | M1 EPR = -0.139 + 2.01|J|  a CI [1.32,2.40] RSS 0.509 | M2 EPR = +0.009 + 3.96J^2  c CI [3.39,4.25] RSS 0.099 | better: quadratic (M2) (bootstrap share M1 better 0.00) | exponent n 1.73 [1.49,1.99] (n pts 20)
+per0DD  both phases n  23 | M1 EPR = -0.316 + 2.73|J|  a CI [1.43,2.97] RSS 0.727 | M2 EPR = +0.090 + 2.84J^2  c CI [2.64,5.26] RSS 0.632 | better: quadratic (M2) (bootstrap share M1 better 0.30) | exponent n 1.84 [1.52,2.32] (n pts 18)
+sss     both phases n  84 | M1 EPR = -0.046 + 1.83|J|  a CI [1.41,2.22] RSS 0.504 | M2 EPR = +0.026 + 6.44J^2  c CI [5.04,8.10] RSS 0.362 | better: quadratic (M2) (bootstrap share M1 better 0.12) | exponent n 1.51 [1.28,1.77] (n pts 39)
+sss     light       n  37 | M1 EPR = -0.045 + 2.00|J|  a CI [1.35,2.54] RSS 0.314 | M2 EPR = +0.030 + 6.38J^2  c CI [4.44,8.31] RSS 0.235 | better: quadratic (M2) (bootstrap share M1 better 0.15) | exponent n 1.51 [1.18,2.00] (n pts 17)
+sss     dark        n  47 | M1 EPR = -0.031 + 1.49|J|  a CI [1.13,1.74] RSS 0.139 | M2 EPR = +0.021 + 6.54J^2  c CI [5.51,8.88] RSS 0.127 | better: quadratic (M2) (bootstrap share M1 better 0.20) | exponent n 1.48 [1.11,1.90] (n pts 22)
+slope a (M1, both phases) minus CS, bootstrap 95% CI:
+  fumin   -0.22 [-0.88,+0.73]
+  per0LD  -0.59 [-1.28,+0.41]
+  per0DD  +0.27 [-0.96,+1.24]
+  sss     -0.63 [-1.32,+0.40]
+```
+- Pooled phases: quadratic (EPR = b + cJ^2) fits better than linear for CS, per0LD, per0DD, sss (bootstrap share linear-better 0.01-0.30); linear better for fumin (0.96). Power-law exponents 1.4-1.8 (CIs 1.1-2.3), all excluding 1 except where few points. Linear fits need negative intercepts (-0.05 to -0.32 nats/h, unphysical); quadratic intercepts +0.02-0.04 (CS, per0LD, sss) match the estimator offset (20f); fumin +0.12, per0DD +0.09.
+- c = 1/L: CS 4.5 [4.1,5.7], per0LD 4.0 [3.5,4.3], per0DD 2.8 [2.6,5.3], fumin 3.6 [3.1,5.1], sss 6.4 [5.0,8.1] (descriptive; the pre-stated genotype contrast was on a, all ns).
+- Interpretation note: for each edge with one-way traffic N and net current J, ln((N+J/2)/(N-J/2)) ~ J/N, so count EPR ~ J^2 / N when J << N. A quadratic relation therefore means the net current is small compared with the back-and-forth traffic on each edge (near-linear response per edge), even though the summed cycle affinity is ~1 nat/cycle. This corrects my earlier remark that A ~ 1 places the data outside linear response: that holds for the whole cycle, not per edge. J and EPR share counts, so errors are correlated.
