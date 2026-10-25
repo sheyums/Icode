@@ -172,3 +172,4 @@ a75afb5 2026-10-25 03:42:52 +0000 Figs 6/6b with estimator-bias caveat; 20f read
 4d8f1ff 2026-10-25 19:03:48 +0000 PRESPEC 20g amendment A: counts, rates, marginals, independence check (before running)
 0ee6707 2026-10-25 19:06:25 +0000 20g round trips: results, matched hidden version, Fig 8
 1196c82 2026-10-25 19:19:07 +0000 Methods V7: theta/r_f implementation details; round-trip section
+a1c4540 2026-10-25 19:19:35 +0000 Methods V7: theta robustness sentence made exact
