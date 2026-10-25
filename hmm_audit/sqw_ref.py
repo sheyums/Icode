@@ -385,3 +385,69 @@ def simulate(pi, P, B, ph, rng):
     cb = np.cumsum(B, 1); v = rng.random(T)
     y = np.array([min(np.searchsorted(cb[z[t]], v[t]), 2) for t in range(T)])
     return z, y
+
+# ---------------------------------------------------------------------------------------------------------
+# 9. Observable-level counts and round trips around sleep bouts (PRESPEC 20f, 20g)
+# ---------------------------------------------------------------------------------------------------------
+ROUND_TRIPS = ['forward', 'reverse', 'direct', 'quiet_both']   # (entry, exit) = (Q, A), (A, Q), (A, A), (Q, Q)
+
+def _rt_index(q_in, q_out):
+    return {(1, 0): 0, (0, 1): 1, (0, 0): 2, (1, 1): 3}[(int(q_in), int(q_out))]
+
+def observable_pair_counts(y, ph, nph):
+    """(nph x 3 x 3) single-step counts on the run-compressed S/Q/W symbols (Q = 0, W = 1, S = 2 share the H1, H2,
+    H3 indices), by phase of the arrival minute. A change that touches a missing minute (-1) is not counted.
+    Feed to j_cycle_count / epr_count_bound for the observable-level J and EPR (PRESPEC 20f)."""
+    y = np.asarray(y); t = np.flatnonzero(y >= 0); ys = y[t]; ps = np.asarray(ph)[t]
+    ch = np.flatnonzero(np.diff(ys)) + 1; ok = (t[ch] - t[ch - 1]) == 1
+    N = np.zeros((nph, 3, 3)); np.add.at(N, (ps[ch[ok]], ys[ch - 1][ok], ys[ch][ok]), 1); return N
+
+def round_trips_observed(x, theta=0.5, light_dark=True, min_wake=600):
+    """(nph x 4) counts of round-trip types from the 1-s counts. A sleep bout (bridged scoring) is used if the wake
+    bouts before AND after it each last >= min_wake s. Entry is Q if the active fraction in seconds 61-300 before the
+    onset is < theta * r_f; exit is Q if the active fraction in seconds 61-300 after waking is < theta * r_f; r_f is
+    the reference of the onset's phase (wake_reference). Phase of a round trip = phase of its sleep onset."""
+    nph = 2 if light_dark else 1; bouts = sleep_bouts(x, True); mv = (np.asarray(x) > 0).astype(float)
+    ev = wake_bout_events(x, bouts)
+    ref = [wake_reference(ev, 0), wake_reference(ev, 1)] if light_dark else [wake_reference(ev, None)]
+    C = np.zeros((nph, 4))
+    for k in range(1, len(bouts) - 1):
+        s, n = bouts[k]; e = s + n
+        if s - (bouts[k-1][0] + bouts[k-1][1]) < min_wake or bouts[k+1][0] - e < min_wake:
+            continue
+        p = int((s % DAY) >= HALF) if light_dark else 0; r = ref[p]
+        if not np.isfinite(r):
+            continue
+        C[p, _rt_index(mv[s-300:s-60].mean() < theta * r, mv[e+60:e+300].mean() < theta * r)] += 1
+    return C
+
+def round_trips_hidden(z, ph, nph, min_sleep=0, min_gap=0):
+    """(nph x 4) counts of round-trip types on one hidden path (run-compressed); H1 plays Q, H2 plays A.
+    Defaults (PRESPEC 20g primary): every H3 run with a neighbour on both sides. Matched definition (20g amendment B):
+    min_sleep=5, min_gap=10 -- H3 runs >= 5 min with >= 10 min free of H3 before and after (the previous and the next
+    H3 run must exist). Phase = phase of the H3 run's first minute."""
+    z = np.asarray(z); ch = np.r_[0, np.flatnonzero(np.diff(z)) + 1, len(z)]; st = z[ch[:-1]]; ln = np.diff(ch)
+    s_idx = np.flatnonzero(st == 2); C = np.zeros((nph, 4))
+    for a, k in enumerate(s_idx):
+        if k == 0 or k == len(st) - 1 or ln[k] < min_sleep:
+            continue
+        if min_gap > 0:
+            if a == 0 or a + 1 == len(s_idx):
+                continue
+            if ch[k] - ch[s_idx[a-1] + 1] < min_gap or ch[s_idx[a+1]] - ch[k+1] < min_gap:
+                continue
+        C[ph[ch[k]], _rt_index(st[k-1] == 0, st[k+1] == 0)] += 1
+    return C
+
+def round_trip_stats(counts, hours):
+    """Summary of round trips for one fly and phase. `counts` is either (4,) for one record (observed level) or
+    (paths x 4) for posterior paths (hidden level: every statistic is computed per path, then averaged; paths with
+    no round trip are skipped). Returns n (mean count), fractions (4), rates per hour (4), P(Q entry), P(Q exit),
+    and dependence = fraction - product of marginals (4), the independence check of PRESPEC 20g amendment A."""
+    C = np.atleast_2d(np.asarray(counts, float)); n = C.sum(1); ok = n > 0
+    if not ok.any():
+        return None
+    Fr = C[ok] / n[ok, None]; qi = Fr[:, 0] + Fr[:, 3]; qo = Fr[:, 1] + Fr[:, 3]
+    prod = np.stack([qi * (1 - qo), (1 - qi) * qo, (1 - qi) * (1 - qo), qi * qo], 1)
+    return dict(n=float(n.mean()), frac=Fr.mean(0), rate=C.mean(0) / hours, p_q_entry=float(qi.mean()),
+                p_q_exit=float(qo.mean()), dependence=(Fr - prod).mean(0), frac_paths_used=float(ok.mean()))

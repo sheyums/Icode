@@ -32,7 +32,8 @@ Port `sqw_ref.py`.
   -> posterior paths                   ffbs (200 paths), viterbi (comparison only)
   -> counts per path                   route_events, route_counts, pair_counts
   -> per-path statistics, averaged     posterior_summaries: Xn, Yn, c, J_cycle, EPR bound
-  -> observable checks                 c_obs_minutes, cycle_current_model_free
+  -> observable checks                 c_obs_minutes, cycle_current_model_free, observable_pair_counts
+  -> round trips per sleep bout        round_trips_observed, round_trips_hidden, round_trip_stats
   -> simulation (validation, nulls)    simulate
 ```
 
@@ -67,6 +68,10 @@ name-value options. Shapes are given for MATLAB with 1-based indices.
 | `c_obs_minutes` | `c = cObsMinutes(y, ph, nP)` | symbols | per phase | G5 |
 | `cycle_current_model_free` | `R = cycleCurrentModelFree(ev, Phase, Theta, hours)` | events | c, J, counts | -- |
 | `simulate` | `[z, y] = hmmSimulatePhased(pi, P, B, ph)` | params | path, symbols | statistical |
+| `observable_pair_counts` | `N = observablePairCounts(y, ph, nP)` | symbols | (3 x 3 x nP) symbol-change counts; feed to `jCycleCount` / `epr_count_based.m` for observable J and EPR | G7 |
+| `round_trips_observed` | `C = roundTripsObserved(x, Theta=0.5, LightDark=true)` | 1-s counts | (nP x 4) counts: forward, reverse, direct, quiet_both | G7 |
+| `round_trips_hidden` | `C = roundTripsHidden(z, ph, nP, MinSleep=0, MinGap=0)` | one hidden path | (nP x 4); matched definition: `MinSleep=5, MinGap=10` | G7 |
+| `round_trip_stats` | `S = roundTripStats(C, hours)` | (4,) or (paths x 4) | fractions, rates/h, P(Q entry), P(Q exit), dependence (fraction - product of marginals); per path then averaged | G7 |
 
 `epr_count_bound` is identical to `epr_count_based.m` (rule `'bound'`, the user's existing function). The
 two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; do not write a second version.
@@ -181,6 +186,7 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
   - `hmmViterbiPhased` (G3);
   - labelling, degeneracy, routing, energetics (G4, 1e-12);
   - counting and the EPR bound (G5, exact or 1e-12).
+  - observable pair counts and round trips (G7, exact).
 - **Statistical tests:**
   - `hmmFFBS`: posterior mean route counts over 4000 paths within 4 SE of G6;
   - `hmmFitPhased`: on G3's inputs, the final log-likelihood is >= that of the G3 parameters after many
@@ -215,3 +221,11 @@ copied the sleep emission row (Spearman -0.94; ledger, post hoc). It does not re
   `counts/<group>/**/*.txt`, with groups CS, fumin, per0LD, per0DD, sss.
 - Analysis scripts, for provenance only (see `SCRIPTS_INDEX.md`): `sqw2.py` (20b), `sqw3.py` (20c),
   `sqw4.py` (20d), `sqw5.py` (20e), `sqw2_report.py`, `sqw2_countJ.py`.
+
+## 8. Per-fly round-trip table
+
+`roundtrip_table.py [theta]` writes `roundtrip_per_fly_theta<theta>.csv` using only `sqw_ref.py` functions and the
+stored 20b fits: one row per fly x phase x level (observed, hidden_all, hidden_matched). Columns: genotype,
+fly_index, file, phase, level, theta, n_round_trips, frac_* (4 types), rate_per_h_* (4), p_quiet_entry,
+p_quiet_exit, dependence_* (4), frac_paths_used. It reproduces the 20g / 20g-B per-fly values to 5e-5 (rounding of
+the CSV). A MATLAB port should reproduce this table from the same fitted parameters.

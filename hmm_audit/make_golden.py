@@ -69,3 +69,15 @@ rp=np.stack([R.route_counts(z,ph,2) for z in Z])
 dump('G6_ffbs.json',dict(note='inputs = G3; 4000 paths; compare MATLAB posterior mean route counts within 4 SE',
      mean_route_counts=rp.mean(0),se_route_counts=rp.std(0)/np.sqrt(len(Z)),c=S['c'],Xn=S['Xn'],Yn=S['Yn'],J=S['J'],EPR_bound=S['EPR_bound']))
 print('golden written:',sorted(os.listdir(OUT)))
+# G7: observable pair counts and round trips (PRESPEC 20f/20g)
+g2=json.load(open(os.path.join(OUT,'G2_symbols.json'))); x2=np.array(g2['x']); y2=np.array(g2['y']); ph2=R.phases(len(y2))
+zr=np.array([1]*12+[2]*6+[1]*3+[0]*2+[2]*8+[0]*11+[1]*4+[2]*7+[1]*15+[0]*1+[2]*9+[0]*12+[2]*3+[1]*20)
+phr=np.zeros(len(zr),int); phr[len(zr)//2:]=1
+Hp=np.stack([R.round_trips_hidden(zr,phr,2)[0],R.round_trips_hidden(zr,phr,2)[0][::-1]])
+dump('G7_roundtrips.json',dict(
+    observable_pair_counts=dict(note='inputs: G2 y, phases 12h',value=R.observable_pair_counts(y2,ph2,2)),
+    round_trips_observed=dict(note='inputs: G2 x, theta 0.5, light_dark true',value=R.round_trips_observed(x2,0.5,True)),
+    hidden_path=dict(z=zr,ph=phr,all=R.round_trips_hidden(zr,phr,2),matched_5_10=R.round_trips_hidden(zr,phr,2,5,10)),
+    stats_single=dict(counts=[6,2,9,3],hours=12.0,**{k:v for k,v in R.round_trip_stats([6,2,9,3],12.0).items()}),
+    stats_paths=dict(counts=Hp,hours=12.0,**{k:v for k,v in R.round_trip_stats(Hp,12.0).items()})))
+print('G7 written')

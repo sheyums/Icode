@@ -39,6 +39,10 @@ including failures. Use them as the specification when porting.
 | `sqw3.py` | 20c | 6 h blocks |
 | `sqw4.py` | 20d | reversible null, attenuation |
 | `sqw5.py` | 20e | across-day and within-day direction flips |
+| `sqw6.py` | 20f | hidden vs observable EPR, estimator calibration |
+| `sqw7.py`, `sqw7b.py` | 20g | round trips (primary; matched hidden definition) |
+| `roundtrip_table.py` | 20g | per-fly round-trip table from sqw_ref functions -> `roundtrip_per_fly_theta*.csv` |
+| `fig_epr_j.py`, `fig_epr_j_obs.py`, `fig_xy3.py`, `fig_roundtrips.py` | -- | Figures 6, 6b, 7, 8 |
 
 ## Scored-HMM audit (identifiability, decoders)
 
