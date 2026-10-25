@@ -28,3 +28,8 @@ Also reported per fly and block, at both levels: counts of each type and their r
 marginal probabilities P(Q entry) and P(Q exit); and an independence check: the joint fraction of each type minus
 the product of the marginals (e.g. forward: P(Q in, A out) - P(Q in) P(A out)), mean over flies with 95% interval
 and Wilcoxon vs 0 (descriptive). Hidden-level counts are posterior means over paths; probabilities per path, averaged.
+
+## Amendment B (2026-10-25, AFTER seeing the primary output; post hoc, labelled)
+The hidden definition counts every H3 run, while the observed one requires >= 10 min wake on both sides of a sleep
+bout; hidden 'quiet-both' then includes sleep fragmented by brief H1 visits. Matched hidden version (reported beside
+the primary one, theta 0.5 only): H3 runs >= 5 min with >= 10 min free of H3 before and after.

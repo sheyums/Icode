@@ -1,0 +1,18 @@
+  hidden(matched) CS      light n 25 (round trips/fly 19.5) | forward 0.20 [0.17,0.24] reverse 0.23 [0.19,0.27] direct 0.24 [0.17,0.32] quiet_both 0.33 [0.24,0.42] | most common: quiet_both | fwd-rev -0.029 p 0.38 Holm 0.45
+      rates/h forward 0.079 reverse 0.098 direct 0.100 quiet_both 0.129 | P(Q entry) 0.53 P(Q exit) 0.56 | joint-product forward -0.000 (p 0.75)
+  hidden(matched) CS      dark  n 25 (round trips/fly 19.4) | forward 0.38 [0.33,0.43] reverse 0.11 [0.08,0.15] direct 0.19 [0.15,0.23] quiet_both 0.31 [0.25,0.38] | most common: forward | fwd-rev +0.267 p 4.2e-07 Holm 3.3e-06
+      rates/h forward 0.150 reverse 0.048 direct 0.074 quiet_both 0.131 | P(Q entry) 0.70 P(Q exit) 0.43 | joint-product forward -0.011 (p 0.3)
+  hidden(matched) fumin   light n 46 (round trips/fly 13.0) | forward 0.30 [0.25,0.35] reverse 0.11 [0.09,0.14] direct 0.41 [0.35,0.47] quiet_both 0.18 [0.12,0.25] | most common: direct | fwd-rev +0.189 p 1.7e-05 Holm 0.00012
+      rates/h forward 0.169 reverse 0.058 direct 0.237 quiet_both 0.076 | P(Q entry) 0.48 P(Q exit) 0.29 | joint-product forward -0.011 (p 0.33)
+  hidden(matched) fumin   dark  n 46 (round trips/fly 9.1) | forward 0.38 [0.31,0.45] reverse 0.07 [0.05,0.10] direct 0.35 [0.27,0.43] quiet_both 0.21 [0.12,0.29] | most common: forward | fwd-rev +0.305 p 8.5e-08 Holm 7.6e-07
+      rates/h forward 0.132 reverse 0.029 direct 0.170 quiet_both 0.050 | P(Q entry) 0.58 P(Q exit) 0.28 | joint-product forward +0.003 (p 0.6)
+  hidden(matched) per0LD  light n 25 (round trips/fly 19.0) | forward 0.30 [0.26,0.34] reverse 0.15 [0.11,0.20] direct 0.30 [0.22,0.38] quiet_both 0.25 [0.18,0.33] | most common: direct | fwd-rev +0.144 p 0.00049 Holm 0.0024
+      rates/h forward 0.120 reverse 0.065 direct 0.129 quiet_both 0.083 | P(Q entry) 0.55 P(Q exit) 0.40 | joint-product forward -0.002 (p 0.98)
+  hidden(matched) per0LD  dark  n 26 (round trips/fly 17.1) | forward 0.30 [0.24,0.35] reverse 0.18 [0.14,0.22] direct 0.36 [0.31,0.43] quiet_both 0.16 [0.12,0.22] | most common: direct | fwd-rev +0.118 p 0.012 Holm 0.036
+      rates/h forward 0.112 reverse 0.059 direct 0.123 quiet_both 0.063 | P(Q entry) 0.46 P(Q exit) 0.34 | joint-product forward -0.000 (p 0.9)
+  hidden(matched) per0DD  whole n 23 (round trips/fly 32.9) | forward 0.35 [0.30,0.41] reverse 0.15 [0.11,0.19] direct 0.19 [0.15,0.25] quiet_both 0.30 [0.23,0.37] | most common: forward | fwd-rev +0.202 p 8.8e-05 Holm 0.00053
+      rates/h forward 0.128 reverse 0.060 direct 0.074 quiet_both 0.124 | P(Q entry) 0.66 P(Q exit) 0.45 | joint-product forward +0.003 (p 0.82)
+  hidden(matched) sss     light n 36 (round trips/fly 7.6) | forward 0.08 [0.05,0.10] reverse 0.22 [0.15,0.29] direct 0.37 [0.27,0.48] quiet_both 0.34 [0.22,0.45] | most common: direct | fwd-rev -0.142 p 0.0011 Holm 0.0046
+      rates/h forward 0.026 reverse 0.077 direct 0.126 quiet_both 0.088 | P(Q entry) 0.41 P(Q exit) 0.55 | joint-product forward -0.012 (p 0.096)
+  hidden(matched) sss     dark  n 39 (round trips/fly 8.0) | forward 0.14 [0.10,0.18] reverse 0.20 [0.14,0.26] direct 0.41 [0.32,0.51] quiet_both 0.25 [0.16,0.34] | most common: direct | fwd-rev -0.061 p 0.22 Holm 0.45
+      rates/h forward 0.050 reverse 0.060 direct 0.149 quiet_both 0.074 | P(Q entry) 0.39 P(Q exit) 0.45 | joint-product forward -0.009 (p 0.097)
