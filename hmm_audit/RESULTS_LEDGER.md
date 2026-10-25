@@ -1390,3 +1390,22 @@ The 20f 'relative bias vs model' (+100-150% in weak blocks) is a median of ratio
 - flies whose model has all transitions in both directions: count estimator - exact = +0.000 to +0.025 nats/h (median by block), a near-constant ADDITIVE offset; it dominates only where the true EPR is ~0.01-0.03 (CS light, per0LD light, sss dark);
 - flies whose model has a one-way edge (exact EPR infinite or > 1 nat/h; fumin 21-36%, sss 24-35%, few elsewhere): the exact value is huge while the count estimator stays small (median 0.01-0.06), i.e. the count estimator UNDER-reports relative to the model there.
 - Figures 6 and 6b updated: weak-circulation blocks faded, offset band shown; exact-model markers NOT shown because one-way-edge flies make the model median misleading for fumin and sss. Methods V7 item (vii) reworded accordingly.
+
+## Figure 7 (user request, 2026-10-25): three-way Xn-Yn per fly, whole record (descriptive; values from existing outputs)
+Code fig_xy3.py; figures/fig7_xn_yn_three_way.*
+```
+(a) observable, model-free | CS | n 25 | mean Xn -0.395 Yn -0.330 | mean c +0.032 | above diagonal 0.60
+(b) S/Q/W HMM, posterior | CS | n 25 | mean Xn -0.146 Yn +0.094 | mean c +0.120 | above diagonal 0.88
+(c) binary HMM, Viterbi (legacy) | CS | n 25 | mean Xn -0.279 Yn +0.169 | mean c +0.224 | above diagonal 0.88
+(a) observable, model-free | per0LD | n 27 | mean Xn -0.489 Yn -0.454 | mean c +0.017 | above diagonal 0.59
+(a) observable, model-free | per0DD | n 25 | mean Xn -0.526 Yn -0.316 | mean c +0.105 | above diagonal 0.72
+(b) S/Q/W HMM, posterior | per0LD | n 27 | mean Xn -0.462 Yn -0.194 | mean c +0.134 | above diagonal 0.89
+(b) S/Q/W HMM, posterior | per0DD | n 23 | mean Xn -0.310 Yn +0.104 | mean c +0.207 | above diagonal 0.87
+(c) binary HMM, Viterbi (legacy) | per0 | n 25 | mean Xn -0.024 Yn -0.217 | mean c -0.096 | above diagonal 0.44
+(a) observable, model-free | fumin | n 53 | mean Xn -0.785 Yn -0.699 | mean c +0.043 | above diagonal 0.70
+(b) S/Q/W HMM, posterior | fumin | n 53 | mean Xn -0.461 Yn -0.033 | mean c +0.214 | above diagonal 0.91
+(c) binary HMM, Viterbi (legacy) | fumin | n 53 | mean Xn -0.951 Yn +0.647 | mean c +0.799 | above diagonal 1.00
+(a) observable, model-free | sss | n 54 | mean Xn -0.461 Yn -0.538 | mean c -0.039 | above diagonal 0.37
+(b) S/Q/W HMM, posterior | sss | n 53 | mean Xn +0.005 Yn -0.210 | mean c -0.107 | above diagonal 0.32
+(c) binary HMM, Viterbi (legacy) | sss | n 54 | mean Xn -0.920 Yn +0.729 | mean c +0.825 | above diagonal 1.00
+```
