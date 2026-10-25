@@ -28,8 +28,9 @@ for ax,rs,title in ((axs[0],rows,'(a) hidden states (posterior paths)'),(axs[1],
     ax.axvline(0,color=INK,lw=0.5)
     for r in rs:
         c=COL[r['g']]; filled=r['bn']!='light'
-        ax.errorbar(r['J'],r['E'],xerr=[[r['J']-r['Jci'][0]],[r['Jci'][1]-r['J']]],yerr=[[r['E']-r['Eci'][0]],[r['Eci'][1]-r['E']]],fmt='none',ecolor=c,elinewidth=0.9)
-        ax.plot(r['J'],r['E'],'o',ms=5.5,mfc=c if filled else 'white',mec=c,mew=1.2,zorder=3)
+        al=0.35 if (r['g'],r['bn']) in WEAK else 1.0
+        ax.errorbar(r['J'],r['E'],xerr=[[r['J']-r['Jci'][0]],[r['Jci'][1]-r['J']]],yerr=[[r['E']-r['Eci'][0]],[r['Eci'][1]-r['E']]],fmt='none',ecolor=c,elinewidth=0.9,alpha=al)
+        ax.plot(r['J'],r['E'],'o',ms=5.5,mfc=c if filled else 'white',mec=c,mew=1.2,zorder=3,alpha=al)
     ax.set_title(title,fontsize=8,loc='left'); ax.set_xlim(-0.07,0.32)
     ax.set_xlabel(r'$J_{\mathrm{cycle}}$ (cycles h$^{-1}$; $+$ = S$\to$W$\to$Q/Reg$\to$S)')
 axs[0].set_ylabel(r'EPR lower bound (nats h$^{-1}$)'); axs[0].set_ylim(0,0.42)
@@ -37,6 +38,8 @@ for A,(xa,ya) in {2:(0.205,0.415),1:(0.315,0.33),0.5:(0.315,0.17)}.items():
     for ax in axs: ax.text(xa,ya,f'$A$ = {A}',fontsize=5.5,color='#555555',ha='right',va='top')
 for g in COL: axs[1].plot([],[],'o',ms=5,mfc=COL[g],mec=COL[g],label=NAME[g])
 axs[1].plot([],[],'o',ms=5,mfc='white',mec=INK,mew=1,label='light'); axs[1].plot([],[],'o',ms=5,mfc=INK,mec=INK,label='dark / DD')
+axs[0].axhspan(0,0.025,color='#d9d9d9',alpha=0.6,lw=0,zorder=0)
+axs[0].text(0.31,0.004,'hidden-estimator offset +0.01–0.025 nats h$^{-1}$ (20f); faded: weak circulation',ha='right',va='bottom',fontsize=5.5,color='#555555')
 axs[1].legend(frameon=False,fontsize=6.5,loc='upper left',ncol=2,handletextpad=0.3,columnspacing=0.8)
 fig.tight_layout(pad=0.4); fig.savefig('figures/fig6b_epr_vs_j_hidden_vs_obs.pdf'); fig.savefig('figures/fig6b_epr_vs_j_hidden_vs_obs.png',dpi=300)
 with open('fig6b_epr_vs_j.log','w') as fh:
