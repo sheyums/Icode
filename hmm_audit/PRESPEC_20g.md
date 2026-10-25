@@ -22,3 +22,9 @@ Sensitivity: theta 0.33 and 0.75 for both levels (hidden from the K = 3 theta fi
 The observed level depends on the Q threshold: theta moves every type's share; the forward-minus-reverse difference is
 the quantity robust to theta (PRESPEC 20b theta check). Statements about which type is most common are reported with
 their theta range.
+
+## Amendment A (2026-10-25, before running; user: "probabilities too")
+Also reported per fly and block, at both levels: counts of each type and their rate per hour of the phase;
+marginal probabilities P(Q entry) and P(Q exit); and an independence check: the joint fraction of each type minus
+the product of the marginals (e.g. forward: P(Q in, A out) - P(Q in) P(A out)), mean over flies with 95% interval
+and Wilcoxon vs 0 (descriptive). Hidden-level counts are posterior means over paths; probabilities per path, averaged.

@@ -169,3 +169,4 @@ d82404c 2026-10-24 23:54:20 +0000 Methods V7: EPR estimator wording corrected af
 a75afb5 2026-10-25 03:42:52 +0000 Figs 6/6b with estimator-bias caveat; 20f reading corrected; Methods (vii) reworded
 529e8c4 2026-10-25 03:46:42 +0000 Fig 7: three-way Xn-Yn comparison
 9bb0950 2026-10-25 19:02:56 +0000 PRESPEC 20g: round-trip types, observed and hidden (before running); sqw7.py
+4d8f1ff 2026-10-25 19:03:48 +0000 PRESPEC 20g amendment A: counts, rates, marginals, independence check (before running)
