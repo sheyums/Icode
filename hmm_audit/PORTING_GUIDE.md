@@ -1,7 +1,7 @@
 # Porting guide: S/Q/W hidden-Markov analysis, Python -> MATLAB
 
 Audience: the Claude instance (or person) translating this analysis into MATLAB functions for repeated use.
-Read this file first, then `sqw_ref.py`. The paper's Methods are a separate document (`METHODS_PAPER.md`).
+Read this file first, then `sqw_ref.py`. Step-by-step data extraction and plotting for every figure: `FIGURE_RECIPES.md`. The paper's Methods are a separate document (`METHODS_PAPER.md`).
 
 ## 0. Sources of truth, in order
 
@@ -187,6 +187,7 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
   - labelling, degeneracy, routing, energetics (G4, 1e-12);
   - counting and the EPR bound (G5, exact or 1e-12).
   - observable pair counts and round trips (G7, exact).
+  - dwell-time runs, Kaplan-Meier, hazard (G8, exact).
 - **Statistical tests:**
   - `hmmFFBS`: posterior mean route counts over 4000 paths within 4 SE of G6;
   - `hmmFitPhased`: on G3's inputs, the final log-likelihood is >= that of the G3 parameters after many

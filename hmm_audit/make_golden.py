@@ -81,3 +81,13 @@ dump('G7_roundtrips.json',dict(
     stats_single=dict(counts=[6,2,9,3],hours=12.0,**{k:v for k,v in R.round_trip_stats([6,2,9,3],12.0).items()}),
     stats_paths=dict(counts=Hp,hours=12.0,**{k:v for k,v in R.round_trip_stats(Hp,12.0).items()})))
 print('G7 written')
+# G8: dwell-time functions (PRESPEC 20h)
+s8=np.array([2,2,2,1,1,0,2,2,-1,1,1,1,1,2,2,2,2]); p8=np.array([0]*12+[1]*5)
+dump('G8_dwell.json',dict(seq=s8,ph=p8,edges=R.DWELL_EDGES,
+    runs={nm:R.runs_censored(s8,p8,v,2) for nm,v in {'S':{2},'wake':{0,1},'Q':{0},'W':{1}}.items()},
+    runs_no_phase_censoring=R.runs_censored(s8,p8,{0,1},2,censor_at_phase=False),
+    km=dict(d=[3,2,1,4],e=[1,0,1,1],out=R.km_survival([3,2,1,4],[1,0,1,1])),
+    km_weighted=dict(d=[3,2,1,4],e=[1,0,1,1],w=[0.5,1,1,2],out=R.km_survival([3,2,1,4],[1,0,1,1],[0.5,1,1,2])),
+    hazard=dict(d=[3,2,1,4,7,15],e=[1,0,1,1,1,0],edges=[1,2,3,5,8,13,21],out=R.life_table_hazard([3,2,1,4,7,15],[1,0,1,1,1,0],[1,2,3,5,8,13,21])),
+    geometric=dict(p=0.9,t=[0,1,5],out=R.geometric_survival(0.9,[0,1,5]))))
+print('G8 written')
