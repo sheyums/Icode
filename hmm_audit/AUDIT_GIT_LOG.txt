@@ -178,3 +178,5 @@ a1c4540 2026-10-25 19:19:35 +0000 Methods V7: theta robustness sentence made exa
 3a14411 2026-10-25 20:14:28 +0000 PRESPEC 20h dwell times: library functions, results, Figs 9-10
 52abec4 2026-10-25 20:58:14 +0000 Fig 9 data-only version
 0c1b3d9 2026-10-25 21:05:26 +0000 FIGURE_RECIPES.md: extraction and plotting recipes for Figs 6-10; golden G8 for dwell functions
+8b697b2 2026-10-25 21:18:30 +0000 PRESPEC 20i: missing-reference sensitivity (before running)
+a4981c5 2026-10-25 21:18:56 +0000 20i sensitivity: results hold

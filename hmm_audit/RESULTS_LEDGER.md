@@ -1507,3 +1507,18 @@ hid sss     dark  H3 runs per path summed over flies   593.1 | model mean dwell 
 - Hidden: mean dwell 1/(1-P_ii), fly medians: H1 2.9-4.0 min in every genotype and phase; H2 5-19 min; H3 20-36 min in CS/per0, 8-9 min in fumin/sss. Decoded dwell distributions match the run-weighted geometric curves (expected, circular).
 
 - 2026-10-25: user will plot observed dwell times from data only in the paper (distribution modelling to be done in the user's MATLAB bout library). Added figures/fig9_dwell_observed_data.* (data only); fig9_dwell_observed.* (with model overlay) kept as a supplementary diagnostic.
+
+## PRESPEC 20i — sensitivity: fly-phases without a Q/W reference excluded (2026-10-25, code 8b697b2)
+15 fly-phases lack r_f (fumin 4, sss 11; 9 of them in non-degenerate flies: fumin light 4, sss light 4, sss dark 1). Their wake minutes were coded missing.
+```
+fumin light all                        | c_model +0.170 [+0.103,+0.232] (n 46) | J +0.129 [+0.085,+0.181] | EPR median 0.108 | round trips fwd-rev: observed +0.073 p 0.00015 (n 49), hidden +0.189 p 1.7e-05 (n 46)
+fumin light excluding 4 fly-phases     | c_model +0.182 [+0.110,+0.245] (n 44) | J +0.139 [+0.090,+0.192] | EPR median 0.150 | round trips fwd-rev: observed +0.073 p 0.00015 (n 49), hidden +0.195 p 1.3e-05 (n 45)
+fumin dark  all                        | c_model +0.335 [+0.258,+0.415] (n 45) | J +0.136 [+0.100,+0.174] | EPR median 0.143 | round trips fwd-rev: observed +0.078 p 0.00013 (n 50), hidden +0.305 p 8.8e-08 (n 46)
+fumin dark  excluding 0 fly-phases     | c_model +0.335 [+0.251,+0.419] (n 45) | J +0.136 [+0.100,+0.179] | EPR median 0.143 | round trips fwd-rev: observed +0.078 p 0.00013 (n 50), hidden +0.305 p 8.8e-08 (n 46)
+sss   light all                        | c_model -0.185 [-0.276,-0.103] (n 39) | J -0.056 [-0.083,-0.030] | EPR median 0.031 | round trips fwd-rev: observed -0.069 p 0.057 (n 46), hidden -0.142 p 0.0011 (n 36)
+sss   light excluding 4 fly-phases     | c_model -0.193 [-0.286,-0.110] (n 37) | J -0.062 [-0.090,-0.035] | EPR median 0.031 | round trips fwd-rev: observed -0.069 p 0.057 (n 46), hidden -0.147 p 0.00096 (n 35)
+sss   dark  all                        | c_model -0.062 [-0.141,+0.013] (n 45) | J -0.018 [-0.044,+0.008] | EPR median 0.044 | round trips fwd-rev: observed -0.052 p 0.2 (n 52), hidden -0.061 p 0.22 (n 39)
+sss   dark  excluding 1 fly-phases     | c_model -0.069 [-0.150,+0.010] (n 44) | J -0.020 [-0.047,+0.007] | EPR median 0.044 | round trips fwd-rev: observed -0.052 p 0.2 (n 52), hidden -0.061 p 0.22 (n 39)
+```
+- All results HOLD: signs and significance unchanged (fumin forward; sss light reversed; sss dark ns). Observed round trips are identical by construction (they need r_f).
+- Noted: coding those minutes as fully missing discards the fact that they are NOT sleep; the correct partial-observation likelihood would be P(Q|H)+P(W|H). Not applied (would need refits); reported to the user.
