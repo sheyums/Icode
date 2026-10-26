@@ -1583,3 +1583,67 @@ fly-bootstrap comparison with CS (pooled phases), L difference and 95% CI, two-s
    per0DD - per0LD dL [-0.044,+0.123] p 0.179
 ```
 - OLS error bars and Wald tests treat a fly's light and dark points as independent; the fly bootstrap is the honest interval and gives wider, asymmetric CIs. By bootstrap (pooled phases): sss L lower than CS (p 0.008), per0LD higher (p 0.011), per0DD higher but ns (p 0.065; one fly with J ~ 0.95 dominates), fumin ns. Subtracting the 0.02 estimator offset raises L by 2-6%.
+
+## PRESPEC 20k — route vs bout duration (2026-10-26, code 05f7bac; hidden null with 400 simulations after amendment A; first run with 40 kept as sqw10_nsim40.log)
+```
+R1_exit_vs_sleep         observed CS      light flies 25 | D +0.087 | null mean +0.001 | p 0.125 Holm 0.75
+R1_exit_vs_sleep         observed CS      dark  flies 24 | D -0.293 | null mean +0.002 | p 0 Holm 0  *
+R1_exit_vs_sleep         observed fumin   light flies 25 | D -0.002 | null mean -0.000 | p 0.994 Holm 1
+R1_exit_vs_sleep         observed fumin   dark  flies 15 | D -0.061 | null mean +0.001 | p 0.349 Holm 1
+R1_exit_vs_sleep         observed per0LD  light flies 26 | D -0.228 | null mean +0.000 | p 0.005 Holm 0.04  *
+R1_exit_vs_sleep         observed per0LD  dark  flies 26 | D -0.121 | null mean +0.002 | p 0.091 Holm 0.637
+R1_exit_vs_sleep         observed per0DD  whole flies 23 | D -0.028 | null mean -0.001 | p 0.589 Holm 1
+R1_exit_vs_sleep         observed sss     light flies 32 | D +0.010 | null mean +0.000 | p 0.848 Holm 1
+R1_exit_vs_sleep         observed sss     dark  flies 31 | D +0.008 | null mean +0.000 | p 0.873 Holm 1
+R1_exit_vs_sleep         hidden   CS      light flies 24 | D +0.041 | null mean -0.031 | p 0.195 Holm 1
+R1_exit_vs_sleep         hidden   CS      dark  flies 25 | D -0.275 | null mean +0.017 | p 0.00499 Holm 0.0449  *
+R1_exit_vs_sleep         hidden   fumin   light flies 29 | D -0.053 | null mean -0.010 | p 0.559 Holm 1
+R1_exit_vs_sleep         hidden   fumin   dark  flies 18 | D -0.144 | null mean -0.013 | p 0.354 Holm 1
+R1_exit_vs_sleep         hidden   per0LD  light flies 27 | D -0.024 | null mean -0.008 | p 0.813 Holm 1
+R1_exit_vs_sleep         hidden   per0LD  dark  flies 25 | D -0.039 | null mean +0.009 | p 0.409 Holm 1
+R1_exit_vs_sleep         hidden   per0DD  whole flies 23 | D -0.027 | null mean -0.000 | p 0.579 Holm 1
+R1_exit_vs_sleep         hidden   sss     light flies 18 | D +0.021 | null mean +0.000 | p 0.868 Holm 1
+R1_exit_vs_sleep         hidden   sss     dark  flies 23 | D +0.004 | null mean +0.013 | p 0.883 Holm 1
+R2_entry_vs_wake_before  observed CS      light flies 25 | D -0.263 | null mean +0.000 | p 0 Holm 0  *
+R2_entry_vs_wake_before  observed CS      dark  flies 25 | D +0.072 | null mean +0.001 | p 0.234 Holm 0.702
+R2_entry_vs_wake_before  observed fumin   light flies 30 | D -0.322 | null mean +0.004 | p 0.004 Holm 0.028  *
+R2_entry_vs_wake_before  observed fumin   dark  flies 29 | D -0.146 | null mean +0.002 | p 0.294 Holm 0.702
+R2_entry_vs_wake_before  observed per0LD  light flies 26 | D -0.180 | null mean +0.000 | p 0.002 Holm 0.016  *
+R2_entry_vs_wake_before  observed per0LD  dark  flies 27 | D -0.077 | null mean +0.000 | p 0.127 Holm 0.508
+R2_entry_vs_wake_before  observed per0DD  whole flies 23 | D -0.044 | null mean -0.001 | p 0.076 Holm 0.38
+R2_entry_vs_wake_before  observed sss     light flies 29 | D -0.036 | null mean -0.001 | p 0.819 Holm 0.819
+R2_entry_vs_wake_before  observed sss     dark  flies 28 | D -0.329 | null mean +0.005 | p 0.03 Holm 0.18
+R2_entry_vs_wake_before  hidden   CS      light flies 25 | D -0.135 | null mean -0.028 | p 0.02 Holm 0.18
+R2_entry_vs_wake_before  hidden   CS      dark  flies 25 | D +0.027 | null mean -0.017 | p 0.339 Holm 1
+R2_entry_vs_wake_before  hidden   fumin   light flies 41 | D -0.051 | null mean -0.057 | p 0.903 Holm 1
+R2_entry_vs_wake_before  hidden   fumin   dark  flies 29 | D +0.041 | null mean +0.004 | p 0.773 Holm 1
+R2_entry_vs_wake_before  hidden   per0LD  light flies 26 | D -0.104 | null mean -0.042 | p 0.195 Holm 1
+R2_entry_vs_wake_before  hidden   per0LD  dark  flies 26 | D -0.016 | null mean +0.007 | p 0.454 Holm 1
+R2_entry_vs_wake_before  hidden   per0DD  whole flies 23 | D -0.018 | null mean -0.016 | p 0.903 Holm 1
+R2_entry_vs_wake_before  hidden   sss     light flies 17 | D -0.416 | null mean -0.079 | p 0.0998 Holm 0.798
+R2_entry_vs_wake_before  hidden   sss     dark  flies 22 | D +0.028 | null mean -0.048 | p 0.608 Holm 1
+R3_entry_vs_sleep        observed CS      light flies 25 | D +0.048 | null mean -0.001 | p 0.39 Holm 1
+R3_entry_vs_sleep        observed CS      dark  flies 25 | D -0.166 | null mean -0.001 | p 0.019 Holm 0.171
+R3_entry_vs_sleep        observed fumin   light flies 30 | D -0.071 | null mean -0.000 | p 0.046 Holm 0.368
+R3_entry_vs_sleep        observed fumin   dark  flies 29 | D -0.032 | null mean +0.001 | p 0.454 Holm 1
+R3_entry_vs_sleep        observed per0LD  light flies 26 | D -0.122 | null mean -0.000 | p 0.098 Holm 0.637
+R3_entry_vs_sleep        observed per0LD  dark  flies 27 | D -0.119 | null mean -0.002 | p 0.091 Holm 0.637
+R3_entry_vs_sleep        observed per0DD  whole flies 23 | D -0.066 | null mean -0.000 | p 0.124 Holm 0.637
+R3_entry_vs_sleep        observed sss     light flies 29 | D -0.022 | null mean -0.000 | p 0.693 Holm 1
+R3_entry_vs_sleep        observed sss     dark  flies 28 | D +0.058 | null mean +0.001 | p 0.213 Holm 0.852
+R3_entry_vs_sleep        hidden   CS      light flies 25 | D +0.111 | null mean -0.000 | p 0.0499 Holm 0.449
+R3_entry_vs_sleep        hidden   CS      dark  flies 25 | D -0.080 | null mean -0.005 | p 0.334 Holm 1
+R3_entry_vs_sleep        hidden   fumin   light flies 41 | D -0.065 | null mean -0.002 | p 0.224 Holm 1
+R3_entry_vs_sleep        hidden   fumin   dark  flies 29 | D -0.048 | null mean -0.001 | p 0.569 Holm 1
+R3_entry_vs_sleep        hidden   per0LD  light flies 26 | D -0.118 | null mean +0.002 | p 0.0499 Holm 0.449
+R3_entry_vs_sleep        hidden   per0LD  dark  flies 26 | D -0.025 | null mean -0.000 | p 0.623 Holm 1
+R3_entry_vs_sleep        hidden   per0DD  whole flies 23 | D -0.071 | null mean -0.000 | p 0.0898 Holm 0.628
+R3_entry_vs_sleep        hidden   sss     light flies 17 | D -0.031 | null mean +0.011 | p 0.788 Holm 1
+R3_entry_vs_sleep        hidden   sss     dark  flies 22 | D -0.089 | null mean -0.007 | p 0.419 Holm 1
+```
+- Significant (Holm < 0.05), all with D < 0 (quiet routes with SHORTER bouts):
+  R1 exit vs sleep-bout length: observed CS dark (-0.29), per0LD light (-0.23); hidden CS dark (-0.28, beyond all 400 Markov simulations: the fitted Markov model cannot produce it).
+  R2 entry vs prior wake length: observed CS light (-0.26), fumin light (-0.32), per0LD light (-0.18); none at the hidden level (largest: CS light -0.14, p 0.02 uncorrected).
+  R3: none.
+- Reading: CS at night wakes from long sleep bouts directly into active wake more often than from short bouts, beyond what the Markov model allows: exit routing has memory of sleep-bout length. R2 (observed) may partly reflect classification (short wake bouts are quieter overall); it is not confirmed at the hidden level.
+- Exports: route_duration_observed_theta0.5.csv; route_duration_hidden_theta0.5.csv.gz (20 posterior paths per fly). Figures 13, 13b. Recipe: FIGURE_RECIPES section I.

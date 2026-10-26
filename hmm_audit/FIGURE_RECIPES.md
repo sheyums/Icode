@@ -304,3 +304,77 @@ Common plotting style (all figures):
 - By phase: CS light 0.297, CS dark 0.213.
 - Bootstrap vs CS: sss p 0.008, per0LD p 0.011.
 - Code: `onsager_L.py`.
+
+---------------------------------------------------------------------------------------------------------------
+
+## I. Route vs bout duration (Fig. 13; PRESPEC 20k) and the per-bout CSVs for a JSD analysis
+
+### I1. Observed records (`route_duration_observed(x, theta, light_dark)`), one per bridged sleep bout k
+1. Use bouts with a sleep bout before and after it, so both neighbouring wake periods are bounded.
+2. Durations (minutes):
+   - sleep_min = bout length;
+   - wake_before_min = start of bout k minus end of bout k-1;
+   - wake_after_min = start of bout k+1 minus end of bout k.
+3. Phase = phase of the sleep onset (light if mod(onset s, 86400) < 43200); per0DD 'whole'.
+4. entry_quiet:
+   - defined only if wake_before >= 10 min;
+   - quiet if the active fraction in [onset - 300 s, onset - 60 s) < theta * r_f(phase).
+5. exit_quiet:
+   - defined only if wake_after >= 10 min;
+   - quiet if the active fraction in [end + 60 s, end + 300 s) < theta * r_f(phase).
+6. Skip the fly-phase if r_f is undefined.
+
+### I2. Hidden records (`route_duration_hidden(z, ph)`), on each posterior path
+1. Use every H3 run >= 5 min that has a previous and a next H3 run.
+2. Durations: sleep_min = run length; wake_before / wake_after = gap since the previous H3 run / until the next.
+3. entry_quiet:
+   - defined only if the gap before is >= 10 min;
+   - quiet if the state just before is H1, active if H2.
+4. exit_quiet: likewise, with the gap after and the state just after.
+5. Phase = phase of the run's first minute.
+
+### I3. Statistic and nulls (`route_duration_D`)
+- Relations:
+  - R1 = exit_quiet vs sleep_min;
+  - R2 = entry_quiet vs wake_before_min;
+  - R3 = entry_quiet vs sleep_min.
+- Per fly x phase: D = mean ln(duration | quiet) - mean ln(duration | active); requires >= 2 of each.
+- Hidden: D per path, averaged over paths where it is defined (>= 50% of paths).
+- Group statistic = mean D over flies.
+- Observed null: permute the route labels among the fly's bouts within the phase (2000 permutations); two-sided p.
+- Hidden null:
+  - simulate records from each fly's fitted model (400 per fly);
+  - decode with FFBS under the true parameters (20 paths);
+  - compute the same statistic;
+  - p from the rank of the real group mean among the simulated group means.
+- Holm over the genotype x phase blocks, per relation and level.
+
+### I4. Fig. 13
+- 2 rows (observed, hidden) x 3 columns (R1, R2, R3).
+- y = P(quiet route) in fixed duration bins:
+  - sleep: 5-10, 10-20, 20-40, 40-80, > 80 min;
+  - wake: 10-20, 20-40, 40-80, 80-160, > 160 min.
+- Wilson 95% intervals; omit bins with < 10 bouts. Hidden: counts averaged per path (20 paths per fly).
+- x log; genotype colours; open = light, filled = dark/DD.
+
+### I5. CSV export (`export_route_duration.py`)
+- Files:
+  - `route_duration_observed_theta0.5.csv`;
+  - `route_duration_hidden_theta0.5.csv`, which has an extra `path` column (0-19).
+- Columns: genotype, fly_index, file, [path], phase, sleep_min, wake_before_min, wake_after_min, entry_quiet,
+  exit_quiet.
+- Routes: 1 = quiet (Q / H1), 0 = active (A / H2), empty = not classified.
+- Sources: from `sqw_out/k_route_duration.json`, built by `sqw10.py`. Only non-degenerate flies.
+
+### I6. Suggested JSD analysis for the user's MATLAB `jsd_kde`
+1. For each genotype x phase and relation, split the durations by route (quiet vs active), pooled over flies.
+2. Compute jsd_kde(durations_quiet, durations_active) with the function's own bootstrap and noise-floor
+   correction.
+3. **Within-fly null (required):** permute the route labels among each fly's own bouts (within phase), pool again,
+   recompute the JSD; 1000-2000 times; p = fraction of permuted JSD >= observed.
+   - Pooling across flies without this null lets between-fly differences (e.g. restless flies with both short
+     bouts and many quiet exits) appear as a route effect.
+4. Hidden level:
+   - use one path at a time (JSD per path, averaged over the 20 paths), or pool paths with weight 1/20 per row;
+   - do not treat the 20 paths as independent data.
+5. Report next to the D results; JSD adds sensitivity to distribution shape, D measures the location shift.

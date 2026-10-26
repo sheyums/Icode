@@ -192,3 +192,5 @@ d70b79c 2026-10-25 22:25:04 +0000 FIGURE_RECIPES: Fig 12 Onsager L
 9a3a310 2026-10-26 02:27:54 +0000 PRESPEC 20k: route vs bout duration (before running); sqw_ref section 12
 41df2ed 2026-10-26 02:28:35 +0000 sqw10: route vs duration computation and report
 05f7bac 2026-10-26 02:32:54 +0000 PRESPEC 20k amendment A: hidden null with 400 simulations (power fix); first run kept
+29f585a 2026-10-26 02:43:09 +0000 Route-duration CSV export script and recipe section I (JSD with within-fly null)
+5d210df 2026-10-26 03:05:59 +0000 20k route vs duration: results, Figs 13/13b, CSV exports
