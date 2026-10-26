@@ -228,7 +228,7 @@ Common plotting style (all figures):
   - fly-phases without a Q/W reference (PRESPEC 20i).
 - Light: open marker. Dark / DD: filled.
 
-### G2. Fits per genotype (both phases pooled), unweighted least squares with a free intercept
+### G2. Fits per genotype (both phases pooled), unweighted least squares with a free intercept (`epr_j_models`)
 - M1: EPR = b + a|J|.
 - M2: EPR = b + cJ^2. c = 1/L in the user's Onsager notation.
 - Compare by residual sum of squares (same number of parameters).
@@ -255,7 +255,7 @@ Common plotting style (all figures):
 - The same per-fly x phase points as G1: J = count J_cycle, path mean; EPR = rule-of-three bound, path mean.
 - Same exclusions as G1.
 
-### H2. Fit (the user's Methods Eq. 25 scheme)
+### H2. Fit (the user's Methods Eq. 25 scheme; `onsager_fit`)
 1. Per genotype, regress EPR on J^2 by ordinary least squares THROUGH THE ORIGIN:
    - slope s = sum(J^2 * EPR) / sum(J^4);
    - L = 1/s.
@@ -266,7 +266,7 @@ Common plotting style (all figures):
 6. Do the fit three ways: pooled over phases (main), light only, dark only. per0DD has one phase; plot it with the
    dark points.
 
-### H3. Intervals that respect the fly as the unit
+### H3. Intervals that respect the fly as the unit (`onsager_bootstrap`, `bootstrap_difference_p`)
 - Fly bootstrap: resample flies with replacement, 2000 times, keeping both phases of a fly together; refit L each
   time; 2.5 and 97.5 percentiles.
 - Genotype vs CS: bootstrap the difference in L (independent resamples of each genotype, 4000 each); two-sided

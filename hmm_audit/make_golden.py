@@ -99,3 +99,10 @@ a,b,c,d=R.em_step(pi9,P9,B9,y9,ph9)
 dump('G9_wake_unknown.json',dict(note='inputs: G3 parameters; y = G3 symbols with wake minutes 100-159 and 400-429 recoded -2 (wake of unknown type; MATLAB 4)',
     y=y9,ph=ph9,loglik=R.loglik(pi9,P9,B9,y9,ph9),em_step=dict(pi=a,P=b,B=c,loglik_input=d),viterbi=R.viterbi(pi9,P9,B9,y9,ph9)))
 print('G9 written')
+# G10: Onsager fit and EPR-J models (PRESPEC 20j)
+J10=np.array([-0.12,0.03,0.08,0.15,0.22,0.31,0.40,0.52,-0.05,0.11,0.27,0.45])
+E10=np.array([0.09,0.03,0.05,0.12,0.24,0.41,0.70,1.18,0.04,0.08,0.33,0.86])
+f10=R.onsager_fit(J10,E10); m10=R.epr_j_models(J10,E10)
+dump('G10_onsager.json',dict(J=J10,EPR=E10,onsager_fit={k:(list(v) if isinstance(v,tuple) else v) for k,v in f10.items()},epr_j_models=m10,
+     note='onsager_bootstrap is stochastic: check the MATLAB bootstrap median of L within 5% of onsager_fit L on these points (fly ids 0..11, one point each)'))
+print('G10 written')

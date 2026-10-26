@@ -188,3 +188,4 @@ b99b021 2026-10-25 22:02:26 +0000 PRESPEC 20j: per-fly EPR vs J, linear vs quadr
 3ba7871 2026-10-25 22:16:32 +0000 Methods V7: per-fly EPR vs J and J^2, Onsager L (S/Q/W)
 9f40e1a 2026-10-25 22:16:56 +0000 Methods V7: offset sensitivity numbers made exact
 d70b79c 2026-10-25 22:25:04 +0000 FIGURE_RECIPES: Fig 12 Onsager L
+4cbb9cd 2026-10-26 01:38:10 +0000 sqw_ref section 11: onsager_fit, onsager_bootstrap, bootstrap_difference_p, epr_j_models; golden G10; guide and recipes updated

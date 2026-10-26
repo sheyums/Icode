@@ -514,3 +514,46 @@ def life_table_hazard(d, e, edges=DWELL_EDGES, w=None):
 def geometric_survival(p_stay, t):
     """P(dwell > t) for a hidden state with self-transition probability p_stay (per minute): p_stay ** t."""
     return np.asarray(p_stay, float) ** np.asarray(t, float)
+
+# ---------------------------------------------------------------------------------------------------------
+# 11. EPR vs J_cycle across flies: linear vs quadratic, Onsager conductance (PRESPEC 20j; Fig. 11, 12)
+# ---------------------------------------------------------------------------------------------------------
+def onsager_fit(J, EPR):
+    """EPR = J^2 / L by ordinary least squares THROUGH THE ORIGIN (user's Methods Eq. 25). Returns dict with
+    slope s = 1/L, its SE (df = n - 1), L, SE_L = L^2 SE_s, the 95% interval of L (t interval of s inverted; upper
+    bound inf if the lower slope bound <= 0) and R^2 through the origin (1 - RSS / sum EPR^2)."""
+    from scipy.stats import t as _t
+    x = np.asarray(J, float) ** 2; y = np.asarray(EPR, float); n = len(x)
+    s = (x @ y) / (x @ x); res = y - s * x; se = np.sqrt((res @ res) / (n - 1) / (x @ x))
+    q = _t.ppf(0.975, n - 1); lo, hi = s - q * se, s + q * se
+    return dict(s=s, se_s=se, L=1 / s, se_L=se / s ** 2, ci_L=(1 / hi, 1 / lo if lo > 0 else np.inf), n=n,
+                r2=1 - (res @ res) / (y @ y))
+
+def onsager_bootstrap(points, n_boot=2000, seed=20):
+    """Fly bootstrap of L. points: list of (fly_id, J, EPR), several per fly (e.g. light and dark); flies are
+    resampled with replacement and all their points kept together. Returns the array of bootstrap L values."""
+    rng = np.random.default_rng(seed); flies = sorted({p[0] for p in points}); by = {f: [p for p in points if p[0] == f] for f in flies}
+    out = []
+    for _ in range(n_boot):
+        rr = [p for f in rng.choice(flies, len(flies)) for p in by[f]]
+        out.append(onsager_fit([p[1] for p in rr], [p[2] for p in rr])['L'])
+    return np.array(out)
+
+def bootstrap_difference_p(boot_a, boot_b):
+    """Difference of two independent bootstrap distributions: (95% interval of a - b, two-sided p =
+    2 min(P(diff <= 0), P(diff >= 0)))."""
+    d = np.asarray(boot_a) - np.asarray(boot_b)
+    return np.percentile(d, [2.5, 97.5]), min(1.0, 2 * min(np.mean(d <= 0), np.mean(d >= 0)))
+
+def epr_j_models(J, EPR, offset=0.02, j_min=0.05, epr_min=0.05):
+    """PRESPEC 20j descriptions with a free intercept b (absorbs the estimator offset; not physics):
+    M1 constant affinity EPR = b + a|J|; M2 linear response EPR = b + c J^2 (c = 1/L); compared by residual sum of
+    squares (both 2 parameters). Exponent n: slope of ln(EPR - offset) on ln|J| over points with |J| >= j_min and
+    EPR >= epr_min (NaN if fewer than 5)."""
+    J = np.asarray(J, float); E = np.asarray(EPR, float)
+    def ls(x):
+        A = np.c_[np.ones_like(x), x]; coef = np.linalg.lstsq(A, E, rcond=None)[0]; return coef[1], coef[0], float(((A @ coef - E) ** 2).sum())
+    a, b1, r1 = ls(np.abs(J)); c, b2, r2 = ls(J ** 2)
+    m = (np.abs(J) >= j_min) & (E >= epr_min)
+    n = np.polyfit(np.log(np.abs(J[m])), np.log(E[m] - offset), 1)[0] if m.sum() >= 5 else np.nan
+    return dict(a=a, b_linear=b1, rss_linear=r1, c=c, b_quadratic=b2, rss_quadratic=r2, exponent=n, n_points=len(J), n_exponent=int(m.sum()))

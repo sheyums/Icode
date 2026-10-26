@@ -72,6 +72,10 @@ name-value options. Shapes are given for MATLAB with 1-based indices.
 | `round_trips_observed` | `C = roundTripsObserved(x, Theta=0.5, LightDark=true)` | 1-s counts | (nP x 4) counts: forward, reverse, direct, quiet_both | G7 |
 | `round_trips_hidden` | `C = roundTripsHidden(z, ph, nP, MinSleep=0, MinGap=0)` | one hidden path | (nP x 4); matched definition: `MinSleep=5, MinGap=10` | G7 |
 | `round_trip_stats` | `S = roundTripStats(C, hours)` | (4,) or (paths x 4) | fractions, rates/h, P(Q entry), P(Q exit), dependence (fraction - product of marginals); per path then averaged | G7 |
+| `onsager_fit` | `F = onsagerFit(J, EPR)` | per-fly J, EPR | slope 1/L, SE, L, SE_L, 95% CI of L (inverted t interval), R^2 through origin; Eq. 25 | G10 |
+| `onsager_bootstrap` | `Lb = onsagerBootstrap(points, NBoot=2000)` | (fly, J, EPR) rows | bootstrap L, flies resampled with all their points | G10 (statistical) |
+| `bootstrap_difference_p` | `[ci, p] = bootstrapDifferenceP(La, Lb)` | two bootstrap vectors | 95% CI of the difference, two-sided p | -- |
+| `epr_j_models` | `M = eprJModels(J, EPR)` | per-fly J, EPR | linear (b + a|J|) vs quadratic (b + cJ^2) with free intercept, RSS, exponent | G10 |
 
 `epr_count_bound` is identical to `epr_count_based.m` (rule `'bound'`, the user's existing function). The
 two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; do not write a second version.
@@ -214,6 +218,7 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
   - counting and the EPR bound (G5, exact or 1e-12).
   - observable pair counts and round trips (G7, exact).
   - dwell-time runs, Kaplan-Meier, hazard (G8, exact).
+  - Onsager fit and EPR-J models (G10, 1e-12); bootstrap statistically.
 - **Statistical tests:**
   - `hmmFFBS`: posterior mean route counts over 4000 paths within 4 SE of G6;
   - `hmmFitPhased`: on G3's inputs, the final log-likelihood is >= that of the G3 parameters after many
