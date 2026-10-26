@@ -557,3 +557,47 @@ def epr_j_models(J, EPR, offset=0.02, j_min=0.05, epr_min=0.05):
     m = (np.abs(J) >= j_min) & (E >= epr_min)
     n = np.polyfit(np.log(np.abs(J[m])), np.log(E[m] - offset), 1)[0] if m.sum() >= 5 else np.nan
     return dict(a=a, b_linear=b1, rss_linear=r1, c=c, b_quadratic=b2, rss_quadratic=r2, exponent=n, n_points=len(J), n_exponent=int(m.sum()))
+
+# ---------------------------------------------------------------------------------------------------------
+# 12. Route vs bout duration (PRESPEC 20k)
+# ---------------------------------------------------------------------------------------------------------
+def route_duration_observed(x, theta=0.5, light_dark=True, min_wake=600):
+    """One record per bridged sleep bout with a neighbour on both sides: dict(phase_on, phase_wake_end,
+    sleep_min, wake_before_min, wake_after_min, q_in, q_out). q_in (q_out) is None unless the preceding (following)
+    wake bout lasts >= min_wake s; otherwise True/False for a quiet (Q) route, with r_f of the onset's phase."""
+    bouts = sleep_bouts(x, True); mv = (np.asarray(x) > 0).astype(float); ev = wake_bout_events(x, bouts)
+    ref = [wake_reference(ev, 0), wake_reference(ev, 1)] if light_dark else [wake_reference(ev, None)]
+    out = []
+    for k in range(1, len(bouts) - 1):
+        s, n = bouts[k]; e = s + n; wb = s - (bouts[k-1][0] + bouts[k-1][1]); wa = bouts[k+1][0] - e
+        p = int((s % DAY) >= HALF) if light_dark else 0; r = ref[p]
+        if not np.isfinite(r): continue
+        out.append(dict(phase_on=p, phase_wake_end=p, sleep_min=n / 60, wake_before_min=wb / 60, wake_after_min=wa / 60,
+                        q_in=(mv[s-300:s-60].mean() < theta * r) if wb >= min_wake else None,
+                        q_out=(mv[e+60:e+300].mean() < theta * r) if wa >= min_wake else None))
+    return out
+
+def route_duration_hidden(z, ph, min_sleep=5, min_gap=10):
+    """Same records on one hidden path: H3 runs >= min_sleep min with a previous and a next H3 run; entry (exit)
+    classified only if the gap since the previous (until the next) H3 run is >= min_gap min; quiet = H1."""
+    z = np.asarray(z); ch = np.r_[0, np.flatnonzero(np.diff(z)) + 1, len(z)]; st = z[ch[:-1]]; ln = np.diff(ch)
+    s_idx = np.flatnonzero(st == 2); out = []
+    for a in range(1, len(s_idx) - 1):
+        k = s_idx[a]
+        if ln[k] < min_sleep: continue
+        gb = ch[k] - ch[s_idx[a-1] + 1]; ga = ch[s_idx[a+1]] - ch[k+1]
+        out.append(dict(phase_on=int(ph[ch[k]]), phase_wake_end=int(ph[ch[k]]), sleep_min=float(ln[k]),
+                        wake_before_min=float(gb), wake_after_min=float(ga),
+                        q_in=(st[k-1] == 0) if gb >= min_gap else None, q_out=(st[k+1] == 0) if ga >= min_gap else None))
+    return out
+
+RELATIONS = {'R1_exit_vs_sleep': ('q_out', 'sleep_min'), 'R2_entry_vs_wake_before': ('q_in', 'wake_before_min'),
+             'R3_entry_vs_sleep': ('q_in', 'sleep_min')}
+
+def route_duration_D(records, relation, phase, min_each=2):
+    """D = mean ln(duration | quiet) - mean ln(duration | active) for one relation and phase; NaN if fewer than
+    min_each of either kind."""
+    lab, dur = RELATIONS[relation]
+    rr = [r for r in records if r['phase_on'] == phase and r[lab] is not None]
+    q = [np.log(r[dur]) for r in rr if r[lab]]; a = [np.log(r[dur]) for r in rr if not r[lab]]
+    return np.mean(q) - np.mean(a) if len(q) >= min_each and len(a) >= min_each else np.nan

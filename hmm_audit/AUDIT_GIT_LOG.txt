@@ -189,3 +189,6 @@ b99b021 2026-10-25 22:02:26 +0000 PRESPEC 20j: per-fly EPR vs J, linear vs quadr
 9f40e1a 2026-10-25 22:16:56 +0000 Methods V7: offset sensitivity numbers made exact
 d70b79c 2026-10-25 22:25:04 +0000 FIGURE_RECIPES: Fig 12 Onsager L
 4cbb9cd 2026-10-26 01:38:10 +0000 sqw_ref section 11: onsager_fit, onsager_bootstrap, bootstrap_difference_p, epr_j_models; golden G10; guide and recipes updated
+9a3a310 2026-10-26 02:27:54 +0000 PRESPEC 20k: route vs bout duration (before running); sqw_ref section 12
+41df2ed 2026-10-26 02:28:35 +0000 sqw10: route vs duration computation and report
+05f7bac 2026-10-26 02:32:54 +0000 PRESPEC 20k amendment A: hidden null with 400 simulations (power fix); first run kept
