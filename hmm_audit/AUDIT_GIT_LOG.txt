@@ -198,3 +198,4 @@ d8f519c 2026-10-29 19:47:00 +0000 PRESPEC 20l: energies, landscape vs counted ro
 81c8e32 2026-10-29 19:48:46 +0000 20l energy landscape: library landscape(), Figs 14, 15, 13c, recipe J
 70cfcfb 2026-10-29 20:13:48 +0000 Figs 13/13c: flies weighted equally, >= 10 flies per bin
 48747b6 2026-10-29 20:29:35 +0000 Fig 13d per-fly D
+5108e3f 2026-10-29 20:35:42 +0000 Methods V7: route vs bout duration section
