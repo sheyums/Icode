@@ -1714,3 +1714,6 @@ R3_entry_vs_sleep        hidden   sss     dark  flies 22 | D -0.089 | null mean 
 
 ## Presentation rule for Figs 13 / 13c (2026-10-29, user-approved after seeing the pooled curves)
 Flies weighted equally per duration bin, bins with < 10 contributing flies omitted, bootstrap-over-flies intervals (route_bins.py). Effect: CS dark exit curve flattens visually (0.44, 0.44, 0.49, 0.33, 0.32) though its within-fly test stays significant; fumin dark (0.31, 0.19, 0.08) and sss dark (0.43, 0.50, 0.59) tails remain, each from >= 10 flies but with wide intervals, and their within-fly tests remain ns (D -0.14 p 0.35; +0.004 p 0.88). Per-fly proportions in sparse bins rest on 1-2 bouts per fly, so the binned curves stay descriptive; the within-fly D (Fig 13b) is the test.
+
+## Fig 13d (2026-10-29, user request): per-fly D, flies as points, group mean, null range of the mean (fig_perfly_D.py; per-fly values fig13d.log)
+- R1 CS dark: 79% of flies D < 0 (observed), 76% (hidden); per0LD light observed 65%. Spread is wide in fumin and sss, especially R2 (few bouts per fly).

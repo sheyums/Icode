@@ -426,3 +426,13 @@ and fly-phases with no cycle or no Q/W reference.
 - The line is constant in duration by construction (Markov).
 - An offset between the curve and the line can come from the matched hidden definition. A slope against the line
   indicates memory (CS dark exits).
+
+### I6b. Fig. 13d: per-fly D (the tested quantity; recommended main-text version)
+- Layout: 2 rows (observed, hidden) x 3 columns (R1, R2, R3).
+- x = the 9 genotype x phase blocks (CS L, CS D, per0LD L, per0LD D, per0DD, fmn L, fmn D, sss L, sss D).
+- One point per fly: D from `route_duration_D` (observed) or the path-averaged hidden D. Jitter +-0.18; open =
+  light, filled = dark/DD.
+- Black bar = mean over flies (the group statistic tested).
+- Grey box = 95% range of the group mean under the null (permutation for observed, Markov simulation for hidden).
+- * marks Holm p < 0.05. y clipped at |D| = 1.8; say so in the caption, with the number of clipped flies.
+- Code: `fig_perfly_D.py`.

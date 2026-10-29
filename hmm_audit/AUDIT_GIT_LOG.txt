@@ -197,3 +197,4 @@ d70b79c 2026-10-25 22:25:04 +0000 FIGURE_RECIPES: Fig 12 Onsager L
 d8f519c 2026-10-29 19:47:00 +0000 PRESPEC 20l: energies, landscape vs counted routing, landscape vs duration (before running)
 81c8e32 2026-10-29 19:48:46 +0000 20l energy landscape: library landscape(), Figs 14, 15, 13c, recipe J
 70cfcfb 2026-10-29 20:13:48 +0000 Figs 13/13c: flies weighted equally, >= 10 flies per bin
+48747b6 2026-10-29 20:29:35 +0000 Fig 13d per-fly D
