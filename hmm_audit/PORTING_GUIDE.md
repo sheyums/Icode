@@ -76,6 +76,10 @@ name-value options. Shapes are given for MATLAB with 1-based indices.
 | `onsager_bootstrap` | `Lb = onsagerBootstrap(points, NBoot=2000)` | (fly, J, EPR) rows | bootstrap L, flies resampled with all their points | G10 (statistical) |
 | `bootstrap_difference_p` | `[ci, p] = bootstrapDifferenceP(La, Lb)` | two bootstrap vectors | 95% CI of the difference, two-sided p | -- |
 | `epr_j_models` | `M = eprJModels(J, EPR)` | per-fly J, EPR | linear (b + a|J|) vs quadratic (b + cJ^2) with free intercept, RSS, exponent | G10 |
+| `route_duration_observed` | `recs = routeDurationObserved(x, Theta=0.5, LightDark=true)` | 1-s counts | one record per sleep bout: phase, sleep_min, wake_before_min, wake_after_min, q_in, q_out (NaN = not classified) | G11 |
+| `route_duration_hidden` | `recs = routeDurationHidden(z, ph, MinSleep=5, MinGap=10)` | one hidden path | same record layout for H3 visits | G11 |
+| `route_duration_D` | `D = routeDurationD(recs, relation, phase)` | records | D = mean ln t(quiet) - mean ln t(active), NaN if < 2 of either | G11 |
+| `landscape` | `Ls = energyLandscape(P)` | 3 x 3 labelled | E2-E1, E3-E1, branching, barriers, F_SW, F_WS (= xn_pred, yn_pred) | G11 |
 
 `epr_count_bound` is identical to `epr_count_based.m` (rule `'bound'`, the user's existing function). The
 two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; do not write a second version.
@@ -219,6 +223,7 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
   - observable pair counts and round trips (G7, exact).
   - dwell-time runs, Kaplan-Meier, hazard (G8, exact).
   - Onsager fit and EPR-J models (G10, 1e-12); bootstrap statistically.
+  - route-duration records, D and the landscape (G11, exact).
 - **Statistical tests:**
   - `hmmFFBS`: posterior mean route counts over 4000 paths within 4 SE of G6;
   - `hmmFitPhased`: on G3's inputs, the final log-likelihood is >= that of the G3 parameters after many
@@ -261,3 +266,78 @@ stored 20b fits: one row per fly x phase x level (observed, hidden_all, hidden_m
 fly_index, file, phase, level, theta, n_round_trips, frac_* (4 types), rate_per_h_* (4), p_quiet_entry,
 p_quiet_exit, dependence_* (4), frac_paths_used. It reproduces the 20g / 20g-B per-fly values to 5e-5 (rounding of
 the CSV). A MATLAB port should reproduce this table from the same fitted parameters.
+
+## 9. Per-fly D: does the route depend on bout duration? (PRESPEC 20k; Fig. 13d)
+
+Inputs per fly: the 1-s counts `x` (observed level), and its fitted 20b model with 200 posterior paths (hidden
+level). theta = 0.5.
+
+### 9.1 Records
+**Observed.** `routeDurationObserved`. Take every bridged sleep bout k that has a sleep bout before and after it.
+1. Durations in minutes:
+   - sleep_min = length of bout k;
+   - wake_before_min = start of k minus end of k-1;
+   - wake_after_min = start of k+1 minus end of k.
+2. Phase = phase of the onset (light if mod(onset_s, 86400) < 43200; per0DD a single phase).
+3. q_in:
+   - only if wake_before >= 600 s;
+   - TRUE if the active fraction in [onset - 300 s, onset - 60 s) < theta * r_f(phase).
+4. q_out:
+   - only if wake_after >= 600 s;
+   - TRUE if the active fraction in [end + 60 s, end + 300 s) < theta * r_f(phase).
+5. Otherwise the field is NaN (not classified).
+6. Skip the fly-phase if r_f is undefined.
+
+**Hidden.** `routeDurationHidden`, on each path z.
+1. Use every H3 run >= 5 min that has a previous and a next H3 run.
+2. gap_before = start of this run - end of the previous H3 run; gap_after = start of the next H3 run - end of this
+   one.
+3. q_in = (state before == H1) if gap_before >= 10, else NaN; q_out = (state after == H1) if gap_after >= 10,
+   else NaN.
+4. Phase = phase of the run's first minute.
+
+### 9.2 Relations
+| relation | route | duration |
+|---|---|---|
+| R1 | q_out | sleep_min |
+| R2 | q_in | wake_before_min |
+| R3 | q_in | sleep_min |
+
+### 9.3 D for one fly and phase (`routeDurationD`)
+1. Keep the records of that phase whose route is classified.
+2. Split them into quiet (route TRUE) and active (FALSE).
+3. D = mean(log(t_quiet)) - mean(log(t_active)), natural log, t in minutes.
+4. D is NaN if either group has fewer than 2 bouts.
+5. Hidden level: compute D on each of the 200 paths. The fly's D = mean over paths where it is defined, and is
+   NaN if it is defined on fewer than 50% of paths.
+6. Interpretation: D < 0 means quiet routes go with shorter bouts. exp(D) is the ratio of geometric-mean durations,
+   e.g. D = -0.29 -> 0.75.
+
+### 9.4 Group statistic and nulls
+- Group value = plain mean of D over flies in the genotype x phase (each fly once).
+- **Observed null.**
+  - For each fly separately, randomly permute its route labels among its own classified bouts in that phase,
+    recompute its D, and average over flies. Repeat 2000 times.
+  - The permutation keeps each fly's durations and its numbers of quiet and active routes; only the pairing is
+    broken.
+  - p = 2 * min(fraction of null >= real, fraction <= real).
+- **Hidden null.**
+  - For each fly: simulate a record from its fitted model (same length and phases), decode 20 FFBS paths with the
+    true parameters, and compute its path-averaged D.
+  - Repeat 400 times. The r-th group null value = mean over flies of their r-th simulated D.
+  - p = 2 * min((1 + #null >= real)/(1 + 400), (1 + #null <= real)/(1 + 400)).
+  - Do not use only 40 replicates: the smallest attainable p is then 0.049, and nothing survives Holm (PRESPEC 20k
+    amendment A).
+- Holm correction over the 9 genotype x phase blocks, separately per relation and per level.
+
+### 9.5 Figure (`fig_perfly_D.py`; FIGURE_RECIPES I6b)
+- One point per fly (D), jittered; black bar = group mean.
+- Grey box = 2.5-97.5 percentiles of the group null.
+- * for Holm p < 0.05.
+- Rows observed / hidden; columns R1 / R2 / R3.
+
+### 9.6 Checks
+- CS dark R1: observed mean D -0.293 (79% of flies < 0, Holm p < 0.001); hidden -0.275 (76%, Holm p 0.045).
+- per0LD light R1 observed: -0.228 (Holm 0.04).
+- Exact unit test: `golden/G11_route_duration.json`, which covers hidden records on a fixed path, observed records
+  from the G2 trace, and D for a hand-checkable set of 7 bouts (R1 = -1.3088).

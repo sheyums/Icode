@@ -106,3 +106,16 @@ f10=R.onsager_fit(J10,E10); m10=R.epr_j_models(J10,E10)
 dump('G10_onsager.json',dict(J=J10,EPR=E10,onsager_fit={k:(list(v) if isinstance(v,tuple) else v) for k,v in f10.items()},epr_j_models=m10,
      note='onsager_bootstrap is stochastic: check the MATLAB bootstrap median of L within 5% of onsager_fit L on these points (fly ids 0..11, one point each)'))
 print('G10 written')
+# G11: route vs bout duration records and D (PRESPEC 20k), landscape (20l)
+z11=np.array([1]*15+[0]*2+[2]*8+[1]*12+[2]*6+[0]*3+[1]*11+[2]*20+[1]*14+[0]*1+[2]*9+[0]*2+[1]*12+[2]*7+[1]*10)
+ph11=np.zeros(len(z11),int); ph11[len(z11)//2:]=1
+rec11=R.route_duration_hidden(z11,ph11)
+obs11=R.route_duration_observed(x2,0.5,True)
+recD=[dict(phase_on=0,phase_wake_end=0,sleep_min=s,wake_before_min=w,wake_after_min=12.0,q_in=qi,q_out=qo)
+      for s,w,qi,qo in [(6,15,True,True),(12,40,False,True),(25,22,True,False),(40,90,False,False),(8,11,True,True),(60,30,False,False),(15,18,None,False)]]
+dump('G11_route_duration.json',dict(
+    hidden_path=dict(z=z11,ph=ph11,records=rec11),
+    observed_from_G2=dict(note='inputs: G2 x, theta 0.5, light_dark true',records=obs11),
+    D_cases=dict(records=recD,**{rel:R.route_duration_D(recD,rel,0) for rel in R.RELATIONS}),
+    landscape=dict(P=np.array(g3['P'])[1],**{k:v for k,v in R.landscape(np.array(g3['P'])[1]).items()})))
+print('G11 written')
