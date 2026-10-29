@@ -204,3 +204,6 @@ c17d107 2026-10-29 20:58:39 +0000 Fig 16: R1 main-figure candidate
 e3bb850 2026-10-29 21:06:13 +0000 Genotype-order rule (wild type, clock mutant, sleep mutants) added to FIGURE_RECIPES and PORTING_GUIDE; existing figures left as they are
 9a54018 2026-10-29 21:21:09 +0000 PORTING_GUIDE section 10: JSD route-duration analysis with jsd_kde, within-fly null
 1dd0eae 2026-10-29 21:21:43 +0000 PORTING_GUIDE 10.2: checked against uploaded jsd_kde.m
+046dcca 2026-10-29 21:37:00 +0000 PRESPEC 20m: 30-s resolution check (before running); sqw_symbols_bin, phases_bin
+4844dd3 2026-10-29 21:37:19 +0000 sqw12.py (20m)
+dcbcad0 2026-10-29 22:06:15 +0000 20m resolution check: results, Fig 17

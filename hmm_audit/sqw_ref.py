@@ -617,3 +617,31 @@ def landscape(P):
         E31c = -np.log(P[2, 0] * b12); E21c = -np.log(P[1, 0] * b13); E32 = -np.log(P[2, 1]); E23 = -np.log(P[1, 2])
         return dict(E2_minus_E1=np.log(pi[0] / pi[1]), E3_minus_E1=np.log(pi[0] / pi[2]), b12=b12, b13=b13,
                     E31c=E31c, E21c=E21c, E32=E32, E23=E23, F_SW=np.tanh((E32 - E31c) / 2), F_WS=np.tanh((E23 - E21c) / 2))
+
+# ---------------------------------------------------------------------------------------------------------
+# 14. Symbols on an arbitrary time grid (PRESPEC 20m)
+# ---------------------------------------------------------------------------------------------------------
+def sqw_symbols_bin(x, bin_s=60, theta=0.5, light_dark=True, full_days=True, unknown_wake=-1):
+    """As sqw_symbols but with bins of bin_s seconds (bin_s must divide 86400): S if >= bin_s/2 seconds of the bin
+    lie in a sleep bout; else Q if the bin's active fraction < theta * r_f (r_f from the 1-s data, per phase),
+    else W. bin_s = 60 reproduces sqw_symbols exactly. Returns (y, refs)."""
+    x = np.asarray(x); nb = len(x) // bin_s; x = x[:nb * bin_s]
+    sl = np.zeros(len(x), bool); bouts = sleep_bouts(x, True)
+    for s, n in bouts: sl[s:s+n] = True
+    ssec = sl.reshape(nb, bin_s).sum(1); act = (x > 0).reshape(nb, bin_s).mean(1)
+    ev = wake_bout_events(x, bouts)
+    refs = ({'light': wake_reference(ev, 0), 'dark': wake_reference(ev, 1)} if light_dark else {'whole': wake_reference(ev, None)})
+    y = np.full(nb, W); y[ssec * 2 >= bin_s] = S
+    for m in np.flatnonzero(ssec * 2 < bin_s):
+        r = refs['whole'] if not light_dark else (refs['light'] if (m * bin_s) % DAY < HALF else refs['dark'])
+        if np.isnan(r): y[m] = unknown_wake
+        elif act[m] < theta * r: y[m] = Q
+    if full_days: y = y[:(len(y) // (DAY // bin_s)) * (DAY // bin_s)]
+    return y, refs
+
+def phases_bin(T, bin_s=60, scheme='12h'):
+    """Phase per step on a bin_s grid (transition INTO step t uses P[ph[t]])."""
+    spd = DAY // bin_s; t = np.arange(T) % spd
+    if scheme == '12h': return (t >= spd // 2).astype(int)
+    if scheme == 'none': return np.zeros(T, int)
+    raise ValueError(scheme)

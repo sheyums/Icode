@@ -1719,3 +1719,38 @@ Flies weighted equally per duration bin, bins with < 10 contributing flies omitt
 - R1 CS dark: 79% of flies D < 0 (observed), 76% (hidden); per0LD light observed 65%. Spread is wide in fumin and sss, especially R2 (few bouts per fly).
 
 ## Fig 16 (2026-10-29, user request): R1 main-figure candidate (fig_R1_main.py). CS dark hidden P(quiet exit) by bin, fly-weighted: 0.44, 0.44, 0.49, 0.33, 0.32 vs flat landscape prediction 0.35; observed 0.24, 0.26, 0.23, 0.12, 0.13.
+
+## PRESPEC 20m — 30-s vs 1-min steps, CS and fumin (2026-10-29, code 4844dd3); Fig 17
+```
+degenerate H1: 1 min 0 flies, 30 s 0 flies (of 78)
+h1_dwell_min  CS    light n 25 | 1 min median +3.105 | 30 s median +2.116 | ratio of medians 0.68 | paired Wilcoxon p 1.2e-07 | Spearman +0.62
+h1_dwell_min  CS    dark  n 25 | 1 min median +3.163 | 30 s median +2.312 | ratio of medians 0.73 | paired Wilcoxon p 6e-08 | Spearman +0.30
+h1_dwell_min  fumin light n 46 | 1 min median +3.491 | 30 s median +1.942 | ratio of medians 0.56 | paired Wilcoxon p 4.2e-11 | Spearman +0.65
+h1_dwell_min  fumin dark  n 46 | 1 min median +2.543 | 30 s median +1.805 | ratio of medians 0.71 | paired Wilcoxon p 1.1e-10 | Spearman +0.68
+h1_one_step   CS    light n 25 | 1 min median +0.302 | 30 s median +0.225 | ratio of medians 0.75 | paired Wilcoxon p 0.00081 | Spearman +0.58
+h1_one_step   CS    dark  n 25 | 1 min median +0.312 | 30 s median +0.213 | ratio of medians 0.68 | paired Wilcoxon p 0.00038 | Spearman +0.22
+h1_one_step   fumin light n 46 | 1 min median +0.288 | 30 s median +0.265 | ratio of medians 0.92 | paired Wilcoxon p 0.071 | Spearman +0.61
+h1_one_step   fumin dark  n 46 | 1 min median +0.362 | 30 s median +0.270 | ratio of medians 0.75 | paired Wilcoxon p 0.00013 | Spearman +0.68
+J             CS    light n 25 | 1 min median +0.023 | 30 s median +0.005 | ratio of medians 0.20 | paired Wilcoxon p 0.63 | Spearman +0.73
+J             CS    dark  n 25 | 1 min median +0.208 | 30 s median +0.189 | ratio of medians 0.91 | paired Wilcoxon p 0.25 | Spearman +0.86
+J             fumin light n 46 | 1 min median +0.130 | 30 s median +0.158 | ratio of medians 1.22 | paired Wilcoxon p 0.036 | Spearman +0.73
+J             fumin dark  n 46 | 1 min median +0.127 | 30 s median +0.128 | ratio of medians 1.01 | paired Wilcoxon p 0.44 | Spearman +0.74
+EPR           CS    light n 25 | 1 min median +0.041 | 30 s median +0.034 | ratio of medians 0.85 | paired Wilcoxon p 0.89 | Spearman +0.33
+EPR           CS    dark  n 25 | 1 min median +0.299 | 30 s median +0.221 | ratio of medians 0.74 | paired Wilcoxon p 0.41 | Spearman +0.86
+EPR           fumin light n 46 | 1 min median +0.160 | 30 s median +0.195 | ratio of medians 1.22 | paired Wilcoxon p 0.14 | Spearman +0.65
+EPR           fumin dark  n 46 | 1 min median +0.169 | 30 s median +0.153 | ratio of medians 0.90 | paired Wilcoxon p 0.92 | Spearman +0.62
+c_ffbs        CS    light n 25 | 1 min median +0.009 | 30 s median -0.016 | ratio of medians -1.80 | paired Wilcoxon p 0.56 | Spearman +0.69 | same sign 0.76
+c_ffbs        CS    dark  n 25 | 1 min median +0.266 | 30 s median +0.222 | ratio of medians 0.84 | paired Wilcoxon p 0.09 | Spearman +0.88 | same sign 0.92
+c_ffbs        fumin light n 44 | 1 min median +0.203 | 30 s median +0.246 | ratio of medians 1.21 | paired Wilcoxon p 0.13 | Spearman +0.65 | same sign 0.86
+c_ffbs        fumin dark  n 41 | 1 min median +0.307 | 30 s median +0.301 | ratio of medians 0.98 | paired Wilcoxon p 0.85 | Spearman +0.54 | same sign 0.90
+R1_D          CS    light n 24 | 1 min median +0.043 | 30 s median +0.019 | ratio of medians 0.43 | paired Wilcoxon p 0.66 | Spearman +0.47 | same sign 0.75
+R1_D          CS    dark  n 25 | 1 min median -0.299 | 30 s median -0.226 | ratio of medians 0.76 | paired Wilcoxon p 0.096 | Spearman +0.61 | same sign 0.88
+R1_D          fumin light n 24 | 1 min median -0.132 | 30 s median -0.187 | ratio of medians 1.42 | paired Wilcoxon p 0.2 | Spearman +0.87 | same sign 0.83
+R1_D          fumin dark  n 12 | 1 min median -0.120 | 30 s median -0.101 | ratio of medians 0.84 | paired Wilcoxon p 0.73 | Spearman +0.82 | same sign 0.75
+CS dark R1 hidden D at 60 s: mean -0.277, flies < 0 0.76 (n 25); Wilcoxon vs 0 p 0.00071
+CS dark R1 hidden D at 30 s: mean -0.186, flies < 0 0.80 (n 25); Wilcoxon vs 0 p 0.0061
+```
+- H1 is faster than the 1-min grid showed: mean dwell ~2 min at 30 s vs ~3 min at 1 min (ratio 0.56-0.73, p < 1e-7). It is resolved at 30 s (single-step runs 21-27%). Part may be Q/W flicker from the noisier 30-s activity fraction.
+- J and EPR barely change: no significant change except fumin light J +22% (p 0.04); CS dark EPR -26% (ns). The 1-min grid did not hide substantial extra cycling or dissipation.
+- Directions hold: per-fly c same sign in 76-92% (lowest in CS light, where c ~ 0); group medians within 0.05.
+- CS-dark R1 memory holds: hidden D -0.19 at 30 s (80% of flies < 0, Wilcoxon p 0.006) vs -0.28 at 1 min.
