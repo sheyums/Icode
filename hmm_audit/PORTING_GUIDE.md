@@ -117,6 +117,9 @@ two agree to 8.9e-16 over 1e5 random count matrices (ledger). Reuse that file; d
     "no cycle".
   - Caution: `sqw2_report.py` printed J in the REVERSE direction (H1 -> H2 net). `sqw_ref.model_energetics` and
     everything after the count-J ledger entry use the forward sign.
+- **Genotype order (presentation rule).** CS -> per0LD -> per0DD -> fumin -> sss (wild type, clock mutant, sleep
+  mutants); light before dark within a genotype. Use it for every axis, legend, table and output loop. Details:
+  FIGURE_RECIPES.md, common plotting style.
 - **Units.** Steps are minutes. Rates are converted to per hour by x60 (model quantities) or by dividing counts
   by hours in the phase.
 - **Non-finite values in golden JSON** are the strings `"Inf"`, `"-Inf"`, `"NaN"`. MATLAB's `jsondecode` returns

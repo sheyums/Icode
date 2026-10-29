@@ -18,6 +18,14 @@ Common plotting style (all figures):
 - Genotype colours, fixed order (validated for colour-vision deficiency): CS #2a78d6, fumin #eb6834,
   per0LD #1baf7a, per0DD #eda100, sss #e87ba4.
 - Light phase: open markers; dark or DD: filled markers.
+- **Genotype order (general rule, user's choice 2026-10-29).** Use this order everywhere a genotype appears: axes,
+  legends, panel order, table rows and log output.
+  - **Groups:** wild type (CS) -> clock mutant (per0 LD, then per0 DD) -> sleep mutants (fumin, then sss).
+  - **Within a genotype:** light before dark.
+  - **Blocks:** CS L, CS D, per0LD L, per0LD D, per0DD, fmn L, fmn D, sss L, sss D.
+  - **Where space allows,** mark the three groups: thin vertical separators between groups, or a group label under
+    the axis ("wild type", "clock mutant", "sleep mutants").
+  - **Colours stay attached to the genotype,** never to the position.
 - Never encode identity by colour alone: direct labels or a legend are always present.
 
 ---------------------------------------------------------------------------------------------------------------
