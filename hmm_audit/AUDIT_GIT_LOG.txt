@@ -202,3 +202,4 @@ d8f519c 2026-10-29 19:47:00 +0000 PRESPEC 20l: energies, landscape vs counted ro
 2a4cc91 2026-10-29 20:48:49 +0000 PORTING_GUIDE section 9: per-fly D recipe; function map rows; golden G11
 c17d107 2026-10-29 20:58:39 +0000 Fig 16: R1 main-figure candidate
 e3bb850 2026-10-29 21:06:13 +0000 Genotype-order rule (wild type, clock mutant, sleep mutants) added to FIGURE_RECIPES and PORTING_GUIDE; existing figures left as they are
+9a54018 2026-10-29 21:21:09 +0000 PORTING_GUIDE section 10: JSD route-duration analysis with jsd_kde, within-fly null

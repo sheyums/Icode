@@ -344,3 +344,86 @@ level). theta = 0.5.
 - per0LD light R1 observed: -0.228 (Holm 0.04).
 - Exact unit test: `golden/G11_route_duration.json`, which covers hidden records on a fixed path, observed records
   from the G2 trace, and D for a hand-checkable set of 7 bouts (R1 = -1.3088).
+
+## 10. Jensen-Shannon distance between route-specific duration distributions (to run in MATLAB with `jsd_kde`)
+
+Not yet run. It complements section 9:
+- D (section 9) measures a LOCATION shift: the mean log duration of quiet-route vs active-route bouts.
+- JSD compares the WHOLE distributions, so it can also show a shape difference. For example: do quiet exits lack
+  the long-bout tail, or are they just shifted shorter?
+
+It replaces the V6 Methods analysis "Jensen-Shannon distance between bout-duration distributions by exit route",
+which pooled bouts across flies with no within-fly null.
+
+### 10.1 Inputs
+- Either the CSVs `route_duration_observed_theta0.5.csv` and `route_duration_hidden_theta0.5.csv(.gz)`, or the
+  records from `routeDurationObserved` / `routeDurationHidden` (section 9.1).
+- CSV columns: genotype, fly_index, file, [path], phase, sleep_min, wake_before_min, wake_after_min, entry_quiet,
+  exit_quiet.
+- Route codes: 1 = quiet (Q / H1), 0 = active (A / H2), empty = not classified.
+
+### 10.2 One statistic per relation x level x genotype x phase
+- Relations as section 9.2: R1 exit_quiet vs sleep_min; R2 entry_quiet vs wake_before_min; R3 entry_quiet vs
+  sleep_min.
+- Take every classified bout of that genotype and phase, pooled over flies.
+- P = durations of quiet-route bouts, Q = durations of active-route bouts.
+- Compute d = jsd_kde(P, Q, 512, min_cutoff, true, 0, 0.05, seed, 0, false):
+  - **do_log_transform = true, explicitly.** Do not rely on its skewness auto-detection: in the permutation loop
+    the decision must not change between replicates.
+  - **min_cutoff fixed and explicit, the same in every call.** Use 4.99 for sleep durations (bouts are >= 5 min)
+    and 9.99 for the wake durations of R2 (wake periods are >= 10 min). At its default the cutoff tracks the
+    observed minimum, which can differ between replicates and switches the estimator (see the jsd_kde header).
+  - **n_boot = 0 and n_perm = 0 inside the permutation loop.**
+- Hidden level:
+  - compute d on each of the 20 paths separately (pool flies within a path), then average the 20 values;
+  - do not pool the 20 paths into one sample, which would treat them as 20x more data.
+
+### 10.3 The null must be WITHIN FLY
+- **Do not use jsd_kde's own p_perm here.** Its permutation relabels the pooled sample across flies. That tests
+  "P and Q come from one pooled distribution", which a difference BETWEEN flies can violate. For example, restless
+  flies with both short bouts and many quiet exits would give a significant result even if no single fly shows any
+  route-duration association.
+- **Within-fly permutation, done outside jsd_kde:**
+  1. For each fly, randomly permute the route labels among that fly's own classified bouts in the phase.
+  2. Leave the durations unchanged.
+  3. Re-pool P and Q over flies and recompute d exactly as in 10.2 (same min_cutoff, log transform and grid).
+  4. Repeat 2000 times.
+  5. p = (1 + #{d_perm >= d_real}) / (1 + 2000), one-sided (JSD >= 0).
+  6. Hidden level: permute within fly on each path, compute the path-averaged d per replicate, and compare as
+     above.
+- Holm over the genotype x phase blocks, per relation and level (as section 9.4).
+
+### 10.4 Effect size and intervals
+- **Report the noise-corrected d_corr** from one call with n_boot = 1000-2000 on the real data. It removes the
+  finite-sample KDE bias.
+- **jsd_kde's bootstrap resamples bouts, not flies,** so its CI ignores fly clustering and is too narrow. For
+  publication intervals:
+  - resample flies with replacement (each with all its bouts);
+  - recompute the pooled d each time;
+  - take percentiles.
+- **Present JSD alongside D**, not instead of it. D gives the direction (shorter or longer); JSD gives the size of
+  the distributional difference.
+
+### 10.5 Figures
+- (a) Per relation and level, a dot per genotype x phase block at d_corr, with the fly-bootstrap interval and the
+  95% range of d_perm as a grey box. Same block order as Fig. 13d: CS L, CS D, per0LD L, per0LD D, per0DD, fmn L,
+  fmn D, sss L, sss D.
+- (b) For significant blocks, overlay the two KDE densities (quiet vs active) on a log-duration axis.
+
+### 10.6 Expectations from the D results (not checks)
+- R1 CS dark should come out significant at both levels. D = -0.29 observed and -0.28 hidden: quiet-exit bouts are
+  about 25% shorter in geometric mean.
+- Blocks with wide per-fly scatter (fumin, sss; especially R2) are unlikely to reach significance under the
+  within-fly null.
+- A block significant by JSD but not by D would indicate a shape difference without a location shift. That would be
+  new information and worth reporting.
+
+### 10.7 Toolbox and testing notes
+- jsd_kde needs the Statistics Toolbox (ksdensity, skewness, iqr, quantile).
+- Its stress suite (`stressTest_jsd_kde.m`) was written by the same Claude sessions as the function, so it checks
+  self-consistency, not independent validity (Icode CLAUDE.md).
+- Before running this analysis, run one sanity check:
+  1. Shuffle labels within fly once and compute d on that.
+  2. Repeat on ~200 shuffled datasets.
+  3. The p-values from 10.3 on these shuffled datasets should be roughly uniform. Fewer than ~5% should fall
+     below 0.05.
