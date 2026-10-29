@@ -1717,3 +1717,5 @@ Flies weighted equally per duration bin, bins with < 10 contributing flies omitt
 
 ## Fig 13d (2026-10-29, user request): per-fly D, flies as points, group mean, null range of the mean (fig_perfly_D.py; per-fly values fig13d.log)
 - R1 CS dark: 79% of flies D < 0 (observed), 76% (hidden); per0LD light observed 65%. Spread is wide in fumin and sss, especially R2 (few bouts per fly).
+
+## Fig 16 (2026-10-29, user request): R1 main-figure candidate (fig_R1_main.py). CS dark hidden P(quiet exit) by bin, fly-weighted: 0.44, 0.44, 0.49, 0.33, 0.32 vs flat landscape prediction 0.35; observed 0.24, 0.26, 0.23, 0.12, 0.13.

@@ -436,3 +436,13 @@ and fly-phases with no cycle or no Q/W reference.
 - Grey box = 95% range of the group mean under the null (permutation for observed, Markov simulation for hidden).
 - * marks Holm p < 0.05. y clipped at |D| = 1.8; say so in the caption, with the number of clipped flies.
 - Code: `fig_perfly_D.py`.
+
+### I6c. Fig. 16 (main-figure candidate): R1 only (`fig_R1_main.py`)
+- (a) Observed per-fly D for R1.
+- (b) Hidden per-fly D for R1.
+- Panels (a) and (b) are in the I6b style: 9 blocks, flies as points, mean bar, grey null range of the mean.
+  Significant blocks (Holm < 0.05) are drawn at full opacity with a star; others are faded. |D| is clipped at 1.5
+  for display.
+- (c) CS dark only: P(quiet exit) vs sleep-bout length (flies weighted equally, >= 10 flies per bin, bootstrap
+  over flies), hidden (filled circles) and observed (open squares). Dashed line at the fly-mean landscape
+  prediction (F_SW + 1)/2 for CS dark.
