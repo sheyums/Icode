@@ -601,3 +601,19 @@ def route_duration_D(records, relation, phase, min_each=2):
     rr = [r for r in records if r['phase_on'] == phase and r[lab] is not None]
     q = [np.log(r[dur]) for r in rr if r[lab]]; a = [np.log(r[dur]) for r in rr if not r[lab]]
     return np.mean(q) - np.mean(a) if len(q) >= min_each and len(a) >= min_each else np.nan
+
+# ---------------------------------------------------------------------------------------------------------
+# 13. Energy landscape (user's Methods Eqs. 5-16), per phase matrix (PRESPEC 20l)
+# ---------------------------------------------------------------------------------------------------------
+def landscape(P):
+    """For one labelled 3x3 matrix (H1, H2, H3 = indices 0, 1, 2): state energies relative to H1,
+    E2 - E1 = ln(pi_1/pi_2), E3 - E1 = ln(pi_1/pi_3); branching b12 = P12/(P12+P13), b13 = 1 - b12;
+    branching-corrected barriers E31c = -ln(P31 b12), E21c = -ln(P21 b13); direct barriers E32 = -ln P32,
+    E23 = -ln P23; predicted routing F_SW = tanh((E32 - E31c)/2), F_WS = tanh((E23 - E21c)/2), identical to
+    xn_pred / yn_pred."""
+    P = np.asarray(P, float); pi = stationary(P)
+    with np.errstate(all='ignore'):
+        b12 = P[0, 1] / (P[0, 1] + P[0, 2]); b13 = 1 - b12
+        E31c = -np.log(P[2, 0] * b12); E21c = -np.log(P[1, 0] * b13); E32 = -np.log(P[2, 1]); E23 = -np.log(P[1, 2])
+        return dict(E2_minus_E1=np.log(pi[0] / pi[1]), E3_minus_E1=np.log(pi[0] / pi[2]), b12=b12, b13=b13,
+                    E31c=E31c, E21c=E21c, E32=E32, E23=E23, F_SW=np.tanh((E32 - E31c) / 2), F_WS=np.tanh((E23 - E21c) / 2))

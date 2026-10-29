@@ -1647,3 +1647,67 @@ R3_entry_vs_sleep        hidden   sss     dark  flies 22 | D -0.089 | null mean 
   R3: none.
 - Reading: CS at night wakes from long sleep bouts directly into active wake more often than from short bouts, beyond what the Markov model allows: exit routing has memory of sleep-bout length. R2 (observed) may partly reflect classification (short wake bouts are quieter overall); it is not confirmed at the hidden level.
 - Exports: route_duration_observed_theta0.5.csv; route_duration_hidden_theta0.5.csv.gz (20 posterior paths per fly). Figures 13, 13b. Recipe: FIGURE_RECIPES section I.
+
+## PRESPEC 20l — energy landscape (2026-10-29, code ); Figs 14, 15 (Viterbi, posterior), 13c
+```
+(1) state energies relative to H1 (nats), median [fly-bootstrap 95% CI]
+  E2_minus_E1 CS      light n 25 median -0.57 [-0.65,-0.50]
+  E2_minus_E1 CS      dark  n 25 median -0.69 [-1.00,-0.47]
+  E2_minus_E1 per0LD  light n 27 median -0.46 [-0.83,-0.19]
+  E2_minus_E1 per0LD  dark  n 27 median -0.35 [-0.70,-0.15]
+  E2_minus_E1 per0DD  whole n 23 median -0.38 [-0.58,-0.26]
+  E2_minus_E1 fumin   light n 46 median -0.92 [-0.97,-0.68]
+  E2_minus_E1 fumin   dark  n 50 median -1.44 [-1.57,-1.27]
+  E2_minus_E1 sss     light n 37 median -1.32 [-1.59,-1.18]
+  E2_minus_E1 sss     dark  n 47 median -1.03 [-1.14,-0.88]
+  E3_minus_E1 CS      light n 25 median -1.08 [-1.41,-0.71]
+  E3_minus_E1 CS      dark  n 25 median -1.85 [-2.11,-1.71]
+  E3_minus_E1 per0LD  light n 27 median -1.73 [-1.89,-1.29]
+  E3_minus_E1 per0LD  dark  n 27 median -1.61 [-1.95,-1.29]
+  E3_minus_E1 per0DD  whole n 23 median -1.85 [-1.95,-1.28]
+  E3_minus_E1 fumin   light n 46 median +0.74 [+0.48,+1.22]
+  E3_minus_E1 fumin   dark  n 50 median +1.07 [+0.87,+1.47]
+  E3_minus_E1 sss     light n 37 median +1.13 [+0.85,+1.58]
+  E3_minus_E1 sss     dark  n 47 median +1.38 [+0.95,+1.61]
+(2) landscape prediction vs counted routing (viterbi): median(counted - predicted), Spearman
+  viterbi $F_{S\to W}$ ( CS      light   n 25 median diff -0.021 Spearman +0.86
+  viterbi $F_{S\to W}$ ( per0LD  light   n 27 median diff -0.044 Spearman +0.95
+  viterbi $F_{S\to W}$ ( fumin   light   n 45 median diff -0.000 Spearman +0.81
+  viterbi $F_{S\to W}$ ( sss     light   n 33 median diff -0.011 Spearman +0.97
+  viterbi $F_{W\to S}$ ( CS      light   n 25 median diff -0.028 Spearman +0.84
+  viterbi $F_{W\to S}$ ( per0LD  light   n 27 median diff -0.030 Spearman +0.92
+  viterbi $F_{W\to S}$ ( fumin   light   n 45 median diff +0.000 Spearman +0.92
+  viterbi $F_{W\to S}$ ( sss     light   n 34 median diff +0.000 Spearman +0.97
+  viterbi $F_{S\to W}$ ( CS      dark/DD n 25 median diff +0.066 Spearman +0.87
+  viterbi $F_{S\to W}$ ( per0LD  dark/DD n 27 median diff -0.006 Spearman +0.86
+  viterbi $F_{S\to W}$ ( per0DD  dark/DD n 23 median diff +0.055 Spearman +0.76
+  viterbi $F_{S\to W}$ ( fumin   dark/DD n 47 median diff +0.002 Spearman +0.90
+  viterbi $F_{S\to W}$ ( sss     dark/DD n 43 median diff -0.034 Spearman +0.96
+  viterbi $F_{W\to S}$ ( CS      dark/DD n 25 median diff +0.055 Spearman +0.95
+  viterbi $F_{W\to S}$ ( per0LD  dark/DD n 27 median diff -0.050 Spearman +0.89
+  viterbi $F_{W\to S}$ ( per0DD  dark/DD n 23 median diff +0.067 Spearman +0.91
+  viterbi $F_{W\to S}$ ( fumin   dark/DD n 44 median diff -0.003 Spearman +0.93
+  viterbi $F_{W\to S}$ ( sss     dark/DD n 43 median diff -0.002 Spearman +0.96
+(2) landscape prediction vs counted routing (ffbs): median(counted - predicted), Spearman
+  ffbs $F_{S\to W}$ ( CS      light   n 25 median diff -0.053 Spearman +0.96
+  ffbs $F_{S\to W}$ ( per0LD  light   n 27 median diff +0.010 Spearman +0.99
+  ffbs $F_{S\to W}$ ( fumin   light   n 45 median diff -0.019 Spearman +0.95
+  ffbs $F_{S\to W}$ ( sss     light   n 33 median diff -0.000 Spearman +1.00
+  ffbs $F_{W\to S}$ ( CS      light   n 25 median diff -0.048 Spearman +0.92
+  ffbs $F_{W\to S}$ ( per0LD  light   n 27 median diff +0.009 Spearman +0.99
+  ffbs $F_{W\to S}$ ( fumin   light   n 45 median diff -0.009 Spearman +0.99
+  ffbs $F_{W\to S}$ ( sss     light   n 34 median diff +0.000 Spearman +0.99
+  ffbs $F_{S\to W}$ ( CS      dark/DD n 25 median diff +0.034 Spearman +0.94
+  ffbs $F_{S\to W}$ ( per0LD  dark/DD n 27 median diff +0.000 Spearman +0.97
+  ffbs $F_{S\to W}$ ( per0DD  dark/DD n 23 median diff +0.044 Spearman +0.96
+  ffbs $F_{S\to W}$ ( fumin   dark/DD n 47 median diff +0.012 Spearman +0.93
+  ffbs $F_{S\to W}$ ( sss     dark/DD n 43 median diff -0.004 Spearman +0.99
+  ffbs $F_{W\to S}$ ( CS      dark/DD n 25 median diff +0.016 Spearman +0.99
+  ffbs $F_{W\to S}$ ( per0LD  dark/DD n 27 median diff +0.004 Spearman +0.99
+  ffbs $F_{W\to S}$ ( per0DD  dark/DD n 23 median diff +0.028 Spearman +0.98
+  ffbs $F_{W\to S}$ ( fumin   dark/DD n 45 median diff +0.003 Spearman +1.00
+  ffbs $F_{W\to S}$ ( sss     dark/DD n 43 median diff -0.000 Spearman +0.99
+```
+- (1) CS and per0: wake H2 and sleep H3 lie below the regulator H1 (E2-E1 -0.35 to -0.69, E3-E1 -1.08 to -1.85 nats); CS sleep is 0.8 nats deeper at night than by day. fumin and sss: H2 further below H1 (-0.9 to -1.4) but H3 ABOVE H1 (+0.7 to +1.4). Qualitatively the user's binary-model finding (sleep/wake wells below the regulator in wt/per0, at or above it in fmn/sss), with smaller magnitudes.
+- (2) Landscape prediction vs counted routing per fly: close agreement (Viterbi Spearman 0.76-0.97, |median diff| <= 0.07; posterior 0.92-1.00, <= 0.05). Consistency check, as stated in the plan; supplementary.
+- (3) Fig 13c: the CS-dark exit curve falls from ~0.52 to ~0.30 across sleep-bout length, crossing the flat landscape line (0.35); fumin dark falls too (ns in 20k). Offsets between curves and lines elsewhere are consistent with the matched-definition difference stated in the plan.

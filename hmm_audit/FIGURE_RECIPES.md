@@ -378,3 +378,43 @@ Common plotting style (all figures):
    - use one path at a time (JSD per path, averaged over the 20 paths), or pool paths with weight 1/20 per row;
    - do not treat the 20 paths as independent data.
 5. Report next to the D results; JSD adds sensitivity to distribution shape, D measures the location shift.
+
+---------------------------------------------------------------------------------------------------------------
+
+## J. Energy landscape (Figs. 14, 15, 13c; PRESPEC 20l; `landscape(P)`)
+
+All three figures use, for each fly x phase, the labelled phase matrix from the 20b fits. Exclude degenerate flies
+and fly-phases with no cycle or no Q/W reference.
+
+`landscape(P)` returns:
+- E2 - E1 = ln(pi_1/pi_2) and E3 - E1 = ln(pi_1/pi_3), with pi the stationary distribution;
+- branching b12 = P12/(P12 + P13), b13 = 1 - b12;
+- branching-corrected barriers E31c = -ln(P31 b12), E21c = -ln(P21 b13); direct barriers E32 = -ln P32,
+  E23 = -ln P23;
+- F_SW = tanh((E32 - E31c)/2) and F_WS = tanh((E23 - E21c)/2). These are identical to xn_pred / yn_pred
+  (checked to 1e-15).
+
+### J1. Fig. 14 (state energies)
+- Two panels: E2 - E1 and E3 - E1.
+- x = genotype (CS, per0LD, per0DD, fumin, sss); light at x - 0.17 (open), dark at x + 0.17 (filled); per0DD at x.
+- One point per fly, jittered +-0.07. A black horizontal bar at the median; no box.
+- Medians with fly-bootstrap 95% CIs go in the log.
+- Check: E3 - E1 median CS light -1.08, CS dark -1.85, fumin dark +1.07, sss dark +1.38.
+
+### J2. Fig. 15 (landscape vs counted routing)
+- x = F_SW (top row) or F_WS (bottom row).
+- y = counted routing of the same fly-phase:
+  - Viterbi version: Xn, Yn from the Viterbi route counts of the whole-record path (`route_counts` on
+    `viterbi`), >= 3 routes per denominator;
+  - posterior version: per-path Xn, Yn averaged (as E1(b)).
+- Columns: light; dark / DD. Identity line; axes -1..1, equal aspect.
+- Log: median(counted - predicted) and Spearman per genotype x phase.
+- Check, Viterbi: |median difference| <= 0.07 everywhere; Spearman 0.76-0.97.
+
+### J3. Fig. 13c (landscape lines on the hidden route-vs-duration curves)
+- Hidden panels of Fig. 13 (I4), split into rows light / dark-DD.
+- For each genotype x phase, add a dashed horizontal line at the mean over flies of (F + 1)/2: F_SW for exits,
+  F_WS for entries.
+- The line is constant in duration by construction (Markov).
+- An offset between the curve and the line can come from the matched hidden definition. A slope against the line
+  indicates memory (CS dark exits).
