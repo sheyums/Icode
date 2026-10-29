@@ -374,6 +374,14 @@ which pooled bouts across flies with no within-fly null.
     and 9.99 for the wake durations of R2 (wake periods are >= 10 min). At its default the cutoff tracks the
     observed minimum, which can differ between replicates and switches the estimator (see the jsd_kde header).
   - **n_boot = 0 and n_perm = 0 inside the permutation loop.**
+  - Checked against the user's uploaded `jsd_kde.m` (2026-10-29; byte-identical to the Icode repo copy, 776
+    lines):
+    - its PERMUTATION NULL section says that callers writing their own permutation wrapper "must pass
+      do_log_transform and min_cutoff explicitly";
+    - its built-in p_perm pools the two groups and re-splits them, i.e. a between-sample null, not within-fly.
+  - With an explicit min_cutoff, the transform shift depends only on the pooled sample's minimum and spread. A
+    within-fly permutation leaves the pooled sample unchanged (only the labels move), so the shift, transform and
+    grid stay identical across replicates, as required.
 - Hidden level:
   - compute d on each of the 20 paths separately (pool flies within a path), then average the 20 values;
   - do not pool the 20 paths into one sample, which would treat them as 20x more data.
