@@ -1,5 +1,5 @@
 # PRESPEC 20k statistics and figure.
-import json,numpy as np,sys,matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt, matplotlib.ticker
+import json,numpy as np,sys,matplotlib; from route_bins import fly_equal_bins; matplotlib.use('Agg'); import matplotlib.pyplot as plt, matplotlib.ticker
 sys.path.insert(0,'.'); import sqw_ref as R
 res=json.load(open('sqw_out/k_route_duration.json')); REL=list(R.RELATIONS); rng=np.random.default_rng(20)
 G=['CS','fumin','per0LD','per0DD','sss']; L=[]; OUT={}
@@ -53,17 +53,10 @@ for col,rel in enumerate(REL):
         ax=axs[row,col]
         for g in G:
             for p in range(1 if g=='per0DD' else 2):
-                if level=='observed': recs=[x for r in res if r['g']==g for x in r['obs'] if x['phase_on']==p and x[lab] is not None]; w=None
-                else:
-                    recs=[x for r in res if r['g']==g for path in r['hidrec'] for x in path if x['phase_on']==p and x[lab] is not None]
-                xs=[];ys=[];lo=[];hi=[]
-                for a,b in zip(edges[:-1],edges[1:]):
-                    sel=[x for x in recs if a<=x[dur]<b]; k=sum(1 for x in sel if x[lab]); n=len(sel)
-                    if level=='hidden': n=n/20; k=k/20      # 20 paths kept per fly: average counts per path
-                    if n<10: continue
-                    pp,l,h=wilson(k,n); xs.append(np.sqrt(a*min(b,a*2))); ys.append(pp); lo.append(l); hi.append(h)
+                xs,ys,lo,hi,_=fly_equal_bins(res,g,p,lab,dur,edges,level)
+                if len(xs)==0: continue
                 filled=g=='per0DD' or p==1
-                ax.errorbar(xs,ys,yerr=[np.array(ys)-np.array(lo),np.array(hi)-np.array(ys)],fmt='o-',ms=3,lw=0.8,elinewidth=0.6,color=COL[g],mfc=COL[g] if filled else 'white',mec=COL[g])
+                ax.errorbar(xs,ys,yerr=[ys-lo,hi-ys],fmt='o-',ms=3,lw=0.8,elinewidth=0.6,color=COL[g],mfc=COL[g] if filled else 'white',mec=COL[g])
         ax.set_xscale('log'); ax.set_ylim(0,1)
         tk=[10,20,40,80,160] if dur=='wake_before_min' else [5,10,20,40,80]
         ax.set_xticks(tk); ax.set_xticklabels([str(t) for t in tk]); ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
@@ -72,7 +65,7 @@ for col,rel in enumerate(REL):
         if row==1: ax.set_xlabel(('wake' if dur=='wake_before_min' else 'sleep')+' duration (min)')
 for g in G: axs[0,2].plot([],[],'o-',color=COL[g],ms=3,label=NAME[g])
 axs[0,2].legend(frameon=False,fontsize=6,loc='upper right')
-fig.text(0.01,0.003,'Open: light, filled: dark / DD. Bouts pooled over flies (descriptive; the tests in Fig. 13b are within-fly). Bins with < 10 bouts omitted; Wilson 95% intervals\n(hidden: per-path average counts, 20 paths per fly).',fontsize=6,color='#333')
+fig.text(0.01,0.003,'Open: light, filled: dark / DD. Mean over flies of each fly\'s proportion (flies weighted equally); bins with < 10 contributing flies omitted; 95% interval by bootstrap over flies.\nHidden: a fly\'s records pooled over its 20 posterior paths. Descriptive; the tests (Fig. 13b) are within-fly.',fontsize=6,color='#333')
 fig.tight_layout(rect=(0,0.04,1,1),pad=0.4); fig.savefig('figures/fig13_route_vs_duration.pdf'); fig.savefig('figures/fig13_route_vs_duration.png',dpi=300)
 
 # ---- Fig 13b: effect D vs null interval, per relation, level, genotype x phase ----

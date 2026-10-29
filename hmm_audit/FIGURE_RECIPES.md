@@ -357,6 +357,14 @@ Common plotting style (all figures):
 - Wilson 95% intervals; omit bins with < 10 bouts. Hidden: counts averaged per path (20 paths per fly).
 - x log; genotype colours; open = light, filled = dark/DD.
 
+### I4b / J3b. Presentation rule for the binned curves (Figs. 13, 13c; adopted 2026-10-29 after seeing the pooled version)
+- Each fly is weighted equally within a duration bin: plot the mean over flies of each fly's proportion of quiet
+  routes in that bin. Hidden level: a fly's records are pooled over its 20 paths before taking its proportion.
+- A bin is shown only if >= 10 flies contribute.
+- 95% interval: bootstrap over flies (2000).
+- Code: `route_bins.fly_equal_bins`.
+- This replaces the bout-pooled curves with Wilson intervals.
+
 ### I5. CSV export (`export_route_duration.py`)
 - Files:
   - `route_duration_observed_theta0.5.csv`;

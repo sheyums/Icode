@@ -1,7 +1,7 @@
 # PRESPEC 20l: (1) state energies, (2) landscape vs counted routing (Viterbi, FFBS), (3) Fig 13 hidden with landscape lines.
 import json,numpy as np,sys,matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt, matplotlib.ticker
 from scipy.stats import spearmanr
-sys.path.insert(0,'.'); import sqw_ref as R
+sys.path.insert(0,'.'); import sqw_ref as R; from route_bins import fly_equal_bins
 plt.rcParams.update({'font.family':'STIXGeneral','mathtext.fontset':'stix','font.size':8,'axes.linewidth':0.6,'xtick.direction':'in','ytick.direction':'in'})
 COL={'CS':'#2a78d6','per0LD':'#1baf7a','per0DD':'#eda100','fumin':'#eb6834','sss':'#e87ba4'}
 NAME={'CS':'CS','fumin':'$fmn$','per0LD':'$per^0$ LD','per0DD':'$per^0$ DD','sss':'$sss$'}; G=list(COL)
@@ -70,13 +70,8 @@ for col,rel in enumerate(R.RELATIONS):
         ax=axs[row,col]
         for g in G:
             if (g=='per0DD' and pp==0): continue
-            recs=[x for r in res if r['g']==g for path in r['hidrec'] for x in path if x['phase_on']==(0 if g=='per0DD' else pp) and x[lab] is not None]
-            xs=[];ys=[];lo=[];hi=[]
-            for a,b in zip(edges[:-1],edges[1:]):
-                sel=[x for x in recs if a<=x[dur]<b]; n=len(sel)/20; k=sum(1 for x in sel if x[lab])/20
-                if n<10: continue
-                p_,l_,h_=wilson(k,n); xs.append(np.sqrt(a*min(b,a*2))); ys.append(p_); lo.append(l_); hi.append(h_)
-            ax.errorbar(xs,ys,yerr=[np.array(ys)-np.array(lo),np.array(hi)-np.array(ys)],fmt='o-',ms=3,lw=0.9,elinewidth=0.6,color=COL[g],mfc=COL[g] if pp==1 else 'white',mec=COL[g])
+            xs,ys,lo,hi,_=fly_equal_bins(res,g,0 if g=='per0DD' else pp,lab,dur,edges,'hidden')
+            ax.errorbar(xs,ys,yerr=[ys-lo,hi-ys],fmt='o-',ms=3,lw=0.9,elinewidth=0.6,color=COL[g],mfc=COL[g] if pp==1 else 'white',mec=COL[g])
             pred=np.mean([(r[pk]+1)/2 for r in rows if r['g']==g and r['phase']==(0 if g=='per0DD' else pp)])
             ax.axhline(pred,color=COL[g],lw=0.8,ls=(0,(4,2)),alpha=0.9)
         ax.set_xscale('log'); ax.set_ylim(0,1); tk=[10,20,40,80,160] if dur=='wake_before_min' else [5,10,20,40,80]
@@ -86,6 +81,6 @@ for col,rel in enumerate(R.RELATIONS):
         if row==1: ax.set_xlabel(('wake' if dur=='wake_before_min' else 'sleep')+' duration (min)')
 for g in G: axs[0,2].plot([],[],'o-',color=COL[g],ms=3,label=NAME[g])
 axs[0,2].plot([],[],color='#1a1a1a',ls=(0,(4,2)),lw=0.8,label='landscape prediction'); axs[0,2].legend(frameon=False,fontsize=6,loc='upper right')
-fig.text(0.01,0.003,'Hidden level (posterior paths, matched definition). Dashed: landscape prediction (F+1)/2 from the phase matrix, mean over flies; it is constant in duration by construction (Markov).\nA slope of the counted curve against its flat line is memory. Bouts pooled over flies (descriptive; tests in Fig. 13b are within-fly).',fontsize=5.8,color='#333')
+fig.text(0.01,0.003,'Hidden level (posterior paths, matched definition). Dashed: landscape prediction (F+1)/2 from the phase matrix, mean over flies; it is constant in duration by construction (Markov).\nA slope against the flat line is memory. Flies weighted equally per bin; bins with < 10 flies omitted; bootstrap-over-flies 95% intervals. Descriptive; tests (Fig. 13b) are within-fly.',fontsize=5.8,color='#333')
 fig.tight_layout(rect=(0,0.045,1,1),pad=0.4); fig.savefig('figures/fig13c_route_duration_landscape.pdf'); fig.savefig('figures/fig13c_route_duration_landscape.png',dpi=300)
 open('sqw11.log','w').write('\n'.join(L)+'\n'); print('\n'.join(L))
