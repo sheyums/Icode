@@ -213,3 +213,6 @@ a4a3108 2026-10-30 20:31:02 +0000 sqw13.py (20n)
 8c6dd78 2026-10-30 21:21:12 +0000 20n results
 50c8cc9 2026-10-30 21:36:56 +0000 Ledger: correct 20n reading (rejection of MC is not evidence for emission noise)
 39f252f 2026-10-30 21:41:06 +0000 PRESPEC 20o: memory and drift checks (before running)
+a59b870 2026-10-30 21:41:51 +0000 sqw14.py (20o)
+27db695 2026-10-30 22:07:20 +0000 sqw14_report.py (20o)
+5121a43 2026-10-30 22:07:20 +0000 20o results

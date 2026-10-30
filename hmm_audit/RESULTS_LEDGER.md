@@ -1822,3 +1822,39 @@ first-order Markov chain (16/20 flies); it does not identify WHY the HMM gains. 
 process, so its gain can come from (1) Q/W misclassification, (2) memory beyond one minute (cf. 1-min run misfit here, 20h
 hazards, 20k), or (3) within-phase ZT drift of rates that the null's constant-per-12-h chain lacks (cf. 20c). None excluded.
 4/20 flies did not reject. Corrected reading: "the MC is rejected; the HMM captures some of what it misses, source unidentified."
+
+## PRESPEC 20o — memory (2nd-order chain) and drift (6-h rates) vs the HMM's gain, CS and fumin (2026-10-30, code a59b870, report 27db695)
+Narrowest block: one fly's light/dark (or 6-h ZT) minutes pooled over its days. All likelihoods full-record, missing marginalised; MC2 checked against the closed-form count MLE (diff 1e-4 nats, first step).
+```
+## CS (n 25)
+  dLL HMM_12  - MC1_12: median [IQR] +17.7 [+6.4, +30.1] nats | per 1000 min +3.07
+  dLL MC2_12  - MC1_12: median [IQR] +36.1 [+27.7, +43.3] nats | per 1000 min +6.27
+  dLL MC1_6   - MC1_12: median [IQR] +14.3 [+11.9, +26.7] nats | per 1000 min +2.49
+  dLL HMM_6   - MC1_12: median [IQR] +31.6 [+27.9, +42.0] nats | per 1000 min +5.49
+  dLL MC2_6   - MC1_12: median [IQR] +60.5 [+53.7, +73.3] nats | per 1000 min +10.50
+  flies with HMM gain > 3 nats: 23 | R_mem median 2.00 IQR [1.45, 3.54], >= 1 in 0.96 | R_drift median 0.08 IQR [0.02, 0.23], >= 0.5 in 0.13
+  HMM_6 - MC1_6 (gain left after drift): +15.4 [+2.9, +21.0] | MC2_12 - HMM_12: +17.6 [+12.5, +24.1] | MC2_6 - HMM_6: +26.0 [+20.9, +32.7]
+  best by BIC: MC1_12 0.72, HMM_12 0.28, MC2_12 0.00, MC1_6 0.00, HMM_6 0.00, MC2_6 0.00
+  best by AIC: MC1_12 0.00, HMM_12 0.36, MC2_12 0.08, MC1_6 0.28, HMM_6 0.28, MC2_6 0.00
+  predictive: fraction of fly-phases outside the central 95% of 20 simulations
+   light (MC1_12/HMM_12/MC2_12/MC1_6) | chg_h 0.00/0.00/0.00/0.00 | q_run 0.00/0.04/0.00/0.00 | w_run 0.04/0.20/0.08/0.04 | s_run 0.00/0.00/0.00/0.00 | q_1min 0.32/0.16/0.00/0.36 | w_1min 0.52/0.40/0.00/0.44 | c_obs 0.00/0.08/0.00/0.00
+   dark  (MC1_12/HMM_12/MC2_12/MC1_6) | chg_h 0.00/0.00/0.00/0.00 | q_run 0.00/0.20/0.00/0.00 | w_run 0.08/0.12/0.00/0.00 | s_run 0.00/0.00/0.00/0.00 | q_1min 0.40/0.28/0.00/0.28 | w_1min 0.36/0.32/0.00/0.36 | c_obs 0.00/0.04/0.00/0.00
+## fumin (n 53)
+  dLL HMM_12  - MC1_12: median [IQR] +8.7 [+1.8, +21.8] nats | per 1000 min +3.01
+  dLL MC2_12  - MC1_12: median [IQR] +18.7 [+14.9, +27.1] nats | per 1000 min +6.50
+  dLL MC1_6   - MC1_12: median [IQR] +13.4 [+9.7, +21.2] nats | per 1000 min +4.66
+  dLL HMM_6   - MC1_12: median [IQR] +26.6 [+14.5, +52.0] nats | per 1000 min +9.24
+  dLL MC2_6   - MC1_12: median [IQR] +41.9 [+31.6, +52.3] nats | per 1000 min +14.54
+  flies with HMM gain > 3 nats: 37 | R_mem median 1.25 IQR [0.72, 1.76], >= 1 in 0.57 | R_drift median -0.03 IQR [-0.49, 0.23], >= 0.5 in 0.11
+  HMM_6 - MC1_6 (gain left after drift): +9.3 [+1.0, +29.0] | MC2_12 - HMM_12: +7.2 [-0.9, +13.7] | MC2_6 - HMM_6: +10.8 [+1.0, +19.9]
+  best by BIC: MC1_12 0.77, HMM_12 0.21, MC2_12 0.00, MC1_6 0.00, HMM_6 0.02, MC2_6 0.00
+  best by AIC: MC1_12 0.19, HMM_12 0.15, MC2_12 0.02, MC1_6 0.21, HMM_6 0.43, MC2_6 0.00
+  predictive: fraction of fly-phases outside the central 95% of 20 simulations
+   light (MC1_12/HMM_12/MC2_12/MC1_6) | chg_h 0.00/0.04/0.00/0.00 | q_run 0.00/0.20/0.00/0.00 | w_run 0.04/0.08/0.04/0.04 | s_run 0.00/0.00/0.00/0.00 | q_1min 0.22/0.14/0.00/0.20 | w_1min 0.49/0.35/0.00/0.49 | c_obs 0.00/0.10/0.00/0.00
+   dark  (MC1_12/HMM_12/MC2_12/MC1_6) | chg_h 0.00/0.06/0.00/0.00 | q_run 0.00/0.17/0.00/0.00 | w_run 0.04/0.06/0.02/0.04 | s_run 0.00/0.00/0.00/0.00 | q_1min 0.17/0.19/0.00/0.17 | w_1min 0.51/0.25/0.00/0.45 | c_obs 0.00/0.02/0.00/0.00
+```
+- MEMORY (pre-specified: median R_mem >= 1 in both genotypes AND MC2 brings the 1-min run fractions inside the simulated 95%): MET. R_mem median 2.00 (CS), 1.25 (fumin): one extra minute of memory gains 1.25-2x what the hidden layer gains. MC2_12 puts 0% of fly-phases outside on q_1min and w_1min (MC1 17-52%, HMM 14-40%). Caveat: MC2 parametrizes the 1-min-run fraction almost directly (P(leave | entered one minute ago)), so passing that check is close to built in; it is a consistency check, not independent evidence.
+- DRIFT (pre-specified: median R_drift >= 0.5): NOT MET. R_drift median 0.08 (CS), -0.03 (fumin): allowing 6-h rates leaves the HMM's gain intact. Drift is real but separate: MC1_6 gains 13-14 nats over MC1_12, and AIC picks a 6-h model (MC1_6 or HMM_6) in 56% (CS) and 64% (fumin) of flies.
+- SECOND-ORDER STRUCTURE BEYOND A 3-STATE NOISY CHAIN (pre-specified: MC2 beats the HMM by AIC): NOT MET. MC2_12 exceeds HMM_12 by a median 17.6 (CS) / 7.2 (fumin) nats, less than its 24 extra parameters cost; AIC prefers MC2_12 in 8% / 2% of flies. So the data do not demand more than the HMM provides, but the HMM does not reproduce the 1-min run fractions and MC2 does.
+- BIC (primary): MC1_12 best in 72% (CS) / 77% (fumin), HMM_12 in the rest; no richer model is ever BIC-best.
+- Reading: the HMM's gain over MC1 is of the same kind as one-step memory (short-range dependence around single-minute switches), not 6-h drift. Whether that short-range dependence is misclassification or genuine short memory is NOT separable here (limitation stated in the PRESPEC). Not pre-specified, not run: a parsimonious MC1 + flicker model (one extra parameter per row for leaving a state entered one minute ago).
