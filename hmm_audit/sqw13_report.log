@@ -1,0 +1,51 @@
+## 1. likelihood
+CS     n 25 | dLL median 17.7 [1.8, 79.9] nats | per 1000 min 3.1 | dBIC(n=T) median -16.6 min -48.4, >10 in 0.20 | dBIC(n_eff) median -6.9, >10 in 0.28
+fumin  n 53 | dLL median 8.7 [0.2, 100.1] nats | per 1000 min 3.0 | dBIC(n=T) median -30.4 min -47.3, >10 in 0.21 | dBIC(n_eff) median -21.8, >10 in 0.21
+## 3. posterior predictive: fraction of fly-phases with the real value outside the central 95% of 20 simulations
+CS     light | chg_h MC 0.00 HMM 0.00 | q_run MC 0.00 HMM 0.04 | w_run MC 0.04 HMM 0.20 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.32 HMM 0.16 | w_1min MC 0.52 HMM 0.40 | c_obs MC 0.00 HMM 0.08
+CS     dark  | chg_h MC 0.00 HMM 0.00 | q_run MC 0.00 HMM 0.20 | w_run MC 0.08 HMM 0.12 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.40 HMM 0.28 | w_1min MC 0.36 HMM 0.32 | c_obs MC 0.00 HMM 0.04
+   CS light q_1min: real median 0.480 | MC sim median 0.440 | HMM sim median 0.506
+   CS light w_1min: real median 0.276 | MC sim median 0.264 | HMM sim median 0.312
+   CS light chg_h: real median 10.875 | MC sim median 11.059 | HMM sim median 10.965
+   CS dark q_1min: real median 0.509 | MC sim median 0.442 | HMM sim median 0.527
+   CS dark w_1min: real median 0.207 | MC sim median 0.226 | HMM sim median 0.305
+   CS dark chg_h: real median 6.833 | MC sim median 6.971 | HMM sim median 7.264
+fumin  light | chg_h MC 0.00 HMM 0.04 | q_run MC 0.00 HMM 0.20 | w_run MC 0.04 HMM 0.08 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.22 HMM 0.14 | w_1min MC 0.49 HMM 0.35 | c_obs MC 0.00 HMM 0.10
+fumin  dark  | chg_h MC 0.00 HMM 0.06 | q_run MC 0.00 HMM 0.17 | w_run MC 0.04 HMM 0.06 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.17 HMM 0.19 | w_1min MC 0.51 HMM 0.25 | c_obs MC 0.00 HMM 0.02
+   fumin light q_1min: real median 0.529 | MC sim median 0.480 | HMM sim median 0.537
+   fumin light w_1min: real median 0.235 | MC sim median 0.198 | HMM sim median 0.273
+   fumin light chg_h: real median 13.208 | MC sim median 13.229 | HMM sim median 14.085
+   fumin dark q_1min: real median 0.581 | MC sim median 0.546 | HMM sim median 0.618
+   fumin dark w_1min: real median 0.177 | MC sim median 0.126 | HMM sim median 0.188
+   fumin dark chg_h: real median 12.167 | MC sim median 12.160 | HMM sim median 12.571
+## 4. thermodynamics, exact stationary, per fly (HMM non-degenerate flies)
+CS     light J   n 25 | MC median +0.056 | HMM median +0.013 | ratio of medians 4.31 | paired Wilcoxon p 0.41 | same sign 0.80
+CS     light EPR n 25 | MC median +0.035 | HMM median +0.032 | ratio of medians 1.08 | paired Wilcoxon p 0.75 | infinite MC 0.00 HMM 0.00
+CS     dark  J   n 25 | MC median +0.167 | HMM median +0.225 | ratio of medians 0.74 | paired Wilcoxon p 0.0015 | same sign 1.00
+CS     dark  EPR n 25 | MC median +0.115 | HMM median +0.281 | ratio of medians 0.41 | paired Wilcoxon p 2.2e-05 | infinite MC 0.00 HMM 0.00
+fumin  light J   n 53 | MC median +0.084 | HMM median +0.100 | ratio of medians 0.84 | paired Wilcoxon p 0.026 | same sign 0.79
+fumin  light EPR n 43 | MC median +0.163 | HMM median +0.122 | ratio of medians 1.34 | paired Wilcoxon p 0.00023 | infinite MC 0.06 HMM 0.17
+fumin  dark  J   n 53 | MC median +0.083 | HMM median +0.104 | ratio of medians 0.80 | paired Wilcoxon p 0.004 | same sign 0.92
+fumin  dark  EPR n 34 | MC median +0.127 | HMM median +0.193 | ratio of medians 0.66 | paired Wilcoxon p 0.00011 | infinite MC 0.19 HMM 0.34
+## 2. bootstrap LRT (sign of J in the model per J/h convention: positive = forward)
+  CS     fly  0 | reps 10 | LR_obs    159.8 | LR* median   0.98 max   4.54 | p 0.091
+  CS     fly  1 | reps 10 | LR_obs     61.5 | LR* median   0.82 max   6.83 | p 0.091
+  CS     fly  3 | reps 10 | LR_obs      5.6 | LR* median   2.54 max   6.26 | p 0.182
+  CS     fly  7 | reps 10 | LR_obs      7.1 | LR* median   1.78 max   5.70 | p 0.091
+  CS     fly  8 | reps 10 | LR_obs     26.5 | LR* median   1.52 max   6.13 | p 0.091
+  CS     fly  9 | reps 10 | LR_obs     13.3 | LR* median   2.72 max   9.70 | p 0.091
+  CS     fly 12 | reps 10 | LR_obs     12.3 | LR* median   3.58 max  11.68 | p 0.091
+  CS     fly 13 | reps 10 | LR_obs      8.4 | LR* median   1.12 max   7.55 | p 0.091
+  CS     fly 15 | reps 10 | LR_obs     43.4 | LR* median   2.29 max   7.76 | p 0.091
+  CS     fly 24 | reps 10 | LR_obs      6.4 | LR* median   1.80 max   3.87 | p 0.091
+  fumin  fly  6 | reps 10 | LR_obs      4.5 | LR* median   2.60 max   6.82 | p 0.455
+  fumin  fly  7 | reps 10 | LR_obs     37.0 | LR* median   1.08 max   4.68 | p 0.091
+  fumin  fly 13 | reps 10 | LR_obs    105.3 | LR* median   1.71 max   7.25 | p 0.091
+  fumin  fly 30 | reps 10 | LR_obs      1.7 | LR* median   2.81 max  15.36 | p 0.636
+  fumin  fly 31 | reps 10 | LR_obs     19.7 | LR* median   1.09 max  11.30 | p 0.091
+  fumin  fly 34 | reps 10 | LR_obs     30.8 | LR* median   0.86 max   5.89 | p 0.091
+  fumin  fly 39 | reps 10 | LR_obs      3.0 | LR* median   1.27 max   5.61 | p 0.182
+  fumin  fly 44 | reps 10 | LR_obs     99.0 | LR* median   0.09 max   1.81 | p 0.091
+  fumin  fly 47 | reps 10 | LR_obs     28.0 | LR* median   0.69 max   2.52 | p 0.091
+  fumin  fly 48 | reps 10 | LR_obs     27.2 | LR* median   0.60 max   5.18 | p 0.091
+  flies with LR_obs above all 10 replicates: 16 of 20; P(X >= 16) under Binomial(20, 1/11) = 7.4e-14

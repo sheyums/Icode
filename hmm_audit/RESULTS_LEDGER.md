@@ -1754,3 +1754,64 @@ CS dark R1 hidden D at 30 s: mean -0.186, flies < 0 0.80 (n 25); Wilcoxon vs 0 p
 - J and EPR barely change: no significant change except fumin light J +22% (p 0.04); CS dark EPR -26% (ns). The 1-min grid did not hide substantial extra cycling or dissipation.
 - Directions hold: per-fly c same sign in 76-92% (lowest in CS light, where c ~ 0); group medians within 0.05.
 - CS-dark R1 memory holds: hidden D -0.19 at 30 s (80% of flies < 0, Wilcoxon p 0.006) vs -0.28 at 1 min.
+
+## PRESPEC 20n — Markov chain on S/Q/W symbols vs 3-state HMM, CS and fumin (2026-10-30, code a4a3108, report 558352a)
+Narrowest block: one fly's light or dark minutes pooled over its days (HMM emissions shared across phases). MC = HMM with B fixed to I (k 14 vs 20). Bootstrap flies drawn with default_rng(2026) (CS then fumin from one generator).
+```
+## 1. likelihood
+CS     n 25 | dLL median 17.7 [1.8, 79.9] nats | per 1000 min 3.1 | dBIC(n=T) median -16.6 min -48.4, >10 in 0.20 | dBIC(n_eff) median -6.9, >10 in 0.28
+fumin  n 53 | dLL median 8.7 [0.2, 100.1] nats | per 1000 min 3.0 | dBIC(n=T) median -30.4 min -47.3, >10 in 0.21 | dBIC(n_eff) median -21.8, >10 in 0.21
+## 3. posterior predictive: fraction of fly-phases with the real value outside the central 95% of 20 simulations
+CS     light | chg_h MC 0.00 HMM 0.00 | q_run MC 0.00 HMM 0.04 | w_run MC 0.04 HMM 0.20 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.32 HMM 0.16 | w_1min MC 0.52 HMM 0.40 | c_obs MC 0.00 HMM 0.08
+CS     dark  | chg_h MC 0.00 HMM 0.00 | q_run MC 0.00 HMM 0.20 | w_run MC 0.08 HMM 0.12 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.40 HMM 0.28 | w_1min MC 0.36 HMM 0.32 | c_obs MC 0.00 HMM 0.04
+   CS light q_1min: real median 0.480 | MC sim median 0.440 | HMM sim median 0.506
+   CS light w_1min: real median 0.276 | MC sim median 0.264 | HMM sim median 0.312
+   CS light chg_h: real median 10.875 | MC sim median 11.059 | HMM sim median 10.965
+   CS dark q_1min: real median 0.509 | MC sim median 0.442 | HMM sim median 0.527
+   CS dark w_1min: real median 0.207 | MC sim median 0.226 | HMM sim median 0.305
+   CS dark chg_h: real median 6.833 | MC sim median 6.971 | HMM sim median 7.264
+fumin  light | chg_h MC 0.00 HMM 0.04 | q_run MC 0.00 HMM 0.20 | w_run MC 0.04 HMM 0.08 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.22 HMM 0.14 | w_1min MC 0.49 HMM 0.35 | c_obs MC 0.00 HMM 0.10
+fumin  dark  | chg_h MC 0.00 HMM 0.06 | q_run MC 0.00 HMM 0.17 | w_run MC 0.04 HMM 0.06 | s_run MC 0.00 HMM 0.00 | q_1min MC 0.17 HMM 0.19 | w_1min MC 0.51 HMM 0.25 | c_obs MC 0.00 HMM 0.02
+   fumin light q_1min: real median 0.529 | MC sim median 0.480 | HMM sim median 0.537
+   fumin light w_1min: real median 0.235 | MC sim median 0.198 | HMM sim median 0.273
+   fumin light chg_h: real median 13.208 | MC sim median 13.229 | HMM sim median 14.085
+   fumin dark q_1min: real median 0.581 | MC sim median 0.546 | HMM sim median 0.618
+   fumin dark w_1min: real median 0.177 | MC sim median 0.126 | HMM sim median 0.188
+   fumin dark chg_h: real median 12.167 | MC sim median 12.160 | HMM sim median 12.571
+## 4. thermodynamics, exact stationary, per fly (HMM non-degenerate flies)
+CS     light J   n 25 | MC median +0.056 | HMM median +0.013 | ratio of medians 4.31 | paired Wilcoxon p 0.41 | same sign 0.80
+CS     light EPR n 25 | MC median +0.035 | HMM median +0.032 | ratio of medians 1.08 | paired Wilcoxon p 0.75 | infinite MC 0.00 HMM 0.00
+CS     dark  J   n 25 | MC median +0.167 | HMM median +0.225 | ratio of medians 0.74 | paired Wilcoxon p 0.0015 | same sign 1.00
+CS     dark  EPR n 25 | MC median +0.115 | HMM median +0.281 | ratio of medians 0.41 | paired Wilcoxon p 2.2e-05 | infinite MC 0.00 HMM 0.00
+fumin  light J   n 53 | MC median +0.084 | HMM median +0.100 | ratio of medians 0.84 | paired Wilcoxon p 0.026 | same sign 0.79
+fumin  light EPR n 43 | MC median +0.163 | HMM median +0.122 | ratio of medians 1.34 | paired Wilcoxon p 0.00023 | infinite MC 0.06 HMM 0.17
+fumin  dark  J   n 53 | MC median +0.083 | HMM median +0.104 | ratio of medians 0.80 | paired Wilcoxon p 0.004 | same sign 0.92
+fumin  dark  EPR n 34 | MC median +0.127 | HMM median +0.193 | ratio of medians 0.66 | paired Wilcoxon p 0.00011 | infinite MC 0.19 HMM 0.34
+## 2. bootstrap LRT (sign of J in the model per J/h convention: positive = forward)
+  CS     fly  0 | reps 10 | LR_obs    159.8 | LR* median   0.98 max   4.54 | p 0.091
+  CS     fly  1 | reps 10 | LR_obs     61.5 | LR* median   0.82 max   6.83 | p 0.091
+  CS     fly  3 | reps 10 | LR_obs      5.6 | LR* median   2.54 max   6.26 | p 0.182
+  CS     fly  7 | reps 10 | LR_obs      7.1 | LR* median   1.78 max   5.70 | p 0.091
+  CS     fly  8 | reps 10 | LR_obs     26.5 | LR* median   1.52 max   6.13 | p 0.091
+  CS     fly  9 | reps 10 | LR_obs     13.3 | LR* median   2.72 max   9.70 | p 0.091
+  CS     fly 12 | reps 10 | LR_obs     12.3 | LR* median   3.58 max  11.68 | p 0.091
+  CS     fly 13 | reps 10 | LR_obs      8.4 | LR* median   1.12 max   7.55 | p 0.091
+  CS     fly 15 | reps 10 | LR_obs     43.4 | LR* median   2.29 max   7.76 | p 0.091
+  CS     fly 24 | reps 10 | LR_obs      6.4 | LR* median   1.80 max   3.87 | p 0.091
+  fumin  fly  6 | reps 10 | LR_obs      4.5 | LR* median   2.60 max   6.82 | p 0.455
+  fumin  fly  7 | reps 10 | LR_obs     37.0 | LR* median   1.08 max   4.68 | p 0.091
+  fumin  fly 13 | reps 10 | LR_obs    105.3 | LR* median   1.71 max   7.25 | p 0.091
+  fumin  fly 30 | reps 10 | LR_obs      1.7 | LR* median   2.81 max  15.36 | p 0.636
+  fumin  fly 31 | reps 10 | LR_obs     19.7 | LR* median   1.09 max  11.30 | p 0.091
+  fumin  fly 34 | reps 10 | LR_obs     30.8 | LR* median   0.86 max   5.89 | p 0.091
+  fumin  fly 39 | reps 10 | LR_obs      3.0 | LR* median   1.27 max   5.61 | p 0.182
+  fumin  fly 44 | reps 10 | LR_obs     99.0 | LR* median   0.09 max   1.81 | p 0.091
+  fumin  fly 47 | reps 10 | LR_obs     28.0 | LR* median   0.69 max   2.52 | p 0.091
+  fumin  fly 48 | reps 10 | LR_obs     27.2 | LR* median   0.60 max   5.18 | p 0.091
+  flies with LR_obs above all 10 replicates: 16 of 20; P(X >= 16) under Binomial(20, 1/11) = 7.4e-14
+```
+- Pre-specified reading: the hidden layer is REQUIRED only if dBIC > 10 in >= 90% of flies AND the bootstrap is clear. Bootstrap clear (LR_obs above all 10 replicates in 16/20 flies, p 7e-14 vs Binomial(20, 1/11)); BIC NOT met (dBIC > 10 in 20-21% of flies; median dBIC -17 CS, -30 fumin). Verdict by the rule: NOT required. The emission noise layer is real (detectable in most flies) but small: HMM gains a median 9-18 nats per fly, ~3 nats per 1000 min, less than its 6 extra parameters cost under BIC.
+- Null LR* medians 0.1-3.6, far below chi-square(6) (median 5.3): the boundary (B = I) makes chi-square wrong in the conservative direction here.
+- Predictive checks: the MC reproduces switching rate, Q/W/S run lengths and c_obs at least as well as the HMM (HMM worse on mean Q run, 17-20% of fly-phases outside). Neither reproduces the fraction of 1-min Q/W runs (17-52% outside for both); HMM somewhat better on q_1min in 3 of 4 blocks.
+- Thermodynamics: MC J has the HMM's sign in 79-100% of flies; MC J is 16-26% lower where circulation is clear (CS dark, fumin; p 0.002-0.03). MC EPR lower in the dark (x0.41 CS, x0.66 fumin) but HIGHER in fumin light (x1.34); no consistent 'hidden > observable'. MC has fewer infinite-EPR flies (fumin 6-19% vs 17-34%).
+- Consequence (to be decided by the user, not acted on): the observed S/Q/W chain is the parsimonious model; HMM results are a robustness check against Q/W misclassification.
