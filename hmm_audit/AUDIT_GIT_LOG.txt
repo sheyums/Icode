@@ -216,3 +216,4 @@ a4a3108 2026-10-30 20:31:02 +0000 sqw13.py (20n)
 a59b870 2026-10-30 21:41:51 +0000 sqw14.py (20o)
 27db695 2026-10-30 22:07:20 +0000 sqw14_report.py (20o)
 5121a43 2026-10-30 22:07:20 +0000 20o results
+18afef7 2026-10-30 22:18:38 +0000 PRESPEC 20p: block KL irreversibility, all genotypes + CS DD (before running)
