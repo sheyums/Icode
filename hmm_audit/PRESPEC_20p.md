@@ -53,3 +53,13 @@ non-stationary for CS DD. Added, for BOTH DD genotypes (per0DD as the matched co
 - Same tests and qualifying rule as the main plan (A2 in place of A), Holm across these 4 extra blocks.
 - The whole-record DD rows of the main plan are still reported; for CS DD the halves rows are the ones to read.
 No HMM / MC2 predictions for the halves (not needed for the qualifying rule).
+
+## Amendment B (2026-10-30, after a crash that produced NO result; nothing had been read)
+The run stopped on an assertion in the MC1 fit (sqw13.mc_fit: "B stays the identity") for flies in which a symbol never
+occurs (sss 34, 35, 50: no Q/W reference in either phase, all wake minutes missing). B is fixed and never fed back, so the
+assertion is restricted to symbols that occur; no fitted value changes (20n/20o unaffected).
+- Fly-phases without a Q/W reference (ref = NaN; fumin 4, sss 11 fly-phases, as in 20i) are EXCLUDED from all tests:
+  their blocks contain only S and missing minutes, so they carry no Q/W irreversibility information.
+- A transition row with zero expected count in a phase (a state never left within that phase) is replaced, for
+  SIMULATION only, by its count-start row (counts + 1), so a simulated record cannot get stuck in a state the data never
+  occupy there. Such rows have zero weight in the likelihood.

@@ -12,7 +12,7 @@ def mc_fit(y,ph,nP,tol=1e-10,maxit=500):
         if y[t-1]>=0 and y[t]>=0: P[ph[t],y[t-1],y[t]]+=1      # count start (+1 keeps every entry positive at start)
     P/=P.sum(2,keepdims=True); pi=np.full(3,1/3); old=-np.inf
     for it in range(maxit):
-        pi,P,B,ll=R.em_step(pi,P,I3,y,ph); assert np.allclose(B,I3,atol=1e-12)
+        pi,P,B,ll=R.em_step(pi,P,I3,y,ph); occ=[v for v in range(3) if np.any(y==v)]; assert np.allclose(B[occ],I3[occ],atol=1e-12)
         if ll-old<tol*abs(ll): break
         old=ll
     return R.loglik(pi,P,I3,y,ph),pi,P

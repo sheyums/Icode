@@ -5,7 +5,7 @@ from multiprocessing import Pool
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import sqw_ref as R, sqw, sqw2
 from sqw13 import mc_fit
-from sqw14 import mc2_fit, B2
+from sqw14 import mc2_fit, B2, ALLOW
 G=['CS','fumin','per0LD','per0DD','sss','CSDD']; DD={'per0DD','CSDD'}; I3=np.eye(3)
 NA=200; NB=200; NM=50; NMAX=4
 def gidx(g): return 5 if g=='CSDD' else sqw.GROUPS.index(g)
@@ -38,19 +38,28 @@ def stats(y,ph,nph):
         d=np.diff(D[p])*60; dq=np.diff(Dq[p])*60                 # d_2, d_3, d_4 in nats/h
         res.append(dict(d2=d[0],d3=d[1],d4=d[2],D3=d[1]-d[0],D4=d[2]-d[1],D3QW=dq[1]-dq[0]))
     return res
+def sim_rows(P,allow=None):
+    """For simulation only (amendment B): a row with zero expected count is replaced by its count-start row,
+    uniform over the allowed transitions."""
+    P=np.array(P,float); A=np.ones(P.shape[1:],bool) if allow is None else allow
+    for p in range(P.shape[0]):
+        for k in range(P.shape[1]):
+            if P[p,k].sum()<0.5: P[p,k]=A[k]/A[k].sum()
+    return P
 def fly(a):
-    g,i,d=a; gi=gidx(g); y,ph,_=seqs(g,i); nP=1 if g in DD else 2; miss=y==-1; ph6=R.phases(len(y),'6h')
+    g,i,d=a; gi=gidx(g); y,ph,_ref=seqs(g,i); nP=1 if g in DD else 2; miss=y==-1; ph6=R.phases(len(y),'6h')
     if d is None:
         ll,pi,P,B,_=R.em_fit(y,ph,nP,3,20,20+1000*gi+i); P,B,pi=R.label_states(P,B,pi); hmm=(pi,P,B); deg=bool(R.is_degenerate(B))
     else: hmm=tuple(np.array(d[k]) for k in ('pi3','P3','B3')); deg=d['deg']
     _,pa,Pa=mc_fit(y,ph,nP); _,pb,Pb=mc_fit(y,ph6,4); _,p2,P2=mc2_fit(y,ph,nP)
+    Pa,Pb,P2=sim_rows(Pa),sim_rows(Pb),sim_rows(P2,ALLOW)
     rng=np.random.default_rng(15000+1000*gi+i); sims={}
     for name,(pi,P,B,pp,ns) in (('A',(pa,Pa,I3,ph,NA)),('B',(pb,Pb,I3,ph6,NB)),('HMM',hmm+(ph,NM)),('MC2',(p2,P2,B2,ph,NM))):
         L=[]
         for _ in range(ns):
             _,ys=R.simulate(pi,P,B,pp,rng); ys[miss]=-1; L.append(stats(ys,ph,nP))
         sims[name]=L
-    return dict(g=g,fly=i,deg=deg,obs=stats(y,ph,nP),sims=sims,hmm=None if d is not None else dict(pi=hmm[0].tolist(),P=hmm[1].tolist(),B=hmm[2].tolist()))
+    return dict(g=g,fly=i,deg=deg,ref={k:(None if not np.isfinite(v) else float(v)) for k,v in _ref.items()},obs=stats(y,ph,nP),sims=sims,hmm=None if d is not None else dict(pi=hmm[0].tolist(),P=hmm[1].tolist(),B=hmm[2].tolist()))
 if __name__=='__main__':
     if sys.argv[1]=='check':
         rng=np.random.default_rng(3)

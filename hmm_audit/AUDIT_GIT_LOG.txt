@@ -219,3 +219,8 @@ a59b870 2026-10-30 21:41:51 +0000 sqw14.py (20o)
 18afef7 2026-10-30 22:18:38 +0000 PRESPEC 20p: block KL irreversibility, all genotypes + CS DD (before running)
 61b08b2 2026-10-30 22:19:28 +0000 sqw15.py (20p)
 9c130d1 2026-10-30 22:20:10 +0000 PRESPEC 20p amendment A: DD analysed in 12-h halves (before any result)
+c8eb02b 2026-10-30 22:20:27 +0000 sqw15b.py (20p amendment A)
+726120e 2026-10-30 22:43:23 +0000 PRESPEC 20p amendment B: crash fix, exclusion of fly-phases without Q/W reference (no result read)
+d0cdfca 2026-10-30 22:44:33 +0000 20p amendment B: assertion restricted to occurring symbols; zero rows filled for simulation; refs saved
+ced44cc 2026-10-30 22:44:47 +0000 sqw15_report.py (20p, amendments A and B)
+80ffe67 2026-10-30 23:10:41 +0000 20p results
