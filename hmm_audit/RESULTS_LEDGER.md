@@ -1815,3 +1815,10 @@ fumin  dark  EPR n 34 | MC median +0.127 | HMM median +0.193 | ratio of medians 
 - Predictive checks: the MC reproduces switching rate, Q/W/S run lengths and c_obs at least as well as the HMM (HMM worse on mean Q run, 17-20% of fly-phases outside). Neither reproduces the fraction of 1-min Q/W runs (17-52% outside for both); HMM somewhat better on q_1min in 3 of 4 blocks.
 - Thermodynamics: MC J has the HMM's sign in 79-100% of flies; MC J is 16-26% lower where circulation is clear (CS dark, fumin; p 0.002-0.03). MC EPR lower in the dark (x0.41 CS, x0.66 fumin) but HIGHER in fumin light (x1.34); no consistent 'hidden > observable'. MC has fewer infinite-EPR flies (fumin 6-19% vs 17-34%).
 - Consequence (to be decided by the user, not acted on): the observed S/Q/W chain is the parsimonious model; HMM results are a robustness check against Q/W misclassification.
+
+## Correction to the 20n reading (2026-10-30, user question)
+The entry above says "The emission noise layer is real (detectable in most flies)". Overstated. The bootstrap REJECTS the
+first-order Markov chain (16/20 flies); it does not identify WHY the HMM gains. An HMM with B != I is a non-Markov observed
+process, so its gain can come from (1) Q/W misclassification, (2) memory beyond one minute (cf. 1-min run misfit here, 20h
+hazards, 20k), or (3) within-phase ZT drift of rates that the null's constant-per-12-h chain lacks (cf. 20c). None excluded.
+4/20 flies did not reject. Corrected reading: "the MC is rejected; the HMM captures some of what it misses, source unidentified."

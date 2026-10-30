@@ -211,3 +211,4 @@ dcbcad0 2026-10-29 22:06:15 +0000 20m resolution check: results, Fig 17
 a4a3108 2026-10-30 20:31:02 +0000 sqw13.py (20n)
 558352a 2026-10-30 21:21:12 +0000 sqw13_report.py (20n)
 8c6dd78 2026-10-30 21:21:12 +0000 20n results
+50c8cc9 2026-10-30 21:36:56 +0000 Ledger: correct 20n reading (rejection of MC is not evidence for emission noise)
