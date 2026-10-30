@@ -43,3 +43,13 @@ checked DD: no activity step at the old light switches, -0.014 +- 0.008 vs CS LD
   behavioural symbols is a statistical arrow of time; calling it dissipation assumes the symbols are a coarse-graining of
   a Markov process whose states are even under time reversal.
 - Narrowest block: one fly's light or dark minutes pooled over its days (DD: whole record).
+
+## Amendment A (2026-10-30, written while the main run was in progress; NO result had been read)
+User information: CS DD still oscillates (subjective day vs night), unlike per0DD, so a single whole-record phase is
+non-stationary for CS DD. Added, for BOTH DD genotypes (per0DD as the matched comparison):
+- The estimator run separately in the two 12-h clock halves (ZT 0-12, 12-24 of the recording clock; with a free-running
+  period near 24 h these approximate subjective day/night to within ~1-2 h over 4 days; tau is not estimated).
+- Null A2: 200 records from MC1 with two 12-h matrices (same halves). Null B unchanged (6-h matrices).
+- Same tests and qualifying rule as the main plan (A2 in place of A), Holm across these 4 extra blocks.
+- The whole-record DD rows of the main plan are still reported; for CS DD the halves rows are the ones to read.
+No HMM / MC2 predictions for the halves (not needed for the qualifying rule).
