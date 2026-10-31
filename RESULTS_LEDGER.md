@@ -468,3 +468,41 @@ Not reportable  Neither correlation is evidence of anything: post hoc, n = 25, n
                 so they measure where a fly's bouts fall on the pooled mixture, not a per-fly fit.
                 The +19.9 nats is a comparison with K = 2, not the matched-k comparison of FINDINGS.
 ```
+
+### 2026-10-31  20r-A follow-up (b): CS DD wake hazard rise within the two 12-h record-clock halves
+
+```
+Commit          043e13b7deff16001c0fc67bce88ba2e9f00f8fc (analysis_20r/run_20rA_followups.m 'halves',
+                rise_test_20r.m with NullReplicates 999); log analysis_20r/followup_halves_log.txt,
+                results analysis_20r/followup_halves_CSDD.mat
+Prespec         2026-10-31 "20r-A follow-ups" (b), and its amendment (power at the half sizes),
+                committed in 9389016 before this output was read.
+Time window     Wake bouts STARTING in record hours 0-12 (resp. 12-24) of each of the 4 days, 25 flies
+                pooled; each half is the narrowest block. Not clipped at the half boundary.
+n               1536 (hours 0-12) and 1773 (hours 12-24); xmin 2 s, dt 1 s.
+Result          Hours 0-12. Null K = 2: tau 9.19 and 1949.7 s, q 0.073 / 0.927.
+                bins 12: trough 3255.9 s, RiseRatio 0.326, null median 1.176, 95th 1.474, p 1.000
+                bins 16: trough 5543.1 s, RiseRatio 0.487, null median 1.270, 95th 1.703, p 1.000
+                bins 20: trough 7628.4 s, RiseRatio 0.859, null median 1.386, 95th 1.907, p 0.998
+                bins 24: trough 9437.8 s, RiseRatio 1.613, null median 1.501, 95th 2.189, p 0.345
+                Hours 12-24. Null K = 2: tau 7.87 and 811.7 s, q 0.089 / 0.911.
+                bins 12: trough 1845.4 s, RiseRatio 0.671, null median 1.142, 95th 1.357, p 1.000
+                bins 16: trough 3026.6 s, RiseRatio 0.674, null median 1.226, 95th 1.506, p 1.000
+                bins 20: trough 4073.1 s, RiseRatio 0.448, null median 1.304, 95th 1.664, p 1.000
+                bins 24: trough 3341.9 s, RiseRatio 0.797, null median 1.383, 95th 1.822, p 0.993
+                NullDropped 0 throughout. Troughs again in the far tail (1845-9438 s), never in the
+                100-1000 s range where per0 DD rises. The slow wake time constant differs between
+                halves (1950 vs 812 s): the halves are not the same law, as the free-running rhythm
+                predicts.
+Matched null    Per half, 999 datasets of that half's n from the half's own two-exponential fit, each
+                through the whole estimator on its own bin edges.
+Verdict         Not supported in either half (p >= 0.345 at every count). By the pre-specified reading:
+                no rise within a half either, so masking by the rhythm does not explain the pooled CS
+                DD null. Two halves tested, no correction; correction could only weaken a rise, and
+                there is none. How much this negative is worth depends on the per0 power at n = 1536
+                and 1773 (amendment), still running; to be read together with that entry.
+Not reportable  Not "CS DD has no rise" on its own: until the half-size power is in, low power is not
+                excluded. The censoring gap applies (bouts assigned by start, not clipped at the
+                boundary; long bouts carry other-half time, direction of the bias not established).
+                The halves approximate subjective day/night only to ~1-2 h; tau not estimated.
+```

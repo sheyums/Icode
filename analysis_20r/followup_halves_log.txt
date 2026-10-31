@@ -1,0 +1,14 @@
+CS DD wake, record hours 0-12 (follow-up b): n = 1536, xmin 2 s
+  null K=2: tau 9.19 1949.66 s, q 0.0726 0.9274, logL -12909.1079, degenerate 0
+  bins 12: trough  3255.9 s, peak  7628.8 s, RiseRatio 0.326, null median 1.176, 95th 1.474, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough  5543.1 s, peak 10497.3 s, RiseRatio 0.487, null median 1.270, 95th 1.703, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough  7628.4 s, peak 12714.0 s, RiseRatio 0.859, null median 1.386, 95th 1.907, RiseNullP 0.998, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough  9437.8 s, peak 14446.6 s, RiseRatio 1.613, null median 1.501, 95th 2.189, RiseNullP 0.345, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: not supported
+CS DD wake, record hours 12-24 (follow-up b): n = 1773, xmin 2 s
+  null K=2: tau 7.87 811.68 s, q 0.0888 0.9112, logL -13333.6032, degenerate 0
+  bins 12: trough  1845.4 s, peak  4073.3 s, RiseRatio 0.671, null median 1.142, 95th 1.357, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough  3026.6 s, peak  5480.7 s, RiseRatio 0.674, null median 1.226, 95th 1.506, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough  4073.1 s, peak  6549.5 s, RiseRatio 0.448, null median 1.304, 95th 1.664, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough  3341.9 s, peak  4964.4 s, RiseRatio 0.797, null median 1.383, 95th 1.822, RiseNullP 0.993, NullDropped 0 (bins dropped 2, saturated 1)
+  verdict: not supported
