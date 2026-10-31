@@ -240,3 +240,49 @@ Verdict         Gate FAILS. No CS DD number looked at; 20r-A/B/C not run. No oth
 Not reportable  The RiseRatios here are close to the recorded ones but are not a replication: the bout
                 set differs by 63 bouts, and the gate is a reproduction check, not a test.
 ```
+
+### 2026-10-31  20r gate amendment 3 (pre-09-22 code, C1 and C2): both FAIL; stopping rule reached
+
+```
+Commit          f5a50a49b03fcdf924a3cdb2c8e31381bf9da67b (Icode branch 20r-lclaude)
+Script          analysis_20r/gate_20r.m; outputs analysis_20r/gate_20r_report_C1.txt, _C2.txt
+Prespec         2026-10-31 "20r gate amendment 3: pre-09-22 pipeline, two pre-listed configurations,
+                stopping rule"
+Code            Rockefeller repo at 04e0508^ = ef1bce38626b71216c795d436cc6ad89be2f2af3, exported by
+                git archive to a scratch folder, added with addpath -begin. SHA-256 prefixes of the
+                exported files (LF line endings): process_LocomToSleep 9d9d64ab39da231b, ironout
+                f1db073793d96bf6, segment_sleep_phases 5cd6b76ec3ab2840, sleeptrace fd84c3c4bcd0f001,
+                extractBoutsForModelCompetition 64f6f15985d04e5e. requiredFilesAndProducts listed
+                exactly these five; which -all for each (both runs): first entry the export,
+                second the current Rockefeller copy, e.g.
+                  ironout: <scratch>\rock_pre0922\ironout.m
+                           C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\ironout.m
+                After each run which('ironout') resolved to the current Rockefeller copy again
+                (path restored).
+Input           The 25 per0 DD cutdata files (zip SHA-256 778599db...). Teliminate 0, timeInterval 1,
+                bridgeWakeSeconds 1, deadThresh 12; C1 minDays 2, C2 minDays 2.8.
+Time window     Each fly's whole cut record, pooled.
+n               Both: 25 flies, 4017 wake / 4022 sleep bouts.
+Result          C1: no match. 4017 / 4022 vs 3989 / 3987; 16-bin centres match, at-risk and events do
+                not (same table as amendment 2). Items (3)-(4) not computed (amendment 3: only for a
+                matching configuration).
+                C2: no match, same counts.
+                The C1 bouts are bit-identical to amendment 2's (current code), and C2's to C1's
+                (isequaln on the full wake and sleep matrices). So the 2026-09-22 recoding does not
+                change the bouts on these data; the "bit-identical" claim in 04e0508's message,
+                previously unchecked, holds here.
+Diagnostic      Per fly: wake 81-249 (recorded 81-248), sleep 81-249 (recorded 80-249). First bout of
+                the record kept in 0 of 25 flies, last bout kept in 0 of 25, in both configurations:
+                segment_sleep_phases drops every bout touching the first or last sample as censored
+                (20 sleep and 14-ish wake per run, reported by the extractor as "censored by
+                segmenter"). Per-fly counts in gate_20r_report_C1.txt.
+Saved           per0DD_bouts_20r_C1.mat 922749f1ad8bf9dfc7fc98dcc09dfb02c666237058f727536e55577e0d75c754
+                per0DD_bouts_20r_C2.mat 62f652a47a4f935745728989dedf93b909ac2cf85f10de9004dd1b40c832cb5f
+                (identical contents to per0DD_bouts_20r_T0.mat; the files differ only in metadata).
+Matched null    Not applicable (reproduction check).
+Verdict         No configuration reproduces the reference set. STOPPING RULE reached: no further
+                settings are tried. 20r moves to the replication route, which must be written as its
+                own PRESPEC entry before anything runs. No CS DD number has been looked at.
+Not reportable  Nothing here is a hazard result. The stored 3989 / 3987 set is not reproducible from
+                the code and data available; its provenance is unresolved.
+```

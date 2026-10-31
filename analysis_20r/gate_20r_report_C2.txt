@@ -1,0 +1,82 @@
+20r gate, 2026-10-31 18:42, MATLAB 26.1.0.3346908 (R2026a) Update 5
+stage dir: C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\per0DD_cut; Teliminate 0 h; minDays 2.8; tag C2
+code dir: C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922
+pipeline files (5), which -all, first entry is the one used:
+extractBoutsForModelCompetition:
+    C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922\extractBoutsForModelCompetition.m
+    C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\extractBoutsForModelCompetition.m
+ironout:
+    C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922\ironout.m
+    C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\ironout.m
+process_LocomToSleep:
+    C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922\process_LocomToSleep.m
+    C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\process_LocomToSleep.m
+segment_sleep_phases:
+    C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922\segment_sleep_phases.m
+    C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\segment_sleep_phases.m
+sleeptrace:
+    C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\rock_pre0922\sleeptrace.m
+    C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts\sleeptrace.m
+flies 25; wake bouts >= 2 s: 4017 (below xmin: 0); sleep bouts >= 300 s: 4022 (below: 0)
+fly-days covered by bouts: 90.45
+per fly: wake 81-249 (recorded 81-248), sleep 81-249 (recorded 80-249); first bout kept in 0 flies, last bout kept in 0
+per fly (file, wake, sleep, record s, first kept, last kept):
+   1 12_29_2017_multibeam_pruned2_10.txt_from1stLD.txtcutdata_4.8.2025.txt   225  226  345600 0 0
+   2 12_29_2017_multibeam_pruned2_12.txt_from1stLD.txtcutdata_4.8.2025.txt   160  159  345600 0 0
+   3 12_29_2017_multibeam_pruned2_3.txt_from1stLD.txtcutdata_4.8.2025.txt    249  249  345600 0 0
+   4 12_29_2017_multibeam_pruned2_5.txt_from1stLD.txtcutdata_4.8.2025.txt    161  161  345600 0 0
+   5 12_29_2017_multibeam_pruned2_7.txt_from1stLD.txtcutdata_4.8.2025.txt    122  122  345600 0 0
+   6 1_26_2018_multibeam_pruned_32.txt_from1stLD.txtcutdata_4.8.2025.txt     164  163  345600 0 0
+   7 1_8_2018_multibeam_pruned_4.txt_from1stLD.txtcutdata_4.8.2025.txt        84   83  345600 0 0
+   8 1_8_2018_multibeam_pruned_5.txt_from1stLD.txtcutdata_4.8.2025.txt       131  131  345600 0 0
+   9 1_8_2018_multibeam_pruned_7.txt_from1stLD.txtcutdata_4.8.2025.txt       229  229  345600 0 0
+  10 2_18_2018_multibeam_pruned2_54.txt_from1stLD.txtcutdata_4.8.2025.txt    164  165  259201 0 0
+  11 2_18_2018_multibeam_pruned2_58.txt_from1stLD.txtcutdata_4.8.2025.txt    113  113  259201 0 0
+  12 2_6_2018_multibeam_pruned_14.txt_from1stLD.txtcutdata_4.8.2025.txt      177  176  345600 0 0
+  13 2_6_2018_multibeam_pruned_7.txt_from1stLD.txtcutdata_4.8.2025.txt        81   81  345600 0 0
+  14 5_28_2020_4b_wc_pruned_11.txt_from1stLD.txtcutdata_4.8.2025.txt         239  240  345600 0 0
+  15 5_28_2020_4b_wc_pruned_2.txt_from1stLD.txtcutdata_4.8.2025.txt          167  168  345600 0 0
+  16 6_11_2020_4b_rc2_pruned_15.txt_from1stLD.txtcutdata_4.8.2025.txt        203  204  345600 0 0
+  17 6_25_2018_2boardmb_pruned_14.txt_from1stLD.txtcutdata_4.8.2025.txt      169  169  259201 0 0
+  18 6_25_2018_2boardmb_pruned_15.txt_from1stLD.txtcutdata_4.8.2025.txt      132  133  259201 0 0
+  19 6_25_2018_2boardmb_pruned_27.txt_from1stLD.txtcutdata_4.8.2025.txt      171  171  259201 0 0
+  20 6_25_2018_2boardmb_pruned_28.txt_from1stLD.txtcutdata_4.8.2025.txt       97   98  259201 0 0
+  21 6_25_2018_2boardmb_pruned_4.txt_from1stLD.txtcutdata_4.8.2025.txt       104  105  259201 0 0
+  22 6_25_2018_2boardmb_pruned_8.txt_from1stLD.txtcutdata_4.8.2025.txt       154  153  259201 0 0
+  23 6_25_2018_2boardmb_pruned_9.txt_from1stLD.txtcutdata_4.8.2025.txt       101  102  259201 0 0
+  24 6_25_2020_4b_rc_pruned_19.txt_from1stLD.txtcutdata_4.8.2025.txt         228  228  345600 0 0
+  25 6_25_2020_4b_rc_pruned_20.txt_from1stLD.txtcutdata_4.8.2025.txt         192  193  345600 0 0
+16 bins: 15 kept bins
+  centre    atRisk  events   (FINDINGS: centre atRisk events)
+      1.41    4017      49   (1.41 3989 46)
+      2.45    3968      35   (2.45 3943 34)
+      3.87    3933      72   (3.87 3909 69)
+      6.71    3861      85   (6.71 3840 85)
+     12.00    3776     114   (12 3755 112)
+     21.17    3662     100   (21.2 3643 98)
+     36.66    3562     125   (36.7 3545 125)
+     63.12    3437     160   (63.1 3420 160)
+    109.33    3277     237   (109.3 3260 237)
+    190.12    3040     400   (190.1 3023 400)
+    330.81    2640     595   (330.8 2623 593)
+    574.50    2045     848   (574.5 2030 844)
+    997.72    1197     740   (997.7 1186 731)
+   1733.43     457     352   (1733 455 351)
+   3012.26     105      98   (3012 104 97)
+null K=2: tau NaN NaN s, q NaN NaN, logL NaN (recorded -29328.2460)
+bins 12: RiseRatio NaN, trough NaN s, peak NaN s
+bins 16: RiseRatio NaN, trough NaN s, peak NaN s
+bins 20: RiseRatio NaN, trough NaN s, peak NaN s
+bins 24: RiseRatio NaN, trough NaN s, peak NaN s
+check flies    true
+check wake     false
+check sleep    false
+check centres  true
+check atRisk   false
+check events   false
+check tau      false
+check q        false
+check logL     false
+check rise     false
+GATE FAIL
+saved C:\Users\sheyu\Icode\analysis_20r\per0DD_bouts_20r_C2.mat
