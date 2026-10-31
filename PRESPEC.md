@@ -372,3 +372,53 @@ Notes           minDays cannot remove a fly here unless the old code trims diffe
                 >= 3.000 d with Teliminate 0); it is listed because the recorded per-fly records were
                 2.8-4.0 d. C2 runs only if C1 does not match (stopping rule).
 ```
+
+### 2026-10-31  20r amendment: stored per0 DD bouts lost (replication route)
+
+```
+Why             The stopping rule of gate amendment 3 was reached (ledger 0d007e8): no pre-listed
+                configuration of the current or pre-09-22 pipeline reproduces the stored 3989 wake /
+                3987 sleep set, whose files are lost. The gate is therefore REPLACED by a replication.
+                Text from Sheyum and cClaude, 2026-10-31.
+Extractor       ONE extractor for both genotypes: the current Rockefeller pipeline (HEAD 001deca;
+                process_LocomToSleep 7aec365d5b79c859, sleeptrace 0deb702eed5cbfcc, ironout
+                f22f91c262f8c370, segment_sleep_phases a627f698159bc97a, extractBoutsForModelCompetition
+                64f6f15985d04e5e), timeInterval 1, bridgeWakeSeconds 1, Teliminate 0, deadThresh 12,
+                minDays 3, phase 'entire'. It implements the lab rule (sleep = >= 300 s of zero
+                counts; a single active second bridged only when the inactive runs on both sides are
+                each >= 300 s; wake bout = gap between consecutive sleep bouts; xmin 2 s wake, 300 s
+                sleep, dt 1 s). Validated on hmm_audit/golden/G1_sleep_bouts.json (ledger bf40518):
+                bridging agrees in every case; bouts touching the first or last sample are DROPPED as
+                censored, the edge convention DESIGNATED BY SHEYUM on 2026-10-31 ("Drop edge
+                bouts"), where the Python reference keeps them.
+Data            per0 DD: the 25 cutdata files (zip 778599db...). Extracted: 4017 wake / 4022 sleep,
+                90.45 fly-days covered by bouts (recorded set: 3989 / 3987, ~90).
+                CS DD: CS_DD_activfiles.zip (33495ce4...), each file cut to its first min(N, 345600)
+                samples (the cut measured on per0 DD, amendment 2), Teliminate 0. SHA-256 of every
+                cut file recorded.
+Steps           (1) Save the per0 DD bouts (wake and sleep, per fly) to
+                    analysis_20r/per0DD_bouts_20r_replication.mat, SHA-256 in the ledger.
+                (2) REPLICATION of "2026-09-15 per0 DD wake: the hazard rise at four fixed bin
+                    counts", unchanged: null = FitHyperexponentialMLE MaxComponents 2, discrete,
+                    SamplingInterval 1, RandomSeed 1, its K = 2 SurvivalHandle; BoutHazard NumBins
+                    {12,16,20,24}, Spacing "log", MinAtRisk 10, Alpha 0.05, Bootstrap 0,
+                    NullReplicates 999, RandomSeed 1. Same decision rule (all four: supported; some:
+                    supported but bin-sensitive; none: not supported; NullDropped > 0: not
+                    computable). Reported whatever it gives, next to the 2026-09-15 numbers.
+                (3) Only then CS DD: 20r-A exactly as written (rise test, per-fly influence, sleep
+                    control, CompareBoutModels), with this extractor.
+                (4) 20r-B and 20r-C exactly as written, with this extractor. 20r-B's synthetic traces
+                    go through the same pipeline (process_LocomToSleep, same settings). 20r-C's per0
+                    fit is hyper_erlang with Shapes [1 1 5] (the FINDINGS shapes) refitted on the
+                    re-extracted per0 bouts; responsibility of the series branch for a bout of k
+                    bins = w_3 [S_3(k-1) - S_3(k)] / sum_j w_j [S_j(k-1) - S_j(k)], the discrete
+                    likelihood's own convention.
+                (5) 20r-A's per-fly influence and 20r-B also run on per0 DD's re-extracted bouts
+                    where 20r-A/B call for per0 (influence: 20r-A asks only CS; not added).
+Decision rules  Unchanged from 20r-A, 20r-B, 20r-C and the 2026-09-15 entry.
+Matched null    As in those entries, at the re-extracted n.
+Notes           FINDINGS' per0 DD numbers were computed on the lost set; the replication says whether
+                they carry to the re-extracted set (28 more wake bouts). 20r-A's "hyper_erlang is
+                pre-specified for CS DD" and its blind status are unchanged: no CS DD number has been
+                looked at.
+```
