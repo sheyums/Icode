@@ -16,3 +16,12 @@ for g in ('CS','CSDD','per0LD','per0DD','fumin','sss'):
     x=np.array([q['J'] for q in pts])**2; y=np.array([q['EPR'] for q in pts]); s0=(x@y)/(x@x)
     A=np.c_[np.ones_like(x),x]; b,s1=np.linalg.lstsq(A,y,rcond=None)[0]
     print(f'{g:6s} L origin {1/s0:.3f} | free intercept: slope change {100*(s1-s0)/s0:+.1f}%, intercept {b:+.3f} nats/h')
+# (3) Genotype vs CS by the bootstrap distribution of the difference in L (sqw_ref.onsager_bootstrap / bootstrap_difference_p,
+#     the procedure the Methods text describes), count points.
+import sqw_ref as R
+pts={}
+for g in ('CS','CSDD','per0LD','per0DD','fumin','sss'):
+    pts[g]=[(d['fly'],d['main'][p]['J'],d['main'][p]['EPR']) for d in O if d['g']==g for p in range(len(d['main'])) if d['main'][p]['ok'] and d['main'][p]['J_chain'] is not None and abs(d['main'][p]['J_chain'])>=1e-12 and np.isfinite(d['main'][p]['EPR'])]
+B={g:R.onsager_bootstrap(v,2000,20) for g,v in pts.items()}
+for g in ('CSDD','per0LD','per0DD','fumin','sss'):
+    out=R.bootstrap_difference_p(B[g],B['CS']); print(f'{g:6s} - CS: L difference 95% CI and p {out}')

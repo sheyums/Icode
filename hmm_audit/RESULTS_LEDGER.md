@@ -2056,3 +2056,14 @@ fumin  L origin 0.243 | free intercept: slope change -11.2%, intercept +0.069 na
 sss    L origin 0.145 | free intercept: slope change -4.3%, intercept +0.012 nats/h
 ```
 - Count J vs exact observed-chain J per fly: Spearman 0.98-1.00 in every block. Free intercept vs through the origin: slope changes 0 to -11% (fumin -11%, per0DD -8%); with the intercept, L = 0.152 (sss), 0.269 (CS DD), 0.274 (fumin), 0.282 (CS), 0.286 (per0LD), 0.382 (per0DD): the order of the five original genotypes is unchanged (CS DD and fumin, 0.005 apart, swap).
+
+## 20s-A addendum 2 — Onsager L vs CS by the fly-bootstrap difference (2026-10-31, code 5e6a295; the procedure the Methods text names; count points)
+```
+CSDD   - CS: L difference 95% CI and p (array([-0.05138066,  0.04472766]), np.float64(0.773))
+per0LD - CS: L difference 95% CI and p (array([-0.03219124,  0.06580453]), np.float64(0.465))
+per0DD - CS: L difference 95% CI and p (array([0.01328367, 0.13997391]), np.float64(0.026))
+fumin  - CS: L difference 95% CI and p (array([-0.08499084,  0.01722534]), np.float64(0.17))
+sss    - CS: L difference 95% CI and p (array([-0.16762543, -0.07750639]), np.float64(0.0))
+```
+- By the bootstrap difference (each fly's two phases resampled together): sss < CS (p < 0.001), per0DD > CS (p 0.026); fumin vs CS NOT different (p 0.17; the Wald BH 0.044 in the 20s-A entry overstates, as noted there); per0LD (p 0.47) and CS DD (p 0.77) not different.
+- C5 therefore reads: EPR grows faster than linearly with J; L is lower in sss and higher in per0 DD than in CS; per0 LD, fumin and CS DD are not distinguishable from CS. (Supersedes the C5 wording in the 20s-A entry's reading.)

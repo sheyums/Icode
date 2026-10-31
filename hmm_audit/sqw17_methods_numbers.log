@@ -15,3 +15,8 @@ per0LD L origin 0.286 | free intercept: slope change +0.0%, intercept -0.000 nat
 per0DD L origin 0.352 | free intercept: slope change -7.9%, intercept +0.023 nats/h
 fumin  L origin 0.243 | free intercept: slope change -11.2%, intercept +0.069 nats/h
 sss    L origin 0.145 | free intercept: slope change -4.3%, intercept +0.012 nats/h
+CSDD   - CS: L difference 95% CI and p (array([-0.05138066,  0.04472766]), np.float64(0.773))
+per0LD - CS: L difference 95% CI and p (array([-0.03219124,  0.06580453]), np.float64(0.465))
+per0DD - CS: L difference 95% CI and p (array([0.01328367, 0.13997391]), np.float64(0.026))
+fumin  - CS: L difference 95% CI and p (array([-0.08499084,  0.01722534]), np.float64(0.17))
+sss    - CS: L difference 95% CI and p (array([-0.16762543, -0.07750639]), np.float64(0.0))
