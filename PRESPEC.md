@@ -153,3 +153,98 @@ Notes           Reinstated at Sheyum's request on 2026-09-15, having been droppe
                 rise is in the flies or is produced by scoring bursty movement into wake bouts,
                 which needs raw traces.
 ```
+
+### 2026-10-31  20r-A  CS DD wake: the hazard rise at the four fixed bin counts (blind)
+
+```
+Question        Does the pooled CS DD wake hazard rise after its trough by more than a strictly
+                falling (two-exponential) hazard produces, at each of the four standing bin counts?
+                (Is the per0 DD rise clock-independent?)
+Data            Canton-S, constant darkness, 25 flies, 4 days each: the 25 files
+                *_from1stLD.txt uploaded by Sheyum on 2026-10-30 (CS_DD_activfiles.zip; recorded in
+                the same runs as per0 DD, e.g. 12_29_2017 multibeam). Checked DD in the S/Q/W audit:
+                no activity step at the old light switches (-0.014 +- 0.008 vs CS LD +0.078).
+                1-s counts, 1-s bridged scoring (ironout), extracted with the SAME code and settings
+                that produced subset_per0DDwakebouts.mat (gate below).
+Time window     The whole analysed record of each fly, all 25 pooled. No subjective-phase split:
+                CS DD has a free-running rhythm, but mixing day and night bouts can only make a
+                pooled hazard fall faster, never rise, so pooling is conservative for a rise.
+Fixed choices   xmin 2 s, dt 1 s (wake; xmin = (floor(bridgeWakeSeconds/dt)+1)*dt with 1-s
+                bridging). BoutHazard with NumBins in {12, 16, 20, 24}, Spacing "log", MinAtRisk 10,
+                Alpha 0.05, Bootstrap 0, NullReplicates 999, RandomSeed 1. Null model:
+                FitHyperexponentialMLE on the same bouts, MaxComponents 2, discrete,
+                SamplingInterval 1, RandomSeed 1; its K = 2 SurvivalHandle as NullSurvivalHandle.
+                Influence: the 2026-09-15 per-fly removal design unchanged (199 random removals of
+                n_i bouts per fly, RandomSeed 1000 + fly). Control: the same rise test on CS DD
+                SLEEP bouts (xmin 300 s, dt 1 s), where per0 DD showed no hump.
+                Model library: CompareBoutModels on the CS DD wake bouts, default library,
+                SamplingInterval 1, MaxComponents 5, read per CLAUDE.md steps 1-3.
+Decision rule   As 2026-09-15: RiseNullP < 0.05 at all four counts: supported; some but not all:
+                supported but bin-sensitive; none: not supported; NullDropped > 0: not computable.
+                Influence verdict by the 2026-09-15 rule. Sleep control read the same way.
+Matched null    999 datasets of the observed n from the fitted two-exponential model, each through
+                the whole estimator on its own bin edges.
+Notes           GATE before any CS DD number: re-extract per0 DD from its raw count files with the
+                same code and confirm 3989 wake and 3987 sleep bouts identical (after sorting) to
+                subset_per0DDwakebouts.mat / FINDINGS. If the gate fails, stop and report.
+                BLIND for CS DD at all four counts. hyper_erlang is now PRE-SPECIFIED for CS DD, so
+                its fit p-value there is not optimistic (unlike per0 DD, FINDINGS).
+                Prepared in the S/Q/W audit session (hmm_audit/INSTRUCTIONS_20r_lClaude.md).
+```
+
+### 2026-10-31  20r-B  per0 DD and CS DD wake: is the rise made by burst-pause renewal and scoring?
+
+```
+Question        Does the wake hazard rise survive a null in which each fly's raw 1-s trace is
+                replaced by an alternating renewal of its OWN active and inactive runs (same marginal
+                run lengths, no correlation between successive runs), scored by the identical
+                pipeline? This is the open question of the 2026-09-15 entries ("in the flies, or
+                produced by scoring bursty movement into wake bouts; needs raw traces").
+Data            per0 DD (25 flies, the 2026-09-15 data) and CS DD (20r-A data), raw 1-s counts.
+Time window     Each fly's whole analysed record (the same trimming as the extraction); per fly
+                for the null construction, pooled over flies for the statistic.
+Fixed choices   Per fly: active runs = maximal runs of count > 0; inactive runs = maximal runs of
+                count == 0, ALL lengths (including >= 300 s). Synthetic trace: start in the state of
+                the fly's first second; alternate active/inactive runs drawn iid with replacement
+                from that fly's own empirical run lengths; stop at the fly's record length (truncate
+                the last run). Each synthetic trace goes through ironout 1-s bridging and the same
+                bout extraction (xmin 2 s wake, dt 1 s); pool the 25 synthetic flies; if the pooled
+                synthetic wake-bout count exceeds the observed n, subsample uniformly without
+                replacement to n (if smaller, keep and report). Statistic: BoutHazard RiseRatio at
+                NumBins {12, 16, 20, 24}, Spacing "log", MinAtRisk 10, no null replicates.
+                B = 199 synthetic pooled datasets per genotype, RandomSeed 2000 + b.
+Decision rule   Per bin count p_ren = (1 + #{RiseRatio* >= observed}) / 200. Rise BEYOND renewal if
+                p_ren < 0.05 at >= 3 of 4 counts; EXPLAINED by renewal and scoring if p_ren >= 0.05 at
+                >= 3 of 4 counts; otherwise inconclusive (bin-sensitive). Applied to per0 DD and CS DD
+                separately; for CS DD only if 20r-A gives "supported" or "supported but bin-sensitive".
+Matched null    The renewal construction above: same flies, same record lengths, same run-length
+                marginals, same scoring, observed n (by subsampling where possible).
+Notes           Reading: a rise beyond renewal needs correlations between successive runs (a
+                progression through wake), which is what sequential hidden stages would produce. A
+                rise explained by renewal means run-length statistics plus the 5-min scoring rule are
+                enough; it does not then evidence hidden stages. Also report, descriptively, the
+                renewal null's median RiseRatio next to the two-exponential null medians of the
+                2026-09-15 entry (does renewal itself make a rise?). Check before the run: one
+                synthetic per0 fly's run-length histograms reproduce the real fly's.
+```
+
+### 2026-10-31  20r-C  EXPLORATORY: does the hazard-rise branch track the 20p excess irreversibility per fly?
+
+```
+Question        Across flies, is the share of a fly's wake bouts attributed to the series (Erlang)
+                branch associated with that fly's 20p excess irreversibility E?
+Data            per0 DD and CS DD wake bouts (20r-A/B data); E per fly from
+                hmm_audit/e_perfly_20p.csv (matched by file name; flies without a Q/W reference
+                have no E and are excluded).
+Time window     Each fly's whole record.
+Fixed choices   The pooled hyper_erlang fit selected for that genotype (per0 DD: FINDINGS shapes
+                [1 1 5]; CS DD: 20r-A's fit if hyper_erlang is selected or identified, else not run).
+                Per fly: mean posterior responsibility of the series branch over its wake bouts.
+                Spearman rank correlation with E, and separately with E_wakeonly.
+Decision rule   None. Exploratory and hypothesis-generating: report rho, its p-value, n. Not to be
+                cited as evidence unless replicated by a pre-specified test on new flies.
+Matched null    Not applicable (exploratory).
+Notes           Motivated AFTER seeing 20p (per0 DD carried the excess) and FINDINGS (per0 DD carries
+                the series branch): a post hoc link, so it is labelled exploratory here. ~25 flies
+                per genotype and noisy per-fly E: low power, and a null result means little.
+```
