@@ -255,3 +255,4 @@ cab282a 2026-10-31 20:22:53 +0000 START_HERE.md; PORTING_GUIDE section 11 (Plan 
 268b147 2026-10-31 22:43:24 +0000 PLANS: C8 status after 20r gate failure (replication route)
 b9b02db 2026-10-31 22:59:07 +0000 PLANS: C8 per0 DD rise replicated on re-extracted bouts (20r-lclaude 7eae6a4)
 f78fd00 2026-10-31 23:24:04 +0000 PLANS: C8 after 20r-A (CS DD no rise; on hold for cut asymmetry)
+4a2f753 2026-10-31 23:24:54 +0000 CS DD cut confirmed identical to per0 DD; C8 updated

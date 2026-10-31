@@ -2067,3 +2067,8 @@ sss    - CS: L difference 95% CI and p (array([-0.16762543, -0.07750639]), np.fl
 ```
 - By the bootstrap difference (each fly's two phases resampled together): sss < CS (p < 0.001), per0DD > CS (p 0.026); fumin vs CS NOT different (p 0.17; the Wald BH 0.044 in the 20s-A entry overstates, as noted there); per0LD (p 0.47) and CS DD (p 0.77) not different.
 - C5 therefore reads: EPR grows faster than linearly with J; L is lower in sss and higher in per0 DD than in CS; per0 LD, fumin and CS DD are not distinguishable from CS. (Supersedes the C5 wording in the 20s-A entry's reading.)
+
+## Note (2026-10-31): CS DD input files were already cut
+Sheyum confirms the CS DD files (CS_DD_activfiles.zip, *_from1stLD.txt, 4.000 d) were cut the same way as the per0 DD
+cutdata files: the first 24 h of DD removed before export. The CS DD rows of 20p, 20q and 20s-A, and lClaude's 20r-A,
+therefore compare like with like; no re-run needed.
