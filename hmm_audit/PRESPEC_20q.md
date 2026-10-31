@@ -46,3 +46,15 @@ come only from paired tests on per-fly quantities.
 - Expected, stated now: weakly driven cycles usually sit far below the TUR bound (Q << 1), so S2 is unlikely; S3 is then
   the result. Any outcome is reported.
 - Narrowest block: one fly's whole DD record (LD: one fly's light or dark minutes pooled over days).
+
+## Amendment C (2026-10-31, before any data run; found by the pre-run sanity check)
+1. FORMULA: the bound is B = J^2 / D, not 2 J^2 / D. Barato-Seifert: eps^2 Sigma >= 2 with eps^2 = Var/<X>^2,
+   Var = 2 D t, <X> = J t, Sigma = sigma t  =>  sigma >= J^2 / D. Every B above and below is J^2 / D.
+2. DISCRETE TIME: the TUR is proven for continuous-time jump processes. Measured with the corrected formula: over 1000
+   random 3-state chains, B/sigma <= 1.000 for the generator P - I, but up to 1.074 for the 1-min discrete chain. On
+   the flies' fitted observed chains (42 fly-phases, every 7th fly) the discrete/continuous inflation of B is median
+   1.0008, max 1.0051. Rule added: per fly, kappa = B_MC(discrete) / B_MC(generator P - I), exact; S2 uses
+   B_c / kappa (deflated) against sigma_MC. B_MC, B_HMM reported in both versions.
+3. DISCLOSED: that check computed the exact Q_MC = B_MC / sigma_MC (an S3 quantity) for those 42 fly-phases: median 0.98,
+   max 1.00. The stated expectation "Q << 1" is withdrawn: near equilibrium a single cycle nearly saturates the TUR, so
+   the observed chain sits at the bound. No data estimate (B_obs) had been computed. Tests and decision rules unchanged.
