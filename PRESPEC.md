@@ -422,3 +422,47 @@ Notes           FINDINGS' per0 DD numbers were computed on the lost set; the rep
                 pre-specified for CS DD" and its blind status are unchanged: no CS DD number has been
                 looked at.
 ```
+
+### 2026-10-31  20r-A follow-ups: power at CS DD's n, and the CS DD rise within 12-h clock halves
+
+```
+Question        (a) At CS DD's sample size, how often would the rise test detect the per0 DD rise?
+                (b) Is a CS DD wake-hazard rise present within either 12-h half of the record clock,
+                    masked in the pooled test by the free-running rhythm?
+                Asked by cClaude after 20r-A (not supported), to tell "no rise" from "not detectable".
+                Written after the 20r-A result was read; the questions follow from it, the settings
+                below are fixed before either runs.
+Data            (a) the per0 DD reference bouts, analysis_20r/per0DD_bouts_20r_replication.mat
+                    (SHA-256 b14ba340...), 25 flies, 4017 wake bouts.
+                (b) the CS DD bouts, analysis_20r/CSDD_bouts_20r.mat (SHA-256 80402183...), 3309 wake
+                    bouts, with their onset bins (meta.OnsetBins, 1 = the first second of the cut
+                    record, which starts at subjective day).
+Time window     (a) each subsample, pooled. (b) each half, pooled over the 25 flies and 4 days.
+Fixed choices   (a) n_CS = 3309. B = 199 subsamples, subsample b drawn with rng(3000 + b, 'twister'):
+                    flies in random order (randperm), whole flies added while the running total stays
+                    <= 3309, then the remainder taken as a uniform random subset, without replacement,
+                    of the next fly's bouts. Each subsample through rise_test_20r unchanged EXCEPT
+                    NullReplicates 199 (Sheyum, 2026-10-31: ~4 h instead of ~20 h; p in steps of
+                    0.005): null = K = 2 hyperexponential fitted to that subsample (RandomSeed 1),
+                    NumBins {12,16,20,24}, Spacing "log", MinAtRisk 10, BoutHazard RandomSeed 1.
+                (b) A wake bout is in the first half if mod(onset - 1, 86400) < 43200 (hours 0-12 of
+                    each record day), else the second. Each half through rise_test_20r unchanged
+                    (NullReplicates 999). The 20p amendment-A split; the free-running period is not
+                    estimated, so the halves approximate subjective day and night to ~1-2 h over 4 d.
+Decision rule   (a) Descriptive: per bin count, power = fraction of the 199 with RiseNullP < 0.05; also
+                    the fraction whose four p-values give "supported" and "supported or supported but
+                    bin-sensitive". Reading: if power is high at 12 and 16 bins (where per0 detects
+                    the rise), CS DD's null is informative; if low, it is not.
+                (b) Each half read by the 2026-09-15 rule. Either half "supported" or "supported but
+                    bin-sensitive": a rise is present within a half and the pooled CS DD verdict may
+                    reflect masking. Neither: no rise within a half either. Two halves tested, no
+                    correction applied; say so when reporting.
+Matched null    (a) the per0 rise test's own null, at n = 3309, 199 replicates per subsample.
+                (b) per half, 999 datasets of that half's n from the half's own K = 2 fit.
+Notes           (b) inherits the censoring gap (CLAUDE.md step 0): bouts are assigned by START and not
+                clipped, so a long bout starting late in a half carries time from the other half, and
+                those long bouts sit in the tail where a rise would be read. The direction of the
+                bias is not established; it must be stated with any (b) result.
+                (a) subsamples share flies and bouts, so the 199 are not independent datasets; the
+                power is an estimate for these flies, not for a new cohort.
+```
