@@ -1,0 +1,17 @@
+G1 golden validation, 2026-10-31 18:44; code C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts
+x301_1_300_bridged         bridged   python [6 602]                matlab kept [6 602]                matlab before censoring [6 602]                AGREE
+x301_1_300_bridged         unbridged python [6 301] [308 300]      matlab kept [6 301] [308 300]      matlab before censoring [6 301] [308 300]      AGREE
+x301_1_100_not_bridged     bridged   python [6 301]                matlab kept [6 301]                matlab before censoring [6 301]                AGREE
+x301_1_100_not_bridged     unbridged python [6 301]                matlab kept [6 301]                matlab before censoring [6 301]                AGREE
+x300_2_300_not_bridged     bridged   python [6 300] [308 300]      matlab kept [6 300] [308 300]      matlab before censoring [6 300] [308 300]      AGREE
+x300_2_300_not_bridged     unbridged python [6 300] [308 300]      matlab kept [6 300] [308 300]      matlab before censoring [6 300] [308 300]      AGREE
+x299_1_400_not_bridged     bridged   python [306 400]              matlab kept [306 400]              matlab before censoring [306 400]              AGREE
+x299_1_400_not_bridged     unbridged python [306 400]              matlab kept [306 400]              matlab before censoring [306 400]              AGREE
+chain_300_1_300_1_300      bridged   python [6 902]                matlab kept [6 902]                matlab before censoring [6 902]                AGREE
+chain_300_1_300_1_300      unbridged python [6 300] [307 300] [608 300] matlab kept [6 300] [307 300] [608 300] matlab before censoring [6 300] [307 300] [608 300] AGREE
+at_start_no_left_flank     bridged   python [1 801]                matlab kept []                     matlab before censoring [1 801]                DIFFER
+at_start_no_left_flank     unbridged python [1 400] [402 400]      matlab kept [402 400]              matlab before censoring [1 400] [402 400]      DIFFER
+exactly_300                bridged   python [4 300]                matlab kept [4 300]                matlab before censoring [4 300]                AGREE
+exactly_300                unbridged python [4 300]                matlab kept [4 300]                matlab before censoring [4 300]                AGREE
+x299                       bridged   python []                     matlab kept []                     matlab before censoring []                     AGREE
+x299                       unbridged python []                     matlab kept []                     matlab before censoring []                     AGREE

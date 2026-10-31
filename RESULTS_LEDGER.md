@@ -296,3 +296,37 @@ Correct         30 wake and 20 sleep bouts dropped as boundary-censored, over th
                 identical). Whole-trace counts, as the extractor reports them.
 Unchanged       Everything else in that entry.
 ```
+
+### 2026-10-31  20r: MATLAB scoring chain against the G1 golden bridging cases
+
+```
+Commit          ee138cfe59ebf0123496eec9045d4a1a653c6bec (Icode branch 20r-lclaude)
+Script          analysis_20r/validate_G1_20r.m; output analysis_20r/G1_validation.txt
+Prespec         None of its own: a code check required by the replication route (Sheyum/cClaude,
+                2026-10-31) before that route's PRESPEC entry names the extractor.
+Code            Current Rockefeller pipeline (HEAD 001deca): sleeptrace -> ironout(.,1,1) ->
+                segment_sleep_phases(timeInterval=1), as process_LocomToSleep calls them.
+Golden          hmm_audit/golden/G1_sleep_bouts.json (SHA-256 prefix 49ecca22e49f6643), from sqw_ref.sleep_bouts
+                (Python); 0-based starts shifted +1.
+Result          8 cases x {bridged, unbridged} = 16 comparisons. 14 AGREE, 2 DIFFER.
+                Every bridging case agrees: 301-1-300 bridged to 602 s; 301-1-100, 300-2-300 and
+                299-1-400 not bridged; the chain 300-1-300-1-300 bridged to 902 s; exactly 300 s is a
+                bout; 299 s is not.
+                The 2 differences are one case, at_start_no_left_flank (400 s inactive from the first
+                sample, 1 active, 400 inactive, 5 active):
+                  Python bridged    [1 801]          MATLAB kept []
+                  Python unbridged  [1 400] [402 400]  MATLAB kept [402 400]
+                Before segment_sleep_phases' censoring, MATLAB's scored wave holds exactly Python's
+                bouts ([1 801] and [1 400] [402 400]). So the bridging agrees there too; the
+                difference is EDGE HANDLING ONLY: MATLAB drops a bout touching the first or last
+                sample as censored, Python keeps it.
+                Consistent with the per0 DD counts: Python 4042 sleep vs MATLAB 4022 is 20, exactly
+                the 20 sleep bouts MATLAB drops as censored there (C1 correction entry); wake 4017 in
+                both.
+Matched null    Not applicable (code check).
+Verdict         Neither side changed. The lab convention for bouts at the record edges is Sheyum's to
+                designate; the 20r extractor will be the designated one, stated in the replication
+                route's PRESPEC entry.
+Not reportable  Not a test of either convention's correctness. Neither convention reproduces the lost
+                3989 / 3987 set.
+```
