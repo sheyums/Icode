@@ -286,3 +286,13 @@ Verdict         No configuration reproduces the reference set. STOPPING RULE rea
 Not reportable  Nothing here is a hazard result. The stored 3989 / 3987 set is not reproducible from
                 the code and data available; its provenance is unresolved.
 ```
+
+### 2026-10-31  Correction to "20r gate amendment 3 (pre-09-22 code, C1 and C2)"
+
+```
+Commit          0d007e8 (no new computation; read from per0DD_bouts_20r_C1.mat, meta.NumCensoredByPipeline)
+Corrects        The Diagnostic line, which gave the segmenter's dropped wake bouts as "14-ish".
+Correct         30 wake and 20 sleep bouts dropped as boundary-censored, over the 25 flies (C1; C2
+                identical). Whole-trace counts, as the extractor reports them.
+Unchanged       Everything else in that entry.
+```
