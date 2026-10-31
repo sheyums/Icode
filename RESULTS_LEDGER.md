@@ -160,3 +160,46 @@ Not reportable  Do not quote 0.001 on its own. The bin sensitivity here is a los
                 is against a falling-hazard null only: it says nothing about whether the rise is in
                 the flies or is produced by scoring bursty movement into wake bouts.
 ```
+
+### 2026-10-31  20r gate: per0 DD re-extraction FAILS (16 of 25 flies retained)
+
+```
+Commit          49ffe9e05e8019cb4f41962f2ba595559d14edd0 (Icode branch 20r-lclaude)
+Script          analysis_20r/gate_20r.m; output analysis_20r/gate_20r_report.txt
+Prespec         2026-10-31 "20r gate amendment: stored bout files not found" (replaces the 20r-A gate)
+Code            Rockefeller Matlab scripts, git HEAD 001deca, current versions (SHA-256 prefixes):
+                process_LocomToSleep 7aec365d5b79c859, sleeptrace 0deb702eed5cbfcc,
+                ironout f22f91c262f8c370, segment_sleep_phases a627f698159bc97a,
+                extractBoutsForModelCompetition 64f6f15985d04e5e. MATLAB R2026a Update 5.
+                Settings: timeInterval 1, bridgeWakeSeconds 1, Teliminate 24, deadThresh 12,
+                minDays 3, phase 'entire'.
+Input           The 25 per0 DD *_from1stLD.txt files; SHA-256 per file in
+                analysis_20r/per0DD_input_sha256.txt.
+Time window     Each retained fly's whole record after the pipeline's trimming, pooled.
+n               16 flies retained, not 25. 2717 wake bouts (xmin 2 s), 2715 sleep bouts (xmin 300 s);
+                61.45 fly-days covered by bouts (FINDINGS: ~90).
+Result          GATE FAIL on every item except bin centres:
+                (1) flies 16 / 25, wake 2717 / 3989, sleep 2715 / 3987: FAIL.
+                (2) 16-bin table: 15 kept bins, centres match to printed precision, but at-risk and
+                    event counts do not (first bin 2717 at risk, 26 events vs 3989, 46): FAIL.
+                (3) null K = 2: tau 10.31 and 642.55 s, q 0.0948 / 0.9052, logL -19828.8228 vs
+                    -29328.2460: FAIL (different data).
+                (4) RiseRatio 1.225 / 1.044 / 1.371 / 1.495 vs 1.405 / 1.388 / 1.376 / 1.430: FAIL.
+                Cause: the 9 discarded flies (2_18_2018 #54, #58; 6_25_2018_2boardmb #4, #8, #9, #14,
+                #15, #27, #28) have files of exactly 3.00 days (259201 s). Teliminate = 24 h leaves
+                48 h < minDays 3 x 24 h, so PIPELINE:InsufficientData drops them. The other 16 files
+                are 4-7 days long; FINDINGS reports per-fly records of 2.8-4.0 days and ~90
+                fly-days for 25 flies, which these settings cannot produce from these files. The
+                reference set was therefore made with different settings or differently trimmed
+                input; which, is not established.
+Saved           analysis_20r/per0DD_bouts_20r.mat, SHA-256
+                ab9c327be079804525f6c2c10ddd79624c666916dcc425d8914157a1c4d3ce2f.
+                NOT the reference set: the failed extraction, kept so the failure is checkable.
+Matched null    Not applicable (reproduction check).
+Verdict         Gate FAILS. Per the amendment: no CS DD number has been looked at, 20r-A/B/C not run.
+                No alternative settings were tried: choosing settings until the counts match would be
+                fitting the gate, and needs a new pre-specified entry.
+Not reportable  Every number above except the cause. The 16-fly RiseRatios in particular (1.044 at 16
+                bins, trough in the second-to-last bin) are a different, smaller dataset and say
+                nothing about the per0 DD rise.
+```
