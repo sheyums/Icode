@@ -1,0 +1,166 @@
+Successfully processed 25 out of 25 selected files.
+extractBoutsForModelCompetition: wake bouts, phase 'entire' (tag ""), seconds
+  flies 25 | bouts 3309 (median 124/fly) | 30 censored by segmenter
+  observed range 2 to 27357 s (bin = 1 s)
+extractBoutsForModelCompetition: sleep bouts, phase 'entire' (tag ""), seconds
+  flies 25 | bouts 3314 (median 124/fly) | 20 censored by segmenter
+  observed range 300 to 13220 s (bin = 1 s)
+CS DD: 25 flies, 3309 wake bouts, 3314 sleep bouts, 100.00 fly-days of record
+CS DD wake (20r-A): n = 3309, xmin 2 s
+  null K=2: tau 9.83 1355.99 s, q 0.0889 0.9111, logL -26525.3468, degenerate 0
+  bins 12: trough  3255.9 s, peak  7628.8 s, RiseRatio 0.327, null median 1.099, 95th 1.247, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough  5543.1 s, peak 10497.3 s, RiseRatio 0.482, null median 1.159, 95th 1.342, RiseNullP 1.000, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough  7628.4 s, peak 12714.0 s, RiseRatio 0.862, null median 1.218, 95th 1.448, RiseNullP 0.994, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough  9437.8 s, peak 14446.6 s, RiseRatio 1.453, null median 1.276, 95th 1.575, RiseNullP 0.140, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: not supported
+CS DD wake (20r-A): per-fly influence, n = 3309, 25 flies
+  full RiseRatio 0.327 0.482 0.862 1.453
+  fly  n_i   without fly i (12/16/20/24)      2.5th pct of random removals    below
+    1  111   0.322 0.460 0.870 1.434   0.309 0.434 0.620 1.317   0000
+    2  124   0.317 0.477 0.891 1.505   0.311 0.422 0.640 1.305   0000
+    3  106   0.328 0.498 0.862 1.453   0.310 0.436 0.702 1.268   0000
+    4  115   0.331 0.485 0.862 1.453   0.314 0.438 0.771 1.294   0000
+    5  104   0.335 0.447 0.725 1.415   0.307 0.434 0.676 1.305   0000
+    6  154   0.330 0.472 0.855 1.434   0.307 0.427 0.618 1.250   0000
+    7  106   0.334 0.466 0.841 1.434   0.311 0.417 0.624 1.275   0000
+    8  117   0.327 0.431 0.870 1.548   0.308 0.430 0.635 1.209   0000
+    9  159   0.318 0.477 0.798 1.364   0.306 0.418 0.626 1.259   0000
+   10  115   0.323 0.492 0.870 1.434   0.312 0.436 0.668 1.291   0000
+   11  172   0.331 0.485 0.862 1.453   0.309 0.417 0.604 1.248   0000
+   12  124   0.318 0.509 0.907 1.453   0.308 0.425 0.610 1.294   0000
+   13  116   0.330 0.482 0.862 1.453   0.309 0.428 0.624 1.278   0000
+   14  124   0.313 0.529 0.964 1.497   0.311 0.419 0.623 1.262   0000
+   15  113   0.352 0.435 0.596 1.470   0.306 0.425 0.614 1.291   0010
+   16  169   0.345 0.522 0.837 1.288   0.306 0.426 0.720 1.222   0000
+   17  139   0.319 0.469 0.902 1.434   0.307 0.409 0.614 1.288   0000
+   18  131   0.327 0.457 0.891 1.562   0.308 0.418 0.614 1.275   0000
+   19  109   0.345 0.503 0.837 1.403   0.311 0.424 0.638 1.268   0000
+   20  136   0.325 0.502 0.863 1.434   0.310 0.434 0.730 1.250   0000
+   21  162   0.339 0.500 0.850 1.288   0.305 0.430 0.661 1.291   0001
+   22  171   0.315 0.465 0.771 1.415   0.306 0.418 0.615 1.268   0000
+   23  121   0.339 0.467 0.791 1.334   0.310 0.435 0.661 1.260   0000
+   24  168   0.321 0.492 0.876 1.453   0.309 0.421 0.654 1.183   0000
+   25  143   0.321 0.486 1.002 1.792   0.307 0.431 0.629 1.222   0000
+  influential flies (>= 3 counts): zeros(1,0)
+  influence verdict: no influential fly: the rise is not carried by any single fly
+CS DD sleep, control (20r-A): n = 3314, xmin 300 s
+  null K=2: tau 154.38 1199.01 s, q 0.1456 0.8544, logL -26290.8837, degenerate 0
+  bins 12: trough  6003.6 s, peak  8232.6 s, RiseRatio 0.731, null median 1.200, 95th 1.594, RiseNullP 0.982, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough  5771.5 s, peak  7313.7 s, RiseRatio 1.091, null median 1.326, 95th 1.958, RiseNullP 0.893, NullDropped 0 (bins dropped 2, saturated 1)
+  bins 20: trough  6811.9 s, peak  8233.0 s, RiseRatio 0.577, null median 1.430, 95th 2.219, RiseNullP 0.997, NullDropped 0 (bins dropped 2, saturated 1)
+  bins 24: trough  6496.8 s, peak  7607.8 s, RiseRatio 1.927, null median 1.568, 95th 2.551, RiseNullP 0.210, NullDropped 0 (bins dropped 3, saturated 1)
+  verdict: not supported
+CompareBoutModels: 10 candidate(s), discrete mode, xmin=2, dt=1.
+  fitting hyperexponential ...
+    hyperexp K=1         logL=   -26868.65   tau=[1236], q=[1]
+    hyperexp K=2         logL=   -26525.35   tau=[9.826 1356], q=[0.08892 0.9111]
+    hyperexp K=3         logL=   -26288.45   tau=[7.721 987.2 5879], q=[0.07803 0.8554 0.06655]
+    hyperexp K=4         logL=   -26283.56   tau=[5.69 45.86 1017 6093], q=[0.06112 0.03452 0.8423 0.06204]
+    hyperexp K=5         logL=   -26283.46   tau=[5.655 42.62 843.6 1118 6261], q=[0.06064 0.03298 0.2907 0.5572 0.05856]
+  fitting exp_weibull ...
+    exp_weibull          logL=   -26420.17   lambda=1111, k=0.7352, alpha=0.8753
+  fitting weibull ...
+    weibull              logL=   -26421.97   scale=948.6, shape=0.6867
+  fitting gamma ...
+    gamma                logL=   -26439.28   shape=0.5344, scale=2274
+  fitting powerlaw_cutoff ...
+    powerlaw_cutoff      logL=   -26439.28   alpha=0.4656, cutoff=2274
+  fitting powerlaw ...
+    powerlaw             logL=   -29360.27   alpha=0.1648
+  fitting erlang ...
+    erlang               logL=   -26868.65   shape=1, scale=1236
+  fitting chisquared ...
+    chisquared           logL=  -839307.57   nu=315.1
+  fitting weibull_mix ...
+    weibull_mix          logL=   -26303.13   q1=0.3686, scale1=402.2, shape1=0.3895, q2=0.6314, scale2=1172, shape2=1.166
+  fitting hyper_erlang ...
+    hyper_erlang         logL=   -26288.45   rate1_m1=0.0001701, rate2_m1=0.001013, rate3_m1=0.1295, q1=0.06723, q2=0.8635, q3=0.06927
+
+model                     k         logL        AICc         BIC    dAICc       w
+hyperexp K=4              7    -26283.56    52581.15    52623.85     0.00   0.794
+hyperexp K=5              9    -26283.46    52584.98    52639.87     3.83   0.117
+hyper_erlang              5    -26288.45    52586.91    52617.42     5.76   0.045
+hyperexp K=3              5    -26288.45    52586.91    52617.42     5.76   0.045
+weibull_mix               5    -26303.13    52616.28    52646.78    35.12   0.000
+exp_weibull               3    -26420.17    52846.34    52864.65   265.19   0.000
+weibull                   2    -26421.97    52847.94    52860.15   266.79   0.000
+powerlaw_cutoff           2    -26439.28    52882.56    52894.76   301.41   0.000
+gamma                     2    -26439.28    52882.56    52894.76   301.41   0.000
+hyperexp K=2              3    -26525.35    53056.70    53075.01   475.55   0.000
+hyperexp K=1              1    -26868.65    53739.29    53745.40  1158.14   0.000
+erlang                    2    -26868.65    53741.30    53753.50  1160.15   0.000
+powerlaw                  1    -29360.27    58722.54    58728.65  6141.39   0.000
+chisquared                1   -839307.57  1678617.14  1678623.25 1626035.99   0.000
+
+selected: hyperexp K=4   tau=[5.69 45.86 1017 6093], q=[0.06112 0.03452 0.8423 0.06204]
+fit test: G=32.799, 40 bins, chi2 p in [0.4276, 0.7475]
+
+CompareBoutModels, CS DD wake (read in CLAUDE.md order)
+R.Skipped:
+R.Table:
+           Model           k    nReported     n        LogLik          AIC           AICc          BIC          dAICc      AkaikeWeight       dBIC       Degenerate      Reason                                                ParamText                                              ParamNames                                            Params                                                                               ParamSE                                     
+    ___________________    _    _________    ____    ___________    __________    __________    __________    _________    ____________    __________    __________    __________    _____________________________________________________________________________________________    ___________    ____________________________________________________________________________________    ________________________________________________________________________________
+
+    {'hyperexp K=4'   }    7        8        3309         -26284         52581         52581         52624            0        0.79416         6.4297      false       {0×0 char}    {'tau=[5.69 45.86 1017 6093], q=[0.06112 0.03452 0.8423 0.06204]'                           }    {1×8  cell}    {[                5.6896 45.8571 1.0167e+03 6.0928e+03 0.0611 0.0345 0.8423 0.0620]}    {[                 1.0004 23.7802 30.3977 723.2001 0.0095 0.0107 0.0134 0.0108]}
+    {'hyperexp K=5'   }    9       10        3309         -26283         52585         52585         52640       3.8331        0.11683         22.451      false       {0×0 char}    {'tau=[5.655 42.62 843.6 1118 6261], q=[0.06064 0.03298 0.2907 0.5572 0.05856]'             }    {1×10 cell}    {[5.6549 42.6230 843.5613 1.1177e+03 6.2609e+03 0.0606 0.0330 0.2907 0.5572 0.0586]}    {[1.0221 23.7802 597.5191 411.6442 855.4712 0.0099 0.0114 1.3688 1.3668 0.0130]}
+    {'hyper_erlang'   }    5        6        3309         -26288         52587         52587         52617       5.7633       0.044505              0      false       {0×0 char}    {'rate1_m1=0.0001701, rate2_m1=0.001013, rate3_m1=0.1295, q1=0.06723, q2=0.8635, q3=0.06927'}    {1×6  cell}    {[                                   1.7009e-04 0.0010 0.1295 0.0672 0.8635 0.0693]}    {[                           1.9671e-05 2.8138e-05 0.0150 0.0114 0.0124 0.0057]}
+    {'hyperexp K=3'   }    5        6        3309         -26288         52587         52587         52617       5.7633       0.044505     1.4552e-11      false       {0×0 char}    {'tau=[7.721 987.2 5879], q=[0.07803 0.8554 0.06655]'                                       }    {1×6  cell}    {[                                 7.7208 987.1604 5.8791e+03 0.0780 0.8554 0.0665]}    {[                                0.8939 27.4225 680.0020 0.0059 0.0123 0.0113]}
+    {'weibull_mix'    }    5        6        3309         -26303         52616         52616         52647       35.125     1.8735e-08         29.361      false       {0×0 char}    {'q1=0.3686, scale1=402.2, shape1=0.3895, q2=0.6314, scale2=1172, shape2=1.166'             }    {1×6  cell}    {[                                 0.3686 402.1627 0.3895 0.6314 1.1721e+03 1.1659]}    {[                                 0.0432 81.5428 0.0300 0.0432 34.1213 0.0529]}
+    {'exp_weibull'    }    3        3        3309         -26420         52846         52846         52865       265.19     2.0644e-58         247.23      false       {0×0 char}    {'lambda=1111, k=0.7352, alpha=0.8753'                                                      }    {1×3  cell}    {[                                                        1.1112e+03 0.7352 0.8753]}    {[                                                       93.2906 0.0281 0.0606]}
+    {'weibull'        }    2        2        3309         -26422         52848         52848         52860       266.79     9.2665e-59         242.73      false       {0×0 char}    {'scale=948.6, shape=0.6867'                                                                }    {1×2  cell}    {[                                                                 948.5733 0.6867]}    {[                                                              25.7330 0.0100]}
+    {'powerlaw_cutoff'}    2        2        3309         -26439         52883         52883         52895       301.41     2.8204e-66         277.34      false       {0×0 char}    {'alpha=0.4656, cutoff=2274'                                                                }    {1×2  cell}    {[                                                               0.4656 2.2735e+03]}    {[                                                              0.0136 76.1151]}
+    {'gamma'          }    2        2        3309         -26439         52883         52883         52895       301.41     2.8204e-66         277.34      false       {0×0 char}    {'shape=0.5344, scale=2274'                                                                 }    {1×2  cell}    {[                                                               0.5344 2.2735e+03]}    {[                                                              0.0136 76.1154]}
+    {'hyperexp K=2'   }    3        4        3309         -26525         53057         53057         53075       475.55     4.321e-104         457.59      false       {0×0 char}    {'tau=[9.826 1356], q=[0.08892 0.9111]'                                                     }    {1×4  cell}    {[                                                 9.8263 1.3560e+03 0.0889 0.9111]}    {[                                                1.2095 25.3696 0.0064 0.0064]}
+    {'hyperexp K=1'   }    1        2        3309         -26869         53739         53739         53745       1158.1    2.5843e-252           1128      false       {0×0 char}    {'tau=[1236], q=[1]'                                                                        }    {1×2  cell}    {[                                                                    1.2363e+03 1]}    {[                                                                   21.4917 0]}
+    {'erlang'         }    2        2        3309         -26869         53741         53741         53754       1160.1    9.4957e-253         1136.1      false       {0×0 char}    {'shape=1, scale=1236'                                                                      }    {1×2  cell}    {[                                                                    1 1.2363e+03]}    {[                                                                 NaN 21.4917]}
+    {'powerlaw'       }    1        1        3309         -29360         58723         58723         58729       6141.4              0         6111.2      false       {0×0 char}    {'alpha=0.1648'                                                                             }    {1×1  cell}    {[                                                                          0.1648]}    {[                                                                      0.0029]}
+    {'chisquared'     }    1        1        3309    -8.3931e+05    1.6786e+06    1.6786e+06    1.6786e+06    1.626e+06              0      1.626e+06      false       {0×0 char}    {'nu=315.1'                                                                                 }    {1×1  cell}    {[                                                                        315.1207]}    {[                                                                      0.0301]}
+
+R.Selected:
+           Model: 'hyperexp K=4'
+               k: 7
+       nReported: 8
+               n: 3309
+          LogLik: -2.6284e+04
+             AIC: 5.2581e+04
+            AICc: 5.2581e+04
+             BIC: 5.2624e+04
+           dAICc: 0
+    AkaikeWeight: 0.7942
+            dBIC: 6.4297
+      Degenerate: 0
+          Reason: ''
+       ParamText: 'tau=[5.69 45.86 1017 6093], q=[0.06112 0.03452 0.8423 0.06204]'
+      ParamNames: {'tau1'  'tau2'  'tau3'  'tau4'  'q1'  'q2'  'q3'  'q4'}
+          Params: [5.6896 45.8571 1.0167e+03 6.0928e+03 0.0611 0.0345 0.8423 0.0620]
+         ParamSE: [1.0004 23.7802 30.3977 723.2001 0.0095 0.0107 0.0134 0.0108]
+
+R.SelectionPath:
+    {'hyperexp K=4: ranked 1, G=32.80 p=0.7475 -- accepted'}
+
+R.GoF:
+                  G: 32.7992
+              nBins: 40
+            dfLower: 32
+            dfUpper: 39
+             pLower: 0.4276
+             pUpper: 0.7475
+          Ambiguous: 0
+         pBootstrap: NaN
+                  B: 0
+             Passed: 1
+              Basis: 'chi2 at df=B-1-k (conservative bound)'
+              Alpha: 0.0500
+           Observed: [67 79 100 81 86 79 84 85 82 82 84 82 83 83 83 83 82 83 83 81 84 82 84 81 84 82 84 80 85 83 82 82 84 83 82 83 83 83 82 84]
+           Expected: [70.3640 73.5393 101.8104 79.5659 88.2121 84.5088 72.8071 90.7337 84.5370 82.5482 83.4435 80.1139 93.4156 75.6892 86.0599 82.3692 77.1327 … ] (1×40 double)
+              Edges: [2 4 7 15 29 52 78 103 137 171 206 243 280 325 363 408 453 497 546 600 659 716 772 825 890 974 1045 1137 1239 1331 1447 1575 1692 1853 2113 … ] (1×41 double)
+    ProbabilityMass: 1
+            GoFBins: 40
+     GoFMinExpected: 5
+
+R.SelectedFit:
+             Model: 'hyperexp K=4'
+    SurvivalHandle: @(t)min(sum(qf.*exp(-rf.*max(round(t(:)/dtf)-n_min+1,0)*dtf),2),1)
+             Refit: @(nd)refitHyper(nd,x,K,common)
+              Full: [1×1 struct]
+

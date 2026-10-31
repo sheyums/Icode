@@ -369,3 +369,75 @@ Not reportable  Do not quote 0.001 alone; every count is the result. Not an inde
                 same flies and records, re-scored, differing from the lost set by 28 wake bouts. Says
                 nothing about whether the rise is in the flies or made by scoring (20r-B).
 ```
+
+### 2026-10-31  20r-A: CS DD wake hazard rise (blind), influence, sleep control, model library
+
+```
+Commit          0197c70 for run_20rA.m / influence_20r.m (code unchanged through 7eae6a4); extractor
+                and rise test as in the per0 DD replication entry. Log analysis_20r/run_20rA_log.txt,
+                results analysis_20r/run_20rA_results.mat.
+Prespec         2026-10-31 20r-A, with the extractor of "20r amendment: stored per0 DD bouts lost",
+                step (3). Run after the per0 DD replication, as that entry requires; blind until then.
+Data            CS DD, 25 flies: CS_DD_activfiles.zip (SHA-256 33495ce4...), each file cut to its first
+                345600 samples (hashes of raw and cut files in analysis_20r/CSDD_input_sha256.txt).
+                25 of 25 flies retained, 100.00 fly-days of record. Bouts saved to
+                analysis_20r/CSDD_bouts_20r.mat, SHA-256
+                80402183169d4c5a92dbda2a06b2ba3c7f78f536bd6480fa857ecc33aed2dfa5.
+Time window     Each fly's whole cut record (4.000 d), 25 flies pooled; the pooled set is the
+                narrowest block.
+n               3309 wake bouts (xmin 2 s), 3314 sleep bouts (xmin 300 s), dt 1 s; 30 wake and 20
+                sleep bouts dropped at record edges.
+
+(1) Rise test, wake. Null K = 2: tau 9.83 and 1356.0 s, q 0.089 / 0.911, logL -26525.3468.
+                bins 12: trough 3255.9 s, peak  7628.8 s, RiseRatio 0.327, null median 1.099, 95th
+                         1.247, RiseNullP 1.000
+                bins 16: trough 5543.1 s, peak 10497.3 s, RiseRatio 0.482, null median 1.159, 95th
+                         1.342, RiseNullP 1.000
+                bins 20: trough 7628.4 s, peak 12714.0 s, RiseRatio 0.862, null median 1.218, 95th
+                         1.448, RiseNullP 0.994
+                bins 24: trough 9437.8 s, peak 14446.6 s, RiseRatio 1.453, null median 1.276, 95th
+                         1.575, RiseNullP 0.140
+                NullDropped 0 at every count; one bin dropped and one saturated at each.
+                Verdict: NOT SUPPORTED (RiseNullP >= 0.05 at all four counts).
+                The trough lies in the far tail (3256-9438 s) at every count: the CS DD wake hazard
+                falls through the 100-1000 s range where per0 DD's rises (per0 troughs 109-161 s,
+                peaks 910-1094 s). RiseRatio < 1 at 12, 16 and 20 bins: the only kept bins after the
+                trough are lower than it. BoutHazard's header says RiseRatio is ">= 1 for ANY curve";
+                that does not hold when the trough is the second-to-last kept bin. The verdict does
+                not depend on it (p ~ 1), but the header claim is wrong; flagged, not changed.
+(2) Per-fly influence (2026-09-15 design). No fly influential: fly 15 below its 2.5th percentile at
+                20 bins only, fly 21 at 24 bins only, every other fly at none. Verdict by the rule:
+                no single fly carries the (absent) rise. With no rise to carry, this is vacuous.
+(3) Sleep control. Null K = 2: tau 154.4 and 1199.0 s, q 0.146 / 0.854. RiseRatio 0.731 / 1.091 /
+                0.577 / 1.927, null median 1.200 / 1.326 / 1.430 / 1.568, RiseNullP 0.982 / 0.893 /
+                0.997 / 0.210, NullDropped 0. Verdict: not supported, as in per0 DD sleep.
+(4) CompareBoutModels(x, 2, SamplingInterval=1, MaxComponents=5), default library.
+                R.Skipped: empty. Table (AICc): hyperexp K=4 (k 7, logL -26283.56, w 0.794); K=5
+                (dAICc 3.83); hyper_erlang and hyperexp K=3 tied (dAICc 5.76, logL -26288.45 both);
+                weibull_mix 35.1; exp_weibull 265; weibull 267; gamma = powerlaw_cutoff 301 (logL
+                identical, nesting check holds); K=2 476; K=1 = erlang (logL identical) 1158;
+                powerlaw 6141; chisquared not interpretable (not unit-invariant). No row Degenerate.
+                R.Selected / SelectionPath: hyperexp K=4, the first row tested, G = 32.80 on 40 bins,
+                p in [0.428, 0.748]: accepted. Rows below it are untested, not accepted.
+                Guards: Degenerate 0, smallest branch q x n = 114 bouts, AtRateBound false,
+                WeightsUntruncatedReliable true. q = 0.061 / 0.035 / 0.842 / 0.062 at tau 5.7 /
+                45.9 / 1017 / 6093 s.
+                hyper_erlang: the fitted shapes are [1 1 1], so it IS hyperexp K=3 (logL equal to 4
+                decimals). ShapeSweep logL by series-branch shape m = 1..6: -26288.448, -26288.751,
+                -26289.682, -26291.002, -26292.497, -26294.060: falls from m = 1. No series branch is
+                supported in CS DD wake bouts (per0 DD: +15.8 nats from m = 1 to 2, FINDINGS).
+Matched null    (1) and (3): 999 datasets of the observed n from that set's fitted two-exponential
+                model, each through the whole estimator on its own bin edges. (2): 199 random removals
+                of n_i bouts per fly (RandomSeed 1000 + fly).
+Verdict         20r-A: the per0 DD wake-hazard rise is NOT seen in CS DD at any of the four bin counts,
+                and the hyper-Erlang series branch collapses to an exponential. Per 20r-B's rule, the
+                CS DD renewal control is NOT run (20r-A did not give "supported" or "supported but
+                bin-sensitive"). Per 20r-C's fixed choices, CS DD 20r-C is NOT run (hyper_erlang not
+                selected, and identified only with no series branch).
+Not reportable  Not "CS DD has four timescales": AICc picks K=4 but BIC prefers K=3 (dBIC 6.43), the
+                order LRT was not triggered, and a pooled mixture cannot attribute components to
+                flies (2026-09-15 correction). Not "the rise needs a broken clock": this is one CS
+                cohort against one per0 cohort, different flies and runs, and the per0 rise is itself
+                bin-sensitive. The influence result is vacuous here and must not be cited as
+                robustness of anything.
+```
