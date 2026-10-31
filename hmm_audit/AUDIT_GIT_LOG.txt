@@ -226,3 +226,4 @@ ced44cc 2026-10-30 22:44:47 +0000 sqw15_report.py (20p, amendments A and B)
 80ffe67 2026-10-30 23:10:41 +0000 20p results
 3c7efd7 2026-10-31 00:05:05 +0000 Fig 18: explainer for 20p (memory and dissipation); panels a-c schematic, d data
 9ebc46d 2026-10-31 00:23:03 +0000 POST HOC per-fly HMM EPR vs model-free bound; correction of a group-median statement
+52ae990 2026-10-31 00:27:15 +0000 PRESPEC 20q: TUR test, per fly (before running)
