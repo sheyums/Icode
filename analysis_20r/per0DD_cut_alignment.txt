@@ -1,0 +1,29 @@
+per0 DD cut alignment, 2026-10-31 18:29
+cut: C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\per0DD_cut
+raw: C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\per0DD
+raw file                                                 raw       cut    offset     after matches  offset/after (h)
+12_29_2017_multibeam_pruned2_10.txt_from1stLD.txt     345601    345600         0         1       1  0.0000 / 0.0003
+12_29_2017_multibeam_pruned2_12.txt_from1stLD.txt     345601    345600         0         1       1  0.0000 / 0.0003
+12_29_2017_multibeam_pruned2_3.txt_from1stLD.txt      345601    345600         0         1       1  0.0000 / 0.0003
+12_29_2017_multibeam_pruned2_5.txt_from1stLD.txt      345601    345600         0         1       1  0.0000 / 0.0003
+12_29_2017_multibeam_pruned2_7.txt_from1stLD.txt      345601    345600         0         1       1  0.0000 / 0.0003
+1_26_2018_multibeam_pruned_32.txt_from1stLD.txt       604801    345600         0    259201       1  0.0000 / 72.0003
+1_8_2018_multibeam_pruned_4.txt_from1stLD.txt         345601    345600         0         1       1  0.0000 / 0.0003
+1_8_2018_multibeam_pruned_5.txt_from1stLD.txt         345601    345600         0         1       1  0.0000 / 0.0003
+1_8_2018_multibeam_pruned_7.txt_from1stLD.txt         345601    345600         0         1       1  0.0000 / 0.0003
+2_18_2018_multibeam_pruned2_54.txt_from1stLD.txt      259201    259201         0         0       1  0.0000 / 0.0000
+2_18_2018_multibeam_pruned2_58.txt_from1stLD.txt      259201    259201         0         0       1  0.0000 / 0.0000
+2_6_2018_multibeam_pruned_14.txt_from1stLD.txt        518401    345600         0    172801       1  0.0000 / 48.0003
+2_6_2018_multibeam_pruned_7.txt_from1stLD.txt         518401    345600         0    172801       1  0.0000 / 48.0003
+5_28_2020_4b_wc_pruned_11.txt_from1stLD.txt           604801    345600         0    259201       1  0.0000 / 72.0003
+5_28_2020_4b_wc_pruned_2.txt_from1stLD.txt            604801    345600         0    259201       1  0.0000 / 72.0003
+6_11_2020_4b_rc2_pruned_15.txt_from1stLD.txt          432001    345600         0     86401       1  0.0000 / 24.0003
+6_25_2018_2boardmb_pruned_14.txt_from1stLD.txt        259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_15.txt_from1stLD.txt        259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_27.txt_from1stLD.txt        259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_28.txt_from1stLD.txt        259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_4.txt_from1stLD.txt         259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_8.txt_from1stLD.txt         259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2018_2boardmb_pruned_9.txt_from1stLD.txt         259201    259201         0         0       1  0.0000 / 0.0000
+6_25_2020_4b_rc_pruned_19.txt_from1stLD.txt           345601    345600         0         1       1  0.0000 / 0.0003
+6_25_2020_4b_rc_pruned_20.txt_from1stLD.txt           345601    345600         0         1       1  0.0000 / 0.0003

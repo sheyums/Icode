@@ -296,3 +296,38 @@ Notes           Gate (2)-(4) are recorded statistics rather than the bouts thems
                 the bout SET only through what those statistics see; (1) and (2) together pin the
                 counts in every log bin. Everything else in 20r-A, 20r-B and 20r-C is unchanged.
 ```
+
+### 2026-10-31  20r gate amendment 2: the pre-cut per0 DD files, Teliminate 0
+
+```
+Question        Unchanged. The gate of "20r gate amendment: stored bout files not found" (same items
+                (1)-(4), same tolerances) FAILED on the raw *_from1stLD.txt files with Teliminate 24
+                (ledger, bd2871f): 16 of 25 flies kept, because nine 3.000-day files fell under
+                minDays after the 24 h trim. This entry changes ONLY the input files and Teliminate.
+Why             Sheyum and cClaude, 2026-10-31: the per0 DD set behind FINDINGS and all S/Q/W results
+                is per0DD activity files_1sec res.zip (C:\Users\sheyu\Box\HMM paper\different
+                genotypes\per0DD\flies\; SHA-256 778599dbcff6a94adc19e804b1b186e824f375833957b5a47bba40f0d74dce5f),
+                25 files *_from1stLD.txtcutdata_4.8.2025.txt, already cut, each starting at subjective
+                day. "Don't cut the first 24 hours" (Sheyum): Teliminate 0.
+The cut         Measured, not assumed (analysis_20r/align_cut_20r.m, report
+                analysis_20r/per0DD_cut_alignment.txt): every cut file is an exact contiguous piece of
+                its raw *_from1stLD.txt, one placement only, at offset 0. The cut keeps the first
+                min(N, 345600) samples: 4-7 day files are capped at 4.000 d (345600 s), the nine
+                3.000-day files (259201 s) are kept whole. 16 x 4.000 d + 9 x 3.000 d = 91.0 fly-days.
+Data            per0 DD: the 25 cutdata files from that zip, unchanged.
+                CS DD (20r-A/B): CS_DD_activfiles.zip (SHA-256
+                33495ce480fd4ededc020169288aafaeb08b3d9b7a18cdf03dbc1eeec3bb5c33), 25 raw
+                *_from1stLD.txt files of 345601 s each, cut by THE SAME RULE: the first
+                min(N, 345600) samples, i.e. the final sample dropped. Sheyum: both genotypes are cut
+                the same way, starting at subjective day.
+Fixed choices   process_LocomToSleep (current Rockefeller code, hashes as in the first amendment):
+                timeInterval 1, bridgeWakeSeconds 1, Teliminate 0, deadThresh 12, minDays 3,
+                phase 'entire'. 20r-B builds its synthetic traces from the same cut traces.
+Gate            Items (1)-(4) and tolerances exactly as in the first amendment. Fail: stop, record,
+                report; no CS DD number is looked at.
+Output          analysis_20r/per0DD_bouts_20r_T0.mat (wake and sleep, per fly), SHA-256 in the ledger.
+Matched null    Not applicable (reproduction check).
+Notes           The cut was identified AFTER the first gate failed, from file provenance supplied by
+                Sheyum, not by trying settings against the gate. It was not tuned: one rule, read off
+                the alignment, applied unchanged to both genotypes.
+```

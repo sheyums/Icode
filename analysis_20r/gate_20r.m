@@ -1,12 +1,15 @@
-function G = gate_20r(stageDir)
+function G = gate_20r(stageDir, Teliminate)
 % GATE_20R  Step 0 of 20r: re-extract per0 DD bouts and check them against the
 % recorded statistics (PRESPEC "2026-10-31 20r gate amendment: stored bout files
 % not found"). Run BY NAME from the Icode folder, with analysis_20r on the path.
 %
-%   stageDir : folder holding ONLY the 25 per0 DD *_from1stLD.txt files
-%              (process_LocomToSleep with selectAll=true reads every .txt there).
+%   stageDir   : folder holding ONLY the 25 per0 DD count files
+%                (process_LocomToSleep with selectAll=true reads every .txt there).
+%   Teliminate : hours trimmed from the start by process_LocomToSleep (0 for the
+%                pre-cut cutdata_4.8.2025 files, per the 2026-10-31 PRESPEC entry).
 %
-% Writes analysis_20r/per0DD_bouts_20r.mat and analysis_20r/gate_20r_report.txt.
+% Writes analysis_20r/per0DD_bouts_20r_T<Teliminate>.mat and gate_20r_report_T<Teliminate>.txt
+% (the first, failed run, with Teliminate 24, wrote the names without the suffix).
 
 assert(isequal(fileparts(which('BoutHazard')), pwd), ...
     'Run from the Icode folder: BoutHazard resolves to %s', which('BoutHazard'));
@@ -24,7 +27,7 @@ end
 here = fileparts(mfilename('fullpath'));
 
 % ------------------------------------------------------------- extraction
-S = process_LocomToSleep(timeInterval=1, bridgeWakeSeconds=1, Teliminate=24, ...
+S = process_LocomToSleep(timeInterval=1, bridgeWakeSeconds=1, Teliminate=Teliminate, ...
     deadThresh=12, minDays=3, folderPath=stageDir, selectAll=true);
 [Wm, metaW] = extractBoutsForModelCompetition(S, 'entire', 'wake');
 [Sm, metaS] = extractBoutsForModelCompetition(S, 'entire', 'sleep');
@@ -83,9 +86,9 @@ res.rise = isequal(round(rr, 3), [1.405 1.388 1.376 1.430]);
 
 % -------------------------------------------------------------- save bouts
 files = S.includedFiles;
-matPath = fullfile(here, 'per0DD_bouts_20r.mat');
+matPath = fullfile(here, sprintf('per0DD_bouts_20r_T%g.mat', Teliminate));
 settings = struct('timeInterval', dt, 'bridgeWakeSeconds', S.bridgeWakeSeconds, ...
-    'Teliminate', 24, 'deadThresh', 12, 'minDays', 3, 'phase', 'entire', ...
+    'Teliminate', Teliminate, 'deadThresh', 12, 'minDays', 3, 'phase', 'entire', ...
     'xminWake', xminW, 'xminSleep', xminS);
 WakeBouts = Wm; SleepBouts = Sm; %#ok<NASGU>
 save(matPath, 'WakeBouts', 'SleepBouts', 'files', 'settings', 'metaW', 'metaS', '-v7');
@@ -94,7 +97,7 @@ save(matPath, 'WakeBouts', 'SleepBouts', 'files', 'settings', 'metaW', 'metaS', 
 names = fieldnames(res); pass = all(struct2array(res));
 L = {};
 L{end+1} = sprintf('20r gate, %s, MATLAB %s', char(datetime('now','Format','yyyy-MM-dd HH:mm')), version);
-L{end+1} = sprintf('stage dir: %s', stageDir);
+L{end+1} = sprintf('stage dir: %s; Teliminate %g h', stageDir, Teliminate);
 L{end+1} = sprintf('flies %d; wake bouts >= %g s: %d (below xmin: %d); sleep bouts >= %g s: %d (below: %d)', ...
     nFly, xminW, numel(w), belowW, xminS, numel(s), belowS);
 L{end+1} = sprintf('fly-days covered by bouts: %.2f', flyDaysBouts);
@@ -120,7 +123,7 @@ L{end+1} = sprintf('GATE %s', ternary(pass, 'PASS', 'FAIL'));
 L{end+1} = sprintf('saved %s', matPath);
 txt = strjoin(L, newline);
 fprintf('%s\n', txt);
-fid = fopen(fullfile(here, 'gate_20r_report.txt'), 'w'); fprintf(fid, '%s\n', txt); fclose(fid);
+fid = fopen(fullfile(here, sprintf('gate_20r_report_T%g.txt', Teliminate)), 'w'); fprintf(fid, '%s\n', txt); fclose(fid);
 
 G = struct('res', res, 'pass', pass, 'nWake', numel(w), 'nSleep', numel(s), ...
     'H16', H16, 'NullFit', f2, 'RiseRatio', rr, 'files', {files});
