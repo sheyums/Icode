@@ -506,3 +506,46 @@ Not reportable  Not "CS DD has no rise" on its own: until the half-size power is
                 boundary; long bouts carry other-half time, direction of the bias not established).
                 The halves approximate subjective day/night only to ~1-2 h; tau not estimated.
 ```
+
+### 2026-10-31  20r-B: per0 DD wake hazard rise against a burst-pause renewal null
+
+```
+Commit          7eae6a4fbe63997dfb6af88699012923b4b837e8 (analysis_20r/run_20rB.m; extractor
+                extract_20r.m); log analysis_20r/run_20rB_per0DD_log.txt, results
+                analysis_20r/run_20rB_per0DD.mat
+Prespec         2026-10-31 20r-B, with the extractor of "20r amendment: stored per0 DD bouts lost".
+Data            per0 DD reference set (per0DD_bouts_20r_replication.mat, b14ba340...) and its 25 cut
+                count files.
+Time window     Each fly's whole cut record for the null construction; pooled over the 25 flies for
+                the statistic. The pooled set is the narrowest block.
+n               Observed 4017 wake bouts (xmin 2 s, dt 1 s). Synthetic pooled wake bouts per
+                replicate: median 4616 (4499-4763), so all 199 were subsampled to 4017.
+Pre-run check   Fly 1 (12_29_2017 #10), one synthetic trace (rng 2000): active-run quantiles (10/25/
+                50/75/90/99%) 1 1 1 1 2 5 s real and synthetic; inactive 1 1 2 5 20 1066 s real vs
+                1 1 2 5 22 1135 s synthetic; 10381 vs 9802 runs. Passed (read before the run).
+Result          bins 12: observed RiseRatio 1.416; renewal median 1.027, 95th 1.145; p_ren 0.015
+                bins 16: observed RiseRatio 1.402; renewal median 1.047, 95th 1.197; p_ren 0.015
+                bins 20: observed RiseRatio 1.385; renewal median 1.088, 95th 1.358; p_ren 0.050
+                bins 24: observed RiseRatio 1.435; renewal median 1.114, 95th 1.418; p_ren 0.050
+                (p_ren = (1 + #{RiseRatio* >= observed}) / 200: 2, 2, 9 and 9 of 199 replicates
+                reached the observed ratio.)
+                Descriptive, as pre-specified: the renewal null's median RiseRatio (1.027, 1.047,
+                1.088, 1.114) is BELOW the two-exponential null medians of 2026-09-15 (1.083, 1.136,
+                1.186, 1.235) and of the replication (1.089, 1.136, 1.185, 1.231) at every count.
+                Renewal plus scoring does not itself manufacture a rise; it makes less of one than a
+                falling-hazard mixture. Renewal also yields ~15% MORE wake bouts than observed from
+                the same run-length marginals.
+Matched null    199 pooled datasets, each the 25 flies' own alternating renewals of their active and
+                inactive runs (same record lengths, same run-length marginals, no correlation between
+                successive runs), scored by the identical pipeline, subsampled to n = 4017;
+                RandomSeed 2000 + b.
+Verdict         INCONCLUSIVE (bin-sensitive), per the rule: p_ren < 0.05 at 2 counts (12, 16), >= 0.05
+                at 2 (20, 24). The two counts that fail sit exactly at 0.050 (9 of 199), the boundary
+                of the rule. CS DD 20r-B not run (20r-A not supported).
+Not reportable  Not "the rise is beyond renewal" and not "renewal explains it": the pre-specified rule
+                gives neither. Do not quote the 12/16-bin p_ren alone. The 0.050s are at the
+                resolution limit of B = 199 (steps of 0.005); a larger B could move them either way,
+                and choosing B after seeing this would be rule 4's failure. The ~15% bout-count excess
+                means subsampling discards synthetic bouts, so the null's bin occupancy differs from
+                the data's; its effect on the ratio is not measured.
+```
