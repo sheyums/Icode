@@ -229,3 +229,6 @@ ced44cc 2026-10-30 22:44:47 +0000 sqw15_report.py (20p, amendments A and B)
 52ae990 2026-10-31 00:27:15 +0000 PRESPEC 20q: TUR test, per fly (before running)
 fdcc6e5 2026-10-31 00:31:52 +0000 PRESPEC 20q amendment C (B = J^2/D; discrete-time slack; disclosed Q_MC check) + sqw16.py
 b371556 2026-10-31 00:36:18 +0000 20r: instructions for lClaude and per-fly 20p excess CSV
+7d26a53 2026-10-31 00:36:51 +0000 sqw16_report.py (20q)
+c463b63 2026-10-31 00:40:00 +0000 20q amendment D + report
+02137ee 2026-10-31 00:40:00 +0000 20q results

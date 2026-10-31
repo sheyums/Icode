@@ -58,3 +58,9 @@ come only from paired tests on per-fly quantities.
 3. DISCLOSED: that check computed the exact Q_MC = B_MC / sigma_MC (an S3 quantity) for those 42 fly-phases: median 0.98,
    max 1.00. The stated expectation "Q << 1" is withdrawn: near equilibrium a single cycle nearly saturates the TUR, so
    the observed chain sits at the bound. No data estimate (B_obs) had been computed. Tests and decision rules unchanged.
+
+## Amendment D (2026-10-31, AFTER the run; the report crashed before printing any result)
+Fly-phases whose fitted observed chain has no cycle (sigma_MC <= 1e-9 or its continuous-time bound B_MC_ct <= 1e-12:
+some transition absent in both directions, so J = sigma = 0) have no defined TUR ratio and are EXCLUDED and counted.
+Fly-phases where B_obs cannot be estimated (fewer than 4 blocks, or D <= 0) are excluded and counted. Mechanical:
+undefined quantities, decided before any ratio was seen (the report crashed on a 0/0 in kappa).
