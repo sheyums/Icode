@@ -247,3 +247,5 @@ ec1ef8e 2026-10-31 20:06:49 +0000 sqw17.py (20s-A)
 d158efb 2026-10-31 20:20:16 +0000 sqw_ref section 15 (Plan A functions, copied from sqw13-17), verify_planA.py (58/58 pass), golden G12
 49dacdc 2026-10-31 20:21:54 +0000 Fig A4: beneath the surface (20n-20q data panels)
 cab282a 2026-10-31 20:22:53 +0000 START_HERE.md; PORTING_GUIDE section 11 (Plan A); FIGURE_RECIPES K (A1-A4); script status
+944b9d4 2026-10-31 20:24:05 +0000 20s-A: observable-level numbers for the Methods text
+2ed76af 2026-10-31 20:24:05 +0000 ledger: 20s-A addendum

@@ -2034,3 +2034,25 @@ Reading against the PLANS.md claim list:
 - C4 observable values (median count J cycles/h, count EPR nats/h): CS 0.06/0.04 (light), 0.17/0.12 (dark); per0LD 0.06/0.01, 0.17/0.07; per0DD 0.17/0.11; fumin 0.13/0.13, 0.08/0.09; sss 0.00/0.02, 0.00/0.03; CS DD 0.12/0.05. HMM bracket per fly: J x1.0-1.2, EPR x1.2-3.6.
 - C5 at the observable level: EPR grows faster than linearly with J (quadratic better) in CS, per0LD, sss clearly; per0DD and fumin ambiguous (fumin linear with exact chain values) - same pattern as 20j. Onsager L: CS 0.27, per0LD 0.29, per0DD 0.35, fumin 0.24, sss 0.145 (both point types agree within 0.01). CHANGES vs 20j: per0LD vs CS is NOT different at the observable level (Wald p 0.25-0.49; 20j hidden said per0LD > CS); per0DD > CS (Wald BH < 1e-4, bootstrap CIs 0.29-0.40 vs 0.23-0.31, slight overlap); fumin < CS (BH 0.044 / 0.00015, CIs overlap); sss < CS robust (BH ~1e-26, CIs disjoint). The Wald test is known to overstate (20j note); the robust statement is sss < CS, with per0DD > CS and fumin < CS weaker.
 - C6 holds: E3 - E1 negative in CS (-0.9 light, -1.8 dark), per0 (-1.6 to -1.8), CS DD (-1.3); positive in fumin (+0.6, +1.0) and sss (+1.0, +1.4). Landscape prediction vs counted routing on the observed symbols: rho 0.81-0.99, median offsets <= 0.07 (consistency check, as stated in 20l).
+
+## 20s-A addendum — numbers for the Methods text at the observable level (2026-10-31, code 944b9d4; same procedures as the 20j / onsager_L sensitivity lines; descriptive)
+```
+CS     phase 0: Spearman(count J, chain J) 0.99 (n 24)
+CS     phase 1: Spearman(count J, chain J) 0.99 (n 25)
+per0LD phase 0: Spearman(count J, chain J) 0.99 (n 26)
+per0LD phase 1: Spearman(count J, chain J) 0.99 (n 27)
+per0DD phase 0: Spearman(count J, chain J) 1.00 (n 24)
+fumin  phase 0: Spearman(count J, chain J) 0.99 (n 47)
+fumin  phase 1: Spearman(count J, chain J) 0.98 (n 49)
+sss    phase 0: Spearman(count J, chain J) 0.99 (n 37)
+sss    phase 1: Spearman(count J, chain J) 0.98 (n 48)
+CSDD   phase 0: Spearman(count J, chain J) 1.00 (n 25)
+range 0.98-1.00
+CS     L origin 0.272 | free intercept: slope change -3.5%, intercept +0.013 nats/h
+CSDD   L origin 0.262 | free intercept: slope change -2.5%, intercept +0.005 nats/h
+per0LD L origin 0.286 | free intercept: slope change +0.0%, intercept -0.000 nats/h
+per0DD L origin 0.352 | free intercept: slope change -7.9%, intercept +0.023 nats/h
+fumin  L origin 0.243 | free intercept: slope change -11.2%, intercept +0.069 nats/h
+sss    L origin 0.145 | free intercept: slope change -4.3%, intercept +0.012 nats/h
+```
+- Count J vs exact observed-chain J per fly: Spearman 0.98-1.00 in every block. Free intercept vs through the origin: slope changes 0 to -11% (fumin -11%, per0DD -8%); with the intercept, L = 0.152 (sss), 0.269 (CS DD), 0.274 (fumin), 0.282 (CS), 0.286 (per0LD), 0.382 (per0DD): the order of the five original genotypes is unchanged (CS DD and fumin, 0.005 apart, swap).

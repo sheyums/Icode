@@ -1,0 +1,17 @@
+CS     phase 0: Spearman(count J, chain J) 0.99 (n 24)
+CS     phase 1: Spearman(count J, chain J) 0.99 (n 25)
+per0LD phase 0: Spearman(count J, chain J) 0.99 (n 26)
+per0LD phase 1: Spearman(count J, chain J) 0.99 (n 27)
+per0DD phase 0: Spearman(count J, chain J) 1.00 (n 24)
+fumin  phase 0: Spearman(count J, chain J) 0.99 (n 47)
+fumin  phase 1: Spearman(count J, chain J) 0.98 (n 49)
+sss    phase 0: Spearman(count J, chain J) 0.99 (n 37)
+sss    phase 1: Spearman(count J, chain J) 0.98 (n 48)
+CSDD   phase 0: Spearman(count J, chain J) 1.00 (n 25)
+range 0.98-1.00
+CS     L origin 0.272 | free intercept: slope change -3.5%, intercept +0.013 nats/h
+CSDD   L origin 0.262 | free intercept: slope change -2.5%, intercept +0.005 nats/h
+per0LD L origin 0.286 | free intercept: slope change +0.0%, intercept -0.000 nats/h
+per0DD L origin 0.352 | free intercept: slope change -7.9%, intercept +0.023 nats/h
+fumin  L origin 0.243 | free intercept: slope change -11.2%, intercept +0.069 nats/h
+sss    L origin 0.145 | free intercept: slope change -4.3%, intercept +0.012 nats/h
