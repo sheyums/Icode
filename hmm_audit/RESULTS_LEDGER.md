@@ -1958,3 +1958,79 @@ sss    dark  n 48 [descriptive (LD)] | J -0.042/h D 0.546/h blocks 8 | B_obs 0.0
 ```
 - With the 33 one-way-edge fly-phases included, every changed block moves TOWARD 1 but no median exceeds it: S2 B_c/sigma_MC 0.81-0.84 (fumin), 0.73-0.80 (sss); S1 0.80-0.98. This although b* makes sigma a 95% LOWER bound, i.e. biases toward 'violation'. The 20q reading is unchanged: no TUR evidence for hidden dissipation, in any block, either way of handling one-way edges.
 - Q_HMM falls (sss dark 0.01) because those flies' HMM EPR is infinite or very large (one-way hidden edges): an efficiency relative to the HMM is not meaningful there.
+
+## PRESPEC 20s-A — Plan A quantities at the observable (S/Q/W) level (2026-10-31; PRESPEC 0b017f5, code ec1ef8e, report 732fa08)
+Narrowest block: one fly's light or dark minutes pooled over its days (DD whole; C3: CS 6-h ZT blocks pooled over days). Per fly x phase; medians over flies with fly-bootstrap 95% CIs. Pre-run checks: observed-symbol route counter = sqw_ref.route_counts on complete records; hours identical to the hidden-level ones.
+```
+A1  observable quantities per fly x phase (median over flies [95% fly-bootstrap CI]); J cycles/h, EPR nats/h, A nats/cycle
+CS     light n 25 (chain with cycle 24) | c_obs +0.042 [-0.006,+0.065] (>0 in 0.64) | count J +0.062 [+0.000,+0.105] (>0 in 0.64) | count EPR +0.038 [+0.012,+0.072] (rule of 3 used in 0.00) | chain J +0.060 A +0.20 EPR 0.037 (inf 0.00)
+        HMM bracket (n 25): count J +0.020, count EPR 0.041, model EPR 0.032 | per fly HMM/obs: J 0.97 [IQR 0.23-1.08], EPR 1.34 [IQR 1.06-2.63] | sign(J) agree 0.83
+CS     dark  n 25 (chain with cycle 25) | c_obs +0.147 [+0.099,+0.179] (>0 in 0.96) | count J +0.167 [+0.104,+0.188] (>0 in 0.96) | count EPR +0.116 [+0.054,+0.189] (rule of 3 used in 0.00) | chain J +0.167 A +0.69 EPR 0.115 (inf 0.00)
+        HMM bracket (n 25): count J +0.201, count EPR 0.301, model EPR 0.281 | per fly HMM/obs: J 1.22 [IQR 1.12-1.69], EPR 2.10 [IQR 1.60-3.26] | sign(J) agree 1.00
+per0LD light n 27 (chain with cycle 26) | c_obs +0.042 [+0.010,+0.086] (>0 in 0.70) | count J +0.062 [+0.000,+0.146] (>0 in 0.67) | count EPR +0.012 [+0.003,+0.060] (rule of 3 used in 0.00) | chain J +0.049 A +0.26 EPR 0.018 (inf 0.00)
+        HMM bracket (n 27): count J +0.047, count EPR 0.030, model EPR 0.015 | per fly HMM/obs: J 0.99 [IQR 0.42-1.42], EPR 3.63 [IQR 1.19-9.37] | sign(J) agree 0.88
+per0LD dark  n 27 (chain with cycle 27) | c_obs +0.096 [+0.041,+0.117] (>0 in 0.81) | count J +0.167 [+0.083,+0.208] (>0 in 0.78) | count EPR +0.073 [+0.045,+0.140] (rule of 3 used in 0.00) | chain J +0.141 A +0.46 EPR 0.072 (inf 0.00)
+        HMM bracket (n 27): count J +0.197, count EPR 0.177, model EPR 0.163 | per fly HMM/obs: J 1.17 [IQR 0.95-1.47], EPR 1.94 [IQR 1.35-4.11] | sign(J) agree 0.89
+per0DD whole n 25 (chain with cycle 24) | c_obs +0.118 [+0.073,+0.164] (>0 in 0.76) | count J +0.167 [+0.097,+0.271] (>0 in 0.76) | count EPR +0.110 [+0.052,+0.180] (rule of 3 used in 0.00) | chain J +0.171 A +0.60 EPR 0.111 (inf 0.00)
+        HMM bracket (n 23): count J +0.233, count EPR 0.208, model EPR 0.208 | per fly HMM/obs: J 1.15 [IQR 1.00-1.41], EPR 1.59 [IQR 1.20-2.75] | sign(J) agree 0.96
+fumin  light n 49 (chain with cycle 47) | c_obs +0.167 [+0.095,+0.238] (>0 in 0.76) | count J +0.125 [+0.042,+0.167] (>0 in 0.73) | count EPR +0.132 [+0.046,+0.206] (rule of 3 used in 0.04) | chain J +0.124 A +1.01 EPR 0.163 (inf 0.04)
+        HMM bracket (n 49): count J +0.121, count EPR 0.150, model EPR 0.160 | per fly HMM/obs: J 1.11 [IQR 0.95-1.32], EPR 1.48 [IQR 1.10-4.70] | sign(J) agree 0.88
+fumin  dark  n 53 (chain with cycle 49) | c_obs +0.250 [+0.182,+0.284] (>0 in 0.79) | count J +0.083 [+0.042,+0.125] (>0 in 0.81) | count EPR +0.093 [+0.046,+0.150] (rule of 3 used in 0.19) | chain J +0.089 A +1.36 EPR 0.132 (inf 0.20)
+        HMM bracket (n 53): count J +0.109, count EPR 0.143, model EPR 0.192 | per fly HMM/obs: J 1.15 [IQR 1.01-1.56], EPR 1.55 [IQR 1.01-3.57] | sign(J) agree 0.96
+sss    light n 50 (chain with cycle 37) | c_obs -0.012 [-0.139,+0.000] (>0 in 0.20) | count J +0.000 [-0.042,+0.000] (>0 in 0.18) | count EPR +0.016 [+0.005,+0.037] (rule of 3 used in 0.14) | chain J -0.042 A -0.41 EPR 0.046 (inf 0.19)
+        HMM bracket (n 50): count J -0.019, count EPR 0.031, model EPR 0.008 | per fly HMM/obs: J 0.99 [IQR 0.25-1.10], EPR 1.36 [IQR 0.88-2.66] | sign(J) agree 0.81
+sss    dark  n 53 (chain with cycle 48) | c_obs +0.000 [-0.083,+0.000] (>0 in 0.36) | count J +0.000 [-0.042,+0.000] (>0 in 0.34) | count EPR +0.029 [+0.012,+0.036] (rule of 3 used in 0.26) | chain J -0.018 A -0.07 EPR 0.043 (inf 0.29)
+        HMM bracket (n 53): count J -0.013, count EPR 0.044, model EPR 0.042 | per fly HMM/obs: J 1.01 [IQR 0.42-1.38], EPR 1.22 [IQR 0.55-2.67] | sign(J) agree 0.89
+CSDD   whole n 25 (chain with cycle 25) | c_obs +0.103 [+0.033,+0.140] (>0 in 0.80) | count J +0.115 [+0.031,+0.177] (>0 in 0.80) | count EPR +0.053 [+0.012,+0.145] (rule of 3 used in 0.00) | chain J +0.111 A +0.50 EPR 0.053 (inf 0.00)
+
+A1/C3  CS in 6-h ZT blocks (observable)
+  ZT0-6    n 25 | c_obs +0.018 [-0.033,+0.054] | count J -0.042 [-0.083,+0.083] | count EPR +0.045 [+0.018,+0.085]
+  ZT6-12   n 25 | c_obs +0.043 [+0.013,+0.101] | count J +0.125 [+0.042,+0.208] | count EPR +0.082 [+0.035,+0.107]
+  ZT12-18  n 25 | c_obs +0.152 [+0.112,+0.205] | count J +0.167 [+0.083,+0.208] | count EPR +0.165 [+0.105,+0.269]
+  ZT18-24  n 25 | c_obs +0.133 [+0.101,+0.247] | count J +0.167 [+0.083,+0.250] | count EPR +0.096 [+0.048,+0.233]
+  night - day per fly (c_obs): median +0.119, >0 in 0.80, paired Wilcoxon p 0.00038 (n 25)
+  night - day per fly (J): median +0.083, >0 in 0.76, paired Wilcoxon p 0.013 (n 25)
+  night - day per fly (EPR): median +0.108, >0 in 0.76, paired Wilcoxon p 0.00081 (n 25)
+
+A2  EPR vs J at the observable level: count J and count EPR (rule of 3). Points = fly x phase (both phases pooled), chains with a cycle and finite values.
+  CS     n  49 | M1 a 1.54 RSS 0.295 | M2 c 3.55 RSS 0.104 | better M2 quadratic (bootstrap share M1 0.10) | exponent 1.61 [1.16,1.97] | Onsager L = 0.272 (fly bootstrap 0.228-0.306)
+  per0LD n  53 | M1 a 1.25 RSS 0.193 | M2 c 3.50 RSS 0.069 | better M2 quadratic (bootstrap share M1 0.00) | exponent 2.19 [1.82,2.81] | Onsager L = 0.286 (fly bootstrap 0.253-0.315)
+  per0DD n  24 | M1 a 1.21 RSS 0.066 | M2 c 2.61 RSS 0.063 | better M2 quadratic (bootstrap share M1 0.43) | exponent 1.89 [1.47,2.38] | Onsager L = 0.352 (fly bootstrap 0.293-0.396)
+  fumin  n  96 | M1 a 1.87 RSS 0.963 | M2 c 3.66 RSS 0.898 | better M2 quadratic (bootstrap share M1 0.43) | exponent 1.14 [0.86,1.36] | Onsager L = 0.243 (fly bootstrap 0.191-0.260)
+  sss    n  85 | M1 a 1.76 RSS 0.331 | M2 c 6.61 RSS 0.236 | better M2 quadratic (bootstrap share M1 0.06) | exponent 1.59 [1.22,1.96] | Onsager L = 0.145 (fly bootstrap 0.117-0.174)
+  CSDD   n  25 | M1 a 1.10 RSS 0.028 | M2 c 3.72 RSS 0.018 | better M2 quadratic (bootstrap share M1 0.23) | exponent 2.11 [1.59,2.55] | Onsager L = 0.262 (fly bootstrap 0.223-0.308)
+    per0LD vs CS (1/L) Wald z -1.15 p 0.25 BH 0.25
+    per0DD vs CS (1/L) Wald z -4.23 p 2.3e-05 BH 4.7e-05
+    fumin vs CS (1/L) Wald z +2.13 p 0.033 BH 0.044
+    sss vs CS (1/L) Wald z +10.72 p 8.1e-27 BH 3.2e-26
+
+A2  EPR vs J at the observable level: exact observed-chain J and EPR. Points = fly x phase (both phases pooled), chains with a cycle and finite values.
+  CS     n  49 | M1 a 1.56 RSS 0.230 | M2 c 3.46 RSS 0.056 | better M2 quadratic (bootstrap share M1 0.04) | exponent 2.00 [1.63,2.27] | Onsager L = 0.281 (fly bootstrap 0.242-0.290)
+  per0LD n  53 | M1 a 1.23 RSS 0.197 | M2 c 3.46 RSS 0.080 | better M2 quadratic (bootstrap share M1 0.00) | exponent 2.26 [2.00,2.61] | Onsager L = 0.289 (fly bootstrap 0.251-0.327)
+  per0DD n  24 | M1 a 1.22 RSS 0.066 | M2 c 2.63 RSS 0.061 | better M2 quadratic (bootstrap share M1 0.41) | exponent 1.90 [1.50,2.36] | Onsager L = 0.352 (fly bootstrap 0.303-0.393)
+  fumin  n  84 | M1 a 1.98 RSS 0.700 | M2 c 3.81 RSS 0.757 | better M1 linear (bootstrap share M1 0.72) | exponent 1.33 [1.13,1.49] | Onsager L = 0.232 (fly bootstrap 0.180-0.249)
+  sss    n  64 | M1 a 1.82 RSS 0.189 | M2 c 6.42 RSS 0.169 | better M2 quadratic (bootstrap share M1 0.34) | exponent 1.55 [1.24,1.86] | Onsager L = 0.145 (fly bootstrap 0.115-0.175)
+  CSDD   n  25 | M1 a 1.08 RSS 0.028 | M2 c 3.67 RSS 0.019 | better M2 quadratic (bootstrap share M1 0.28) | exponent 2.05 [1.54,2.49] | Onsager L = 0.265 (fly bootstrap 0.222-0.311)
+    per0LD vs CS (1/L) Wald z -0.69 p 0.49 BH 0.49
+    per0DD vs CS (1/L) Wald z -4.15 p 3.3e-05 BH 6.6e-05
+    fumin vs CS (1/L) Wald z +3.86 p 0.00011 BH 0.00015
+    sss vs CS (1/L) Wald z +11.38 p 5.1e-30 BH 2e-29
+
+A3  energy landscape from the observed chains (nats; E1 = quiet wake = 0)
+CS     light n 24 | E2-E1 -0.491 [-0.632,-0.411] | E3-E1 -0.909 [-1.192,-0.695] | counted - predicted: Xn -0.058 (rho 0.81, n 24), Yn -0.059 (rho 0.85, n 24)
+CS     dark  n 25 | E2-E1 -0.582 [-0.838,-0.393] | E3-E1 -1.782 [-1.960,-1.711] | counted - predicted: Xn -0.024 (rho 0.91, n 25), Yn -0.020 (rho 0.97, n 25)
+per0LD light n 26 | E2-E1 -0.572 [-0.920,-0.378] | E3-E1 -1.714 [-2.114,-1.094] | counted - predicted: Xn -0.018 (rho 0.93, n 26), Yn -0.006 (rho 0.97, n 26)
+per0LD dark  n 27 | E2-E1 -0.507 [-0.681,-0.289] | E3-E1 -1.584 [-2.120,-1.201] | counted - predicted: Xn +0.002 (rho 0.97, n 27), Yn +0.003 (rho 0.96, n 27)
+per0DD whole n 24 | E2-E1 -0.337 [-0.455,-0.273] | E3-E1 -1.765 [-1.874,-1.550] | counted - predicted: Xn +0.005 (rho 0.98, n 24), Yn +0.001 (rho 0.97, n 24)
+fumin  light n 47 | E2-E1 -1.031 [-1.094,-0.914] | E3-E1 +0.641 [+0.435,+1.000] | counted - predicted: Xn +0.007 (rho 0.99, n 47), Yn +0.006 (rho 0.96, n 47)
+fumin  dark  n 49 | E2-E1 -1.459 [-1.611,-1.307] | E3-E1 +1.002 [+0.609,+1.396] | counted - predicted: Xn +0.007 (rho 0.93, n 48), Yn +0.004 (rho 0.99, n 48)
+sss    light n 37 | E2-E1 -1.333 [-1.656,-1.143] | E3-E1 +1.015 [+0.804,+1.370] | counted - predicted: Xn +0.004 (rho 0.99, n 35), Yn +0.006 (rho 0.99, n 35)
+sss    dark  n 48 | E2-E1 -1.127 [-1.308,-1.043] | E3-E1 +1.367 [+0.878,+1.654] | counted - predicted: Xn +0.000 (rho 0.98, n 44), Yn +0.000 (rho 0.98, n 44)
+CSDD   whole n 25 | E2-E1 -0.730 [-0.839,-0.571] | E3-E1 -1.263 [-1.437,-1.059] | counted - predicted: Xn -0.068 (rho 0.96, n 25), Yn -0.050 (rho 0.97, n 25)
+```
+Reading against the PLANS.md claim list:
+- C2 direction, observable: forward (c_obs and count J > 0) in CS dark (96% of flies), per0LD dark (78-81%), per0DD (76%), fumin light/dark (73-81%), CS DD (80%); weakly forward in CS light and per0LD light (64-70%); sss light median c_obs -0.012 [-0.139, 0.000], > 0 in only 20% (reversed or zero), sss dark ~0. The HMM agrees in sign of J in 81-100% of flies.
+- C3 holds at the observable level: CS night minus day per fly, c_obs +0.119 (80% of flies, p 0.0004), J +0.083 (p 0.013), EPR +0.108 (p 0.0008).
+- C4 observable values (median count J cycles/h, count EPR nats/h): CS 0.06/0.04 (light), 0.17/0.12 (dark); per0LD 0.06/0.01, 0.17/0.07; per0DD 0.17/0.11; fumin 0.13/0.13, 0.08/0.09; sss 0.00/0.02, 0.00/0.03; CS DD 0.12/0.05. HMM bracket per fly: J x1.0-1.2, EPR x1.2-3.6.
+- C5 at the observable level: EPR grows faster than linearly with J (quadratic better) in CS, per0LD, sss clearly; per0DD and fumin ambiguous (fumin linear with exact chain values) - same pattern as 20j. Onsager L: CS 0.27, per0LD 0.29, per0DD 0.35, fumin 0.24, sss 0.145 (both point types agree within 0.01). CHANGES vs 20j: per0LD vs CS is NOT different at the observable level (Wald p 0.25-0.49; 20j hidden said per0LD > CS); per0DD > CS (Wald BH < 1e-4, bootstrap CIs 0.29-0.40 vs 0.23-0.31, slight overlap); fumin < CS (BH 0.044 / 0.00015, CIs overlap); sss < CS robust (BH ~1e-26, CIs disjoint). The Wald test is known to overstate (20j note); the robust statement is sss < CS, with per0DD > CS and fumin < CS weaker.
+- C6 holds: E3 - E1 negative in CS (-0.9 light, -1.8 dark), per0 (-1.6 to -1.8), CS DD (-1.3); positive in fumin (+0.6, +1.0) and sss (+1.0, +1.4). Landscape prediction vs counted routing on the observed symbols: rho 0.81-0.99, median offsets <= 0.07 (consistency check, as stated in 20l).
