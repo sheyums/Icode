@@ -248,3 +248,51 @@ Notes           Motivated AFTER seeing 20p (per0 DD carried the excess) and FIND
                 the series branch): a post hoc link, so it is labelled exploratory here. ~25 flies
                 per genotype and noisy per-fly E: low power, and a null result means little.
 ```
+
+### 2026-10-31  20r gate amendment: stored bout files not found
+
+```
+Question        Unchanged from 20r-A: the GATE only is replaced. Does the extraction code, re-run on
+                the raw per0 DD files, reproduce the per0 DD bouts that every 20r comparison builds on?
+Why             subset_per0DDwakebouts.mat (Perwake, SHA-256 039C7BC2E3C8FED1...) and
+                wakebouts_per0dd.mat (w_bouts) were not found: absent from the Icode working tree and
+                its git history, and a recursive search of C:\Users\sheyu (the only drive) for
+                subset_per0DDwakebouts.mat, wakebouts_per0dd.mat and *per0*wake*.mat found nothing.
+                Sheyum, 2026-10-31: treat them as lost. The 20r-A gate ("identical after sorting to
+                subset_per0DDwakebouts.mat") therefore cannot be run as written.
+Data            per0 DD: the 25 files *_from1stLD.txt in
+                C:\Users\sheyu\Box\HMM paper_Activity based\different genotypes activity data\per0 dd
+                (the 28 other .txt files in that folder are not used). SHA-256 recorded per file.
+Code            The CURRENT extraction code in C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab
+                scripts (git repo, HEAD 001deca), chosen by Sheyum on 2026-10-31 over the pre-09-22
+                state: process_LocomToSleep.m 7aec365d5b79c859, sleeptrace.m 0deb702eed5cbfcc,
+                ironout.m f22f91c262f8c370, segment_sleep_phases.m a627f698159bc97a,
+                extractBoutsForModelCompetition.m 64f6f15985d04e5e (SHA-256 prefixes). No new extractor
+                is written. Settings: timeInterval 1, bridgeWakeSeconds 1, Teliminate 24,
+                deadThresh 12, minDays 3 (defaults, confirmed by Sheyum); phase 'entire'.
+                Fitting/hazard code: Icode, run by name from the Icode folder behind
+                assert(isequal(fileparts(which('BoutHazard')), pwd)). New 20r scripts live in
+                Icode/analysis_20r/.
+Gate            ALL of the following, else STOP and report which item failed:
+                (1) 25 flies retained; 3989 wake bouts (xmin 2 s) and 3987 sleep bouts (xmin 300 s).
+                    Exact.
+                (2) The 16-bin hazard table in FINDINGS ("The hazard with bands"): bin centres to the
+                    printed precision, and at-risk and event counts in every one of the 15 kept bins.
+                    Counts exact.
+                (3) The 2026-09-15 two-exponential null fit on the wake bouts
+                    (FitHyperexponentialMLE, MaxComponents 2, discrete, SamplingInterval 1,
+                    RandomSeed 1): tau 8.4 and 661.9 s, observed weights 0.079 / 0.921 (to the printed
+                    precision), logL -29328.2460 to within 1e-4.
+                (4) RiseRatio 1.405 / 1.388 / 1.376 / 1.430 at 12 / 16 / 20 / 24 bins (BoutHazard,
+                    Spacing "log", MinAtRisk 10, Alpha 0.05), to the 3 decimals recorded.
+                Also reported, not gated: per-fly bout counts, fly-days, and the trough/peak bins.
+Output          The re-extracted bouts (wake and sleep, per fly, NaN-padded, with the file list) are
+                saved to Icode/analysis_20r/per0DD_bouts_20r.mat; its SHA-256 goes in the ledger so
+                the reference set cannot be lost again.
+Decision rule   Pass: proceed to 20r-A exactly as written, using the same code for CS DD. Fail: no
+                CS DD number is looked at; the failure is recorded in RESULTS_LEDGER.md.
+Matched null    Not applicable (reproduction check).
+Notes           Gate (2)-(4) are recorded statistics rather than the bouts themselves, so they check
+                the bout SET only through what those statistics see; (1) and (2) together pin the
+                counts in every log bin. Everything else in 20r-A, 20r-B and 20r-C is unchanged.
+```
