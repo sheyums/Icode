@@ -330,3 +330,42 @@ Verdict         Neither side changed. The lab convention for bouts at the record
 Not reportable  Not a test of either convention's correctness. Neither convention reproduces the lost
                 3989 / 3987 set.
 ```
+
+### 2026-10-31  20r replication: per0 DD wake hazard rise at the four fixed bin counts
+
+```
+Commit          d9334dd63768bb576308f5aa611ab1583215a29f (Icode branch 20r-lclaude)
+Script          analysis_20r/extract_20r.m, analysis_20r/rise_test_20r.m; log
+                analysis_20r/replication_per0DD.txt
+Prespec         2026-10-31 "20r amendment: stored per0 DD bouts lost (replication route)", step (2):
+                the 2026-09-15 "per0 DD wake: the hazard rise at four fixed bin counts", unchanged.
+Extractor       Current Rockefeller pipeline (HEAD 001deca), edge bouts dropped (Sheyum's convention),
+                Teliminate 0, on the 25 cutdata files (zip 778599db...).
+Bouts saved     analysis_20r/per0DD_bouts_20r_replication.mat, SHA-256
+                b14ba34047b04d028154da4ae492959fca1528eeac2c3f0714b84e71b0591b30
+                (wake and sleep per fly, NaN-padded, seconds, with file list and trace lengths).
+                This is now the per0 DD reference set for 20r.
+Time window     Each fly's whole cut record (16 x 4.000 d + 9 x 3.000 d), 25 flies pooled. The pooled
+                set is the narrowest block.
+n               4017 wake bouts (xmin 2 s, dt 1 s); 30 wake and 20 sleep bouts dropped at record edges.
+                The 2026-09-15 set had 3989.
+Result          Null K = 2: tau 8.27 and 663.45 s, observed weights 0.081 / 0.919, logL -29523.4966
+                (2026-09-15: 8.4 and 661.9 s, 0.079 / 0.921).
+                bins 12: trough 119.8 s, peak 1094.0 s, RiseRatio 1.416, null median 1.089, 95th 1.208,
+                         RiseNullP 0.001   (2026-09-15: 1.405, 1.083, 1.210, 0.001)
+                bins 16: trough 109.3 s, peak  997.7 s, RiseRatio 1.402, null median 1.136, 95th 1.283,
+                         RiseNullP 0.009   (2026-09-15: 1.388, 1.136, 1.285, 0.010)
+                bins 20: trough 161.0 s, peak  944.3 s, RiseRatio 1.385, null median 1.185, 95th 1.401,
+                         RiseNullP 0.059   (2026-09-15: 1.376, 1.186, 1.390, 0.068)
+                bins 24: trough 144.1 s, peak  910.0 s, RiseRatio 1.435, null median 1.231, 95th 1.503,
+                         RiseNullP 0.086   (2026-09-15: 1.430, 1.235, 1.512, 0.101)
+                NullDropped 0 at every count; one bin dropped and one saturated at each.
+                Trough and peak bins identical to 2026-09-15 at all four counts.
+Matched null    999 datasets of n = 4017 from the fitted two-exponential model, each through the whole
+                estimator on its own bin edges.
+Verdict         Supported but bin-sensitive (rise at 12 and 16 bins, not at 20 and 24): the 2026-09-15
+                verdict REPLICATES on the re-extracted bouts, count by count.
+Not reportable  Do not quote 0.001 alone; every count is the result. Not an independent replication: the
+                same flies and records, re-scored, differing from the lost set by 28 wake bouts. Says
+                nothing about whether the rise is in the flies or made by scoring (20r-B).
+```
