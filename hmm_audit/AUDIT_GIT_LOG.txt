@@ -253,3 +253,4 @@ cab282a 2026-10-31 20:22:53 +0000 START_HERE.md; PORTING_GUIDE section 11 (Plan 
 6c7009a 2026-10-31 20:25:00 +0000 C5 revised after bootstrap-difference tests
 6454404 2026-10-31 20:26:18 +0000 Methods (tracked): Plan A observable-first framing, observed chain, HMM as bracket, observable-vs-hidden subsection (20n-20q)
 268b147 2026-10-31 22:43:24 +0000 PLANS: C8 status after 20r gate failure (replication route)
+b9b02db 2026-10-31 22:59:07 +0000 PLANS: C8 per0 DD rise replicated on re-extracted bouts (20r-lclaude 7eae6a4)
