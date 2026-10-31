@@ -236,3 +236,4 @@ c463b63 2026-10-31 00:40:00 +0000 20q amendment D + report
 edf220c 2026-10-31 00:41:52 +0000 sqw16b.py (20q amendment E)
 a0e5ca3 2026-10-31 00:43:04 +0000 20q report: amendment E option
 aaeebef 2026-10-31 00:43:04 +0000 20q amendment E results + correction of exclusion labels
+9f6982b 2026-10-31 19:13:37 +0000 Fig 19: TUR explainer (a-b schematic, c-d 20q data per fly)
