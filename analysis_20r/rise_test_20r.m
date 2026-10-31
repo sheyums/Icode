@@ -1,4 +1,4 @@
-function R = rise_test_20r(x, xmin, label)
+function R = rise_test_20r(x, xmin, label, nullReps)
 % RISE_TEST_20R  The 2026-09-15 rise test, unchanged: null = FitHyperexponentialMLE
 % MaxComponents 2, discrete, SamplingInterval 1, RandomSeed 1, its K = 2
 % SurvivalHandle; BoutHazard at NumBins {12,16,20,24}, Spacing "log",
@@ -8,12 +8,14 @@ function R = rise_test_20r(x, xmin, label)
 %   x     : bout durations in seconds (NaN ignored)
 %   xmin  : truncation point (2 s wake, 300 s sleep)
 %   label : text for the printout
+%   nullReps : NullReplicates (default 999; the power follow-up uses 199)
 
 assert(isequal(fileparts(which('BoutHazard')), pwd), ...
     'Run from the Icode folder: BoutHazard resolves to %s', which('BoutHazard'));
 assert(isequal(fileparts(which('FitHyperexponentialMLE')), pwd), ...
     'FitHyperexponentialMLE resolves to %s', which('FitHyperexponentialMLE'));
 
+if nargin < 4 || isempty(nullReps), nullReps = 999; end
 x = x(isfinite(x) & x >= xmin); x = x(:);
 F  = FitHyperexponentialMLE(x, xmin, MaxComponents=2, DistributionType="discrete", ...
     SamplingInterval=1, RandomSeed=1, Verbose=false);
@@ -24,7 +26,7 @@ R = struct('label', label, 'n', numel(x), 'tau', f2.Tau(:)', 'q', f2.WeightsObse
     'logL', f2.LogLik, 'Degenerate', f2.Degenerate, 'NumBins', nb);
 for i = 1:4
     H = BoutHazard(x, xmin, SamplingInterval=1, NumBins=nb(i), Spacing="log", MinAtRisk=10, ...
-        Alpha=0.05, Bootstrap=0, NullSurvivalHandle=f2.SurvivalHandle, NullReplicates=999, ...
+        Alpha=0.05, Bootstrap=0, NullSurvivalHandle=f2.SurvivalHandle, NullReplicates=nullReps, ...
         RandomSeed=1);
     R.trough(i)    = H.BinCenters(H.TroughIndex);
     R.peak(i)      = H.BinCenters(H.PeakIndex);
