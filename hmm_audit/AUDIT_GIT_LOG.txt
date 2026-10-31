@@ -244,3 +244,4 @@ ec1ef8e 2026-10-31 20:06:49 +0000 sqw17.py (20s-A)
 573c076 2026-10-31 20:08:56 +0000 20s-A results
 5097d16 2026-10-31 20:09:16 +0000 PLANS.md: claim statuses after 20s-A (C5 revised)
 539526a 2026-10-31 20:10:42 +0000 Plan A figures A1-A3 at the observable level (20s-A)
+d158efb 2026-10-31 20:20:16 +0000 sqw_ref section 15 (Plan A functions, copied from sqw13-17), verify_planA.py (58/58 pass), golden G12

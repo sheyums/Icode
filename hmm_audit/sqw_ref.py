@@ -645,3 +645,145 @@ def phases_bin(T, bin_s=60, scheme='12h'):
     if scheme == '12h': return (t >= spd // 2).astype(int)
     if scheme == 'none': return np.zeros(T, int)
     raise ValueError(scheme)
+
+# ---------------------------------------------------------------------------------------------------------
+# 15. PLAN A: the observed S/Q/W chain and model-free probes (PRESPEC 20n, 20o, 20p, 20q, 20s-A)
+#     Copied from the scripts that produced the ledger numbers (sqw13-sqw17); verify_ref.py checks equality.
+# ---------------------------------------------------------------------------------------------------------
+def mc_fit(y, ph, nP, tol=1e-10, maxit=500):
+    """First-order Markov chain on the symbols = the HMM with B fixed to the identity (Q, W, S = states 0, 1, 2),
+    fitted by em_step so that missing minutes (-1) are marginalised exactly. Start: transition counts + 1 per phase of
+    the arrival minute; stop when the relative log-likelihood gain < tol. On complete data equals the count MLE.
+    Returns (loglik, pi, P (nP x 3 x 3)). PRESPEC 20n."""
+    y = np.asarray(y); I3 = np.eye(3); P = np.full((nP, 3, 3), 1.0)
+    for t in range(1, len(y)):
+        if y[t-1] >= 0 and y[t] >= 0: P[ph[t], y[t-1], y[t]] += 1
+    P /= P.sum(2, keepdims=True); pi = np.full(3, 1/3); old = -np.inf
+    for it in range(maxit):
+        pi, P, B, ll = em_step(pi, P, I3, y, ph)
+        occ = [v for v in range(3) if np.any(y == v)]; assert np.allclose(B[occ], I3[occ], atol=1e-12)
+        if ll - old < tol * abs(ll): break
+        old = ll
+    return loglik(pi, P, I3, y, ph), pi, P
+
+B_PAIR = np.zeros((9, 3)); B_PAIR[np.arange(9), np.arange(9) % 3] = 1          # pair state k = 3*y_{t-1} + y_t emits y_t
+ALLOW_PAIR = np.array([[k % 3 == l // 3 for l in range(9)] for k in range(9)])    # (a,b) -> (b,c) only
+
+def mc2_fit(y, ph, nP, tol=1e-10, maxit=1000):
+    """Second-order chain P(y_t | y_t-2, y_t-1) as a 9-state chain on pairs with fixed deterministic emissions and
+    structural zeros; missing minutes marginalised. Returns (loglik, pi (9), P (nP x 9 x 9)). PRESPEC 20o."""
+    y = np.asarray(y); P = np.where(ALLOW_PAIR, 1.0, 0.0)[None].repeat(nP, 0)
+    for t in range(2, len(y)):
+        if min(y[t-2], y[t-1], y[t]) >= 0: P[ph[t], 3*y[t-2] + y[t-1], 3*y[t-1] + y[t]] += 1
+    P /= P.sum(2, keepdims=True); pi = np.full(9, 1/9); old = -np.inf
+    for it in range(maxit):
+        pi, P, _, ll = em_step(pi, P, B_PAIR, y, ph); assert np.all(P[:, ~ALLOW_PAIR] == 0)
+        if ll - old < tol * abs(ll): break
+        old = ll
+    return loglik(pi, P, B_PAIR, y, ph), pi, P
+
+def sim_rows(P, allow=None):
+    """FOR SIMULATION ONLY (20p amendment B): a row with zero expected count is replaced by its count-start row,
+    uniform over the allowed transitions, so a simulated record cannot get stuck in a state the data never leave."""
+    P = np.array(P, float); A = np.ones(P.shape[1:], bool) if allow is None else allow
+    for p in range(P.shape[0]):
+        for k in range(P.shape[1]):
+            if P[p, k].sum() < 0.5: P[p, k] = A[k] / A[k].sum()
+    return P
+
+def block_kl(y, ph, nph, qw=False, nmax=4):
+    """D_n (n = 1..nmax) per phase: KL divergence between n-minute blocks and their time reverses,
+    D_n = sum_b p(b) ln[p(b)/p(reverse b)], pseudocount 0.5 on every block of the alphabet ({Q,W,S}, or {Q,W} if qw).
+    Blocks lie within one phase and contain no missing minute. d_n = D_n - D_{n-1} (x 60 for nats/h); for a
+    stationary first-order chain d_3 = d_2 (PRESPEC 20p). Returns (nph x nmax), column n-1 = D_n, D_1 = 0."""
+    y = np.asarray(y); ph = np.asarray(ph); T = len(y); out = np.zeros((nph, nmax))
+    ok = (y >= 0) & ((y < 2) if qw else True)
+    for n in range(2, nmax + 1):
+        m = T - n + 1; good = np.ones(m, bool); code = np.zeros(m, int); rc = np.zeros(m, int)
+        for k in range(n):
+            good &= ok[k:k+m] & (ph[k:k+m] == ph[:m]); yk = np.clip(y[k:k+m], 0, 2)
+            code = code * 3 + yk; rc += yk * 3**k
+        allc = np.arange(3**n); digits = np.array([[(c // 3**k) % 3 for k in range(n)] for c in allc])
+        alph = (digits < 2).all(1) if qw else np.ones(3**n, bool)
+        rev = np.array([sum(digits[c, n-1-k] * 3**k for k in range(n)) for c in allc])
+        for p in range(nph):
+            c = np.bincount(code[good & (ph[:m] == p)], minlength=3**n).astype(float)
+            pr = np.where(alph, c + 0.5, 0.0); pr /= pr.sum(); s = alph
+            out[p, n-1] = float(np.sum(pr[s] * np.log(pr[s] / pr[rev[s]])))
+    return out
+
+def block_kl_stats(y, ph, nph):
+    """Per phase: d2, d3, d4 (nats/h), Delta3 = d3 - d2, Delta4 = d4 - d3, and Delta3 on wake-only blocks (D3QW).
+    The excess E of PRESPEC 20p is Delta3 minus the median Delta3 of records simulated from the fly's own mc_fit."""
+    D = block_kl(y, ph, nph); Dq = block_kl(y, ph, nph, True); res = []
+    for p in range(nph):
+        d = np.diff(D[p]) * 60; dq = np.diff(Dq[p]) * 60
+        res.append(dict(d2=d[0], d3=d[1], d4=d[2], D3=d[1] - d[0], D4=d[2] - d[1], D3QW=dq[1] - dq[0]))
+    return res
+
+D_CYCLE = np.zeros((3, 3))
+for _a, _b in ((W, Q), (Q, S), (S, W)): D_CYCLE[_a, _b] = 1; D_CYCLE[_b, _a] = -1   # forward cycle W->Q->S->W = +1
+
+def tur_estimate(y, ph, nph, taus=(180, 120, 360)):
+    """Per phase: J (counted forward-cycle increments per hour) and, per block length tau (minutes), D = Var(N_tau)/(2 tau)
+    (per hour) from non-overlapping blocks lying in one phase with no missing minute (>= 4 blocks), and the TUR bound
+    B = J^2 / D (k_B per hour). PRESPEC 20q (amendment C: B = J^2/D, not 2 J^2/D)."""
+    y = np.asarray(y); ph = np.asarray(ph); T = len(y)
+    val = np.zeros(T, bool); val[1:] = (y[1:] >= 0) & (y[:-1] >= 0)
+    inc = np.zeros(T); inc[1:] = np.where(val[1:], D_CYCLE[np.clip(y[:-1], 0, 2), np.clip(y[1:], 0, 2)], 0)
+    seg = np.flatnonzero(np.diff(ph) != 0) + 1; starts = np.r_[0, seg]; ends = np.r_[seg, T]; out = []
+    for p in range(nph):
+        m = (ph == p) & val; hours = m.sum() / 60; J = inc[m].sum() / hours if hours > 0 else np.nan; r = dict(J=J)
+        for tau in taus:
+            Nb = []
+            for s, e in zip(starts, ends):
+                if ph[s] != p: continue
+                for b0 in range(s, e - tau + 1, tau):
+                    if b0 == 0 or not val[b0:b0+tau].all(): continue
+                    Nb.append(inc[b0:b0+tau].sum())
+            D = np.var(Nb, ddof=1) / (2 * tau / 60) if len(Nb) >= 4 else np.nan
+            r[f'D{tau}'] = D; r[f'B{tau}'] = J**2 / D if D and np.isfinite(D) and D > 0 else np.nan; r[f'n{tau}'] = len(Nb)
+        out.append(r)
+    return out
+
+def _log_perron(M):
+    return float(np.log(np.max(np.linalg.eigvals(M).real)))
+
+def tur_exact(T, d=D_CYCLE, h=1e-3):
+    """Exact J, D, B = J^2/D (per hour) of the current with increments d on the per-minute chain T, from the tilted matrix
+    T_ij exp(s d_ij): lambda(s) = log Perron root, J = lambda'(0), D = lambda''(0)/2 (central differences)."""
+    lp = _log_perron(T * np.exp(h * d)); lm = _log_perron(T * np.exp(-h * d)); l0 = _log_perron(T)
+    J = (lp - lm) / (2 * h) * 60; D = (lp - 2 * l0 + lm) / h**2 / 2 * 60; return J, D, (J**2 / D if D > 0 else np.nan)
+
+def tur_exact_ct(T, d=D_CYCLE, h=1e-3):
+    """The same for the continuous-time generator T - I (off-diagonal tilt). The steady-state TUR B <= sigma holds here;
+    the 1-min discrete chain can exceed it slightly (kappa = B_discrete / B_continuous, PRESPEC 20q amendment C)."""
+    def lam(s):
+        M = T * np.exp(s * d); np.fill_diagonal(M, np.diag(T)); return float(np.max(np.linalg.eigvals(M).real)) - 1.0
+    lp, lm = lam(h), lam(-h); J = (lp - lm) / (2 * h) * 60; D = (lp + lm) / h**2 / 2 * 60; return J, D, (J**2 / D if D > 0 else np.nan)
+
+def hmm_observed_chain(P, B):
+    """9-state chain on (hidden z, symbol y): T[(z,y),(z',y')] = P[z,z'] B[z',y'], with the cycle increments on the symbols,
+    so that tur_exact(T, d) gives the HMM's exact J, D, B for the OBSERVED current."""
+    T = np.einsum('ab,bc->abc', P, B)[:, None, :, :].repeat(3, 1).reshape(9, 9); d = np.tile(D_CYCLE, (3, 3)); return T, d
+
+def routes_observed(y, ph, nph):
+    """Route counts (ROUTES order) on the observed symbols, each run of non-missing minutes separately, by phase of the
+    arrival minute (PRESPEC 20s-A). Equals route_counts(y, ph, nph) on a complete record."""
+    y = np.asarray(y); c = np.zeros((nph, 4)); ok = np.r_[False, y >= 0, False]; d = np.diff(ok.astype(int))
+    for s, e in zip(np.flatnonzero(d == 1), np.flatnonzero(d == -1)):
+        for r, t in route_events(y[s:e]): c[ph[s + t], ROUTES.index(r)] += 1
+    return c
+
+def observable_quantities(y, ph, nph, P_chain):
+    """PLAN A per phase (PRESPEC 20s-A): c_obs, count J (cycles/h), count EPR (rule-of-three bound) and whether the rule
+    was used, exact chain J / affinity A / EPR (model_energetics of mc_fit's matrix), landscape energies and predicted
+    routing, counted routing Xn, Yn on the observed symbols. hours = minutes in the phase / 60."""
+    N = observable_pair_counts(y, ph, nph); c = c_obs_minutes(y, ph, nph); X, Y = xy_counts(routes_observed(y, ph, nph)); out = []
+    for p in range(nph):
+        h = np.sum(np.asarray(ph) == p) / 60; e = model_energetics(P_chain[p]); ls = landscape(P_chain[p]); epr, sub = epr_count_bound(N[p], h)
+        out.append(dict(c_obs=float(c[p]), J=float(j_cycle_count(N[p], h)), EPR=float(epr), rule_of_three=bool(sub),
+                        J_chain=float(e['J']), A_chain=float(e['A']), EPR_chain=float(e['EPR']),
+                        E21=float(ls['E2_minus_E1']), E31=float(ls['E3_minus_E1']), F_SW=float(ls['F_SW']), F_WS=float(ls['F_WS']),
+                        Xn_cnt=float(X[p]), Yn_cnt=float(Y[p])))
+    return out
