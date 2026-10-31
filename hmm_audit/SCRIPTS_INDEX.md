@@ -1,5 +1,13 @@
 # Script index — for converting the analysis to MATLAB
 
+**Status (2026-10-31): read `START_HERE.md` first.** For Plan A only `sqw_ref.py` is ported. CURRENT analysis scripts
+(provenance of the Plan A numbers and figures): `sqw2.py` (20b fits), `sqw4.py` (20d), `sqw7*.py` (20g), `sqw8.py`
+(20h), `sqw10*.py` (20k), `sqw12*.py` (20m), `sqw13*.py` (20n), `sqw14*.py` (20o), `sqw15*.py` (20p), `sqw16*.py`
+(20q), `sqw17*.py` (20s-A), `fig_planA.py`, `fig_beneath.py`, `fig_memory_dissipation.py`, `fig_tur.py`,
+`verify_ref.py`, `verify_planA.py`, `make_golden*.py`. SUPERSEDED for the paper (HMM bracket only): `sqw3.py` (20c),
+`sqw9.py`, `onsager_L.py` (20j), `sqw11.py` (20l). HISTORY (do not port): everything for PRESPEC 2-19 below, and
+`sqw.py`/`sqw_common.py`/`sqw_synth.py`/`sqw_power.py` (failed per-window design).
+
 **For the S/Q/W analysis (PRESPEC 19-20e), port `sqw_ref.py` following `PORTING_GUIDE.md`, tested against `golden/`.** The table below is provenance.
 
 Python 3.13; packages: numpy, scipy, matplotlib, hmmlearn 0.3.3, scikit-learn.

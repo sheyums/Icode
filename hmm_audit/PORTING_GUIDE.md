@@ -1,6 +1,7 @@
 # Porting guide: S/Q/W hidden-Markov analysis, Python -> MATLAB
 
 Audience: the Claude instance (or person) translating this analysis into MATLAB functions for repeated use.
+**Read `START_HERE.md` first** (what is current vs history). Plan A additions: section 11 below and `sqw_ref.py` section 15.
 Read this file first, then `sqw_ref.py`. Step-by-step data extraction and plotting for every figure: `FIGURE_RECIPES.md`. The paper's Methods are a separate document (`METHODS_PAPER.md`).
 
 ## 0. Sources of truth, in order
@@ -435,3 +436,49 @@ which pooled bouts across flies with no within-fly null.
   2. Repeat on ~200 shuffled datasets.
   3. The p-values from 10.3 on these shuffled datasets should be roughly uniform. Fewer than ~5% should fall
      below 0.05.
+
+## 11. Plan A (2026-10-31): the observed S/Q/W chain and model-free probes (`sqw_ref.py` section 15; golden G12)
+
+Plan A (PLANS.md) makes the OBSERVED first-order chain on S/Q/W the primary object; the HMM is a robustness check and a
+model-based upper bracket. Every number below is per fly x phase; group values are medians over flies with
+fly-bootstrap intervals; every observable-vs-hidden comparison is paired within fly.
+
+### 11.1 Function map (add to section 2)
+| Python | MATLAB (suggested) | notes | Golden |
+|---|---|---|---|
+| `mc_fit(y, ph, nP)` | `[ll, pi, P] = chainFitPhased(y, ph, nP)` | the HMM with B = I, fitted by `hmmEmStep` so missing minutes are marginalised; start = counts + 1; on complete data equals the count MLE | G12 `mc_fit` |
+| `mc2_fit(y, ph, nP)` | `[ll, pi, P] = chain2FitPhased(y, ph, nP)` | 2nd-order chain as 9 pair states (state 3*y_{t-1}+y_t, 0-based) with fixed emissions `B_PAIR` and structural zeros `ALLOW_PAIR` | G12 `mc2_fit` |
+| `sim_rows(P, allow)` | `P = fillEmptyRows(P, Allow)` | SIMULATION ONLY: a zero row becomes uniform over allowed transitions | G12 `sim_rows_example` |
+| `block_kl`, `block_kl_stats` | `D = blockKL(y, ph, nP, QW=false, NMax=4)`, `S = blockKLStats(y, ph, nP)` | pseudocount 0.5 on every block of the alphabet; blocks within one phase, no missing minute; d_n = D_n - D_{n-1} (x 60 -> nats/h) | G12 |
+| `tur_estimate` | `T = turEstimate(y, ph, nP, Taus=[180 120 360])` | counted current: +1 W->Q, Q->S, S->W, -1 reverses; D = var(block sums, ddof 1)/(2 tau); B = J^2/D; >= 4 blocks | G12 |
+| `tur_exact`, `tur_exact_ct` | `[J, D, B] = turExact(T, d)`, `turExactCT(T, d)` | tilted matrix T.*exp(s*d), lambda = log of the largest real eigenvalue; central differences h = 1e-3; continuous version tilts off-diagonal of T - I | G12 |
+| `hmm_observed_chain(P, B)` | `[T, d] = hmmObservedChain(P, B)` | 9-state (hidden, symbol) chain, for the HMM's exact J, D, B of the OBSERVED current | G12 |
+| `routes_observed` | `C = routeCountsObserved(y, ph, nP)` | route counts on symbols, each run of non-missing minutes separately | G12 |
+| `observable_quantities(y, ph, nP, P)` | `Q = observableQuantities(y, ph, nP, P)` | c_obs, count J, count EPR (rule of three), chain J/A/EPR, landscape, counted Xn/Yn | G12 |
+
+### 11.2 Conventions specific to Plan A
+- **J sign**: forward W -> Q -> S -> W is positive everywhere (count J = (N_SW - N_WS)/hours, chain J from
+  `model_energetics`). Labels: Q = H1 index, W = H2, S = H3.
+- **Exclusions** (decide per fly x phase, count them, report them): no Q/W reference (all wake minutes missing);
+  chain without a cycle (|J_chain| < 1e-12); for the TUR, three kinds (20q amendment E): one-way edge with a cycle
+  (rule of three, b* = min(3, k), as `epr_count_based.m`), exactly symmetric counts (net J = 0; TUR trivial),
+  no cycle (excluded).
+- **TUR**: B = J^2/D. The 1-min chain can exceed the continuous-time bound slightly (kappa = B_discrete/B_continuous,
+  <= 1.005 on fitted fly chains); the reported comparison deflates B by kappa. Bias of the D estimator is calibrated
+  per fly by simulating its own chain (B_c = B_obs * B_chain_exact / median(B_simulated)).
+- **Block irreversibility** is reported only as the excess E over the fly's own simulated first-order chain; raw
+  d3/d2 ratios are estimator bias and must not be reported.
+- **Nulls**: every simulated replicate gets the fly's missing-minute mask and goes through the same estimator.
+- **Seeds**: numpy streams cannot be reproduced in MATLAB; verify ports with golden files (exact) and by reaching the
+  same per-fly results within Monte Carlo error (statistical).
+
+### 11.3 What each Plan A analysis needs
+| analysis | functions | PRESPEC / ledger |
+|---|---|---|
+| observable table, direction, flux, EPR, 6-h CS | `mc_fit`, `observable_quantities` | 20s-A |
+| EPR vs J, Onsager L (observable) | `observable_quantities`, `epr_j_models`, `onsager_fit`, `onsager_bootstrap` | 20s-A |
+| landscape (observable) | `mc_fit`, `landscape`, `routes_observed` | 20s-A |
+| hidden layer vs chain | `mc_fit`, `em_fit` (20b fits), `simulate` | 20n |
+| memory vs drift | `mc_fit` (12 h, 6 h), `mc2_fit`, `em_fit` (6 h) | 20o |
+| memory and dissipation | `block_kl_stats`, `mc_fit`, `sim_rows`, `simulate` | 20p |
+| TUR | `tur_estimate`, `tur_exact`, `tur_exact_ct`, `hmm_observed_chain`, `mc_fit`, `sim_rows`, `simulate` | 20q |

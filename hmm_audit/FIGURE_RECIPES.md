@@ -454,3 +454,34 @@ and fly-phases with no cycle or no Q/W reference.
 - (c) CS dark only: P(quiet exit) vs sleep-bout length (flies weighted equally, >= 10 flies per bin, bootstrap
   over flies), hidden (filled circles) and observed (open squares). Dashed line at the fly-mean landscape
   prediction (F_SW + 1)/2 for CS dark.
+
+## K. Plan A figures (2026-10-31; PRESPEC 20s-A, 20n-20q; scripts `fig_planA.py`, `fig_beneath.py`)
+
+Common style: STIX font, 8 pt, ticks in; one point per fly (light open, dark/DD filled), median as a bar with a
+fly-bootstrap 95% CI (2000 resamples). Genotype order (rule): CS, CS DD, per0 LD, per0 DD, fumin, sss; light before
+dark. Colours: CS #2a78d6, CS DD #6250d6, per0 LD #1baf7a, per0 DD #eda100, fumin #eb6834, sss #e87ba4.
+
+### K1. Fig A1 (direction and flux; replaces Figs 6/6b), 3 stacked panels, 7.0 x 6.6 in
+Per fly x phase from `observable_quantities` with `mc_fit` matrices: (a) c_obs, (b) count J (cycles/h), (c) count EPR
+(nats/h, rule of three). In (b) and (c) a grey triangle beside each group = median of the HMM value over
+non-degenerate flies (20b FFBS counts), labelled "model-based upper bracket". Exclude fly-phases without a Q/W
+reference. Check: medians equal the 20s-A ledger (e.g. CS dark c_obs +0.147, J +0.167, EPR 0.116).
+
+### K2. Fig A2 (EPR vs J and Onsager L; replaces Figs 11/12)
+(a) one panel per genotype: count EPR vs count J per fly x phase (chains with a cycle), curve EPR = J^2/L with L from
+OLS through the origin (`onsager_fit`). (b) L per genotype with fly-bootstrap CI (flies resampled with all their
+points), dashed line at CS. Check: L = 0.272 (CS), 0.262 (CS DD), 0.286 (per0 LD), 0.352 (per0 DD), 0.243 (fumin),
+0.145 (sss).
+
+### K3. Fig A3 (energy landscape; replaces Figs 14/15)
+(a) E_W - E_Q = ln(pi_Q/pi_W), (b) E_S - E_Q = ln(pi_Q/pi_S) from the observed chain, per fly x phase (chains with a
+cycle); (c) landscape prediction F_SW, F_WS vs counted routing Xn, Yn on the observed symbols (`routes_observed`,
+>= 3 routes per denominator), identity line. Check: E_S - E_Q medians -1.78 (CS dark), +1.00 (fumin dark).
+
+### K4. Fig A4 (beneath the surface; data panels of Figs 18/19 plus 20n, 20o)
+(a) 20n: per fly dBIC = BIC(chain) - BIC(HMM) (> 0: hidden layer preferred), CS and fumin. Sign check: medians -16.6
+and -30.4; 28% and 23% of flies above 0. (b) 20o: per fly R_mem = (LL_MC2 - LL_MC1)/(LL_HMM - LL_MC1) and
+R_drift = 1 - (LL_HMM6 - LL_MC1_6)/(LL_HMM - LL_MC1), flies with HMM gain > 3 nats; values > 5 drawn at 5.
+(c) 20p: excess E per block (CS DD as its two 12-h halves, amendment A), filled = passes the pre-registered rule.
+(d) 20q: B_c/sigma_chain per block (tau 3 h, amendment-D set), filled = primary DD blocks, line at 1.
+Schematic explainers (Figs 18a-c, 19a-b) go to the supplement.
