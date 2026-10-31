@@ -203,3 +203,40 @@ Not reportable  Every number above except the cause. The 16-fly RiseRatios in pa
                 bins, trough in the second-to-last bin) are a different, smaller dataset and say
                 nothing about the per0 DD rise.
 ```
+
+### 2026-10-31  20r gate, amendment 2 (pre-cut per0 DD files, Teliminate 0): FAILS, close
+
+```
+Commit          a3611dd00187abb9bbd89790817bb85799cb8de1 (Icode branch 20r-lclaude)
+Script          analysis_20r/gate_20r.m (Teliminate 0); output analysis_20r/gate_20r_report_T0.txt
+Prespec         2026-10-31 "20r gate amendment 2: the pre-cut per0 DD files, Teliminate 0"
+Code            Rockefeller Matlab scripts, HEAD 001deca, current versions (hashes as in the first
+                gate entry). MATLAB R2026a Update 5. timeInterval 1, bridgeWakeSeconds 1,
+                Teliminate 0, deadThresh 12, minDays 3, phase 'entire'.
+Input           per0DD activity files_1sec res.zip (SHA-256 778599db...), 25 cutdata files.
+Time window     Each fly's whole cut record (16 x 4.000 d + 9 x 3.000 d), pooled.
+n               25 flies. 4017 wake bouts (xmin 2 s), 4022 sleep bouts (xmin 300 s); 90.45
+                fly-days covered by bouts.
+Result          (1) flies 25: pass. Wake 4017 vs 3989 (+28), sleep 4022 vs 3987 (+35): FAIL.
+                (2) 16-bin centres match; at-risk and event counts do not. Every bin holds the same
+                    or slightly more bouts than FINDINGS (events +3, +1, +3, 0, +2, +2, 0, 0, 0, 0,
+                    +2, +4, +9, +1, +1; at risk +28 in the first bin, +11 in the last): FAIL.
+                (3) null K = 2: tau 8.27 and 663.45 s, q 0.0813 / 0.9188, logL -29523.4966 vs
+                    -29328.2460: FAIL (a different n, so logL cannot match).
+                (4) RiseRatio 1.416 / 1.402 / 1.386 / 1.435 vs 1.405 / 1.388 / 1.376 / 1.430: FAIL
+                    at 3 decimals. Trough and peak bins identical to the 2026-09-15 entry at all four
+                    counts (119.8/1094.0, 109.3/997.7, 161.0/944.3, 144.1/910.0 s).
+                Reading: the right flies and the right records, with 28 extra wake and 35 extra sleep
+                bouts spread over the whole duration range. 4017 wake equals the count cClaude
+                reports for the Python S/Q/W definition on these files, so the current MATLAB
+                pipeline and the Python one agree on wake bouts here; the reference 3989/3987 came
+                from something else. Candidate, NOT tested: the pre-09-22 pipeline (04e0508^:
+                ironout b54ade9, segment_sleep_phases f6c81f5, process_LocomToSleep 31d341d), the
+                code that existed when the reference set was made on or before 2026-09-15.
+Saved           analysis_20r/per0DD_bouts_20r_T0.mat, SHA-256 b3655e6bdaed7c18b6b6768e2aba1260bb8a964ba60e0d9ac6398cb473ad5eee. NOT the reference set.
+Matched null    Not applicable (reproduction check).
+Verdict         Gate FAILS. No CS DD number looked at; 20r-A/B/C not run. No other code version or
+                setting tried.
+Not reportable  The RiseRatios here are close to the recorded ones but are not a replication: the bout
+                set differs by 63 bouts, and the gate is a reproduction check, not a test.
+```
