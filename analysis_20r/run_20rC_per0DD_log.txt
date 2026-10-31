@@ -1,0 +1,49 @@
+FitTruncatedDiscreteMLE(hyper_erlang): discrete mode, n=4017, k=5 parameter(s).
+  logL=-29503.5874  AICc=59017.1898  BIC=59048.6663
+  rate1_m1   = 0.00151377 (SE 3.26e-05)
+  rate2_m1   = 0.106437 (SE 0.01131)
+  rate3_m5   = 0.00688037 (SE 0.0004769)
+  q1         = 0.803422 (SE 0.02061)
+  q2         = 0.0806859 (SE 0.006164)
+  q3         = 0.115893 (SE 0.01846)
+[Warning: Column headers from the file were modified to make them valid MATLAB identifiers before creating variable names for the table. The original column headers are saved in
+the VariableDescriptions property.
+Set 'VariableNamingRule' to 'preserve' to use the original column headers as table variable names.] 
+{Error using . (line 236)
+Unrecognized table variable name 'genotype'.
+
+Error in run_20rC (line 45)
+T = T(T.genotype == string(genotype), :);
+      ^^^^^^^^^^
+} 
+FitTruncatedDiscreteMLE(hyper_erlang): discrete mode, n=4017, k=5 parameter(s).
+  logL=-29503.5874  AICc=59017.1898  BIC=59048.6663
+  rate1_m1   = 0.00151377 (SE 3.26e-05)
+  rate2_m1   = 0.106437 (SE 0.01131)
+  rate3_m5   = 0.00688037 (SE 0.0004769)
+  q1         = 0.803422 (SE 0.02061)
+  q2         = 0.0806859 (SE 0.006164)
+  q3         = 0.115893 (SE 0.01846)
+{Error using . (line 236)
+Unrecognized table variable name 'file'.
+
+Error in run_20rC (line 50)
+    m = find(T.file == files(i));
+             ^^^^^^
+} 
+FitTruncatedDiscreteMLE(hyper_erlang): discrete mode, n=4017, k=5 parameter(s).
+  logL=-29503.5874  AICc=59017.1898  BIC=59048.6663
+  rate1_m1   = 0.00151377 (SE 3.26e-05)
+  rate2_m1   = 0.106437 (SE 0.01131)
+  rate3_m5   = 0.00688037 (SE 0.0004769)
+  q1         = 0.803422 (SE 0.02061)
+  q2         = 0.0806859 (SE 0.006164)
+  q3         = 0.115893 (SE 0.01846)
+20r-C (EXPLORATORY), per0DD: hyper_erlang Shapes [1 1 5], logL -29503.5874
+  rates [0.001514 0.1064 0.00688], untruncated w [0.7888 0.09772 0.1134]
+  reported: rate1_m1=0.001514, rate2_m1=0.1064, rate3_m5=0.00688, q1=0.8034, q2=0.08069, q3=0.1159
+  GuardOK 1
+  flies matched with a Q/W reference: 25 of 25
+  per-fly mean series-branch responsibility: median 0.111, range 0.056-0.168
+  Spearman with E_nats_per_h:          rho 0.338, p 0.099, n 25
+  Spearman with E_wakeonly_nats_per_h: rho 0.139, p 0.505, n 25

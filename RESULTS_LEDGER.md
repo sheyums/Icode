@@ -441,3 +441,30 @@ Not reportable  Not "CS DD has four timescales": AICc picks K=4 but BIC prefers 
                 bin-sensitive. The influence result is vacuous here and must not be cited as
                 robustness of anything.
 ```
+
+### 2026-10-31  20r-C (EXPLORATORY): per0 DD series-branch share per fly vs 20p excess irreversibility
+
+```
+Commit          61228262d5b1c4fcd984c5a9c86a289dd4fa9538 (analysis_20r/run_20rC.m; log
+                analysis_20r/run_20rC_per0DD_log.txt; results analysis_20r/run_20rC_per0DD.mat)
+Prespec         2026-10-31 20r-C, with step (4) of "20r amendment: stored per0 DD bouts lost". CS DD
+                NOT run: 20r-A's hyper_erlang collapsed to shapes [1 1 1] (no series branch).
+Time window     Each fly's whole cut record; the fit pools the 25 flies.
+n               25 flies (all matched in hmm_audit/e_perfly_20p.csv by file name, all with a Q/W
+                reference); 4017 wake bouts in the pooled fit.
+Result          Pooled fit, FitHyperErlangMLE Shapes [1 1 5], discrete, RandomSeed 1: logL -29503.5874,
+                GuardOK 1; rates 1.514e-3, 0.1064, 6.88e-3 /s; observed q 0.803 / 0.081 / 0.116
+                (FINDINGS on the lost set: 1.515e-3, 0.1053, 6.949e-3; q 0.807 / 0.079 / 0.114).
+                Against the K = 2 two-exponential on the same bouts (replication entry, -29523.4966):
+                +19.9 nats for two more parameters.
+                Per-fly mean responsibility of the 5-stage branch: median 0.111, range 0.056-0.168.
+                Spearman with E_nats_per_h:          rho 0.338, p 0.099, n 25
+                Spearman with E_wakeonly_nats_per_h: rho 0.139, p 0.505, n 25
+Matched null    Not applicable (exploratory).
+Verdict         None, by design. Exploratory and hypothesis-generating only.
+Not reportable  Neither correlation is evidence of anything: post hoc, n = 25, noisy per-fly E, two
+                tests run, neither below 0.05. Must not be cited unless replicated by a pre-specified
+                test on new flies. The responsibilities come from ONE pooled fit applied to every fly,
+                so they measure where a fly's bouts fall on the pooled mixture, not a per-fly fit.
+                The +19.9 nats is a comparison with K = 2, not the matched-k comparison of FINDINGS.
+```
