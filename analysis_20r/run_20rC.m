@@ -41,8 +41,16 @@ for i = 1:nFly
     resp(i) = mean(r); nb(i) = numel(k);
 end
 
-T = readtable(eFile, 'TextType', 'string', 'VariableNamingRule', 'preserve');
-T.Properties.VariableNames{1} = 'genotype';   % the header carries a byte-order mark
+% Parsed by hand: readtable's header detection renamed the columns on this file.
+ln = readlines(eFile); ln = ln(strlength(ln) > 0);
+hdr = split(ln(1), ',')';
+assert(isequal(hdr(1:6), ["genotype" "fly_index" "file" "qw_reference" "E_nats_per_h" ...
+    "E_wakeonly_nats_per_h"]), 'unexpected header in %s', eFile);
+rows = cellfun(@(s) split(s, ',', 2), cellstr(ln(2:end)), 'UniformOutput', false);
+rows = vertcat(rows{:});
+rows = rows(:, 1:6);
+T = table(rows(:,1), rows(:,3), rows(:,4), str2double(rows(:,5)), str2double(rows(:,6)), ...
+    'VariableNames', {'genotype','file','qw_reference','E_nats_per_h','E_wakeonly_nats_per_h'});
 T = T(T.genotype == string(genotype), :);
 files = string(B.files(:));
 E = nan(nFly, 1); Ew = nan(nFly, 1); ref = false(nFly, 1);
