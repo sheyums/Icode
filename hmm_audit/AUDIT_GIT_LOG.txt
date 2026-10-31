@@ -251,3 +251,4 @@ cab282a 2026-10-31 20:22:53 +0000 START_HERE.md; PORTING_GUIDE section 11 (Plan 
 2ed76af 2026-10-31 20:24:05 +0000 ledger: 20s-A addendum
 5e6a295 2026-10-31 20:25:00 +0000 20s-A: bootstrap-difference tests for L
 6c7009a 2026-10-31 20:25:00 +0000 C5 revised after bootstrap-difference tests
+6454404 2026-10-31 20:26:18 +0000 Methods (tracked): Plan A observable-first framing, observed chain, HMM as bracket, observable-vs-hidden subsection (20n-20q)
