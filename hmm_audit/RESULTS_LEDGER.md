@@ -1942,3 +1942,19 @@ sss    dark  n 34 [descriptive (LD)] | J -0.021/h D 0.951/h blocks 8 | B_obs 0.0
 - Efficiency of precision (descriptive): the observed chains sit at the bound (Q_MC 0.90-1.00; near-equilibrium unicyclic). The data reach Q_obs 0.90 (per0 DD), 0.75 (CS DD) relative to sigma_MC; relative to the HMM's dissipation Q_HMM 0.66 (per0 DD), 0.45 (CS DD), 0.14-0.73 in LD. sigma_HMM >= B_c in 67-88% of flies; HMM simulations bracket B_obs in 89-100%.
 - Reading: no TUR evidence for hidden dissipation. The cycle current is about as precise as a Markov cycle with the observed chain's dissipation can be (per0 DD), or less precise where slow modulation adds variance (CS DD, LD). If the HMM's larger dissipation is real, the sleep-wake cycle uses it inefficiently (Q_HMM ~ 0.5).
 - Excluded fly-phases (amendment D): observed chain without a cycle per0DD 1, CS light 1, per0LD light 1, fumin 4/14 (light/dark), sss 20/19; no estimate (blocks < 4): fumin light 15, sss light 10, others <= 1.
+
+## 20q amendment E — rule of three for one-way edges (user request after results; 2026-10-31; PRESPEC 6586c0d, code sqw16b.py + report a0e5ca3)
+CORRECTION to the 20q entry above: its last bullet labelled every amendment-D exclusion "observed chain without a cycle". Wrong for most. Classified from each phase's directed counts:
+  (i) one-way edge, cycle present (sigma infinite): fumin 2/10, sss 7/14 (light/dark)
+  (ii) net cycle count exactly 0 (counts symmetric on every edge; detailed balance; TUR trivially 0 >= 0): CS light 1, per0LD light 1, per0DD 1, fumin 1/2, sss 4/1
+  (iii) no cycle (edge absent both ways, or a state absent in the phase): fumin 1/2, sss 9/4
+Amendment E applies the rule of three (b* = min(3, k), as sqw_ref.epr_count_bound) to (i) only; (ii) and (iii) stay excluded.
+Changed blocks only (all others, including both PRIMARY DD blocks, are identical):
+```
+fumin  light n 46 [descriptive (LD)] | J +0.334/h D 1.063/h blocks 7 | B_obs 0.107 sigma_MC 0.149 | S1 B_obs/median(B* chain) 0.98 (Wilcoxon p 0.35; flies p<.05 0.02, binom 0.91) | S2 B_c/sigma_MC 0.84 (p 0.13; >1 in 0.43) | sigma_HMM >= B_c in 0.76, HMM sims bracket B_obs 0.91 | Q_MC 0.95 Q_obs 0.84 Q_HMM 0.44 | kappa max 1.0096 | tau 2h/6h: S1 0.91/nan S2 0.88/nan
+fumin  dark  n 49 [descriptive (LD)] | J +0.292/h D 0.640/h blocks 8 | B_obs 0.130 sigma_MC 0.093 | S1 B_obs/median(B* chain) 0.92 (Wilcoxon p 0.67; flies p<.05 0.04, binom 0.71) | S2 B_c/sigma_MC 0.81 (p 0.25; >1 in 0.41) | sigma_HMM >= B_c in 0.82, HMM sims bracket B_obs 0.98 | Q_MC 0.92 Q_obs 0.81 Q_HMM 0.16 | kappa max 1.0090 | tau 2h/6h: S1 1.00/1.08 S2 0.87/0.99
+sss    light n 36 [descriptive (LD)] | J -0.125/h D 0.421/h blocks 7 | B_obs 0.088 sigma_MC 0.035 | S1 B_obs/median(B* chain) 0.93 (Wilcoxon p 0.4; flies p<.05 0.00, binom 1) | S2 B_c/sigma_MC 0.80 (p 0.23; >1 in 0.36) | sigma_HMM >= B_c in 0.78, HMM sims bracket B_obs 0.97 | Q_MC 0.97 Q_obs 0.80 Q_HMM 0.29 | kappa max 1.0043 | tau 2h/6h: S1 0.74/nan S2 0.69/nan
+sss    dark  n 48 [descriptive (LD)] | J -0.042/h D 0.546/h blocks 8 | B_obs 0.064 sigma_MC 0.019 | S1 B_obs/median(B* chain) 0.80 (Wilcoxon p 0.062; flies p<.05 0.00, binom 1) | S2 B_c/sigma_MC 0.73 (p 0.029; >1 in 0.42) | sigma_HMM >= B_c in 0.75, HMM sims bracket B_obs 1.00 | Q_MC 0.99 Q_obs 0.73 Q_HMM 0.01 | kappa max 1.0041 | tau 2h/6h: S1 0.93/1.00 S2 0.84/0.97
+```
+- With the 33 one-way-edge fly-phases included, every changed block moves TOWARD 1 but no median exceeds it: S2 B_c/sigma_MC 0.81-0.84 (fumin), 0.73-0.80 (sss); S1 0.80-0.98. This although b* makes sigma a 95% LOWER bound, i.e. biases toward 'violation'. The 20q reading is unchanged: no TUR evidence for hidden dissipation, in any block, either way of handling one-way edges.
+- Q_HMM falls (sss dark 0.01) because those flies' HMM EPR is infinite or very large (one-way hidden edges): an efficiency relative to the HMM is not meaningful there.

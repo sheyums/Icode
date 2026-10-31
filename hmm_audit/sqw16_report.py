@@ -3,7 +3,8 @@ import os,sys,json,numpy as np
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import sqw
 from scipy.stats import wilcoxon, binomtest
-O=json.load(open(sqw.OUTD+'q_tur.json'))
+R3=len(sys.argv)>1 and sys.argv[1]=='r3'
+O=json.load(open(sqw.OUTD+'q_tur_r3.json'))['data'] if R3 else json.load(open(sqw.OUTD+'q_tur.json'))   # amendment E
 BL=[('per0DD',0,'whole',True),('CSDD',0,'whole',True),('CS',0,'light',False),('CS',1,'dark',False),('per0LD',0,'light',False),
     ('per0LD',1,'dark',False),('fumin',0,'light',False),('fumin',1,'dark',False),('sss',0,'light',False),('sss',1,'dark',False)]
 def holm(ps):
@@ -45,7 +46,7 @@ prim=[r for r in out if r['prim']]
 for k in ('S1_p','S2_p'):
     h=holm([r[k] for r in prim])
     for r,x in zip(prim,h): r[k+'_holm']=x
-print('20q. All per fly x phase; tau = 3 h primary. B = J^2/D (k_B/h). Ratios are medians over flies of per-fly ratios.')
+print(('AMENDMENT E (rule of three for one-way edges). ' if R3 else '')+'20q. All per fly x phase; tau = 3 h primary. B = J^2/D (k_B/h). Ratios are medians over flies of per-fly ratios.')
 for r in out:
     tag='PRIMARY' if r['prim'] else 'descriptive (LD)'
     print(f"   [{r['g']} {r['ph']}: excluded, observed chain without a cycle: {NOCYC.get((r['g'],r['ph']),0)//3}; no estimate (blocks < 4 or D <= 0): {NOEST.get((r['g'],r['ph']),0)//3}]")

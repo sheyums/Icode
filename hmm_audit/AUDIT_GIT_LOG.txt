@@ -232,3 +232,7 @@ b371556 2026-10-31 00:36:18 +0000 20r: instructions for lClaude and per-fly 20p 
 7d26a53 2026-10-31 00:36:51 +0000 sqw16_report.py (20q)
 c463b63 2026-10-31 00:40:00 +0000 20q amendment D + report
 02137ee 2026-10-31 00:40:00 +0000 20q results
+6586c0d 2026-10-31 00:41:28 +0000 PRESPEC 20q amendment E (rule of three for one-way edges, user request, after results)
+edf220c 2026-10-31 00:41:52 +0000 sqw16b.py (20q amendment E)
+a0e5ca3 2026-10-31 00:43:04 +0000 20q report: amendment E option
+aaeebef 2026-10-31 00:43:04 +0000 20q amendment E results + correction of exclusion labels

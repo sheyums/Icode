@@ -64,3 +64,15 @@ Fly-phases whose fitted observed chain has no cycle (sigma_MC <= 1e-9 or its con
 some transition absent in both directions, so J = sigma = 0) have no defined TUR ratio and are EXCLUDED and counted.
 Fly-phases where B_obs cannot be estimated (fewer than 4 blocks, or D <= 0) are excluded and counted. Mechanical:
 undefined quantities, decided before any ratio was seen (the report crashed on a 0/0 in kappa).
+
+## Amendment E (2026-10-31, AFTER the results; user request "use rule of 3 for 0 cycles"; reported BESIDE amendment D)
+The fly-phases excluded under D are of three kinds (classified from the phase's directed transition counts):
+(i) one-way edge(s), cycle present, sigma_MC infinite; (ii) all edges two-way but counts exactly symmetric, so the net
+cycle count is exactly 0 and the fitted chain is in detailed balance (sigma = B = 0: TUR trivially satisfied, no ratio);
+(iii) no cycle: an edge absent in both directions, or a state absent in that phase.
+Rule of three is applied to (i) only, as in sqw_ref.epr_count_bound: an unseen direction gets b* = min(3, k) counts,
+k = the observed reverse count; P_r3 = row-normalised counts of that phase; sigma_MC, B_MC, B_MC_ct from P_r3; 200 new
+null records simulated with P_r3 in that phase (the fly's MC1 matrix in its other phase). (ii) and (iii) stay excluded and
+are reported by kind. Direction: b* gives a 95% LOWER bound on sigma, so it inflates B/sigma (toward S2 'violation';
+an upper bound on efficiency). Primary DD blocks contain no (i) fly-phases, so the primary verdicts cannot change.
+The ledger label "observed chain without a cycle" for all D exclusions was wrong; corrected in the ledger.
