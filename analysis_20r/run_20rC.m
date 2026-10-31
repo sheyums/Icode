@@ -41,7 +41,8 @@ for i = 1:nFly
     resp(i) = mean(r); nb(i) = numel(k);
 end
 
-T = readtable(eFile, 'TextType', 'string');
+T = readtable(eFile, 'TextType', 'string', 'VariableNamingRule', 'preserve');
+T.Properties.VariableNames{1} = 'genotype';   % the header carries a byte-order mark
 T = T(T.genotype == string(genotype), :);
 files = string(B.files(:));
 E = nan(nFly, 1); Ew = nan(nFly, 1); ref = false(nFly, 1);
