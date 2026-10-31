@@ -466,3 +466,19 @@ Notes           (b) inherits the censoring gap (CLAUDE.md step 0): bouts are ass
                 (a) subsamples share flies and bouts, so the 199 are not independent datasets; the
                 power is an estimate for these flies, not for a new cohort.
 ```
+
+### 2026-10-31  Amendment to "20r-A follow-ups": power also at each half's n
+
+```
+What changes    (a) is ALSO run at the two half sizes of (b), so a negative (b) can be told from low
+                power: n = 1536 (record hours 0-12) and n = 1773 (hours 12-24), counted from the onset
+                rule of (b) with no rise test run (wake bouts >= 2 s; 1536 + 1773 = 3309). Same
+                subsampling scheme (whole flies in random order, remainder from the next fly),
+                rng(3000 + b, 'twister'), B = 199, NullReplicates 199, same rise test and readout.
+                Requested by cClaude.
+Timing, stated  This request arrived AFTER (a) at n = 3309 and (b) had been started (scripts 043e13b).
+                When this entry was committed, no output of (a) or (b) had been read: (b)'s log was not
+                opened and (a) was still running. The half counts above were computed separately,
+                without any test. So this amendment is pre-result for both, but not pre-run.
+Unchanged       Everything else in "20r-A follow-ups".
+```
