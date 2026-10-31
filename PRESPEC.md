@@ -331,3 +331,44 @@ Notes           The cut was identified AFTER the first gate failed, from file pr
                 Sheyum, not by trying settings against the gate. It was not tuned: one rule, read off
                 the alignment, applied unchanged to both genotypes.
 ```
+
+### 2026-10-31  20r gate amendment 3: pre-09-22 pipeline, two pre-listed configurations, stopping rule
+
+```
+Question        Unchanged. Amendment 2 (pre-cut files, Teliminate 0, current code) FAILED narrowly
+                (ledger 2e09b9e): 25 flies but 4017 wake / 4022 sleep against 3989 / 3987. 4017 equals
+                the Python extraction of the documented rule, so the stored set most likely differs in
+                edge handling. This entry tries the code that existed when the reference set was made.
+Code            The Rockefeller repo at 04e0508^ (the state before "Sleep/wake pipeline: one coding
+                convention", 2026-09-22): process_LocomToSleep 31d341d, ironout b54ade9,
+                segment_sleep_phases f6c81f5, sleeptrace 2ca51d9, extractBoutsForModelCompetition
+                22214ac, exported with git archive into a scratch folder and placed on the path INSTEAD
+                of the current folder: addpath(..., '-begin'), which() asserted to resolve into that
+                folder for every pipeline file listed by matlab.codetools.requiredFilesAndProducts,
+                their which -all output recorded in the ledger, and the folder removed from the path
+                when the run ends so later steps use the current code. outputCoding left at its
+                default.
+                Fitting/hazard code: Icode, by name, behind the which/pwd assert.
+Data            per0 DD: the 25 cutdata files (zip SHA-256 778599db...), unchanged.
+Configurations  Pre-listed, run IN THIS ORDER, nothing else:
+                  C1  timeInterval 1, bridgeWakeSeconds 1, Teliminate 0, deadThresh 12, minDays 2
+                  C2  the same with minDays 2.8
+Stopping rule   Stop at the first configuration that EXACTLY matches 3989 wake / 3987 sleep and the
+                FINDINGS 16-bin hazard table (at-risk and events in every kept bin). That
+                configuration then goes through gate items (3)-(4) as in the first amendment; if it
+                passes, 20r proceeds with it for both genotypes. If neither configuration matches,
+                NO further settings are tried: switch to the replication route ("20r amendment: stored
+                per0 DD bouts lost", to be written as its own entry before anything runs): one
+                documented extractor for both genotypes, the 2026-09-15 per0 DD rise test repeated on
+                the re-extracted bouts as a REPLICATION, then CS DD, 20r-B and 20r-C with that
+                extractor.
+Diagnostic      For every configuration, descriptive only, no hazard statistics beyond the gate items:
+                per-fly wake and sleep bout counts; their min/max against the recorded 81-248 wake and
+                80-249 sleep per fly (2026-09-15 entries); and per fly whether the first and last
+                bouts of the record are kept (first kept bout starts at sample 1; last kept bout ends
+                at the final sample).
+Matched null    Not applicable (reproduction check).
+Notes           minDays cannot remove a fly here unless the old code trims differently (all 25 have
+                >= 3.000 d with Teliminate 0); it is listed because the recorded per-fly records were
+                2.8-4.0 d. C2 runs only if C1 does not match (stopping rule).
+```
