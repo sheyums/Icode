@@ -1,10 +1,12 @@
-function Fu = run_20rA_followups(part)
+function Fu = run_20rA_followups(part, nCS)
 % RUN_20RA_FOLLOWUPS  PRESPEC "2026-10-31 20r-A follow-ups". Run BY NAME from
 % the Icode folder, with analysis_20r on the path.
 %
 %   part = 'halves' : (b) CS DD rise test within each 12-h half of the record clock
 %   part = 'power'  : (a) 199 per0 DD subsamples at CS DD's n, rise test with
 %                     NullReplicates 199; power per bin count
+%   nCS             : subsample size for 'power' (default 3309; the amendment adds
+%                     1536 and 1773, the two half sizes of (b))
 
 here = fileparts(mfilename('fullpath'));
 switch part
@@ -20,7 +22,8 @@ switch part
 
     case 'power'
         B = load(fullfile(here, 'per0DD_bouts_20r_replication.mat'));
-        nCS = 3309; nRep = 199;
+        if nargin < 2 || isempty(nCS), nCS = 3309; end
+        nRep = 199;
         keep = isfinite(B.Wake) & B.Wake >= B.xminWake;
         nFly = size(B.Wake, 1);
         bouts = arrayfun(@(i) B.Wake(i, keep(i, :)), (1:nFly)', 'UniformOutput', false);
@@ -53,6 +56,7 @@ switch part
             mean(verdict == "supported" | verdict == "supported but bin-sensitive"), ...
             sum(startsWith(verdict, "not computable")));
         Fu = struct('nCS', nCS, 'P', P, 'RiseRatio', RR, 'verdict', verdict, 'nWhole', nWhole, 'power', power);
-        save(fullfile(here, 'followup_power_per0DD.mat'), 'Fu', '-v7');
+        if nCS == 3309, tag = ''; else, tag = sprintf('_n%d', nCS); end
+        save(fullfile(here, ['followup_power_per0DD' tag '.mat']), 'Fu', '-v7');
 end
 end
