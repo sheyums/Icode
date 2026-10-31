@@ -238,3 +238,4 @@ a0e5ca3 2026-10-31 00:43:04 +0000 20q report: amendment E option
 aaeebef 2026-10-31 00:43:04 +0000 20q amendment E results + correction of exclusion labels
 9f6982b 2026-10-31 19:13:37 +0000 Fig 19: TUR explainer (a-b schematic, c-d 20q data per fly)
 84a0a4c 2026-10-31 20:04:46 +0000 PLANS.md: Plan A (observable-first paper 1, frozen claim list) and Plan B (regulators), decision criteria
+0b017f5 2026-10-31 20:06:09 +0000 PRESPEC 20s-A: Plan A quantities at the observable level (before running)
