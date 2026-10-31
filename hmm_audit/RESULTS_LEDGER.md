@@ -1888,3 +1888,23 @@ CSDD   ZT12-24 n 25 | d2 0.064 d3 0.209 d4 0.396 | Delta3 obs +0.095 | null A2: 
 - Per fly the effect is rarely detectable (13-28% of flies p < 0.05 where it qualifies): a group-level effect, small per fly.
 - Model predictions: the HMM's predicted Delta3 brackets the observed in 80-96% of fly-phases (>= 80% in both qualifying blocks: fumin dark 0.91, per0DD 0.80), but its median prediction is BELOW the observed there (0.072 vs 0.097; 0.058 vs 0.104). MC2 brackets 96-100% with medians ABOVE the observed. Both bracket mostly because 50 simulated records are wide.
 - Reading: the short memory carries detectable extra irreversibility beyond the pair statistics in 2 of 10 pre-specified blocks (per0DD clean; fumin dark with the sleep-criterion confound open), not in CS LD or in the designated CS DD halves. As a physics motivation for a hidden layer this is WEAK: present in a minority of blocks, small per fly, and the HMM only roughly reproduces it.
+
+## POST HOC, descriptive (user point 2026-10-31: compare observable vs hidden per fly) — per-fly HMM EPR vs observed-chain EPR and the 20p triplet bound (code perfly_bound_check.py, this commit)
+Narrowest block: one fly's light/dark minutes pooled over its days (DD whole). Bound = sigma_MC (exact, that fly's first-order chain) + E (that fly's 20p excess over its own null A). Non-degenerate flies with a Q/W reference; flies with infinite HMM EPR excluded from the ratios (fraction shown).
+```
+per fly-phase; EPR in k_B/h; bound = sigma_MC + E (E from 20p, that fly vs its own null). Non-degenerate flies with a Q/W reference.
+CS     light n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.035 | bound 0.037 | HMM 0.032 | per fly: HMM > sigma_MC in 0.56 (paired Wilcoxon p 0.75), HMM >= bound in 0.52, median HMM/bound 1.50 [IQR 0.15-18.76]
+CS     dark  n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.115 | bound 0.167 | HMM 0.281 | per fly: HMM > sigma_MC in 0.92 (paired Wilcoxon p 2.2e-05), HMM >= bound in 0.60, median HMM/bound 1.11 [IQR 0.84-1.94]
+CSDD   whole n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.053 | bound 0.134 | HMM 0.114 | per fly: HMM > sigma_MC in 0.92 (paired Wilcoxon p 6.4e-05), HMM >= bound in 0.64, median HMM/bound 1.37 [IQR 0.57-1.57]
+per0LD light n 27 (HMM EPR infinite 0.04) | sigma_MC median 0.011 | bound 0.073 | HMM 0.015 | per fly: HMM > sigma_MC in 0.69 (paired Wilcoxon p 0.08), HMM >= bound in 0.50, median HMM/bound 1.01 [IQR 0.28-3.45]
+per0LD dark  n 27 (HMM EPR infinite 0.04) | sigma_MC median 0.073 | bound 0.089 | HMM 0.163 | per fly: HMM > sigma_MC in 0.81 (paired Wilcoxon p 0.00059), HMM >= bound in 0.73, median HMM/bound 2.59 [IQR 0.80-15.05]
+per0DD whole n 23 (HMM EPR infinite 0.00) | sigma_MC median 0.113 | bound 0.152 | HMM 0.208 | per fly: HMM > sigma_MC in 0.87 (paired Wilcoxon p 0.00048), HMM >= bound in 0.57, median HMM/bound 1.18 [IQR 0.67-2.38]
+fumin  light n 49 (HMM EPR infinite 0.14) | sigma_MC median 0.170 | bound 0.194 | HMM 0.159 | per fly: HMM > sigma_MC in 0.78 (paired Wilcoxon p 0.00043), HMM >= bound in 0.61, median HMM/bound 1.49 [IQR 0.73-2.49]
+fumin  dark  n 53 (HMM EPR infinite 0.34) | sigma_MC median 0.127 | bound 0.276 | HMM 0.193 | per fly: HMM > sigma_MC in 0.76 (paired Wilcoxon p 0.00011), HMM >= bound in 0.44, median HMM/bound 0.91 [IQR 0.52-1.84]
+sss    light n 50 (HMM EPR infinite 0.26) | sigma_MC median 0.007 | bound 0.052 | HMM 0.008 | per fly: HMM > sigma_MC in 0.71 (paired Wilcoxon p 0.034), HMM >= bound in 0.51, median HMM/bound 0.68 [IQR 0.00-3.01]
+sss    dark  n 53 (HMM EPR infinite 0.36) | sigma_MC median 0.035 | bound 0.063 | HMM 0.042 | per fly: HMM > sigma_MC in 0.72 (paired Wilcoxon p 0.11), HMM >= bound in 0.47, median HMM/bound 0.83 [IQR 0.18-4.76]
+```
+- CORRECTION of my chat statement (2026-10-31) "the HMM's hidden EPR is above these model-free bounds everywhere (per0DD 0.21 against ~0.17)": that compared GROUP MEDIANS. Per fly, the HMM's EPR reaches the triplet bound in only 44-73% of fly-phases (per0DD 57%, fumin dark 44%, CS dark 60%).
+- Per fly, HMM EPR > sigma_MC in 56-92% of fly-phases; paired Wilcoxon p < 0.05 in 7 of 10 blocks (not CS light, per0LD light, sss dark).
+- The per-fly bound is noisy (E per fly has a wide null spread; ratios IQR span 0.5-2.4 typically), so single-fly shortfalls are not individually established; the paired group tests are the interpretable part.
+- Infinite HMM EPR (one-way edges; fumin 14-34%, sss 26-36%) is excluded above; counted as above the bound, the 'HMM >= bound' fractions rise in those blocks.

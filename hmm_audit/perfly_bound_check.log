@@ -1,0 +1,11 @@
+per fly-phase; EPR in k_B/h; bound = sigma_MC + E (E from 20p, that fly vs its own null). Non-degenerate flies with a Q/W reference.
+CS     light n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.035 | bound 0.037 | HMM 0.032 | per fly: HMM > sigma_MC in 0.56 (paired Wilcoxon p 0.75), HMM >= bound in 0.52, median HMM/bound 1.50 [IQR 0.15-18.76]
+CS     dark  n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.115 | bound 0.167 | HMM 0.281 | per fly: HMM > sigma_MC in 0.92 (paired Wilcoxon p 2.2e-05), HMM >= bound in 0.60, median HMM/bound 1.11 [IQR 0.84-1.94]
+CSDD   whole n 25 (HMM EPR infinite 0.00) | sigma_MC median 0.053 | bound 0.134 | HMM 0.114 | per fly: HMM > sigma_MC in 0.92 (paired Wilcoxon p 6.4e-05), HMM >= bound in 0.64, median HMM/bound 1.37 [IQR 0.57-1.57]
+per0LD light n 27 (HMM EPR infinite 0.04) | sigma_MC median 0.011 | bound 0.073 | HMM 0.015 | per fly: HMM > sigma_MC in 0.69 (paired Wilcoxon p 0.08), HMM >= bound in 0.50, median HMM/bound 1.01 [IQR 0.28-3.45]
+per0LD dark  n 27 (HMM EPR infinite 0.04) | sigma_MC median 0.073 | bound 0.089 | HMM 0.163 | per fly: HMM > sigma_MC in 0.81 (paired Wilcoxon p 0.00059), HMM >= bound in 0.73, median HMM/bound 2.59 [IQR 0.80-15.05]
+per0DD whole n 23 (HMM EPR infinite 0.00) | sigma_MC median 0.113 | bound 0.152 | HMM 0.208 | per fly: HMM > sigma_MC in 0.87 (paired Wilcoxon p 0.00048), HMM >= bound in 0.57, median HMM/bound 1.18 [IQR 0.67-2.38]
+fumin  light n 49 (HMM EPR infinite 0.14) | sigma_MC median 0.170 | bound 0.194 | HMM 0.159 | per fly: HMM > sigma_MC in 0.78 (paired Wilcoxon p 0.00043), HMM >= bound in 0.61, median HMM/bound 1.49 [IQR 0.73-2.49]
+fumin  dark  n 53 (HMM EPR infinite 0.34) | sigma_MC median 0.127 | bound 0.276 | HMM 0.193 | per fly: HMM > sigma_MC in 0.76 (paired Wilcoxon p 0.00011), HMM >= bound in 0.44, median HMM/bound 0.91 [IQR 0.52-1.84]
+sss    light n 50 (HMM EPR infinite 0.26) | sigma_MC median 0.007 | bound 0.052 | HMM 0.008 | per fly: HMM > sigma_MC in 0.71 (paired Wilcoxon p 0.034), HMM >= bound in 0.51, median HMM/bound 0.68 [IQR 0.00-3.01]
+sss    dark  n 53 (HMM EPR infinite 0.36) | sigma_MC median 0.035 | bound 0.063 | HMM 0.042 | per fly: HMM > sigma_MC in 0.72 (paired Wilcoxon p 0.11), HMM >= bound in 0.47, median HMM/bound 0.83 [IQR 0.18-4.76]
