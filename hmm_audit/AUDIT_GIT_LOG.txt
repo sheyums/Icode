@@ -242,3 +242,4 @@ aaeebef 2026-10-31 00:43:04 +0000 20q amendment E results + correction of exclus
 ec1ef8e 2026-10-31 20:06:49 +0000 sqw17.py (20s-A)
 732fa08 2026-10-31 20:08:56 +0000 sqw17_report.py (20s-A)
 573c076 2026-10-31 20:08:56 +0000 20s-A results
+5097d16 2026-10-31 20:09:16 +0000 PLANS.md: claim statuses after 20s-A (C5 revised)

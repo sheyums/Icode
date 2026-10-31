@@ -30,11 +30,11 @@ beneath the observed cycle (hidden layer thin; per0 DD anomaly; TUR saturation).
 | # | Claim | Level | Support (ledger) | Status |
 |---|---|---|---|---|
 | C1 | Wake contains two states, quiet (Q) and active (W), defined per fly by theta x r_f | observed | 20b theta sensitivity; 20m (30 s) | done |
-| C2 | Sleep-wake transitions circulate W->Q->S->W: forward in CS night, fumin, per0 (LD, DD); reversed in sss light; ~0 in CS light | observed (minute-level c_obs, 20d; transit c, 20b); HMM agrees in sign | 20b, 20d, 20e, 20m | done; observable table to collect (A1). NOTE per0LD: transit c ~0 but minute-level c_obs +0.08 |
-| C3 | In CS the circulation switches on at night | 6-h blocks | 20c (HMM) | observable 6-h version needed (A1) |
-| C4 | Cycle flux J, affinity A and EPR per genotype x phase: new quantities for sleep-wake | observed (count-based, rule of three; exact observed-chain values); HMM value as upper bracket | 20b count J, rule of 3; 20f calibration | recompute per fly at the observable level (A1) |
-| C5 | EPR grows faster than linearly with J; Onsager conductance L differs by genotype (sss < CS < per0LD at the hidden level) | currently hidden | 20j | RECOMPUTE at the observable level (A2); the claim is accepted in whatever form the observable data give, including 'no difference' |
-| C6 | Energy landscape: E3 - E1 negative in CS/per0, positive in fumin/sss | currently HMM | 20l | recompute from the observed chain (A3) |
+| C2 | Sleep-wake transitions circulate W->Q->S->W: forward in CS night, per0 (LD dark, DD), fumin, CS DD; weak in CS light and per0LD light; ~0 or reversed in sss | observed (minute-level c_obs and count J, 20s-A); HMM agrees in sign in 81-100% of flies | 20b, 20d, 20e, 20m, 20s-A | DONE. NOTE per0LD: transit c (20b) ~0 but minute-level c_obs +0.04/+0.10 |
+| C3 | In CS the circulation switches on at night | observed, 6-h blocks | 20c (HMM); 20s-A observable: night - day c_obs +0.12 (80% of flies, p 0.0004) | DONE |
+| C4 | Cycle flux J, affinity A and EPR per genotype x phase: new quantities for sleep-wake | observed (count-based, rule of three; exact observed-chain values); HMM value as upper bracket (J x1.0-1.2, EPR x1.2-3.6 per fly) | 20s-A | DONE |
+| C5 | EPR grows faster than linearly with J (CS, per0LD, sss; ambiguous per0DD, fumin); Onsager L: sss < CS robust; per0DD > CS and fumin < CS weaker; per0LD = CS (the hidden-level per0LD > CS does NOT hold) | observed | 20s-A (20j hidden for comparison) | DONE, claim REVISED |
+| C6 | Energy landscape: E3 - E1 negative in CS/per0 (and CS DD), positive in fumin/sss | observed chain | 20s-A (20l HMM agrees) | DONE |
 | C7 | Memory: how a fly leaves sleep depends on how long it slept (CS night) | observed (within-fly null), confirmed hidden (400-sim null) | 20k, 20m | done |
 | C8 | Wake-bout hazard rises after a trough in per0 DD (bin-sensitive); CS DD to be tested | observed bouts, 1 s | FINDINGS; root ledger 2026-09-15; 20r | 20r with lClaude (A4) |
 | C9 | Beneath the observed cycle: hidden layer thin; extra irreversibility only in per0 DD; cycle sits at the TUR bound | model-free probes | 20n, 20o, 20p, 20q | done |
