@@ -261,3 +261,4 @@ b3bd58c 2026-11-01 00:49:10 +0000 PLANS: C8 after 20r-B and follow-up (b)
 c6082a5 2026-11-01 03:14:59 +0000 PLANS: C8 final (power at n 3309, 1773, 1536)
 6621be9 2026-11-01 03:17:28 +0000 ANSWERS_for_lClaude.md: Q1 resolved
 012ffce 2026-11-01 11:56:16 +0000 20b fits for the port; answers to lClaude Q2 and stage-1 cases; 20s-A correction
+a538d3f 2026-11-01 12:02:39 +0000 Rewordings from the 20t critique (C1, C3, C4, C5, C9) in PLANS.md and the Methods; 20s-A correction in Methods; Plan B merged
