@@ -1,0 +1,385 @@
+row,genotype,file,fly,phase,E
+"CS light",CS,10_5_2017_multibeam_pruned2_11.txt_from1stLD.txtcutdata_4.8.2025.txt,1,light,-0.0837789780321639
+"CS light",CS,10_5_2017_multibeam_pruned2_21.txt_from1stLD.txtcutdata_4.8.2025.txt,2,light,-0.0588761265677947
+"CS light",CS,10_5_2017_multibeam_pruned2_23.txt_from1stLD.txtcutdata_4.8.2025.txt,3,light,0.00105641521931257
+"CS light",CS,10_5_2017_multibeam_pruned2_24.txt_from1stLD.txtcutdata_4.8.2025.txt,4,light,-0.0110866795987334
+"CS light",CS,10_5_2017_multibeam_pruned2_27.txt_from1stLD.txtcutdata_4.8.2025.txt,5,light,0.0959915856360583
+"CS light",CS,10_5_2017_multibeam_pruned2_29.txt_from1stLD.txtcutdata_4.8.2025.txt,6,light,-0.0833314217839279
+"CS light",CS,10_5_2017_multibeam_pruned2_30.txt_from1stLD.txtcutdata_4.8.2025.txt,7,light,-0.04971618054328
+"CS light",CS,10_5_2017_multibeam_pruned2_32.txt_from1stLD.txtcutdata_4.8.2025.txt,8,light,-0.0250923949233073
+"CS light",CS,10_5_2017_multibeam_pruned2_9.txt_from1stLD.txtcutdata_4.8.2025.txt,9,light,0.175787097610038
+"CS light",CS,6_30_2017_multibeam_pruned11.txt_from1stLD.txtcutdata_4.8.2025.txt,10,light,0.126546442661002
+"CS light",CS,6_30_2017_multibeam_pruned13.txt_from1stLD.txtcutdata_4.8.2025.txt,11,light,0.31829714042721
+"CS light",CS,6_30_2017_multibeam_pruned9.txt_from1stLD.txtcutdata_4.8.2025.txt,12,light,0.401313932881787
+"CS light",CS,6_9_2017_mb_pruned10.txt_from1stLD.txtcutdata_4.8.2025.txt,13,light,0.0828498421589991
+"CS light",CS,6_9_2017_mb_pruned8.txt_from1stLD.txtcutdata_4.8.2025.txt,14,light,-0.0620276931178631
+"CS light",CS,7_10_2017_multibeam_pruned15.txt_from1stLD.txtcutdata_4.8.2025.txt,15,light,0.0640603215069757
+"CS light",CS,7_10_2017_multibeam_pruned7.txt_from1stLD.txtcutdata_4.8.2025.txt,16,light,-0.0454776076606628
+"CS light",CS,7_19_2018_2boardmb_pruned_27.txt_from1stLD.txtcutdata_4.8.2025.txt,17,light,0.135529537494066
+"CS light",CS,7_19_2018_2boardmb_pruned_29.txt_from1stLD.txtcutdata_4.8.2025.txt,18,light,0.0106404516068801
+"CS light",CS,8_25_2017_multibeam_pruned25.txt_from1stLD.txtcutdata_4.8.2025.txt,19,light,0.151483885770888
+"CS light",CS,8_25_2017_multibeam_pruned26.txt_from1stLD.txtcutdata_4.8.2025.txt,20,light,0.152406332209451
+"CS light",CS,8_25_2017_multibeam_pruned28.txt_from1stLD.txtcutdata_4.8.2025.txt,21,light,-0.0655058743957914
+"CS light",CS,8_25_2017_multibeam_pruned32.txt_from1stLD.txtcutdata_4.8.2025.txt,22,light,-0.0576121516647931
+"CS light",CS,9_29_2017_multibeam_pruned2_10.txt_from1stLD.txtcutdata_4.8.2025.txt,23,light,0.0508988903298338
+"CS light",CS,9_29_2017_multibeam_pruned2_7.txt_from1stLD.txtcutdata_4.8.2025.txt,24,light,-0.026394405590918
+"CS light",CS,9_29_2017_multibeam_pruned2_9.txt_from1stLD.txtcutdata_4.8.2025.txt,25,light,-0.0290265043498281
+"CS dark",CS,10_5_2017_multibeam_pruned2_11.txt_from1stLD.txtcutdata_4.8.2025.txt,1,dark,0.032002599969686
+"CS dark",CS,10_5_2017_multibeam_pruned2_21.txt_from1stLD.txtcutdata_4.8.2025.txt,2,dark,0.157789059152965
+"CS dark",CS,10_5_2017_multibeam_pruned2_23.txt_from1stLD.txtcutdata_4.8.2025.txt,3,dark,0.413018674253855
+"CS dark",CS,10_5_2017_multibeam_pruned2_24.txt_from1stLD.txtcutdata_4.8.2025.txt,4,dark,0.0219937439219714
+"CS dark",CS,10_5_2017_multibeam_pruned2_27.txt_from1stLD.txtcutdata_4.8.2025.txt,5,dark,0.195404773222432
+"CS dark",CS,10_5_2017_multibeam_pruned2_29.txt_from1stLD.txtcutdata_4.8.2025.txt,6,dark,0.121344427872065
+"CS dark",CS,10_5_2017_multibeam_pruned2_30.txt_from1stLD.txtcutdata_4.8.2025.txt,7,dark,-0.0438941800604413
+"CS dark",CS,10_5_2017_multibeam_pruned2_32.txt_from1stLD.txtcutdata_4.8.2025.txt,8,dark,0.0785238983520907
+"CS dark",CS,10_5_2017_multibeam_pruned2_9.txt_from1stLD.txtcutdata_4.8.2025.txt,9,dark,0.027227970565169
+"CS dark",CS,6_30_2017_multibeam_pruned11.txt_from1stLD.txtcutdata_4.8.2025.txt,10,dark,-0.0372886716346773
+"CS dark",CS,6_30_2017_multibeam_pruned13.txt_from1stLD.txtcutdata_4.8.2025.txt,11,dark,-0.001308957113586
+"CS dark",CS,6_30_2017_multibeam_pruned9.txt_from1stLD.txtcutdata_4.8.2025.txt,12,dark,0.0967541297155832
+"CS dark",CS,6_9_2017_mb_pruned10.txt_from1stLD.txtcutdata_4.8.2025.txt,13,dark,0.00737578961285199
+"CS dark",CS,6_9_2017_mb_pruned8.txt_from1stLD.txtcutdata_4.8.2025.txt,14,dark,0.00926864376442373
+"CS dark",CS,7_10_2017_multibeam_pruned15.txt_from1stLD.txtcutdata_4.8.2025.txt,15,dark,0.165459941692065
+"CS dark",CS,7_10_2017_multibeam_pruned7.txt_from1stLD.txtcutdata_4.8.2025.txt,16,dark,0.0570642664974734
+"CS dark",CS,7_19_2018_2boardmb_pruned_27.txt_from1stLD.txtcutdata_4.8.2025.txt,17,dark,-0.00709570075241
+"CS dark",CS,7_19_2018_2boardmb_pruned_29.txt_from1stLD.txtcutdata_4.8.2025.txt,18,dark,-0.0278712443935484
+"CS dark",CS,8_25_2017_multibeam_pruned25.txt_from1stLD.txtcutdata_4.8.2025.txt,19,dark,0.224235276448334
+"CS dark",CS,8_25_2017_multibeam_pruned26.txt_from1stLD.txtcutdata_4.8.2025.txt,20,dark,0.102881723041257
+"CS dark",CS,8_25_2017_multibeam_pruned28.txt_from1stLD.txtcutdata_4.8.2025.txt,21,dark,0.0673431066326765
+"CS dark",CS,8_25_2017_multibeam_pruned32.txt_from1stLD.txtcutdata_4.8.2025.txt,22,dark,0.0849782236056694
+"CS dark",CS,9_29_2017_multibeam_pruned2_10.txt_from1stLD.txtcutdata_4.8.2025.txt,23,dark,0.0835574454037206
+"CS dark",CS,9_29_2017_multibeam_pruned2_7.txt_from1stLD.txtcutdata_4.8.2025.txt,24,dark,-0.0695156791110097
+"CS dark",CS,9_29_2017_multibeam_pruned2_9.txt_from1stLD.txtcutdata_4.8.2025.txt,25,dark,0.0401187731636294
+"CS DD, ZT 0-12",CSDD,12_29_2017_multibeam_pruned2_19.txt_from1stLD.txt,1,ZT0-12,-0.0296803988716029
+"CS DD, ZT 0-12",CSDD,12_29_2017_multibeam_pruned2_22.txt_from1stLD.txt,2,ZT0-12,-0.0462756866460174
+"CS DD, ZT 0-12",CSDD,12_29_2017_multibeam_pruned2_23.txt_from1stLD.txt,3,ZT0-12,0.379106844819459
+"CS DD, ZT 0-12",CSDD,12_29_2017_multibeam_pruned2_25.txt_from1stLD.txt,4,ZT0-12,0.0155439878616832
+"CS DD, ZT 0-12",CSDD,1_8_2018_multibeam_pruned_26.txt_from1stLD.txt,5,ZT0-12,0.167053802553132
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_10.txt_from1stLD.txt,6,ZT0-12,0.0358485612192718
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_11.txt_from1stLD.txt,7,ZT0-12,-0.0651741723431383
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_14.txt_from1stLD.txt,8,ZT0-12,-0.0406901923793921
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_18.txt_from1stLD.txt,9,ZT0-12,0.117371183652231
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_21.txt_from1stLD.txt,10,ZT0-12,-0.0136055722432361
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_25.txt_from1stLD.txt,11,ZT0-12,0.433781313407674
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_29.txt_from1stLD.txt,12,ZT0-12,0.0229253415943225
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_6.txt_from1stLD.txt,13,ZT0-12,0.0997996256901281
+"CS DD, ZT 0-12",CSDD,2_23_2018_multibeam_pruned2_7.txt_from1stLD.txt,14,ZT0-12,0.0621473943170545
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_27.txt_from1stLD.txt,15,ZT0-12,-0.0356845081476375
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_29.txt_from1stLD.txt,16,ZT0-12,0.533925878405008
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_31.txt_from1stLD.txt,17,ZT0-12,0.214880126759384
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_39.txt_from1stLD.txt,18,ZT0-12,0.229037747810981
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_44.txt_from1stLD.txt,19,ZT0-12,0.0720945286046637
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_45.txt_from1stLD.txt,20,ZT0-12,0.882096620059434
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_51.txt_from1stLD.txt,21,ZT0-12,-0.0251256601496899
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_56.txt_from1stLD.txt,22,ZT0-12,0.0644269865645336
+"CS DD, ZT 0-12",CSDD,5_18_2020_4b_rc2_pruned_64.txt_from1stLD.txt,23,ZT0-12,-0.00964616444456521
+"CS DD, ZT 0-12",CSDD,6_25_2020_4b_rc_pruned_52.txt_from1stLD.txt,24,ZT0-12,-0.0246769915575881
+"CS DD, ZT 0-12",CSDD,6_25_2020_4b_rc_pruned_60.txt_from1stLD.txt,25,ZT0-12,-0.0238146044192419
+"CS DD, ZT 12-24",CSDD,12_29_2017_multibeam_pruned2_19.txt_from1stLD.txt,1,ZT12-24,0.0851912424031852
+"CS DD, ZT 12-24",CSDD,12_29_2017_multibeam_pruned2_22.txt_from1stLD.txt,2,ZT12-24,0.00383325425663776
+"CS DD, ZT 12-24",CSDD,12_29_2017_multibeam_pruned2_23.txt_from1stLD.txt,3,ZT12-24,-0.0538291096237734
+"CS DD, ZT 12-24",CSDD,12_29_2017_multibeam_pruned2_25.txt_from1stLD.txt,4,ZT12-24,-0.080889199071277
+"CS DD, ZT 12-24",CSDD,1_8_2018_multibeam_pruned_26.txt_from1stLD.txt,5,ZT12-24,0.0545427708821672
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_10.txt_from1stLD.txt,6,ZT12-24,0.174925167987166
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_11.txt_from1stLD.txt,7,ZT12-24,-0.0374920767437432
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_14.txt_from1stLD.txt,8,ZT12-24,-0.0326117269313726
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_18.txt_from1stLD.txt,9,ZT12-24,0.0154197721510079
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_21.txt_from1stLD.txt,10,ZT12-24,-0.0170507333216751
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_25.txt_from1stLD.txt,11,ZT12-24,0.0504147748156419
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_29.txt_from1stLD.txt,12,ZT12-24,-0.0222827084987308
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_6.txt_from1stLD.txt,13,ZT12-24,-0.0135794832910294
+"CS DD, ZT 12-24",CSDD,2_23_2018_multibeam_pruned2_7.txt_from1stLD.txt,14,ZT12-24,0.0626476840450131
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_27.txt_from1stLD.txt,15,ZT12-24,0.114029870028041
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_29.txt_from1stLD.txt,16,ZT12-24,0.28997460215795
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_31.txt_from1stLD.txt,17,ZT12-24,0.0660079797280123
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_39.txt_from1stLD.txt,18,ZT12-24,0.138178856917414
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_44.txt_from1stLD.txt,19,ZT12-24,0.0120277582003162
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_45.txt_from1stLD.txt,20,ZT12-24,-0.0646237182802018
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_51.txt_from1stLD.txt,21,ZT12-24,0.0914885655860499
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_56.txt_from1stLD.txt,22,ZT12-24,0.000631266531529701
+"CS DD, ZT 12-24",CSDD,5_18_2020_4b_rc2_pruned_64.txt_from1stLD.txt,23,ZT12-24,0.0467682060313731
+"CS DD, ZT 12-24",CSDD,6_25_2020_4b_rc_pruned_52.txt_from1stLD.txt,24,ZT12-24,0.343182891501006
+"CS DD, ZT 12-24",CSDD,6_25_2020_4b_rc_pruned_60.txt_from1stLD.txt,25,ZT12-24,-0.00474469862633206
+"per0 LD light",per0LD,8_18_2017_multibeam_pruned9.txtcutdata_4.8.2025.txt,1,light,0.161495629771359
+"per0 LD light",per0LD,8_25_2017_multibeam_pruned3.txtcutdata_4.8.2025.txt,2,light,-0.0432190348177843
+"per0 LD light",per0LD,8_25_2017_multibeam_pruned4.txtcutdata_4.8.2025.txt,3,light,0.0123251385781338
+"per0 LD light",per0LD,8_25_2017_multibeam_pruned6.txtcutdata_4.8.2025.txt,4,light,-0.0341994557378008
+"per0 LD light",per0LD,9_1_2017_multibeam_pruned3_11.txtcutdata_4.8.2025.txt,5,light,0.160838520581915
+"per0 LD light",per0LD,9_1_2017_multibeam_pruned3_15.txtcutdata_4.8.2025.txt,6,light,0.0510991553193672
+"per0 LD light",per0LD,9_1_2017_multibeam_pruned3_3.txtcutdata_4.8.2025.txt,7,light,0.0616829603513926
+"per0 LD light",per0LD,9_1_2017_multibeam_pruned3_4.txtcutdata_4.8.2025.txt,8,light,0.0315680182176217
+"per0 LD light",per0LD,9_1_2017_multibeam_pruned3_8.txtcutdata_4.8.2025.txt,9,light,0.0098767152432256
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_17.txtcutdata_4.8.2025.txt,10,light,-0.0414692159301985
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_18.txtcutdata_4.8.2025.txt,11,light,0.0343068923344776
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_19.txtcutdata_4.8.2025.txt,12,light,0.0188297492356785
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_2.txtcutdata_4.8.2025.txt,13,light,-0.0533805741692149
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_22.txtcutdata_4.8.2025.txt,14,light,0.30051985406224
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_24.txtcutdata_4.8.2025.txt,15,light,0.0517108036876688
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_27.txtcutdata_4.8.2025.txt,16,light,0.0157934260861856
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_28.txtcutdata_4.8.2025.txt,17,light,-0.0400173049711801
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_30.txtcutdata_4.8.2025.txt,18,light,1.02067875564458
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_5.txtcutdata_4.8.2025.txt,19,light,-0.0505571084904804
+"per0 LD light",per0LD,9_21_2020_4b_rc_pruned_9.txtcutdata_4.8.2025.txt,20,light,0.0681543930500483
+"per0 LD light",per0LD,9_22_2017_multibeam_pruned4.txtcutdata_4.8.2025.txt,21,light,0.106843764680098
+"per0 LD light",per0LD,9_22_2017_multibeam_pruned5.txtcutdata_4.8.2025.txt,22,light,-0.0141796288099701
+"per0 LD light",per0LD,9_22_2017_multibeam_pruned9.txtcutdata_4.8.2025.txt,23,light,-0.0446433353020421
+"per0 LD light",per0LD,9_29_2017_multibeam_pruned2_17.txtcutdata_4.8.2025.txt,24,light,-0.0514151751704184
+"per0 LD light",per0LD,9_29_2017_multibeam_pruned2_19.txtcutdata_4.8.2025.txt,25,light,-0.0613072717760001
+"per0 LD light",per0LD,9_29_2017_multibeam_pruned2_23.txtcutdata_4.8.2025.txt,26,light,0.115831712128188
+"per0 LD light",per0LD,9_29_2017_multibeam_pruned2_24.txtcutdata_4.8.2025.txt,27,light,-0.0501115733394042
+"per0 LD dark",per0LD,8_18_2017_multibeam_pruned9.txtcutdata_4.8.2025.txt,1,dark,-0.0399938400068663
+"per0 LD dark",per0LD,8_25_2017_multibeam_pruned3.txtcutdata_4.8.2025.txt,2,dark,0.119324984535623
+"per0 LD dark",per0LD,8_25_2017_multibeam_pruned4.txtcutdata_4.8.2025.txt,3,dark,-0.0665401635553469
+"per0 LD dark",per0LD,8_25_2017_multibeam_pruned6.txtcutdata_4.8.2025.txt,4,dark,0.0611181809816545
+"per0 LD dark",per0LD,9_1_2017_multibeam_pruned3_11.txtcutdata_4.8.2025.txt,5,dark,-0.0583004572331082
+"per0 LD dark",per0LD,9_1_2017_multibeam_pruned3_15.txtcutdata_4.8.2025.txt,6,dark,-0.0694422465337839
+"per0 LD dark",per0LD,9_1_2017_multibeam_pruned3_3.txtcutdata_4.8.2025.txt,7,dark,0.0598768362672847
+"per0 LD dark",per0LD,9_1_2017_multibeam_pruned3_4.txtcutdata_4.8.2025.txt,8,dark,-0.0295964912931755
+"per0 LD dark",per0LD,9_1_2017_multibeam_pruned3_8.txtcutdata_4.8.2025.txt,9,dark,-0.0173086403272542
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_17.txtcutdata_4.8.2025.txt,10,dark,0.0880646379886533
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_18.txtcutdata_4.8.2025.txt,11,dark,-0.0674316356116524
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_19.txtcutdata_4.8.2025.txt,12,dark,0.110699318475064
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_2.txtcutdata_4.8.2025.txt,13,dark,-0.0328889728275253
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_22.txtcutdata_4.8.2025.txt,14,dark,0.0454587255760807
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_24.txtcutdata_4.8.2025.txt,15,dark,-0.0881182626207774
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_27.txtcutdata_4.8.2025.txt,16,dark,-0.0535997598361129
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_28.txtcutdata_4.8.2025.txt,17,dark,-0.0220600420251337
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_30.txtcutdata_4.8.2025.txt,18,dark,-0.083663709380952
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_5.txtcutdata_4.8.2025.txt,19,dark,-0.111494129948717
+"per0 LD dark",per0LD,9_21_2020_4b_rc_pruned_9.txtcutdata_4.8.2025.txt,20,dark,-0.0524755324327987
+"per0 LD dark",per0LD,9_22_2017_multibeam_pruned4.txtcutdata_4.8.2025.txt,21,dark,-0.0312232797987846
+"per0 LD dark",per0LD,9_22_2017_multibeam_pruned5.txtcutdata_4.8.2025.txt,22,dark,-0.067464700711536
+"per0 LD dark",per0LD,9_22_2017_multibeam_pruned9.txtcutdata_4.8.2025.txt,23,dark,0.286155733482085
+"per0 LD dark",per0LD,9_29_2017_multibeam_pruned2_17.txtcutdata_4.8.2025.txt,24,dark,-0.133803928295442
+"per0 LD dark",per0LD,9_29_2017_multibeam_pruned2_19.txtcutdata_4.8.2025.txt,25,dark,0.344344047511443
+"per0 LD dark",per0LD,9_29_2017_multibeam_pruned2_23.txtcutdata_4.8.2025.txt,26,dark,-0.0356477411071384
+"per0 LD dark",per0LD,9_29_2017_multibeam_pruned2_24.txtcutdata_4.8.2025.txt,27,dark,0.0240512587973016
+"per0 DD",per0DD,12_29_2017_multibeam_pruned2_10.txt_from1stLD.txtcutdata_4.8.2025.txt,1,whole,0.0521121482935231
+"per0 DD",per0DD,12_29_2017_multibeam_pruned2_12.txt_from1stLD.txtcutdata_4.8.2025.txt,2,whole,-0.00948436399093458
+"per0 DD",per0DD,12_29_2017_multibeam_pruned2_3.txt_from1stLD.txtcutdata_4.8.2025.txt,3,whole,-0.00785106128284987
+"per0 DD",per0DD,12_29_2017_multibeam_pruned2_5.txt_from1stLD.txtcutdata_4.8.2025.txt,4,whole,0.076859974534299
+"per0 DD",per0DD,12_29_2017_multibeam_pruned2_7.txt_from1stLD.txtcutdata_4.8.2025.txt,5,whole,-0.0129278078477027
+"per0 DD",per0DD,1_26_2018_multibeam_pruned_32.txt_from1stLD.txtcutdata_4.8.2025.txt,6,whole,0.0301832090884986
+"per0 DD",per0DD,1_8_2018_multibeam_pruned_4.txt_from1stLD.txtcutdata_4.8.2025.txt,7,whole,0.202539544823412
+"per0 DD",per0DD,1_8_2018_multibeam_pruned_5.txt_from1stLD.txtcutdata_4.8.2025.txt,8,whole,0.120432346875731
+"per0 DD",per0DD,1_8_2018_multibeam_pruned_7.txt_from1stLD.txtcutdata_4.8.2025.txt,9,whole,0.356548147636787
+"per0 DD",per0DD,2_18_2018_multibeam_pruned2_54.txt_from1stLD.txtcutdata_4.8.2025.txt,10,whole,0.0315034871351908
+"per0 DD",per0DD,2_18_2018_multibeam_pruned2_58.txt_from1stLD.txtcutdata_4.8.2025.txt,11,whole,0.290900719815007
+"per0 DD",per0DD,2_6_2018_multibeam_pruned_14.txt_from1stLD.txtcutdata_4.8.2025.txt,12,whole,-0.0139925286518596
+"per0 DD",per0DD,2_6_2018_multibeam_pruned_7.txt_from1stLD.txtcutdata_4.8.2025.txt,13,whole,-0.013216154155927
+"per0 DD",per0DD,5_28_2020_4b_wc_pruned_11.txt_from1stLD.txtcutdata_4.8.2025.txt,14,whole,-0.00408052882124375
+"per0 DD",per0DD,5_28_2020_4b_wc_pruned_2.txt_from1stLD.txtcutdata_4.8.2025.txt,15,whole,0.0154269622192884
+"per0 DD",per0DD,6_11_2020_4b_rc2_pruned_15.txt_from1stLD.txtcutdata_4.8.2025.txt,16,whole,-0.0407896609440008
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_14.txt_from1stLD.txtcutdata_4.8.2025.txt,17,whole,-0.0177096568201954
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_15.txt_from1stLD.txtcutdata_4.8.2025.txt,18,whole,0.56129277490975
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_27.txt_from1stLD.txtcutdata_4.8.2025.txt,19,whole,0.130658914423097
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_28.txt_from1stLD.txtcutdata_4.8.2025.txt,20,whole,0.39028541763289
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_4.txt_from1stLD.txtcutdata_4.8.2025.txt,21,whole,0.0626173771833229
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_8.txt_from1stLD.txtcutdata_4.8.2025.txt,22,whole,-0.0280348430488579
+"per0 DD",per0DD,6_25_2018_2boardmb_pruned_9.txt_from1stLD.txtcutdata_4.8.2025.txt,23,whole,0.0556011948264516
+"per0 DD",per0DD,6_25_2020_4b_rc_pruned_19.txt_from1stLD.txtcutdata_4.8.2025.txt,24,whole,0.0603866062260649
+"per0 DD",per0DD,6_25_2020_4b_rc_pruned_20.txt_from1stLD.txtcutdata_4.8.2025.txt,25,whole,0.0670937727654078
+"fmn light",fumin,10_15_2018_4b_RC2_pruned_14.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,1,light,0.667501219591242
+"fmn light",fumin,10_15_2018_4b_RC2_pruned_15.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,2,light,0.00843304509729755
+"fmn light",fumin,10_15_2018_4b_RC2_pruned_16.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,3,light,0.0938938588442331
+"fmn light",fumin,10_15_2018_4b_RC2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,4,light,-0.0950377185868385
+"fmn light",fumin,10_15_2018_4b_RC2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,5,light,-0.104657022991897
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,6,light,-0.00306610540292523
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,7,light,-0.147145349214451
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_14.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,8,light,-0.0598411289808998
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_23.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,9,light,-0.107214110811821
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_26.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,10,light,-0.0399953578160071
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_27.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,11,light,-0.0791025565383945
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,12,light,0.131251854445816
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,14,light,-0.0327066171539339
+"fmn light",fumin,10_22_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,15,light,0.140493945984436
+"fmn light",fumin,10_30_2018_4b_RC2_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,16,light,-0.00326766333141004
+"fmn light",fumin,10_30_2018_4b_RC2_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,17,light,0.0355236684978743
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_29.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,20,light,-0.00577689235826226
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_30.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,21,light,0.166547119369251
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_31.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,22,light,-0.0073095723424457
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_32.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,23,light,0.0468146739498559
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_35.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,25,light,0.178812447289996
+"fmn light",fumin,10_5_2018_4b_RC2_pruned_36.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,26,light,-0.0714203548822837
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,27,light,-0.134033534548089
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,28,light,-0.0119191745358946
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,29,light,-0.113142316779453
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,30,light,0.118621344563465
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,31,light,0.170016788901025
+"fmn light",fumin,11_12_2018_4b_RC2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,32,light,0.00830499277633316
+"fmn light",fumin,11_19_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,33,light,0.0679775468190894
+"fmn light",fumin,11_19_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,34,light,-0.0363418811628712
+"fmn light",fumin,11_19_2018_4b_RC2_pruned_17.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,35,light,-0.121242153822916
+"fmn light",fumin,11_19_2018_4b_RC2_pruned_19.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,36,light,0.031384888167037
+"fmn light",fumin,11_19_2018_4b_RC2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,37,light,-0.0382907932456412
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,38,light,0.0455977333392654
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,39,light,-0.0630526337024924
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_19.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,40,light,0.167572839887589
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_21.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,41,light,0.370045951029222
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,42,light,0.372194746134707
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_24.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,43,light,-0.0513913444299076
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,44,light,0.360401306012244
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,45,light,0.156546681078314
+"fmn light",fumin,11_26_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,46,light,0.0999601721194657
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,47,light,0.30482879197612
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,48,light,0.0860350919060261
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,49,light,-0.101520368438075
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,50,light,0.063236689750768
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,51,light,0.100635511594929
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,52,light,-0.0493996609755701
+"fmn light",fumin,11_5_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,53,light,-0.134832253145884
+"fmn dark",fumin,10_15_2018_4b_RC2_pruned_14.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,1,dark,0.314264738500673
+"fmn dark",fumin,10_15_2018_4b_RC2_pruned_15.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,2,dark,0.191622412169636
+"fmn dark",fumin,10_15_2018_4b_RC2_pruned_16.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,3,dark,0.433395073056293
+"fmn dark",fumin,10_15_2018_4b_RC2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,4,dark,-0.0314977647071768
+"fmn dark",fumin,10_15_2018_4b_RC2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,5,dark,0.174847160084371
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,6,dark,0.000649702825895083
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,7,dark,0.526820602544747
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_14.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,8,dark,0.148642698841513
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_23.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,9,dark,0.0653630558469693
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_26.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,10,dark,-4.98626882693351e-05
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_27.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,11,dark,-4.64454267642021e-05
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,12,dark,0.101864825328139
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,13,dark,0.0588008282790098
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,14,dark,0.389918532196893
+"fmn dark",fumin,10_22_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,15,dark,0.00629937051837744
+"fmn dark",fumin,10_30_2018_4b_RC2_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,16,dark,0.223400707937614
+"fmn dark",fumin,10_30_2018_4b_RC2_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,17,dark,0.322640967257485
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_27.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,18,dark,0.0652362377652162
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_28.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,19,dark,0.0287431171185537
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_29.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,20,dark,0.028178548440915
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_30.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,21,dark,-0.0340917126565937
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_31.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,22,dark,0.0660443038077087
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_32.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,23,dark,-0.0012863914929679
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_33.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,24,dark,0.0330404252743807
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_35.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,25,dark,0.385943433144034
+"fmn dark",fumin,10_5_2018_4b_RC2_pruned_36.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,26,dark,-0.0786955360903249
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,27,dark,1.22427937001678
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,28,dark,-0.0400696652348216
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,29,dark,0.0894283863166484
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,30,dark,0.0122575935709051
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,31,dark,-0.00921759491595917
+"fmn dark",fumin,11_12_2018_4b_RC2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,32,dark,0.000321787597777396
+"fmn dark",fumin,11_19_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,33,dark,0.192245787204136
+"fmn dark",fumin,11_19_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,34,dark,0.431474977423757
+"fmn dark",fumin,11_19_2018_4b_RC2_pruned_17.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,35,dark,0.0549818495402377
+"fmn dark",fumin,11_19_2018_4b_RC2_pruned_19.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,36,dark,-0.0325565544806014
+"fmn dark",fumin,11_19_2018_4b_RC2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,37,dark,0.237407232568674
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,38,dark,0.230985497106183
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,39,dark,-0.0418859736096208
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_19.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,40,dark,-0.0144699153512175
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_21.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,41,dark,0.166845930123088
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,42,dark,0.0832271027219459
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_24.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,43,dark,-0.00642934245152287
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,44,dark,-0.129065902916468
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,45,dark,0.0334388962989331
+"fmn dark",fumin,11_26_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,46,dark,0.167881521752158
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,47,dark,0.253566010005742
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,48,dark,-0.0211020811669343
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,49,dark,0.620880895437884
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,50,dark,0.10447203939768
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,51,dark,-0.0414125187126689
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,52,dark,-0.0198844181175646
+"fmn dark",fumin,11_5_2018_4b_RC2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,53,dark,0.0283341866439721
+"sss light",sss,10_20_2019_4b_rc2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,1,light,0.0127559592561124
+"sss light",sss,10_20_2019_4b_rc2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,2,light,0
+"sss light",sss,10_20_2019_4b_rc2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,3,light,0.0262618595534615
+"sss light",sss,10_20_2019_4b_rc2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,5,light,0.0300490939662145
+"sss light",sss,10_20_2019_4b_rc2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,6,light,0.032171227859095
+"sss light",sss,10_22_2018_4b_WC_pruned_30.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,7,light,-0.0905538846340072
+"sss light",sss,10_9_2019_4b_rc2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,8,light,-0.0277762517782297
+"sss light",sss,10_9_2019_4b_rc2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,9,light,-0.00719798476158259
+"sss light",sss,10_9_2019_4b_rc2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,10,light,-0.0481892104124544
+"sss light",sss,11_11_2019_4b_wc_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,11,light,-0.0645299129735823
+"sss light",sss,11_11_2019_4b_wc_pruned_15.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,12,light,-0.00241717961721843
+"sss light",sss,11_11_2019_4b_wc_pruned_16.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,13,light,0.281258202575541
+"sss light",sss,11_12_2018_4b_WC_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,14,light,0.0512508661878175
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,16,light,0.0909510000967045
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,17,light,-0.094914918386586
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,18,light,0.0509943992998569
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,19,light,0.129262580737564
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,20,light,0.0338396452895925
+"sss light",sss,11_14_2019_cut_4b_rc2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,21,light,0.0675978988820019
+"sss light",sss,11_19_2019_4b_wc_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,22,light,-0.00114034257302714
+"sss light",sss,11_19_2019_4b_wc_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,23,light,0.00059353682989826
+"sss light",sss,11_19_2019_4b_wc_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,24,light,0.0694070658910591
+"sss light",sss,11_19_2019_4b_wc_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,25,light,0.180039350881108
+"sss light",sss,11_5_2018_4b_WC_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,26,light,0
+"sss light",sss,11_5_2018_4b_WC_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,27,light,0.0945965485798572
+"sss light",sss,11_6_2019_4b_rc2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,28,light,0.00016277472553354
+"sss light",sss,11_6_2019_4b_rc2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,29,light,0.000971561360056855
+"sss light",sss,11_6_2019_4b_rc_pruned_39.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,30,light,-0.0032709864934485
+"sss light",sss,3_13_2018_4boardmb_pruned1_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,31,light,-0.027668128349066
+"sss light",sss,3_13_2018_4boardmb_pruned1_25.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,32,light,0.198856377605334
+"sss light",sss,3_23_2018_4boardmb_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,33,light,-0.00029462123122196
+"sss light",sss,4_11_2018_4boardmb_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,34,light,0.178319593730723
+"sss light",sss,6_15_2018_4boardmb_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,37,light,-0.00032917942438588
+"sss light",sss,6_25_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,38,light,-0.102462869889462
+"sss light",sss,7_16_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,39,light,-0.0542927776693757
+"sss light",sss,7_16_2018_4boardmb_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,40,light,-0.0456182555877947
+"sss light",sss,7_23_2018_4boardmb_pruned2_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,41,light,0
+"sss light",sss,8_13_2018_4boardmb_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,42,light,0.095034565775437
+"sss light",sss,8_30_2019_4b_RC_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,44,light,0.064430290049957
+"sss light",sss,8_6_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,45,light,-0.077036889872861
+"sss light",sss,8_6_2018_4boardmb_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,46,light,-0.0764712100944014
+"sss light",sss,8_6_2018_4boardmb_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,47,light,-0.0337155405555485
+"sss light",sss,9_10_2018_4b_RC_pruned_63.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,48,light,0.0200721149548256
+"sss light",sss,9_16_2019_4b_rc2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,49,light,0.270761555893422
+"sss light",sss,9_16_2019_4b_rc2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,50,light,-0.00215319084196783
+"sss light",sss,9_17_2018_4b_RC_pruned_36.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,53,light,0.200966883896994
+"sss light",sss,9_25_2019_4b_rc_pruned_50.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,54,light,-0.154615427224884
+"sss light",sss,9_25_2019_4b_rc_pruned_55.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,55,light,-0.000165900309946281
+"sss light",sss,9_4_2018_4b_RC_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,56,light,0.0909510000967045
+"sss light",sss,9_9_2019_4b_RC_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,57,light,0.0906815952617984
+"sss dark",sss,10_20_2019_4b_rc2_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,1,dark,-0.0941179874393758
+"sss dark",sss,10_20_2019_4b_rc2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,2,dark,0.00470509587897938
+"sss dark",sss,10_20_2019_4b_rc2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,3,dark,0.123484901344349
+"sss dark",sss,10_20_2019_4b_rc2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,4,dark,-0.03685450702521
+"sss dark",sss,10_20_2019_4b_rc2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,5,dark,0.00119429995027098
+"sss dark",sss,10_20_2019_4b_rc2_pruned_9.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,6,dark,0.197734193210456
+"sss dark",sss,10_22_2018_4b_WC_pruned_30.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,7,dark,0.0397015562648738
+"sss dark",sss,10_9_2019_4b_rc2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,8,dark,0.244150615105805
+"sss dark",sss,10_9_2019_4b_rc2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,9,dark,0.059253969098313
+"sss dark",sss,10_9_2019_4b_rc2_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,10,dark,0.219239805935561
+"sss dark",sss,11_11_2019_4b_wc_pruned_12.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,11,dark,0.00862327072985366
+"sss dark",sss,11_11_2019_4b_wc_pruned_15.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,12,dark,-0.126127042752166
+"sss dark",sss,11_11_2019_4b_wc_pruned_16.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,13,dark,-0.0312306600299493
+"sss dark",sss,11_12_2018_4b_WC_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,14,dark,0.189176516040903
+"sss dark",sss,11_12_2018_4b_WC_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,15,dark,0.375019675393569
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_10.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,16,dark,0.000309177720503039
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,17,dark,0.0540239590365169
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,18,dark,0.0953090250516768
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,19,dark,0.0774478695575779
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,20,dark,-0.0666182177364219
+"sss dark",sss,11_14_2019_cut_4b_rc2_pruned_8.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,21,dark,0.157121740698131
+"sss dark",sss,11_19_2019_4b_wc_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,22,dark,0.00715648500202171
+"sss dark",sss,11_19_2019_4b_wc_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,23,dark,0.0466418038421192
+"sss dark",sss,11_19_2019_4b_wc_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,24,dark,0.00451561689386552
+"sss dark",sss,11_19_2019_4b_wc_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,25,dark,0.122038584810172
+"sss dark",sss,11_5_2018_4b_WC_pruned_11.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,26,dark,0.0196955620537174
+"sss dark",sss,11_5_2018_4b_WC_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,27,dark,-0.0720993499222651
+"sss dark",sss,11_6_2019_4b_rc2_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,28,dark,-0.0383830059890558
+"sss dark",sss,11_6_2019_4b_rc2_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,29,dark,0.117377363036368
+"sss dark",sss,11_6_2019_4b_rc_pruned_39.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,30,dark,-0.106220491600155
+"sss dark",sss,3_13_2018_4boardmb_pruned1_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,31,dark,0.372124659751559
+"sss dark",sss,3_13_2018_4boardmb_pruned1_25.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,32,dark,-0.00309940741684678
+"sss dark",sss,3_23_2018_4boardmb_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,33,dark,-0.0282635218722641
+"sss dark",sss,4_11_2018_4boardmb_pruned_22.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,34,dark,-0.00153937457072128
+"sss dark",sss,6_15_2018_4boardmb_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,37,dark,-2.5089312264818e-06
+"sss dark",sss,6_25_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,38,dark,0.263403439233996
+"sss dark",sss,7_16_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,39,dark,0.202548142730648
+"sss dark",sss,7_16_2018_4boardmb_pruned_5.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,40,dark,-0.0180645331112959
+"sss dark",sss,7_23_2018_4boardmb_pruned2_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,41,dark,0.0588714460887471
+"sss dark",sss,8_13_2018_4boardmb_pruned_18.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,42,dark,-0.0414895486097762
+"sss dark",sss,8_19_2019_4b_RC_pruned_1.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,43,dark,0.104376280332235
+"sss dark",sss,8_30_2019_4b_RC_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,44,dark,0.0110455972957811
+"sss dark",sss,8_6_2018_4boardmb_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,45,dark,-0.00412405736625565
+"sss dark",sss,8_6_2018_4boardmb_pruned_3.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,46,dark,-0.0231319857132318
+"sss dark",sss,8_6_2018_4boardmb_pruned_6.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,47,dark,-0.031857505268191
+"sss dark",sss,9_10_2018_4b_RC_pruned_63.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,48,dark,0.0239325454909027
+"sss dark",sss,9_16_2019_4b_rc2_pruned_13.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,50,dark,-0.00148226816368562
+"sss dark",sss,9_16_2019_4b_rc2_pruned_4.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,52,dark,-0.0136210239442524
+"sss dark",sss,9_17_2018_4b_RC_pruned_36.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,53,dark,-0.0711589902123653
+"sss dark",sss,9_25_2019_4b_rc_pruned_50.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,54,dark,0.00776851406232157
+"sss dark",sss,9_25_2019_4b_rc_pruned_55.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,55,dark,0.0666179727491968
+"sss dark",sss,9_4_2018_4b_RC_pruned_7.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,56,dark,-0.0333030843216408
+"sss dark",sss,9_9_2019_4b_RC_pruned_2.txtcutdata_4.8.2025.txtcutdata_4.8.2025.txt,57,dark,0.0584422611270046

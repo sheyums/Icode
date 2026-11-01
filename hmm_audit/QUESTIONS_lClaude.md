@@ -22,3 +22,17 @@ per fly and ~90 fly-days for 25 flies, which these settings cannot produce from 
 
 No other settings have been tried. Whatever the answer is goes into a new dated PRESPEC entry,
 committed before the gate is re-run.
+
+## Q2 (2026-11-01): stored 20b fits for the stage-2 port check
+Stage 1 of the MATLAB port passed (hmm_audit/PORT_VALIDATION.md, 29815b5; five cases reported there for you and
+Sheyum). Stage 2's pass condition includes "per-fly 20b log-likelihoods to 1e-6 given the same start", which needs
+the fitted parameters per fly: sqw_out/fit2_0.5.jsonl (and, for the bracket, route2_0.5.json). They are not in the
+repo. Please commit them (or a .mat export via `sqw2.py mat 0.5`) under hmm_audit/, or tell Sheyum where to find them.
+
+## Q3 (2026-11-01): G12 tolerance for the exact TUR diffusion D (and B = J^2/D)
+turExact / turExactCT / hmmObservedChain reproduce G12's J and sigma to 1e-9, but D and B only to 6e-8 relative (max abs
+1.5e-7, the hmm_observed_chain_check D). D is a second central difference of the log Perron root with h = 1e-3, which
+multiplies eigenvalue round-off by ~60/h^2: measured, a 1e-15 relative perturbation of T moves D by 1.9e-8. The h-truncation
+error is larger still (D at h = 1e-3 vs 3e-4 differs by 3.7e-7). So 1e-9 on D is unattainable for a second implementation
+(numpy vs LAPACK eig) and below D's own accuracy. test_sqw_stage3 checks D and B at 1e-6 relative. Neither side's code is
+changed. OK to record G12's tolerance for D/B as 1e-6 relative?
