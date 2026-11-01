@@ -508,3 +508,6 @@ noted on the panel.
   P(quiet exit) vs bout length with a FLAT memoryless reference = the same flies' overall P(quiet exit) (0.202), which a
   Markov chain predicts at every length (replaces the HMM-landscape line, whose definition differed). fig16 stays as SI.
   Fig A4 keeps its HMM panels: it is the evidence for not using hidden states. Port: drop the A1 markers; add C7 obs.
+- 2026-11-01 HMM CHECKS stay referenced in the main text (Sheyum): main Fig A4 keeps its HMM panels; SI figures
+  figS_A1_with_hmm_check (Fig A1 + HMM medians, fig_planA.py SI variant) and figS_C7_memory_with_hmm_check (= the
+  former fig16_R1_memory_main: memory seen at the hidden level too). Port: exportFigA1 gets an 'IncludeHMM' option.
