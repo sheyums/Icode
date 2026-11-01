@@ -267,3 +267,4 @@ cbc6f87 2026-11-01 18:18:30 +0000 PRESPEC 20y (circuit silencing), before runnin
 cb7b90c 2026-11-01 18:19:22 +0000 sqw20y.py (PRESPEC 20y)
 216a8e4 2026-11-01 18:20:28 +0000 20y result
 fda8479 2026-11-01 18:25:01 +0000 PRESPEC 20z before running
+a581fe5 2026-11-01 18:25:31 +0000 sqw20z.py
