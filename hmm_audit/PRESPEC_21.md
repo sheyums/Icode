@@ -24,15 +24,17 @@ Take a wake bout [w0, w1) between two consecutive sleep bouts (sqw_ref.sleep_bou
 window is x_start(tau) = activity at second w0 + tau - 1; its end window is x_end(tau) = activity at second w1 - tau,
 tau = 1..L. If the 1-s process is stationary and time-reversible, and bout detection is time-symmetric (F1 showed
 sqw_symbols, which contains sleep_bouts and bridging, maps reversed traces to reversed symbols in every minute),
-then x_start and x_end are EXCHANGEABLE within each bout. Reversing the trace maps a bout's start onto its end. A
-per-bout sign flip of d = x_start - x_end is then an exact null, with sample size matched by construction.
+then reversing the WHOLE record maps every bout's start onto its end: the exact symmetry is a GLOBAL flip of all bouts
+together. A per-bout sign flip of d = x_start - x_end additionally needs the bouts to be independent given |d_b|, and
+20k/C7 shows that bouts carry memory. The per-bout flip is therefore the primary null only TOGETHER with the
+whole-day block null below; neither alone is called exact.
 What this needs, and what it does not (cClaude's review):
 - It does NOT need stationarity WITHIN a bout. The rise and fall of activity inside a bout is exactly what is measured,
   and a reversible process can have a non-flat profile, as long as start and end mirror each other.
 - It DOES need stationarity of the whole record plus reversibility. That holds for per0 DD; for CS DD the circadian
   drive is the stated caveat.
-- The weak point is INDEPENDENCE OF BOUTS, which the per-bout flip assumes. Hence the per-day block sensitivity null
-  below.
+- The weak point is INDEPENDENCE OF BOUTS, which the per-bout flip assumes (20k/C7: bouts carry memory). Hence the
+  per-day block sensitivity null below.
 
 ## Data and blocks
 - PRIMARY (Holm over 2): per0 DD (25 cut files) and CS DD (25 cut files), whole retained records. per0 DD is
@@ -44,8 +46,9 @@ What this needs, and what it does not (cClaude's review):
 ## Readouts (per fly)
 PRIMARY setting: L = 300 s in 30 bins of 10 s (bouts >= 600 s). SECONDARY setting, also pre-declared and reported in
 full, outside the Holm family: L = 120 s in 24 bins of 5 s (bouts >= 240 s, the same no-overlap rule). Bin 1 = the bin
-next to the sleep boundary. Activity = 1 if count > 0 (as the scoring uses). Wake bouts used per fly are reported
-(median, range) for both settings.
+next to the sleep boundary. Activity = 1 if count > 0 (as the scoring uses). Wake bouts used per fly are reported per block
+(median, range, and the per-fly list) for both settings, because S grows with the number of bouts, in the null and in
+the data alike.
 - PRIMARY, shape: per bout, d_b = x_start bin means - x_end bin means (30 values); centre d_b by its own mean over the
   30 bins (this removes the level difference, i.e. the C2 component). S = sum over bins of (mean over bouts of
   centred d_b)^2.
@@ -64,8 +67,8 @@ next to the sleep boundary. Activity = 1 if count > 0 (as the scoring uses). Wak
 Per primary block, "TIME-ASYMMETRIC SHAPE" if the group Wilcoxon of z_fly against 0 has Holm p < 0.05 with
 median z > 0, AND the fraction of flies with p_fly < 0.05 exceeds Binomial(n, 0.05) at p < 0.05. Otherwise
 "no shape asymmetry detected". The same group rule is applied to the block null (Holm over the same 2 blocks) and
-reported. If the per-bout verdict is positive but the block-null Holm p >= 0.05, the wording adds "sensitive to
-dependence between bouts within a day". The secondary L = 120 s setting is reported with the same rule and does not
+reported. If the two nulls DISAGREE (one positive, the other not), the per-bout result is NOT reported as clean: the
+verdict reads "not robust to dependence between bouts within a day", and no shape asymmetry is claimed. The secondary L = 120 s setting is reported with the same rule and does not
 change the verdict.
 Wording if detected (per0 DD): "Within wake bouts, the 1-s activity trajectory into sleep is not the time-reverse of the
 trajectory out of sleep, beyond their difference in level; under stationarity and the verified time-symmetric
@@ -80,11 +83,16 @@ Then the 20v excess has no 1-s trajectory counterpart in this statistic.
 Narrowest block: one fly's whole DD record (the bouts it contains). Matched null: the same bouts, sign-flipped.
 Expected run time: minutes. One run, one verdict.
 
-## Resolved review points (cClaude, 2026-11-01)
+## Resolved review points (cClaude, 2026-11-01; two notes)
+0. Renamed from draft 20y because 20y and 20z are taken on the shared branch (the Kir2.1 circuit-silencing test, cf777b1,
+   and its follow-up).
 1. L and bins: L = 300 s / 10-s bins primary; L = 120 s / 5-s bins secondary; both pre-declared, both reported.
 2. Centring: yes (without it the shape statistic duplicates C2).
 3. Within-bout stationarity: not required (see the symmetry argument); whole-record stationarity is, so per0 DD is
-   the clean block and CS DD carries the circadian caveat. Bout dependence is handled by the block sensitivity null.
+   the clean block and CS DD carries the circadian caveat. Bout dependence is handled by the whole-day block null
+   (one block per 24-h day: 4 blocks for a 4-day record, 3 for a 3-day record); disagreement between the nulls means
+   no clean claim.
+4. Exclusions: flies with < 5 qualifying bouts are excluded and counted; bouts per fly per block are reported.
 
 ## Conditional follow-up B (NOT part of this test; its own PRESPEC, written only if PRESPEC 21 detects a shape asymmetry)
 Refit 20u's models WITHOUT the reversibility constraint: same orders, starts, seeds, adequacy gate and time box.
