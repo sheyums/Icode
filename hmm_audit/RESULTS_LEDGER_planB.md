@@ -120,3 +120,26 @@ G2: RiseRatio 12 bins 1.4155 16 bins 1.4022 20 bins 1.3855 24 bins 1.4347 (targe
 - The Python extractor (sqw_ref.sleep_bouts + edge sleep bouts dropped) reproduces lClaude's MATLAB per0 DD bouts EXACTLY
   per fly (sorted wake and sleep bouts identical, 25/25 flies). The RiseRatio port reproduces 20r-B's observed values.
   Fallback (a) is not needed. Proceeding to stage 1.
+
+## PRESPEC 20w — clock face, descriptive (2026-11-01; PRESPEC ccae0e8 + 20u amendment A item 4; code e6fc5f3; planB_20w.log/.json)
+Narrowest block: one 2-h clock bin pooled over the flies and days of a genotype. 2000 fly-bootstrap replicates.
+Pooled-chain J (cycles/h) by 2-h bin, point estimates (full table with bands, A, EPR, E3-E1 and c_obs in planB_20w.log):
+```
+bin h     0-2   2-4   4-6   6-8  8-10 10-12 12-14 14-16 16-18 18-20 20-22 22-24 | range [95% band]
+CS LD   +.025 +.017 +.001 +.079 +.115 +.008 +.228 +.146 +.250 +.086 +.088 +.177 | 0.250 [0.220, 0.448]
+per0 LD +.150 +.113 +.084 +.096 +.033 +.081 +.040 +.009 +.166 +.122 +.191 +.209 | 0.200 [0.156, 0.369]
+per0 DD +.183 +.108 +.190 +.141 +.152 +.194 +.102 +.167 +.193 +.173 +.137 +.162 | 0.092 [0.120, 0.355]
+CS DD   +.251 +.077 +.084 +.099 +.019 +.052 +.074 +.063 +.089 +.186 +.086 +.166 | 0.232 [0.172, 0.385]
+EPR range: CS 0.251 [0.163, 0.532]; per0LD 0.131 [0.082, 0.333]; per0DD 0.085 [0.094, 0.391]; CSDD 0.231 [0.128, 0.440]
+```
+- PRE-SPECIFIED READING: no genotype's range band lies entirely above per0 DD's, for J or for EPR, so none is called
+  "rhythmic" by this summary.
+- The summary is insensitive, and this is visible in the output: the bootstrapped max-minus-min range is inflated by
+  noise. per0 DD's band [0.120, 0.355] lies entirely ABOVE its own point estimate 0.092, which a 12-bin range at this
+  bin width does to any genotype. Stated as a limitation of the chosen summary, not fixed (no re-analysis).
+- Descriptively the profiles agree with C3: CS LD J is ~0 at ZT0-6 and 10-12, peaks at ZT12-14 and 16-18
+  (+0.23, +0.25), and is forward through the night. CS DD is highest at CT0-2 and 18-24 (late subjective night).
+  per0 DD is flat within its bands (0.10-0.19 in every bin). per0 LD is highest late night and early morning.
+- E3-E1 stays negative in almost every bin of every genotype (sleep is the lowest-energy state round the clock);
+  CS DD's minimum magnitude is at CT8-12. Single-bin values have wide bands; no bin-wise test was planned or run.
+- CS DD bins are clock time from the cut start; free-running drift (<= ~2 h over 4 days) smears them (stated in 20w).
