@@ -1,0 +1,15 @@
+sleep bouts exported: {'empty': 5132, 'dfb': 8671, 'vnc': 9149} | min duration 300
+
+== C1 group mean D (R1 exit vs sleep length) vs within-fly permutation null (2000)
+empty light flies 19 | mean D +0.253 | null mean +0.001 | p 0.0060
+empty dark  flies 19 | mean D -0.086 | null mean -0.005 | p 0.4108
+dfb   light flies 25 | mean D +0.344 | null mean -0.001 | p 0.0005
+dfb   dark  flies 25 | mean D -0.077 | null mean -0.000 | p 0.0280
+vnc   light flies 34 | mean D +0.100 | null mean +0.000 | p 0.0055
+vnc   dark  flies 34 | mean D -0.078 | null mean +0.001 | p 0.0135
+
+== C2 per-fly D vs empty, two-sided Mann-Whitney, Holm over 4
+dfb vs empty light n 25/19 | median D +0.339 vs +0.216 | PS 0.58 | p 0.3807 Holm 1
+vnc vs empty light n 34/19 | median D +0.131 vs +0.216 | PS 0.35 | p 0.07965 Holm 0.3186
+dfb vs empty dark  n 25/19 | median D -0.069 vs -0.155 | PS 0.58 | p 0.3807 Holm 1
+vnc vs empty dark  n 34/19 | median D -0.087 vs -0.155 | PS 0.57 | p 0.4415 Holm 1

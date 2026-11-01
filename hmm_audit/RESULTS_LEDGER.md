@@ -2113,3 +2113,19 @@ VERDICT: constitutive silencing of the vnc population reduces sleep by ~40% in l
 Caveats (from the PRESPEC): constitutive (developmental effects not excluded); control is enhancerless full GAL4, drivers
   are split-GAL4 (hemidriver insertions not controlled); background not CS, so no comparison with the main cohorts;
   primary nulls are 'not detected' with the CIs above, in a background whose cycle is weak.
+
+## PRESPEC 20z Part C — exit route vs time asleep in the Kir2.1 flies (2026-11-01; PRESPEC 24c358b; code 2d92d67; z_partC.log/.json)
+Also: sleep bouts exported for Part A (kir_sleep_bouts_20z.csv): empty 5132, dfb 8671, vnc 9149 bouts (>= 300 s; record
+edges dropped). Part A (MATLAB, lClaude) not yet run.
+C1 (descriptive; group mean D = mean ln(sleep length | quiet exit) - mean ln(... | active exit); within-fly
+permutation null, 2000):
+  empty light +0.253 (p 0.006) | dark -0.086 (p 0.41)
+  dfb   light +0.344 (p 0.0005) | dark -0.077 (p 0.028)
+  vnc   light +0.100 (p 0.0055) | dark -0.078 (p 0.0135)
+  The exit route depends on time asleep in this background, with OPPOSITE signs by phase: in the light, flies leave
+  longer bouts through quiet wake; in the dark, longer bouts tend to end in active wake (the CS dark direction of 20k,
+  where D was -0.293, but weaker here). Different background from CS: not compared.
+C2 (PRIMARY for Part C; per-fly D vs empty, Mann-Whitney, Holm over 4): NO CHANGE (dfb light Holm 1, vnc light 0.32,
+  dfb dark 1, vnc dark 1).
+Verdict Part C: silencing does not detectably change how the exit from sleep depends on time asleep. The footprint of
+  sleep-length memory is present in all three groups.
