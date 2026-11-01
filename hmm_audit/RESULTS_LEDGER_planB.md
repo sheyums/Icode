@@ -143,3 +143,38 @@ EPR range: CS 0.251 [0.163, 0.532]; per0LD 0.131 [0.082, 0.333]; per0DD 0.085 [0
 - E3-E1 stays negative in almost every bin of every genotype (sleep is the lowest-energy state round the clock);
   CS DD's minimum magnitude is at CT8-12. Single-bin values have wide bands; no bin-wise test was planned or run.
 - CS DD bins are clock time from the cut start; free-running drift (<= ~2 h over 4 days) smears them (stated in 20w).
+
+## PRESPEC 20v — waiting-time irreversibility beyond the observed chain (2026-11-01; PRESPEC ccae0e8 + 20u amendment A item 4; code e6fc5f3; planB_20v.log/.json)
+Narrowest block: one fly's whole DD record (LD: one fly's light or dark minutes pooled over days). Null A = 20p's
+(own mc_fit chain, 200 records, missing reinserted). Excess E_WT = sigma_WT(obs) - median(null), nats/h.
+```
+per0DD  whole n 25 [PRIMARY] | sigma_WT obs median 0.2756 | E_WT median +0.0827 | Wilcoxon p 0.000556 Holm 0.000556 | flies p<.05 0.28 (binom 0.000169) -> SUPPORTED
+CSDD    whole n 25 [PRIMARY] | sigma_WT obs median 0.2604 | E_WT median +0.0782 | Wilcoxon p 8.8e-05 Holm 0.000176 | flies p<.05 0.32 (binom 1.96e-05) -> SUPPORTED
+CS      light n 25 [descr.] | 12-h null: E +0.0281 p 0.442 frac 0.08 | 6-h null: E +0.0345 p 0.578
+CS      dark  n 25 [descr.] | 12-h null: E +0.1367 p 0.0013 frac 0.04 | 6-h null: E +0.1284 p 0.00309
+per0LD  light n 27 [descr.] | 12-h null: E +0.0269 p 0.0463 frac 0.15 | 6-h null: E +0.0293 p 0.0655
+per0LD  dark  n 27 [descr.] | 12-h null: E +0.0295 p 0.269 frac 0.04  | 6-h null: E +0.0379 p 0.336
+fumin   light n 49 [descr.] | 12-h null: E +0.0323 p 0.01 frac 0.02   | 6-h null: E +0.0399 p 0.0131
+fumin   dark  n 53 [descr.] | 12-h null: E +0.0530 p 6.4e-05 frac 0.11 | 6-h null: E +0.0611 p 8.0e-05
+sss     light n 50 [descr.] | 12-h null: E +0.0036 p 0.258 frac 0.02  | 6-h null: E +0.0115 p 0.192
+sss     dark  n 53 [descr.] | 12-h null: E -0.0000 p 0.449 frac 0.02  | 6-h null: E -0.0045 p 0.374
+```
+- VERDICT by the pre-specified rule: SUPPORTED in both primary blocks (per0 DD, CS DD). Dwell times in Q and W depend
+  on the direction of passage (W->Q->S vs S->Q->W; Q->W->S vs S->W->Q) beyond what each fly's own first-order chain
+  produces. The excess is ~0.08 nats/h, comparable to the observed chain's own EPR (per0 DD sigma_MC median 0.111;
+  CS DD 0.053; 20s-A).
+- Agreement with 20p: per0 DD carries excess irreversibility again, by an independent statistic (dwell shape
+  rather than block frequencies). CS DD also qualifies here. In 20p, CS DD's whole-record row had qualified but its
+  designated 12-h halves had not.
+- MAJOR CAVEAT, NOT EXCLUDED by this design: the mixed pairs are conditioned on transitions into and out of S, and S
+  is scored by the 5-min criterion. The wake minute(s) before a sleep onset contain the start of the inactivity that
+  becomes sleep, while waking is followed by activity. That scoring asymmetry can make Q/W dwells next to S
+  direction-dependent, and a first-order chain on the symbols does not reproduce it. 20p excluded this for per0 DD
+  with wake-only blocks; 20v has no wake-only guard (cClaude flagged the same issue for S dwells; it applies to the
+  conditioning too). Until a guard is run, the 20v excess must be worded "consistent with hidden irreversibility; a
+  sleep-scoring origin is not excluded". The natural guard (not run, not pre-registered) is the same statistic on
+  records simulated at 1 s and scored through sqw_symbols, i.e. a scoring-matched null.
+- sss (descriptive): E_WT ~0 in light and dark, so no waiting-time evidence for a hidden cycle without a visible current.
+- LD (descriptive): excess in CS dark and fumin light and dark, not CS light, per0LD or sss. It is unchanged by the
+  6-h-rate null, so within-phase drift does not explain it.
+- Not a bound by itself: the lower-bound statement is sigma_MC + E_WT per fly, which was not computed here.

@@ -1,0 +1,10 @@
+per0DD  whole n 25 [PRIMARY] | sigma_WT obs median 0.2756 nats/h | E_WT median +0.0827 | Wilcoxon p 0.000556 Holm 0.000556 | flies p<.05 0.28 (binom 0.000169) -> SUPPORTED
+CSDD    whole n 25 [PRIMARY] | sigma_WT obs median 0.2604 nats/h | E_WT median +0.0782 | Wilcoxon p 8.8e-05 Holm 0.000176 | flies p<.05 0.32 (binom 1.96e-05) -> SUPPORTED
+CS      light n 25 [descriptive] | sigma_WT obs 0.3369 | 12-h null: E +0.0281 p 0.442 frac 0.08 | 6-h null: E +0.0345 p 0.578 frac 0.08
+CS      dark  n 25 [descriptive] | sigma_WT obs 0.4069 | 12-h null: E +0.1367 p 0.0013 frac 0.04 | 6-h null: E +0.1284 p 0.00309 frac 0.04
+per0LD  light n 27 [descriptive] | sigma_WT obs 0.3397 | 12-h null: E +0.0269 p 0.0463 frac 0.15 | 6-h null: E +0.0293 p 0.0655 frac 0.15
+per0LD  dark  n 27 [descriptive] | sigma_WT obs 0.3448 | 12-h null: E +0.0295 p 0.269 frac 0.04 | 6-h null: E +0.0379 p 0.336 frac 0.00
+fumin   light n 49 [descriptive] | sigma_WT obs 0.3666 | 12-h null: E +0.0323 p 0.01 frac 0.02 | 6-h null: E +0.0399 p 0.0131 frac 0.02
+fumin   dark  n 53 [descriptive] | sigma_WT obs 0.2092 | 12-h null: E +0.0530 p 6.39e-05 frac 0.11 | 6-h null: E +0.0611 p 8.04e-05 frac 0.13
+sss     light n 50 [descriptive] | sigma_WT obs 0.1285 | 12-h null: E +0.0036 p 0.258 frac 0.02 | 6-h null: E +0.0115 p 0.192 frac 0.02
+sss     dark  n 53 [descriptive] | sigma_WT obs 0.1916 | 12-h null: E -0.0000 p 0.449 frac 0.02 | 6-h null: E -0.0045 p 0.374 frac 0.00
