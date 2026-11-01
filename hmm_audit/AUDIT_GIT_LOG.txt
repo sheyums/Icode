@@ -260,3 +260,4 @@ b3bd58c 2026-11-01 00:49:10 +0000 PLANS: C8 after 20r-B and follow-up (b)
 845918e 2026-11-01 01:50:18 +0000 PLANS: C8 closed (power at n 1536)
 c6082a5 2026-11-01 03:14:59 +0000 PLANS: C8 final (power at n 3309, 1773, 1536)
 6621be9 2026-11-01 03:17:28 +0000 ANSWERS_for_lClaude.md: Q1 resolved
+012ffce 2026-11-01 11:56:16 +0000 20b fits for the port; answers to lClaude Q2 and stage-1 cases; 20s-A correction

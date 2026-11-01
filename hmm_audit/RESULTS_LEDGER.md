@@ -2072,3 +2072,15 @@ sss    - CS: L difference 95% CI and p (array([-0.16762543, -0.07750639]), np.fl
 Sheyum confirms the CS DD files (CS_DD_activfiles.zip, *_from1stLD.txt, 4.000 d) were cut the same way as the per0 DD
 cutdata files: the first 24 h of DD removed before export. The CS DD rows of 20p, 20q and 20s-A, and lClaude's 20r-A,
 therefore compare like with like; no re-run needed.
+
+## Correction to 20s-A (2026-11-01; raised by lClaude's MATLAB port, PORT_VALIDATION.md stage 1, matlab-port 29815b5)
+The MATLAB port reproduces every 20s-A median at printed precision (0 disagreements). It flagged two reporting defects:
+- "Chain with a cycle" exclusion (|J_chain| < 1e-12) lumps three kinds. Of the 28 excluded fly-phases with a Q/W reference: 11
+  exactly symmetric counts (net J = 0; a cycle with zero current), 15 an edge never seen in either direction (rates only bounded),
+  2 a state absent (sss 1 and 38, light: truly no cycle). By block: CS L 1, per0LD L 1, per0DD 1, fumin L 2 / D 4, sss L 13 / D 5.
+  The exclusion stands for chain-based quantities and Onsager points; the Methods must name the three kinds.
+- The chain-EPR medians in the 20s-A table dropped infinite values (one-way edges, the most irreversible flies). With Inf ranked
+  highest: fumin L 0.163 -> 0.170, fumin D 0.132 -> 0.189, sss L 0.046 -> 0.090, sss D 0.043 -> 0.109; other blocks unchanged.
+  The Inf-ranked median, with the Inf share, is the value to report. Count-based EPR (rule of three) was unaffected.
+- Port calibration (400 null replicates, equal L, EPR-proportional noise): Wald p < 0.05 in 22% (nominal 5%), fly-bootstrap
+  difference 5.2%; supports the bootstrap difference for the L comparisons (addendum 2).
