@@ -549,3 +549,30 @@ Not reportable  Not "the rise is beyond renewal" and not "renewal explains it": 
                 means subsampling discards synthetic bouts, so the null's bin occupancy differs from
                 the data's; its effect on the ratio is not measured.
 ```
+
+### 2026-10-31  20r-A follow-up (a), amendment: power to see the per0 DD rise at n = 1536
+
+```
+Commit          7bd0e99f92554a6a71eeda4604c0eb0236fcef49 (analysis_20r/run_20rA_followups.m 'power',
+                rise_test_20r.m); log analysis_20r/followup_power_n1536_log.txt (a snapshot of the
+                running half-size log at the end of this set), results
+                analysis_20r/followup_power_per0DD_n1536.mat
+Prespec         "Amendment to 20r-A follow-ups: power also at each half's n" (9389016).
+Data            per0 DD reference wake bouts (per0DD_bouts_20r_replication.mat, b14ba340...).
+Time window     Each subsample, pooled over the flies it holds.
+n               1536 per subsample (the CS DD record-hours 0-12 count); 199 subsamples, median 9 whole
+                flies each plus part of one more; rng(3000 + b).
+Result          Power (fraction with RiseNullP < 0.05), bins 12 / 16 / 20 / 24:
+                  0.774 / 0.598 / 0.432 / 0.377
+                Median RiseRatio 1.537 / 1.601 / 1.664 / 1.792; median RiseNullP 0.010 / 0.025 /
+                0.065 / 0.080. Verdict over the four counts: "supported" 0.302; "supported" or
+                "supported but bin-sensitive" 0.809. NullDropped > 0 in none.
+Matched null    Each subsample's own two-exponential fit, 199 null datasets of n = 1536, each through
+                the whole estimator on its own bins (NullReplicates 199, Sheyum 2026-10-31).
+Verdict         Descriptive (no rule). At n = 1536 a per0-like rise is detected at 12 bins in 77% of
+                subsamples and gives a "supported" or "bin-sensitive" verdict in 81%. CS DD hours 0-12
+                (n = 1536) gave p = 1.000 / 1.000 / 0.998 / 0.345: not a near miss.
+Not reportable  The power is for THESE 25 per0 flies, resampled with overlap, not for a new cohort, and
+                assumes CS DD's rise, if any, would be per0-sized. 199 null replicates per subsample:
+                p in steps of 0.005.
+```
