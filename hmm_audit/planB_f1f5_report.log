@@ -1,0 +1,63 @@
+seconds 4153
+N0          days 4 a 0.0 Eb 0.0 b 0.000 sdH_calib nan Hc 0.500
+DD-CH       days 4 a 0.4 Eb 0.2 b 2.112 sdH_calib 0.0947 Hc 0.394
+DD-CH-half  days 4 a 0.2 Eb 0.1 b 1.126 sdH_calib 0.0888 Hc 0.390
+DD-C        days 4 a 0.4 Eb 0.0 b 0.000 sdH_calib nan Hc 0.500
+DD-H        days 4 a 0.0 Eb 0.2 b 2.195 sdH_calib 0.0911 Hc 0.396
+LD2-CH      days 2 a 0.4 Eb 0.2 b 2.224 sdH_calib 0.0899 Hc 0.349
+LD3-step-C  days 3 a 0.4 Eb 0.0 b 0.000 sdH_calib nan Hc 0.500
+N0-2d       days 2 a 0.0 Eb 0.0 b 0.000 sdH_calib nan Hc 0.500
+
+Detection rates (LRT > nominal chi2 5%): clock rows Q/W/S | homeostat rows Q/W/S | N0-null 95th pct LR
+N0          n 25 | clock 0.08 0.04 0.12 | homeo 0.16 0.24 0.08
+DD-CH       n 25 | clock 0.24 0.04 0.32 | homeo 0.24 0.24 0.44
+DD-CH-half  n 25 | clock 0.12 0.08 0.08 | homeo 0.24 0.24 0.32
+DD-C        n 25 | clock 0.28 0.00 0.48 | homeo 0.04 0.04 0.16
+DD-H        n 25 | clock 0.00 0.08 0.12 | homeo 0.20 0.16 0.36
+LD2-CH      n 25 | clock 0.16 0.04 0.28 | homeo 0.08 0.24 0.24
+LD3-step-C  n 25 | clock 0.44 0.00 0.52 | homeo 0.04 0.08 0.12
+N0-2d       n 25 | clock 0.08 0.00 0.20 | homeo 0.12 0.08 0.20
+  N0 95th pct LR: clock 10.39 9.07 10.64 | homeo 8.20 7.73 7.30
+  N0-2d 95th pct LR: clock 12.27 6.89 12.57 | homeo 9.56 6.66 15.41
+
+Estimates per modulated transition (median over flies [IQR])
+N0          02 | Eb hat (truth 0) median +0.101 IQR [-0.072,+0.183] | a hat (truth 0) 0.36
+N0          21 | Eb hat (truth 0) median -0.074 IQR [-0.168,-0.007] | a hat (truth 0) 0.24
+            tau_r true 5.9 h hat median 32 | tau_d true 3.3 hat median 16 | r(H,clock) true 0.30 hat 0.27 | frac S 0.46
+DD-CH       02 | Eb true +0.184 hat +0.234 ratio 1.16 [0.10,1.99] sign ok 0.76 | a true 0.42 hat 0.41 ratio 0.99 | phase err median 1.7 h
+DD-CH       21 | Eb true -0.171 hat -0.347 ratio 1.69 [0.83,2.64] sign ok 0.96 | a true 0.39 hat 0.46 ratio 1.06 | phase err median 1.3 h
+            tau_r true 5.8 h hat median 16 | tau_d true 3.0 hat median 16 | r(H,clock) true 0.47 hat 0.45 | frac S 0.42
+DD-CH-half  02 | Eb true +0.098 hat +0.237 ratio 2.43 [0.25,4.63] sign ok 0.76 | a true 0.20 hat 0.48 ratio 2.34 | phase err median 2.4 h
+DD-CH-half  21 | Eb true -0.089 hat -0.178 ratio 2.44 [0.65,3.31] sign ok 0.88 | a true 0.19 hat 0.26 ratio 1.28 | phase err median 1.6 h
+            tau_r true 5.7 h hat median 16 | tau_d true 2.8 hat median 16 | r(H,clock) true 0.32 hat 0.30 | frac S 0.45
+DD-C        02 | Eb hat (truth 0) median -0.066 IQR [-0.144,+0.129] | a true 0.43 hat 0.56 ratio 1.37 | phase err median 1.9 h
+DD-C        21 | Eb hat (truth 0) median -0.104 IQR [-0.217,+0.026] | a true 0.40 hat 0.54 ratio 1.23 | phase err median 1.6 h
+            tau_r true 6.3 h hat median 16 | tau_d true 2.9 hat median 4 | r(H,clock) true 0.43 hat 0.38 | frac S 0.46
+DD-H        02 | Eb true +0.177 hat +0.277 ratio 1.53 [0.62,2.17] sign ok 0.96 | a hat (truth 0) 0.28
+DD-H        21 | Eb true -0.178 hat -0.234 ratio 1.54 [0.81,2.02] sign ok 0.92 | a hat (truth 0) 0.19
+            tau_r true 5.9 h hat median 16 | tau_d true 3.0 hat median 16 | r(H,clock) true 0.22 hat 0.20 | frac S 0.45
+LD2-CH      02 | Eb true +0.177 hat +0.360 ratio 1.98 [1.14,3.95] sign ok 0.84 | a true 0.38 hat 0.66 ratio 1.74 | phase err median 2.0 h
+LD2-CH      21 | Eb true -0.176 hat -0.278 ratio 1.82 [0.85,3.24] sign ok 0.92 | a true 0.38 hat 0.63 ratio 1.72 | phase err median 1.9 h
+            tau_r true 6.1 h hat median 32 | tau_d true 2.7 hat median 16 | r(H,clock) true 0.46 hat 0.48 | frac S 0.47
+LD3-step-C  02 | Eb hat (truth 0) median +0.181 IQR [-0.001,+0.246] | a true 0.39 hat 0.64 ratio 1.80 | phase err median 1.1 h
+LD3-step-C  21 | Eb hat (truth 0) median -0.118 IQR [-0.265,+0.028] | a true 0.38 hat 0.63 ratio 1.62 | phase err median 1.6 h
+            tau_r true 6.2 h hat median 16 | tau_d true 2.8 hat median 32 | r(H,clock) true 0.57 hat 0.48 | frac S 0.51
+N0-2d       02 | Eb hat (truth 0) median +0.225 IQR [+0.001,+0.332] | a hat (truth 0) 0.44
+N0-2d       21 | Eb hat (truth 0) median -0.082 IQR [-0.287,-0.018] | a hat (truth 0) 0.35
+            tau_r true 5.8 h hat median 16 | tau_d true 2.9 hat median 16 | r(H,clock) true 0.40 hat 0.35 | frac S 0.50
+
+F5 thermodynamics (nats/h; median over flies)
+N0          hk true 0.0910 hat 0.1462 ratio 2.19 | na true 0.00000 hat -0.00184 ratio -144315755924154.66 [nan,885336944925.40] | na share true 0.0000
+DD-CH       hk true 0.1276 hat 0.2106 ratio 1.64 | na true -0.00119 hat -0.00646 ratio 6.08 [3.42,8.40] | na share true -0.0122
+DD-CH-half  hk true 0.1421 hat 0.3061 ratio 1.69 | na true -0.00034 hat -0.00279 ratio 7.92 [3.27,21.42] | na share true -0.0023
+LD2-CH      hk true 0.1700 hat 0.3927 ratio 2.46 | na true -0.00096 hat -0.01306 ratio 12.97 [4.19,27.50] | na share true -0.0052
+
+F1 criteria
+DD-CH: (1) detection min 0.24 -> False | (2) FP W-row clock 0.04 homeo 0.24, N0 max clock 0.12 homeo 0.24 -> False | (4) Eb ratio/sign 02 1.16/0.76, 21 1.69/0.96 -> False
+LD2-CH: (1) detection min 0.08 -> False | (2) FP W-row clock 0.04 homeo 0.24, N0-2d max clock 0.20 homeo 0.20 -> False | (4) Eb ratio/sign 02 1.98/0.84, 21 1.82/0.92 -> False
+(3) cross-talk: homeostat in DD-C Q/S 0.04/0.16; clock in DD-H Q/S 0.00/0.12 -> False
+F1 FAIL
+F5 DD-CH: hk ratio 1.64 -> False | na ratio 6.08 -> False
+F5 LD2-CH: hk ratio 2.46 -> False | na ratio 12.97 -> False
+F5 noise floor: N0 fitted na -0.00184 / DD-CH true na -0.00119 = 1.54 -> False
+F5 FAIL

@@ -1,0 +1,14 @@
+check: max |J_vec - model_energetics| = 8.33e-15
+  calibration 50/200 (110 s)
+  calibration 100/200 (206 s)
+  calibration 150/200 (299 s)
+  calibration 200/200 (395 s)
+CALIBRATION: fraction p < 0.05 = 0.045 over 200 per0-DD-matched constant-chain datasets (gate [0.02, 0.09]) -> PASS
+POWER at per0 DD size vs CS LD's pooled modulation (no heterogeneity, optimistic): 0.80 (100 datasets)
+CS      n 25 | J amplitude 0.0774 (null 95th 0.0618) peak 16.2 h | p 0.005 | Holm 0.015 -> CLOCK-LOCKED MODULATION | c_obs amplitude 0.0691 (null 95th 0.0517) peak 17.5 h p 0.003
+CSDD    n 25 | J amplitude 0.0628 (null 95th 0.0551) peak 22.9 h | p 0.015 | Holm 0.030 -> CLOCK-LOCKED MODULATION | c_obs amplitude 0.0468 (null 95th 0.0438) peak 23.4 h p 0.034
+per0LD  n 27 | J amplitude 0.0711 (null 95th 0.0725) peak 22.7 h | p 0.059 | Holm 0.059 -> not detected | c_obs amplitude 0.0422 (null 95th 0.0516) peak 23.8 h p 0.140
+per0DD  n 25 | J amplitude 0.0058 (null 95th 0.0503) peak 18.3 h | p 0.959 | NEGATIVE CONTROL | c_obs amplitude 0.0042 (null 95th 0.0312) peak 17.5 h p 0.953
+fumin   n 53 | J amplitude 0.0700 (null 95th 0.0455) peak 11.0 h | p 0.001 | descriptive | c_obs amplitude 0.0515 (null 95th 0.0564) peak 13.7 h p 0.091
+sss     n 57 | J amplitude 0.0334 (null 95th 0.0242) peak 16.5 h | p 0.002 | descriptive | c_obs amplitude 0.0893 (null 95th 0.0604) peak 17.5 h p 0.002
+per0 DD null (p >= 0.05): no flag

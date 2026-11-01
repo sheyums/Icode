@@ -1,0 +1,33 @@
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ~~~~^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 48, in mapstar
+    return list(map(*args))
+  File "/home/user/Icode/hmm_audit/planB_20u.py", line 222, in fit_fly
+    ll, X, it = fit_order(sym, L, Ka, Ki, rng); K = Ka + Ki; k = K * (K + 1) // 2 - 1
+                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Icode/hmm_audit/planB_20u.py", line 211, in fit_order
+    ll, C = loglik_counts(X, Ka, sym, L)
+            ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/user/Icode/hmm_audit/planB_20u.py", line 188, in loglik_counts
+    return _kernel(sym, L, P, Ka, K, l1, V1, Vi1, l0, V0, Vi0, x / x.sum())
+ZeroDivisionError: division by zero
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/user/Icode/hmm_audit/planB_20u.py", line 339, in <module>
+    run(sys.argv[2])
+    ~~~^^^^^^^^^^^^^
+  File "/home/user/Icode/hmm_audit/planB_20u.py", line 281, in run
+    fits = pool.map(fit_fly, list(enumerate(A)), chunksize=1)
+  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 774, in get
+    raise self._value
+ZeroDivisionError: division by zero
