@@ -172,3 +172,36 @@ cClaude's stored 20b fits, CS DD refitted here as 20p did, K = 3, 20 starts; 200
    reverse-biased). The golden values are unaffected.
 
 Not yet done: the figure-export functions (FIGURE_RECIPES section K, A1-A4).
+
+## 2026-11-01  Figure exports A1-A4 (FIGURE_RECIPES section K) — code 6809a63 (lClaude, matlab-port)
+
+Merged claude/trusting-allen-7nxrsf (a3e1b63, includes 366efc5: "model-based estimate" wording) into matlab-port first.
+PRESPEC 20z Part A was NOT run (frozen by Sheyum 2026-11-01; only a synthetic smoke test of a draft runner was
+started and stopped, nothing committed, the Kir2.1 bout file untouched).
+
+Functions (sqw/README.md, "Figure exports"): planAData, planAFlyHMM, planALikelihoods, exportFigA1..A4, planAStyle /
+planAFigure / planAStrip. Each export writes the plotted per-fly points and the per-block median + fly-bootstrap CI as
+CSV (Origin) and .mat, and draws the figure with the theme pinned light, genotype order CS -> CS DD -> per0 LD ->
+per0 DD -> fumin -> sss, light before dark. Outputs: sqw/validation/figA. Tests: test_sqw_figA 7/7 (B = I makes the
+HMM marker equal the counted J/EPR to 4e-16; path-mean J vs exact forward-backward posterior current |z| < 0.5;
+noiseless Onsager L recovered to 1e-16; exclusion filters, order, theme, Fig A4 clipping and file routing).
+
+**Raw-data checks (same data as stages 1-3; sss = the 54-file 20s-A set for A1-A3, 57 for A4 c/d as 20p/20q):**
+- Recipe checks all reproduced: Fig A1 CS dark c_obs +0.147, J +0.167, EPR 0.116; Fig A2 L 0.272 / 0.262 / 0.286 /
+  0.352 / 0.243 / 0.145; Fig A3 E_S - E_Q -1.78 (CS dark), +1.00 (fumin dark); Fig A4 dBIC medians -16.6 / -30.4,
+  above 0 in 28% / 23%. Every A1/A3 median equals the 20s-A ledger to its printed precision.
+- Fig A1 HMM markers (200 FFBS paths per fly, MATLAB stream) against the 20s-A "HMM bracket" medians: 18 comparisons,
+  mean z +0.37, max |z| 2.40, none > 3 (SD of the median from 6 independent path draws, so rough). The stored fits
+  were matched to data files BY NAME (the fits index the 57-file sss list, 20s-A used 54 files); sss agrees with the
+  ledger, so no sign that sqw17 paired sss flies with the wrong fit.
+- Fig A4 (a, b): planALikelihoods reproduces the 20n/20o ledger: CS dLL +17.7 [6.4, 30.1], MC2 +36.1, MC1_6 +14.3,
+  HMM_6 +31.6, R_mem 2.00 (>= 1 in 0.96), R_drift 0.08 (>= 0.5 in 0.13); fumin +8.7 [1.8, 21.8], +18.7, +13.4, +26.6,
+  1.25 (0.57), -0.03 (0.11); dBIC > 10 in 0.20 / 0.21. HMM_6 refitted with 20 MATLAB-stream starts (61 min, 78 flies).
+- Fig A4 (c, d) read the per-fly CSVs of the stage-3 validation run (4448209), whose medians were checked there.
+
+**For cClaude (presentation, nothing changed):**
+1. fig_beneath.py hard-codes the panel (a) text ("28% (CS), 23% (fmn)", "~3 nats per 1000 min"); the port computes
+   it (0.28 / 0.23, 3.1 / 3.0 nats per 1000 min): same numbers.
+2. Panel (c): per0 DD is filled (passes the pre-registered rule, a null-based Holm test) while its fly-bootstrap 95%
+   CI of the median E crosses 0 (-0.008 to 0.077). Not an error, but a reader comparing the two marks will ask.
+3. The 20o ledger's "HMM_6 - MC1_6 (gain left after drift)" is over all flies; nothing in the figure uses it.
