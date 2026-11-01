@@ -76,3 +76,22 @@ All four bin counts are reported in every case.
 Same flies, same record lengths, same scoring, the observed n by subsampling. Narrowest block: one fly's retained
 trace; pooled statistic. Time box: if stage 1 has not finished in 6 h wall time on 4 cores, report "not completed".
 Orders and starts are not reduced after the fact.
+
+## Amendment A (2026-11-01, before ANY part of 20u ran; go-ahead for tests 1-3 given by Sheyum, relayed by cClaude)
+1. DEATH CRITERION ON SYNTHETIC TRACES (raised by cClaude). The pipeline's deadThresh 12 never acted on the real cut
+   files, but a reversible-null fly with long silences could trigger it, and the Python port does not reproduce MATLAB's
+   trimming. Assumption, stated: deadThresh 12 means a continuous inactive run of >= 12 h (as Teliminate is in hours).
+   Check, before stage 2: on the REAL per0 DD retained traces, no inactive run reaches 12 h (otherwise G1 would already
+   differ). Rule for the nulls: a synthetic fly-trace with any inactive run >= 12 h is EXCLUDED from that replicate's
+   pool. The total count of excluded fly-replicates is reported. If more than 5% of the 25 x 199 fly-replicates are
+   excluded, the verdict carries "death-criterion exclusions > 5%" as a stated limitation (no change of rule).
+2. FALLBACK (a) APPROVED (Sheyum): if G1 fails, lClaude commits the five Rockefeller extraction files with SHA-256 to
+   the shared branch under analysis_20r/rockefeller_extractor/; that branch is merged, and the port is rewritten line by
+   line. The switch is recorded as a dated amendment before use. There is still no tuning: the port must match per fly
+   exactly, or stop and report. Option (b) is used only if (a) also fails.
+3. G1 implementation fixed now: sqw_ref.sleep_bouts(x[:traceLen], bridge=True) for sleep bouts; sleep bouts starting at
+   second 0 or ending at traceLen are dropped. Wake bouts are the gaps between consecutive sleep bouts (all of them,
+   including gaps next to a dropped edge sleep bout); leading and trailing wake segments touch the edge and are not bouts.
+   G2: BoutHazard's buildEdges / hazard / trough-peak logic ported verbatim, with MATLAB round (half away from zero).
+4. Reporting conventions (20s-A correction, shared branch 0212253): medians rank Inf highest where infinities occur;
+   "no cycle" is split into its three kinds. These apply to 20v and 20w; 20u has neither.
