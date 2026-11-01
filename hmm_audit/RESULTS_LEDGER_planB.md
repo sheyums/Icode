@@ -109,3 +109,14 @@ F4 n 26 | baseline ZT15-24 sleep median 367 min | deprivation night 51 min (rang
   slept 316 of 540 min). Dose is then partly a fly property (resistance to arousal), which can confound "dose" with
   sleep drive. A dose-response PRESPEC must address it, e.g. with deprivation efficacy as a covariate, or by
   restricting to flies with >= 80% of the window awake.
+
+## PRESPEC 20u Stage 0 — gates (2026-11-01; PRESPEC ccae0e8 + amendment A 3f3f2cd; code ae2c364; planB_20u_stage0.log/.json)
+Go-ahead for tests 1-3 (20u, 20v, 20w) given by Sheyum, relayed by cClaude, 2026-11-01.
+```
+G1: port wake 4017 (ref 4017), sleep 4022 (ref 4022); flies identical 25/25 -> PASS
+     longest inactive run on real traces 11881 s = 3.30 h (amendment A: must be < 12 h)
+G2: RiseRatio 12 bins 1.4155 16 bins 1.4022 20 bins 1.3855 24 bins 1.4347 (target 1.416, 1.402, 1.385, 1.435) -> PASS
+```
+- The Python extractor (sqw_ref.sleep_bouts + edge sleep bouts dropped) reproduces lClaude's MATLAB per0 DD bouts EXACTLY
+  per fly (sorted wake and sleep bouts identical, 25/25 flies). The RiseRatio port reproduces 20r-B's observed values.
+  Fallback (a) is not needed. Proceeding to stage 1.
