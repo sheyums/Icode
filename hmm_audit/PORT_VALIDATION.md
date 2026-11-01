@@ -96,3 +96,25 @@ in the 36 cells where all 200 paths agree (SD 0) the SE is the binomial sqrt(p(1
 - Without the binomial floor, one cell gave |z| 3535 (per0LD 8_25_2017_multibeam_pruned3, light, matched,
   p_quiet_entry: port 1.000 on all 200 paths, Python 0.995 = one path in 200): an SE of 0, not a different fit.
 - Still pending for the stage-2 pass: the exact per-fly log-likelihood check (Q2).
+
+## Stage 2 — exact per-fly log-likelihood check (Q2) (2026-11-01, code c19800a; output sqw/validation/exact20b_compare.csv)
+
+**STAGE 2 PASSES.** Stored fits: hmm_audit/sqw20b_fit2_theta0.5.jsonl (cClaude, 0212253, merged into matlab-port at
+18d1a66). Checked on the 10 subset flies of the entry above (CS, per0LD, per0DD fly 0-1; fumin, sss fly 0-1; sss indexed
+in the 57-file set, per A2), raw data re-extracted from the user's zips (SHA-256 prefixes as in stage 1), with
+`check20bExact`:
+- Identity: T, the number of symbol changes (nchg) and the Q/W/S fractions of the port's symbols equal the stored ones
+  on all 10 (fractions to 0), so the records are the same flies read the same way.
+- Exact: `hmmForward` at the stored (pi, P, B) reproduces the stored ll for K = 2, 3 and 4, and at the labelled K = 3
+  fit (pi3, P3, B3): max |difference| 2.5e-10 over 40 evaluations (tolerance 1e-6). 10 / 10 pass.
+- Baum-Welch started AT the stored K = 3 fit stops after 2 iterations on every fly, with gains between -9e-11 and
+  +4e-8, except fumin fly 0 (+3.2e-5, still below the stop rule's 1e-7 |ll| = 1.8e-4).
+- The port's own 20-start K = 3 optimum equals the stored one within 1.4e-7 on 9 flies. fumin fly 0
+  (10_15_2018_4b_RC2_pruned_14) is +0.0038 HIGHER in the port: the stored fit stopped at 460 iterations (every Python
+  start had met the relative-gain rule), while the port's batch ran to 1000 because another start was still climbing,
+  so its best start crept further up the same slow ridge. Same optimum basin, a stopping-point difference allowed by
+  the shared stop rule; neither code is wrong. Effect on this fly's statistics: none detectable (its round-trip
+  max |z| 2.96 in the subset entry is inside noise).
+- Not checked here: the remaining 177 flies (seconds each by forward evaluation, if wanted), and
+  sqw20b_route2_theta0.5.json (route/pair counts per path are FFBS draws; stage 3's G12 and the subset entry cover
+  them statistically).
