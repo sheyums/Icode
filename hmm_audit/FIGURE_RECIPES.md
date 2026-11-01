@@ -502,3 +502,9 @@ noted on the panel.
 - 2026-11-01 (lClaude note 2): Fig A4(c) legend now states that a filled marker means the pre-registered test passed
   (per-fly simulated nulls, Wilcoxon + binomial, Holm) and that the bar is the fly-bootstrap CI of the median, a
   descriptive quantity that can cross 0 for a filled block (per0 DD: -0.008 to 0.077). Port: mirror the legend text.
+- 2026-11-01 MAIN TEXT IS OBSERVED-LEVEL ONLY (Sheyum, PNAS). Fig A1: HMM markers removed (fig_planA.py; the HMM
+  comparison moves to the SI). Sleep-length memory: figC7_sleep_memory_observed (fig_R1_obs.py) replaces
+  fig16_R1_memory_main in the main text: (a) observed per-fly D with the within-fly null band; (b) CS dark observed
+  P(quiet exit) vs bout length with a FLAT memoryless reference = the same flies' overall P(quiet exit) (0.202), which a
+  Markov chain predicts at every length (replaces the HMM-landscape line, whose definition differed). fig16 stays as SI.
+  Fig A4 keeps its HMM panels: it is the evidence for not using hidden states. Port: drop the A1 markers; add C7 obs.

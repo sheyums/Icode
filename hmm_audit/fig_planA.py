@@ -37,11 +37,11 @@ def strip(ax,key,ylabel,hmm=None,ref0=True):
 # ---------------- Fig A1 ----------------
 fig,axs=plt.subplots(3,1,figsize=(7.0,6.6),constrained_layout=True)
 strip(axs[0],'c_obs','observable current $c_{obs}$\n(P(Q before sleep) $-$ P(Q after waking))')
-strip(axs[1],'J','cycle flux $J$ (cycles h$^{-1}$)\n(forward W$\\to$Q$\\to$S$\\to$W $>0$)',hmm='J_hmm')
-strip(axs[2],'EPR','entropy production (nats h$^{-1}$)\ncount estimate, rule of three',hmm='EPR_hmm',ref0=False)
+strip(axs[1],'J','cycle flux $J$ (cycles h$^{-1}$)\n(forward W$\\to$Q$\\to$S$\\to$W $>0$)')
+strip(axs[2],'EPR','entropy production (nats h$^{-1}$)\ncount estimate, rule of three',ref0=False)
 for a,l in zip(axs,'abc'): a.text(-0.07,1.02,l,transform=a.transAxes,fontsize=10,fontweight='bold')
 axs[0].plot([],[],'o',ms=3,mfc='white',mec='k',mew=0.6,label='light (one point per fly)'); axs[0].plot([],[],'o',ms=3,mfc='k',mec='k',label='dark / DD')
-axs[0].plot([],[],'-',color='k',lw=1.2,label='median, 95% CI'); axs[0].plot([],[],'<',ms=4,color='0.35',ls='none',label='HMM (model-based estimate), median')
+axs[0].plot([],[],'-',color='k',lw=1.2,label='median, 95% CI')
 axs[0].legend(frameon=False,fontsize=6.5,ncol=4,loc='lower left',bbox_to_anchor=(0.04,1.03))
 for ext in ('png','pdf'): fig.savefig(f'figures/figA1_direction_flux_observable.{ext}',dpi=300)
 # ---------------- Fig A2 ----------------
