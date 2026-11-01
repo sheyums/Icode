@@ -44,3 +44,28 @@ If either is changed in the Rockefeller folder, re-copy it here and re-run the t
 
 Tests: `test_sqw_stage1` (run by name from this folder). Raw-data check: `validate_20sA(dataRoot, outDir)`.
 Validation record: `hmm_audit/PORT_VALIDATION.md`.
+
+## Stage 2 — HMM bracket
+| MATLAB | sqw_ref | notes |
+|---|---|---|
+| `hmmFitPhased` | `em_fit` | batched Baum-Welch, Dirichlet(1) starts; `Start=` for one fixed start |
+| `labelStates`, `isDegenerateH1`, `hmmBic` | `label_states`, `is_degenerate`, `bic` | |
+| `hmmViterbiPhased`, `hmmFFBS`, `pairCounts`, `posteriorSummaries` | `viterbi`, `ffbs`, `pair_counts`, `posterior_summaries` | |
+| `hmmSimulatePhased` | `simulate` | refuses rows that do not sum to 1 (`fillEmptyRows` first) |
+| `roundTripsHidden`, `roundTripStats` | `round_trips_hidden`, `round_trip_stats` | |
+| `readStored20bFits`, `check20bExact`, `checkSubset20b` | — | cClaude's stored 20b fits; exact and statistical checks |
+
+Tests: `test_sqw_stage2`.
+
+## Stage 3 — model-free probes (20p, 20q)
+| MATLAB | sqw_ref | notes |
+|---|---|---|
+| `chain2FitPhased`, `pairChainStructure` | `mc2_fit`, `B_PAIR`, `ALLOW_PAIR` | second-order chain as 9 pair states, k = 3(y_{t-1}-1)+y_t |
+| `fillEmptyRows` | `sim_rows` | simulation only; also applied to HMM rows never left (sqw_ref jumps to the last state instead) |
+| `blockKL`, `blockKLStats` | `block_kl`, `block_kl_stats` | |
+| `cycleIncrements`, `turEstimate`, `turExact`, `turExactCT`, `hmmObservedChain` | `D_CYCLE`, `tur_estimate`, `tur_exact(_ct)`, `hmm_observed_chain` | turExact needs stochastic rows; any K in hmmObservedChain |
+| `sqwMemoryFly`, `sqwMemoryGroup` | `sqw15.py`, `sqw15b.py`, `sqw15_report.py` | 20p per fly / group: nulls A, B (A2 halves for DD), HMM and MC2 predictions; CSV, figure |
+| `sqwTURFly`, `sqwTURGroup` | `sqw16.py`, `sqw16b.py`, `sqw16_report.py` | 20q per fly / group, rule of three (amendment E); CSV, figure |
+| `sqwListFiles`, `sqwFlyInput`, `wilcoxonP`, `binomGreater`, `holmAdjust` | — | helpers |
+
+Tests: `test_sqw_stage3`. Raw-data check: `validate_20pq(dataRoot, jsonlFile, outDir)`.
