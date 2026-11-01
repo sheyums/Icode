@@ -511,3 +511,6 @@ noted on the panel.
 - 2026-11-01 HMM CHECKS stay referenced in the main text (Sheyum): main Fig A4 keeps its HMM panels; SI figures
   figS_A1_with_hmm_check (Fig A1 + HMM medians, fig_planA.py SI variant) and figS_C7_memory_with_hmm_check (= the
   former fig16_R1_memory_main: memory seen at the hidden level too). Port: exportFigA1 gets an 'IncludeHMM' option.
+- 2026-11-01 NAMES ALIGNED WITH THE PORT (lClaude's note): the SI variant of Fig A1 is figA1_direction_flux_SI_hmm
+  (MATLAB: exportFigA1(..., HmmMarkers=true)); legend 'HMM (model-based estimate), median' in both. The earlier Python
+  name figS_A1_with_hmm_check is retired.

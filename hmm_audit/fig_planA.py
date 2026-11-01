@@ -43,9 +43,9 @@ for SI in (False, True):
     for a,l in zip(axs,'abc'): a.text(-0.07,1.02,l,transform=a.transAxes,fontsize=10,fontweight='bold')
     axs[0].plot([],[],'o',ms=3,mfc='white',mec='k',mew=0.6,label='light (one point per fly)'); axs[0].plot([],[],'o',ms=3,mfc='k',mec='k',label='dark / DD')
     axs[0].plot([],[],'-',color='k',lw=1.2,label='median, 95% CI')
-    if SI: axs[0].plot([],[],'<',ms=4,color='0.35',ls='none',label='hidden Markov model (check), median')
+    if SI: axs[0].plot([],[],'<',ms=4,color='0.35',ls='none',label='HMM (model-based estimate), median')
     axs[0].legend(frameon=False,fontsize=6.5,ncol=4,loc='lower left',bbox_to_anchor=(0.04,1.03))
-    name='figS_A1_with_hmm_check' if SI else 'figA1_direction_flux_observable'
+    name='figA1_direction_flux_SI_hmm' if SI else 'figA1_direction_flux_observable'
     for ext in ('png','pdf'): fig.savefig(f'figures/{name}.{ext}',dpi=300)
 # ---------------- Fig A2 ----------------
 fig=plt.figure(figsize=(7.0,5.0)); gs=fig.add_gridspec(2,4,width_ratios=[1,1,1,1.25],hspace=0.45,wspace=0.45); Ls={}
