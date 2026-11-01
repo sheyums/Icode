@@ -1,0 +1,2 @@
+per0DD DESCRIPTIVE (null inadequate): sigma_WT obs median 0.2756 (20v original 0.2756) | scored-reversible null median 0.1733 vs 20v chain null 0.1834 | E_score median +0.1035, >0 in 0.76, flies p<.05 0.28 | count-match flags 4531/4975 | run ratios sim/obs median Q 0.95 W 1.13 S 1.26
+CSDD adequacy: wake ratio median 1.402 IQR [1.300,1.532], sleep ratio median 1.014; selected orders {(3, 3): 25}; min eig<=0 in 25/25

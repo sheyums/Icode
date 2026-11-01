@@ -375,3 +375,34 @@ Reading of the plotted profiles (description, not a result):
 - LD (supplementary): CS LD and per0 LD resemble the DD pattern. fumin is very active right after waking, decaying over
   minutes, and low and flat before onset. sss is reversed near the boundary (more active before onset than after
   waking), matching its reversed cycle in C2.
+
+## PRESPEC 20v amendment F — F2/F3: scoring-matched reversible null: NO VERDICT, both blocks NULL INADEQUATE (2026-11-01; amendment 87d9d77, code 946eb90 + per0 cache 3c9ed65; planB_20vF_f2.log, planB_20vF_f2.json, planB_20vF_f2_descriptive.log)
+The CS DD fits ran in two parts: the harness's 2-h limit stopped the first job at 20/25 checkpointed fits and the
+resumed job fitted the last 5 (CS DD fits ~2.6 h in total, inside the 6-h box).
+```
+per0DD: NULL INADEQUATE (20u stage 1b: wake-bout ratio 1.225) -> no verdict
+CSDD adequacy: wake-bout ratio median 1.402 IQR [1.300, 1.532], total sleep ratio median 1.014; selected (3,3) in 25/25; min eig <= 0 in 25/25
+          -> FAIL (NULL INADEQUATE) -> no verdict
+per0DD DESCRIPTIVE ONLY: sigma_WT obs median 0.2756 (= 20v original 0.2756) | scored-reversible null median 0.1733 vs 20v chain null 0.1834
+          | E_score median +0.1035, > 0 in 0.76 of flies, flies p<.05 0.28 | count-match flags 4531/4975 fly-replicates
+          | run ratios sim/obs median Q 0.95, W 1.13, S 1.26
+```
+- By F3 ("Holm over the blocks that pass adequacy"), NO block is eligible: amendment F gives no verdict, and 20v's
+  caveat stays.
+- What F DID establish: F1, the scoring is exactly time-symmetric (0 differing minutes). The F0 argument therefore
+  holds in the code, and the 5-min rule cannot by itself create the 20v asymmetry from reversible dynamics. That part
+  of the caveat ("a sleep-scoring origin") is answered by F1 on its own: a time-symmetric scoring of a reversible
+  process cannot produce direction-dependent dwells.
+- What F could NOT do: supply a reversible 1-s null adequate to the bout process. The best reversible aggregated HMM
+  (K <= 6) over-fragments wake by 22.5% (per0 DD) and 40% (CS DD). All 25 CS DD flies sat at the (3,3) ceiling, and
+  all 25 have non-lazy fits.
+- Descriptive per0 DD (no inference): against the scored reversible null, the observed sigma_WT exceeds the null
+  median in 76% of flies (median excess +0.104). The scored-reversible null median (0.173) is close to the 20v chain
+  null (0.183), as F0 predicts for two nulls that both sit near the estimator bias. Count matching was incomplete in
+  most replicates: reversible traces have fewer runs in some (s, e, x) cells (S runs x1.26, W x1.13 overall but
+  unevenly by cell), so the null's bias is not fully matched.
+- Wording for 20v after F, fixed by this outcome: "Dwell times in quiet and active wake depend on the direction of
+  passage beyond what the observed chain allows. The scoring is exactly time-symmetric (verified), so the sleep
+  criterion cannot produce this from reversible dynamics. A reversible 1-s model adequate to the bout process could not
+  be built within K <= 6, so no scoring-matched null verdict exists." Together with PRESPEC 21 (seconds-scale shape
+  asymmetry in per0 DD and CS DD), this is consistent with irreversibility at the seconds scale.
