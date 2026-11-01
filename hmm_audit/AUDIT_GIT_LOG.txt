@@ -272,3 +272,9 @@ a581fe5 2026-11-01 18:25:31 +0000 sqw20z.py
 6950508 2026-11-01 18:27:09 +0000 C12, Methods Kir section, 20z instructions
 ea520f6 2026-11-01 18:59:00 +0000 port stage 3 notes; wording fixes
 823b5fb 2026-11-01 18:59:52 +0000 C13
+e3e5f9a 2026-11-01 19:07:33 +0000 C10, C12 figures
+0f16bd1 2026-11-01 19:08:12 +0000 C13 direction
+25e0beb 2026-11-01 19:10:39 +0000 C13 revised
+c54660d 2026-11-01 19:18:44 +0000 freeze; 20z A withdrawn; C12 toned down
+d0cbd12 2026-11-01 20:05:25 +0000 F final
+5723b22 2026-11-01 20:36:21 +0000 A4c legend

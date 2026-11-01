@@ -1,0 +1,11 @@
+P1 (POST HOC): transition | recovery/baseline [CI] | placebo day2/days0-1 [CI] | log contrast [CI] p Holm -> reading
+  Q->W | 0.94 [0.83, 1.05] | 1.02 [0.92, 1.14] | -0.09 [-0.22, +0.06] p 0.217 Holm 0.868 -> not separable from the trend in morning sleep
+  Q->S | 1.16 [0.98, 1.34] | 0.97 [0.78, 1.18] | +0.18 [+0.01, +0.36] p 0.033 Holm 0.198 -> not separable from the trend in morning sleep
+  W->Q | 1.17 [1.05, 1.31] | 1.20 [1.04, 1.37] | -0.02 [-0.19, +0.17] p 0.857 Holm 1.000 -> not separable from the trend in morning sleep
+  W->S | 1.49 [1.24, 1.79] | 1.26 [1.00, 1.54] | +0.17 [-0.06, +0.45] p 0.160 Holm 0.800 -> not separable from the trend in morning sleep
+  S->Q | 0.90 [0.71, 1.12] | 0.90 [0.72, 1.15] | -0.00 [-0.28, +0.28] p 0.962 Holm 1.000 -> not separable from the trend in morning sleep
+  S->W | 0.75 [0.58, 0.95] | 0.86 [0.68, 1.07] | -0.13 [-0.39, +0.15] p 0.346 Holm 1.000 -> not separable from the trend in morning sleep
+P2 (POST HOC): median active fraction of non-S minutes
+  ZT0-6   baseline median 0.067 | Delta median -0.0167 p 0.00479 | Delta_pl median -0.0167 | Delta vs Delta_pl paired p 0.196 -> no change beyond day-to-day variation
+  ZT6-12  baseline median 0.050 | Delta median +0.0000 p 0.42 | Delta_pl median +0.0000 | Delta vs Delta_pl paired p 0.0876 -> descriptive
+  ZT12-24 baseline median 0.200 | Delta median -0.0500 p 8.46e-05 | Delta_pl median -0.0333 | Delta vs Delta_pl paired p 0.0332 -> descriptive

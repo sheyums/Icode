@@ -1,0 +1,14 @@
+__pycache__/
+planB_f1f5.log
+planB_20u_run.log
+planB_20v.log
+planB_20wB.log
+planB_20u_run.json
+planB_20v.json
+planB_20wB.json
+planB_20u_fits/
+planB_20vF_csdd_fits/
+planB_20vF_f2.log
+planB_20vF_f2.json
+planB_20u_run_part*.log
+planB_20vF_per0_cache.json
