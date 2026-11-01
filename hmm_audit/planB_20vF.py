@@ -117,7 +117,10 @@ def f2(per0dir, csdddir):
     run = json.load(open(os.path.join(HERE, 'planB_20u_run.json')))
     fits = [json.load(open(os.path.join(HERE, 'planB_20u_fits', f'fly{i:02d}.json'))) for i in range(25)]
     Xp, _ = per0_traces(per0dir); _, _, _, tl = U.load_ref()
-    out['per0DD'] = block('per0DD', Xp, tl, models_from(fits), lambda b: 5000 + b, 25_000)
+    cp = os.path.join(HERE, 'planB_20vF_per0_cache.json')
+    if os.path.exists(cp): out['per0DD'] = json.load(open(cp))
+    else:
+        out['per0DD'] = block('per0DD', Xp, tl, models_from(fits), lambda b: 5000 + b, 25_000); json.dump(out['per0DD'], open(cp, 'w'))
     out['per0DD']['adequate'] = bool(run['adequacy']['PASS'])
     print(f"per0 DD null done ({time.time()-t0:.0f} s)", flush=True)
     # ---- CS DD: fits (20u stage 1 procedure, seeds 3000+100+fly), adequacy (4000+100+fly), nulls (5000+100+b)
