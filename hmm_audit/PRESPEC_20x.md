@@ -74,3 +74,24 @@ recovery, beyond the day-to-day variation of the same flies."
 Not supported: "No change of [readout] beyond day-to-day variation was detected", with the CI quoted (fly-bootstrap 95%
 CI of median Delta, 2000 replicates).
 One run, one verdict. Time box 2 h.
+
+## 20x post hoc P1-P2 (2026-11-01; approved by Sheyum; brief by cClaude) — committed before running
+POST HOC: both lines were specified AFTER the 20x results were seen. They are NOT confirmatory. One run, no follow-ups.
+P1, placebo arm for the six transitions (requested by Sheyum).
+- Identical pooled-chain procedure on ZT0-6 (consecutive non-missing pairs arriving in the window, pooled over flies,
+  row-normalised), r_f from days 0-2.
+- Placebo ratio: day 2 / days 0-1 pooled, for each of the six off-diagonal probabilities.
+- Contrast: log(day4 / days0-2) - log(day2 / days0-1).
+- Fly bootstrap, 2000 replicates, seed default_rng(2027). The SAME resampled flies are used for both ratios in each
+  replicate. 95% percentile CIs; p = 2 min(frac(contrast* <= 0), frac(contrast* >= 0)); Holm across the six.
+- Reading: a transition "changes beyond the day-to-day trend" only if the contrast's Holm p < 0.05 AND its CI excludes
+  0. Otherwise: "not separable from the trend in morning sleep". Even a pass is reported as post hoc, a hint for the
+  controlled experiment, not a deprivation effect.
+P2, activity level within wake (the emission analogue).
+- Per fly, in ZT0-6: median active fraction (fraction of seconds with count > 0) over non-S minutes (minutes with
+  < 30 s in a sleep bout), for days 0-2, day 4, day 2 and days 0-1.
+- Delta = day4 - days0-2; Delta_pl = day2 - days0-1.
+- Tests: Wilcoxon of Delta vs 0; paired Wilcoxon of Delta vs Delta_pl. Reading as 20x: a change only if both p < 0.05
+  in the same direction (single readout, no Holm).
+- Descriptive: the same Delta and Delta_pl for day 4 ZT6-12 and ZT12-24 (placebo = the same window on day 2 vs
+  days 0-1).
