@@ -252,3 +252,10 @@ cab282a 2026-10-31 20:22:53 +0000 START_HERE.md; PORTING_GUIDE section 11 (Plan 
 5e6a295 2026-10-31 20:25:00 +0000 20s-A: bootstrap-difference tests for L
 6c7009a 2026-10-31 20:25:00 +0000 C5 revised after bootstrap-difference tests
 6454404 2026-10-31 20:26:18 +0000 Methods (tracked): Plan A observable-first framing, observed chain, HMM as bracket, observable-vs-hidden subsection (20n-20q)
+268b147 2026-10-31 22:43:24 +0000 PLANS: C8 status after 20r gate failure (replication route)
+b9b02db 2026-10-31 22:59:07 +0000 PLANS: C8 per0 DD rise replicated on re-extracted bouts (20r-lclaude 7eae6a4)
+f78fd00 2026-10-31 23:24:04 +0000 PLANS: C8 after 20r-A (CS DD no rise; on hold for cut asymmetry)
+4a2f753 2026-10-31 23:24:54 +0000 CS DD cut confirmed identical to per0 DD; C8 updated
+b3bd58c 2026-11-01 00:49:10 +0000 PLANS: C8 after 20r-B and follow-up (b)
+845918e 2026-11-01 01:50:18 +0000 PLANS: C8 closed (power at n 1536)
+c6082a5 2026-11-01 03:14:59 +0000 PLANS: C8 final (power at n 3309, 1773, 1536)
