@@ -82,6 +82,12 @@ as PNG and vector PDF.
 | `planALikelihoods` | `sqw13.py`, `sqw14.py` | per-fly 20n / 20o log-likelihoods (MC1, HMM, MC2 at 12 h; MC1, HMM at 6 h), dBIC, R_mem, R_drift |
 | `exportFigA1` .. `exportFigA3` | `fig_planA.py` | direction and flux; EPR vs J and Onsager L; energy landscape |
 | `exportFigA4` | `fig_beneath.py` | reads the per-fly CSVs `sqwMemoryGroup` / `sqwTURGroup` write, plus `planALikelihoods` |
+| `exportFigC10` | `fig_clockface.py` | Fig C10 clock face, from `planB_20wB.json` (20w-B); the cosine is refitted, its amplitude checked against the stored AJ |
+| `exportFigC12` | `fig_kir.py` | Fig C12 Kir2.1 silencing, from `y_kir.json` (20y); ledger Holm stars copied, not recomputed |
 | `planAStyle`, `planAFigure`, `planAStrip` | — | colours, fonts, blocks; figure with theme pinned; strip panel |
 
 Tests: `test_sqw_figA`.
+
+Fig C8 (per0 DD and CS DD wake hazards at 12/16/20/24 bins) is a bout-suite figure, not an sqw one:
+`analysis_20r/figC8_wake_hazard.m`, run by name from the Icode folder; it recomputes the ledgered rise tests from the
+saved 20r bouts and checks every RiseNullP against the ledger. Outputs in `analysis_20r/figC8`.

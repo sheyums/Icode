@@ -18,6 +18,9 @@ function test_sqw_figA()
 %    7. exportFigA4: medians from unclipped values (a value of 40 moves the median, is drawn
 %       at 5); use_180 and hasRef filters; CS DD read from the halves file; filled flags as
 %       the recipe; dBIC share above 0 computed, not hard-coded
+%    8. exportFigC10 (synthetic 20w-B file): the 24-h cosine amplitude and mean recovered exactly
+%    9. exportFigC12 (synthetic 20y file): dead flies dropped, no-cycle fly-phases out of the depth and J
+%       panels (JSON nulls), ledger stars as given, medians = point medians
 
 here = fileparts(mfilename('fullpath'));
 assert(isequal(fileparts(which('exportFigA1')), here), 'Run from the sqw folder.');
@@ -139,7 +142,52 @@ try
         sprintf('a %d b %d c %d d %d filled %d', okA, okB, okC, okD, okF));
 catch err, [nP, nF] = rep(false, nP, nF, 7, '', err.message); end
 
+%% 8. Fig C10 on a synthetic 20w-B file: exact cosine recovered
+try
+    b = (0:11)'; R = struct();
+    amp0 = [0.08 0.05 0.03 0.01]; G = ["CS" "CSDD" "per0LD" "per0DD"];
+    for k = 1:4
+        J = 0.1 + amp0(k) * cos(2 * pi * (b - 3 * k) / 12);
+        R.(G(k)) = struct('AJ', amp0(k), 'phJ', 2 * 3 * k + 1, 'pJ', 0.01 * k, 'nullJ95', 0.05, 'J', J, 'n', 25);
+    end
+    jf = fullfile(tmp, 'w.json'); fid = fopen(jf, 'w'); fprintf(fid, '%s', jsonencode(struct('real', R))); fclose(fid);
+    X = exportFigC10(jf, fullfile(tmp, 'c10')); close(X.fig);
+    [nP, nF] = rep(X.check < 1e-12 && all(abs(X.amplitude.mean - 0.1) < 1e-12), nP, nF, 8, ...
+        sprintf('exportFigC10: cosine amplitude and mean recovered (max err %.2g)', X.check), 'mismatch');
+catch err, [nP, nF] = rep(false, nP, nF, 8, '', err.message); end
+
+%% 9. Fig C12 on a synthetic 20y file: dead dropped, no-cycle excluded from depth and J, nulls, stars
+try
+    rs = RandStream('twister', 'Seed', 9); Y = {}; gg = ["empty" "dfb" "vnc"];
+    for g = 1:3
+        for i = 1:6
+            m = cell(2, 1);
+            for p = 1:2
+                cyc = ~(g == 3 && i == 1 && p == 2);
+                m{p} = struct('ok', true, 'cycle', cyc, 'sleep', 30 + 5 * g + randn(rs), 'P', struct('QS', 0.1, 'SW', 0.01 * g), ...
+                    'E31', ifelse(cyc, -1 - 0.2 * g + 0.1 * randn(rs), []), 'J', ifelse(cyc, 0.1 * randn(rs), []));
+            end
+            Y{end + 1} = struct('g', gg(g), 'f', "f" + i, 'dead', g == 2 && i == 6, 'main', {m}); %#ok<AGROW>
+        end
+    end
+    jf = fullfile(tmp, 'y.json'); fid = fopen(jf, 'w'); fprintf(fid, '%s', jsonencode(Y)); fclose(fid);
+    X = exportFigC12(jf, fullfile(tmp, 'c12')); close(X.fig); s = X.summary;
+    okN = s.n(s.quantity == "sleep" & s.group == "dfb" & s.phase == "dark") == 5 && ...
+        s.n(s.quantity == "depth" & s.group == "vnc" & s.phase == "dark") == 5 && ...
+        s.n(s.quantity == "J" & s.group == "vnc" & s.phase == "light") == 6;
+    okS = isequal(sort(string(s.group(s.ledgerHolmStar & s.quantity == "SW")) + s.phase(s.ledgerHolmStar & s.quantity == "SW"))', ...
+        sort(["dfblight" "vnclight" "dfbdark" "vncdark"])) && ~any(s.ledgerHolmStar(s.quantity == "J"));
+    v = X.points.depth(X.points.group == "vnc" & X.points.phase == "light" & X.points.cycle);
+    okM = abs(s.median(s.quantity == "depth" & s.group == "vnc" & s.phase == "light") - median(v)) < 1e-12;
+    [nP, nF] = rep(okN && okS && okM, nP, nF, 9, 'exportFigC12: dead dropped, no-cycle excluded, nulls, stars, medians', ...
+        sprintf('n %d stars %d median %d', okN, okS, okM));
+catch err, [nP, nF] = rep(false, nP, nF, 9, '', err.message); end
+
 fprintf('\n%d passed, %d failed\n', nP, nF);
+end
+
+function v = ifelse(c, a, b)
+if c, v = a; else, v = b; end
 end
 
 % ------------------------------------------------------------------------

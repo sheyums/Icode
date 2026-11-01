@@ -18,8 +18,10 @@ function X = exportFigA4(L, perFlyDir, outDir, options)
 %       < -1.5 at -1.5); medians and CIs from the unclipped values.
 %   (c) 20p: excess irreversibility E = D3 - median D3 under null A per fly, per block,
 %       median and CI; CS DD as its two 12-h halves (amendment A, null A2). Filled =
-%       the block passes the pre-registered rule (20p ledger verdict, reproduced by
-%       VALIDATE_20PQ: per0 DD, fumin dark; CS DD's halves do not).
+%       the block passes the pre-registered test (each fly against its own simulated
+%       null, Wilcoxon + binomial, Holm; 20p ledger verdict, reproduced by VALIDATE_20PQ:
+%       per0 DD, fumin dark; CS DD's halves do not). The bar is the fly-bootstrap CI of
+%       the median, descriptive, and can cross 0 for a filled block (legend says so).
 %   (d) 20q: B_c / sigma_chain per block, tau 3 h, amendment-D set (use_180); filled =
 %       primary DD blocks (CS DD, per0 DD); line at 1 (the TUR bound).
 %   Medians with a fly-bootstrap 95% CI (MEDIANCI, 2000 resamples). Genotype order rule.
@@ -135,11 +137,12 @@ if options.Plot
     title(ax, 'b   What the HMM''s gain is made of (20o)', 'FontSize', 8.5, 'HorizontalAlignment', 'left', 'Units', 'normalized', 'Position', [-0.3 1.02]);
     % (c), (d)
     forest(nexttile(tl), rows(rows.panel == "c", :), specC(:, 2), S, gi, 0, ...
-        'extra irreversibility from 3-min memory, E (nats h^{-1})', {'filled: passes the', 'pre-registered rule'}, ...
-        'c   Does the memory carry dissipation? (20p)', []);
+        'extra irreversibility from 3-min memory, E (nats h^{-1})', {'filled: passes the pre-registered test', ...
+        '(each fly vs its own simulated null);', 'bars: bootstrap CI of the median', ...
+        '(descriptive; can cross 0 when filled)'}, 'c   Does the memory carry dissipation? (20p)', [], 5.8);
     forest(nexttile(tl), rows(rows.panel == "d", :), specD(:, 2), S, gi, 1, ...
         'cycle precision / its observed dissipation, B_c/\sigma_{chain}', {'filled: primary (DD);', 'open: LD, descriptive'}, ...
-        'd   Is the cycle more precise than it pays for? (20q)', [0.2 1.5]);
+        'd   Is the cycle more precise than it pays for? (20q)', [0.2 1.5], 6.3);
     exportgraphics(fh, fullfile(outDir, "figA4_beneath_the_surface.png"), 'Resolution', 300);
     exportgraphics(fh, fullfile(outDir, "figA4_beneath_the_surface.pdf"), 'ContentType', 'vector');
 end
@@ -155,7 +158,7 @@ r = table(nnz(isfinite(v)), m, lo, hi, 'VariableNames', {'n', 'median', 'lo', 'h
 r.filled = false;
 end
 
-function forest(ax, R, geno, S, gi, ref, xlab, note, ttl, xl)
+function forest(ax, R, geno, S, gi, ref, xlab, note, ttl, xl, noteSize)
 hold(ax, 'on'); n = height(R);
 for j = 1:n
     c = S.col(gi(geno{j}), :); y = n - j;
@@ -171,8 +174,10 @@ end
 lab = replace(R.group, ["per0" "fmn" "sss"], ["\itper^0\rm" "\itfmn\rm" "\itsss\rm"]);
 set(ax, 'YTick', 0:n - 1, 'YTickLabel', flipud(lab), 'YLim', [-0.7 n - 0.3], 'TickLabelInterpreter', 'tex');
 ax.YAxis.FontSize = 7;
-if ~isempty(xl), xlim(ax, xl); end
+if ~isempty(xl), xlim(ax, xl);
+else, xl = [min(R.lo) max(R.hi)]; xlim(ax, [xl(1) - 0.05 * diff(xl), xl(2) + 0.75 * diff(xl)]);   % room on the right for the note
+end
 xlabel(ax, xlab);
-text(ax, 0.98, 0.02, note, 'Units', 'normalized', 'HorizontalAlignment', 'right', 'VerticalAlignment', 'bottom', 'FontSize', 6.3);
+text(ax, 0.98, 0.02, note, 'Units', 'normalized', 'HorizontalAlignment', 'right', 'VerticalAlignment', 'bottom', 'FontSize', noteSize);
 title(ax, ttl, 'FontSize', 8.5, 'HorizontalAlignment', 'left', 'Units', 'normalized', 'Position', [-0.3 1.02]);
 end
