@@ -102,3 +102,12 @@ Limits fixed now:
 - BIC is reported beside the gate, so a pass is not simply extra flexibility (more free parameters at the same K);
 - if it also fails, the verdict is "no model in either class reproduces the bouts", with no further enlargement;
 - B runs only after PRESPEC 21's verdict, so it is not chosen in light of anything else.
+
+## Amendment A (2026-11-01, after Sheyum's go-ahead, BEFORE any data run; found while implementing)
+Whole-DAY blocks give 2^4 = 16 sign configurations for a 4-day record (2^3 = 8 for 3 days). The smallest attainable
+p_fly_block is then 1/16 = 0.0625 (1/8 for 3 days), so the binomial-excess half of the decision rule (flies with
+p < 0.05) could NEVER pass under the block null. Any per-bout positive would "disagree" by construction.
+The block is therefore the 12-h HALF-DAY, within the "8 or 4 blocks per fly" cClaude's review allowed: blocks =
+floor(bout midpoint / 43200 s). That gives 8 blocks and 256 configurations for a 4-day record (minimum p 1/256), and
+6 blocks and 64 configurations for 3 days (1/64). Configurations are enumerated exactly, identity included;
+p_fly_block = #{S* >= S} / (number of configurations), z_fly_block from the same set. Nothing else changes.
