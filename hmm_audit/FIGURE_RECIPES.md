@@ -499,3 +499,6 @@ cycle flux J (count, cycles/h). Fly x phases without a Q/W reference excluded (n
 phases with a cycle. Per-fly points (open light, filled dark), median with fly-bootstrap 95% CI (2000), '*' = Holm <
 0.05 in the 20y ledger (flags hard-coded, not recomputed). Depth panel ylim -0.6..3.3 with the one clipped control fly
 noted on the panel.
+- 2026-11-01 (lClaude note 2): Fig A4(c) legend now states that a filled marker means the pre-registered test passed
+  (per-fly simulated nulls, Wilcoxon + binomial, Holm) and that the bar is the fly-bootstrap CI of the median, a
+  descriptive quantity that can cross 0 for a filled block (per0 DD: -0.008 to 0.077). Port: mirror the legend text.

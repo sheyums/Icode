@@ -2157,3 +2157,6 @@ ANALYSIS FREEZE from this entry: no new PRESPEC unless a referee asks or the con
 Still to finish (already running, pre-registered): 20v amendment F, CS DD verdict (cClaudeII). C12 toned down
 (see PLANS.md): silencing reduces sleep through fewer entries and earlier exits; E_S - E_Q follows from occupancy and is
 not an independent result; the cycle's drive did not change detectably in a background where the cycle is weak.
+
+## 2026-11-01  Note (lClaude, figure exports 6b8c6bb): the 20o line "HMM_6 - MC1_6 (gain left after drift)" is computed
+over ALL flies, while R_mem / R_drift use flies with HMM gain > 3 nats; no figure or claim uses the all-fly line.

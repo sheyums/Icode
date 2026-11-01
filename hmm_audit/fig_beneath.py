@@ -55,7 +55,7 @@ for k,(lab,src,g,p,rk,nul,c,q) in enumerate(rowsC):
     m,lo,hi=mci(E_of(src,g,p,rk,nul)); y=len(rowsC)-1-k; ax.plot([lo,hi],[y,y],color=COL[c],lw=1.4); ax.plot(m,y,'o',ms=5,mfc=COL[c] if q else 'white',mec=COL[c],mew=1.2)
 ax.axvline(0,color='0.5',lw=0.6); ax.set_yticks(range(len(rowsC))); ax.set_yticklabels([r[0] for r in rowsC][::-1],fontsize=7)
 ax.set_xlabel('extra irreversibility from 3-min memory, $E$ (nats h$^{-1}$)'); clean(ax)
-ax.text(0.98,0.02,'filled: passes the\npre-registered rule',transform=ax.transAxes,ha='right',va='bottom',fontsize=6.3)
+ax.text(0.98,0.02,'filled: passes the pre-registered test\n(each fly vs its own simulated null);\nbars: bootstrap CI of the median\n(descriptive; can cross 0 when filled)',transform=ax.transAxes,ha='right',va='bottom',fontsize=5.8)
 ax.set_title('c   Does the memory carry dissipation? (20p)',loc='left',fontsize=8.5,fontweight='bold',x=-0.32)
 # (d) 20q
 ax=fig.add_subplot(gs[1,1]); Q=json.load(open(sqw.OUTD+'q_tur.json'))
