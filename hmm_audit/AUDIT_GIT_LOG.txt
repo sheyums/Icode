@@ -271,3 +271,4 @@ a581fe5 2026-11-01 18:25:31 +0000 sqw20z.py
 6efdb2a 2026-11-01 18:26:09 +0000 20z part C
 6950508 2026-11-01 18:27:09 +0000 C12, Methods Kir section, 20z instructions
 ea520f6 2026-11-01 18:59:00 +0000 port stage 3 notes; wording fixes
+823b5fb 2026-11-01 18:59:52 +0000 C13
