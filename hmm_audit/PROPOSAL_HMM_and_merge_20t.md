@@ -132,3 +132,30 @@ clock face, and the clock's own minimum cost. Each layer is built on the one bef
   nonequilibrium", not which.
 - The homeostat is feedback, so it has no clean housekeeping/driving split (20t F5 caveat). The hidden-stage
   formulation avoids that by making the build-up part of the state.
+
+## CORRECTIONS (2026-11-01, after review by the S/Q/W audit session; verified against the shared ledger at f2701c1)
+1. **Keilson's theorem does not apply to scored bouts.** A scored wake bout ends at the start of a silence that LATER
+   reaches 300 s. In the chain augmented with a silence counter, that is a hitting time, and the augmented chain is
+   irreversible by construction (the counter only climbs or resets). Reversibility of the 1-s process therefore does
+   NOT imply a non-increasing hazard of the SCORED duration. The theorem only motivates the test; the
+   reversible-null simulation through the identical scoring IS the test. (Discrete time also needs a lazy chain,
+   i.e. a positive spectrum, for complete monotonicity; fine at 1 s, but it must be stated.)
+2. **The 20h rising LD wake hazards cannot support the argument.** Within-phase drift (20o: 6-h rates gain 13-14
+   nats/fly) can raise a minute-level hazard without any irreversibility. Only per0 DD, the stationary undriven
+   block, is eligible.
+3. **The control is partly run already: 20r-B** (root RESULTS_LEDGER.md, f2701c1). A burst-pause renewal null
+   (each fly's own runs drawn iid, so the trace is time-reversible) scored identically gives
+   p_ren 0.015/0.015/0.050/0.050 at 12/16/20/24 bins: INCONCLUSIVE, bin-sensitive. A reversible HMM null
+   (correlated but reversible runs) is the generalisation, for per0 DD only.
+4. **The aggregated model's EPR is NOT an "upper rung"; I repeated the C4 error.** Aggregated Markov models are
+   identified only up to equivalence classes (Fredkin & Rice 1986; Kienker 1989 Proc R Soc B 236:269). In this
+   audit's own earlier entries, routing Xn, Yn were undetermined over about [-1, +1] with equal likelihoods. The ladder
+   is lower bounds (sigma_MC, triplet, waiting-time) plus one model estimate; the data give no upper bound.
+5. **Pooling can create false stages** (PRESPEC 13, V2: fly heterogeneity with no transitional state yielded an
+   extra state, +8-9 nats/h on held-out days). Any pooled sub-state model needs that heterogeneous negative control
+   in its synthetic check.
+6. **No per-fly link between hidden stages and irreversibility yet**: 20r-C (exploratory), series-branch share vs 20p
+   E, rho 0.34 (p 0.10); vs wake-only E, 0.14. The "homeostat = hidden stages = dissipation" merge is a hypothesis,
+   not a supported link.
+Net: the one item worth adding to paper 1 is a single pre-registered reversible-HMM null for the per0 DD wake hazard
+(generalising 20r-B), whose outcome changes one sentence (C8). Everything else in this proposal is paper 2.
