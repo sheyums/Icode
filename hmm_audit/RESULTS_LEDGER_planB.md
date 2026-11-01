@@ -77,3 +77,35 @@ per0DD  n 25 | r(6h,3h) median 0.28 IQR [0.22,0.34] max 0.52 | r<0.8 in 1.00 -> 
 - Does not change the step-4 decision (F1 failed). In LD the cos term also stands in for the light step, so r here
   measures H vs 24-h periodicity, not H vs the clock alone.
 - F3 (needs CS DD) and F4 (needs deprivation recordings): still not runnable; neither was in this upload.
+
+## PRESPEC 20t F3 + F4 — clock-precision bound; deprivation data (2026-11-01; PRESPEC 3465f69, code 7cc22e5 + planB_f4_lost.py in this commit; planB_f3f4.log, planB_f4_lost.log, planB_f3f4.json)
+Data: CS_DD_activfiles.zip (25 files, 4.000 d each, the cut DD files) and CS_9hrdeprExp.zip (26 files, 9.513 d each),
+both uploaded 2026-11-01; per0 DD as before.
+```
+F3 CS DD   [rhythmic] flies 25 intervals 75 | tau 24.03 h | s 1.60 h [1.26, 1.92] | B = 2 tau/s^2 = 18.7 k_B/h [13.0, 30.3] | CI ratio 2.32
+F3 CS DD   rhythmic 25 of 25 | periods median 23.90 h
+F3 per0 DD [all     ] flies 25 intervals 66 | tau 23.57 h | s 7.16 h [6.30, 7.91] | B = 0.9 k_B/h [0.7, 1.2]
+F3 per0 DD rhythmic 23 of 25 (!)
+F3 criterion: rhythmic 25 >= 15 and CI ratio 2.32 < 4 -> PASS
+F4 n 26 | baseline ZT15-24 sleep median 367 min | deprivation night 51 min (range 0-316) | sleep lost median 315 min,
+   P10 172, P90 375, range 84-502 | P90/P10 2.18 | CV 0.33 -> PASS
+```
+- **F3 PASS by the rule, but its rhythmicity half does not discriminate.** The uncorrected chi-square periodogram
+  (81 trial periods, autocorrelated 1-min counts) calls 23/25 arrhythmic per0 DD flies "rhythmic". That half of the
+  criterion is uninformative and must not be quoted as a rhythmicity result.
+- The informative number is the jitter. CS DD s = 1.60 h [1.26, 1.92] against per0 DD 7.16 h. 7.16 h is close to
+  the ~6.9 h SD of a uniformly random marker on the wrapped +/-12 h difference, so per0's "bound" of 0.9 k_B/h is the
+  method's floor, not a measurement.
+- CS DD minimum clock dissipation B = 2 tau / s^2 = 18.7 k_B/h (95% CI 13-30), about 20x the arrhythmic floor and
+  about 200-350x the observed S/Q/W cycle's EPR (0.053 k_B/h, 20s-A).
+- The centroid marker adds noise, so s is an OVERestimate and B a valid but weak lower bound. Only 3 intervals per fly
+  (4-day records); longer records would tighten it.
+- **F4 PASS.** The deprivation sits on DAY INDEX 3, ZT15-24 (group sleep 2-12 min/h against 38-50 on days 0-2), i.e.
+  THREE baseline days, not two as remembered. 6 recovery days follow (day 9 partial).
+  - Located from the group hourly profile before any per-fly number was computed. The window agrees with the user's
+    "last 9 h of the night".
+  - Rebound is visible but modest: day 4 ZT1-6 43-55 min/h vs 31-51 on baseline days.
+- **Caveat for any dose-response:** the spread in sleep lost comes partly from deprivation failing in some flies (one
+  slept 316 of 540 min). Dose is then partly a fly property (resistance to arousal), which can confound "dose" with
+  sleep drive. A dose-response PRESPEC must address it, e.g. with deprivation efficacy as a covariate, or by
+  restricting to flies with >= 80% of the window awake.

@@ -1,0 +1,19 @@
+F3 CS DD   [rhythmic] flies 25 intervals 75 | tau 24.03 h | s 1.60 h [1.26, 1.92] | B = 2 tau/s^2 = 18.7 k_B/h [13.0, 30.3] | CI ratio 2.32
+F3 CS DD   [all     ] flies 25 intervals 75 | tau 24.03 h | s 1.60 h [1.26, 1.92] | B = 2 tau/s^2 = 18.7 k_B/h [13.1, 30.4] | CI ratio 2.32
+F3 CS DD   rhythmic 25 of 25 | periods (rhythmic) median 23.90 h
+F3 per0 DD [rhythmic] flies 23 intervals 61 | tau 23.83 h | s 7.02 h [6.09, 7.86] | B = 2 tau/s^2 = 1.0 k_B/h [0.8, 1.3] | CI ratio 1.67
+F3 per0 DD [all     ] flies 25 intervals 66 | tau 23.57 h | s 7.16 h [6.30, 7.91] | B = 2 tau/s^2 = 0.9 k_B/h [0.7, 1.2] | CI ratio 1.61
+F3 per0 DD rhythmic 23 of 25 | periods (rhythmic) median 23.50 h
+F3 criterion: rhythmic 25 >= 15 and CI ratio 2.32 < 4 -> PASS
+F4 files 26 | length 9.5127 d | hours 228
+F4 group mean sleep (min per hour) by day (rows) x ZT hour (cols):
+   day 0:   16   35   39   38   46   44   48   42   43   34   28   11   32   51   47   45   47   41   44   40   41   38   41   16
+   day 1:   15   31   41   46   49   47   47   46   40   35   23   10   34   55   50   48   48   47   46   44   44   42   39   20
+   day 2:   13   37   45   46   51   51   49   44   47   32   26   12   39   55   53   49   50   45   46   45   47   43   41   20
+   day 3:   17   38   45   49   51   47   49   34   38   27   23    9   39   54   55    3    2    7   12   12   12   11    7   10
+   day 4:   19   43   48   50   51   55   51   49   43   30   17   10   39   53   54   50   49   44   45   47   47   42   39   25
+   day 5:   18   39   45   49   50   52   51   48   43   32   19   14   39   55   55   54   54   47   48   47   48   42   39   25
+   day 6:   17   42   50   50   53   53   56   53   44   35   19   12   40   55   53   53   52   49   47   47   47   40   43   28
+   day 7:   15   39   48   52   52   51   51   50   48   31   24   13   40   56   55   55   52   50   48   48   48   37   41   29
+   day 8:   15   43   51   52   53   52   51   50   47   39   26   11   41   55   54   51   55   50   45   45   48   43   38   26
+   day 9 (partial):   16   38   45   50   51   52   55   53   47   37   25   18
