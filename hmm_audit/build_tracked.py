@@ -51,7 +51,11 @@ def del_para(p):
         if part.startswith('<m:oMath>'):
             out.append(f'<m:oMath><w:del {attrs()}>{part[len("<m:oMath>"):-len("</m:oMath>")]}</w:del></m:oMath>')
         else:
-            out.append(re.sub(r'<w:r>(?:(?!</w:r>).)*</w:r>|<w:r [^>]*>(?:(?!</w:r>).)*</w:r>', del_run, part, flags=re.S))
+            # leave text already deleted by another author untouched (a del inside a del is invalid);
+            # runs inside another author's insertion get our del nested inside it, which is correct
+            for sub in re.split(r'(<w:del [^>]*>.*?</w:del>)', part, flags=re.S):
+                out.append(sub if sub.startswith('<w:del ') else
+                           re.sub(r'<w:r>(?:(?!</w:r>).)*</w:r>|<w:r [^>]*>(?:(?!</w:r>).)*</w:r>', del_run, sub, flags=re.S))
     p = ''.join(out)
     # paragraph mark
     if '<w:pPr>' in p and re.search(r'<w:pPr>.*?</w:pPr>', p, re.S):

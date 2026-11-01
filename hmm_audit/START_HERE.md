@@ -7,7 +7,7 @@ wins.
 ## 1. What the paper claims and why
 | file | status | use |
 |---|---|---|
-| `PLANS.md` | CURRENT | Plan A (paper 1): the frozen claim list C1-C9, each with the analysis that supports it. Plan B (regulators) is a separate, later project. |
+| `PLANS.md` | CURRENT | ONE merged paper (2026-11-01): claim list C1-C11, each with the analysis that supports it, and the paper outline. Plan B group-level tests 1-4 are on branch planB-feasibility (RESULTS_LEDGER_planB.md). |
 | `RESULTS_LEDGER.md` | CURRENT (append-only record) | every number, with the commit that produced it. Read the entries named in PLANS.md, not the whole file. Earlier entries are history; corrections are appended, never edited in place. |
 
 ## 2. What to implement in MATLAB

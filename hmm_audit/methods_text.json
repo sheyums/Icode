@@ -148,6 +148,16 @@
     },
     {
      "text": "HMM-based values are reported beside the observable ones as a model-based estimate, not as a bound. Per fly, the HMM's cycle flux was about 1.0–1.2 times and its count-based entropy production 1.2–3.6 times the observable value (medians by genotype and phase), but its model entropy production was below that of the observed chain in the light phase of CS, *fumin* and *sss*, and the HMM's entropy production reached the triplet-based lower bound above in only 44–73% of fly–phases. All observable–hidden comparisons were made within fly and phase."
+    },
+    {
+     "text": "Waiting-time irreversibility. In a first-order chain the time spent in a state does not depend on the states before and after it. For runs of Q and of W whose neighbouring minutes were classified, the dwell-time distributions for the two directions of passage, W→Q→S against S→Q→W and Q→W→S against S→W→Q (bins of 1, 2, 3, 4–5, 6–9 and ≥ 10 min; pseudocount 0.5 per bin), were compared by the Kullback–Leibler divergence, weighted by the rate of such runs, giving σ_{WT} in nats h^{-1} (Martínez et al., 2019; van der Meer et al., 2022; Harunari et al., 2022). The excess *E*_{WT} of σ_{WT} over its median in 200 records simulated from each fly's own chain was tested in constant darkness as for *E* above (Wilcoxon test with Holm correction over the blocks, and more flies than expected by chance with individual *p* < 0.05); light–dark blocks were analysed descriptively, with 12-hour and 6-hour chain nulls. Every condition contains an entry into or an exit from sleep, which is scored by the 5-minute criterion. The scoring is, however, exactly time-symmetric on these data: scoring the time-reversed 1-s record gave the time-reversed symbol sequence in every minute (0 of 275,040 minutes differed, *per0* and CS in constant darkness). For a stationary, time-reversible activity process, a time-symmetric scoring yields a reversible symbol process, in which both directions of passage have the same dwell distribution, so the sleep criterion cannot by itself produce an excess. A direct control, σ_{WT} of time-reversible hidden Markov models of each fly's 1-s activity (Wake-bout hazard and its controls) scored identically and matched in run counts, was pre-specified; it could not be evaluated in *per0* (DD), where no such model reproduced the bout process. [CS (DD): result to be added.]"
+    },
+    {
+     "text": "Circadian modulation of the cycle",
+     "heading": true
+    },
+    {
+     "text": "For each genotype, symbol changes were pooled over flies and days in twelve 2-hour bins of clock time (ZT in light–dark cycles; time from the start of each day of the analysed record in constant darkness), and the cycle flux was computed per bin from the pooled counts. A first harmonic, *J*(*b*) = *m* + *a* cos(2π*b*/12) + *c* sin(2π*b*/12), was fitted by least squares; its amplitude *A* = (*a*^{2} + *c*^{2})^{1/2} was the test statistic, and its phase is reported descriptively. The null distribution came from 999 replicates in which each fly's whole-day record was rotated circularly by an independent random offset, uniform over 24 h in whole minutes, with no transition counted across the junction, and then passed through the identical pooling and fit. The rotation keeps each fly's own rhythm, noise and sample size and destroys only the phase shared across flies; *p* = (1 + #{*A** ≥ *A*})/1000. Holm correction was applied over CS (LD), CS (DD) and *per0* (LD); *per0* (DD) was the negative control. On 200 datasets simulated from constant-rate chains matched to *per0* (DD), the test gave *p* < 0.05 in 4.5% of cases. *c*_{obs} was analysed in the same way as a secondary readout. In constant darkness, differences in free-running period between flies spread the phase by up to about 2 h over the record, so the amplitude is a lower estimate. A first pre-specified summary, the range of the twelve bins with a bootstrap over flies, was found to have no power (its 95% band lay above the point estimate even in *per0* (DD)); it is reported as such and not used for inference."
     }
    ]
   },
@@ -160,6 +170,47 @@
     },
     {
      "text": "The Onsager conductance was then estimated as in Eq. (25), by ordinary least squares of EPR on *J*_{cycle}^{2} through the origin, per genotype, both pooled over phases and per phase, with *L* = 1/slope, its standard error by error propagation and its 95% interval by inverting the interval of the slope. Because the light and dark points of a fly are not independent, intervals were also obtained by a bootstrap over flies (2000 resamples, each fly's phases kept together), and genotypes were compared with the control by the bootstrap distribution of the difference in *L*; the five comparisons with the control were corrected by the Benjamini–Hochberg procedure. The Wald test on the slope overstates significance: in a calibration with 400 simulated pairs of genotypes of equal *L* and entropy-proportional noise, it rejected at nominal 5% in 22% of replicates, against 5.2% for the bootstrap difference. Fitting with a free intercept instead of through the origin changed the slope by 0–11% (largest in *fumin*), and using the exact flux and entropy production of the fitted chains instead of the counts changed *L* by at most 0.011; neither changed the ordering of CS, *per0* (LD, DD), *fumin* and *sss*. HMM-based values of *L* (Validation of the inference) are reported for comparison only. For a single edge with one-way traffic *N* (transitions h^{-1}) and net current *J*, the Schnakenberg term is *J* ln[(*N* + *J*/2)/(*N* − *J*/2)] ≈ *J*^{2}/*N* when *J* ≪ *N*; a quadratic relation between EPR and *J*_{cycle} therefore indicates net currents that are small relative to the back-and-forth traffic on each edge, even when the summed cycle affinity is of order one nat per cycle."
+    }
+   ]
+  },
+  {
+   "anchor": "Hidden Markov model of sleep-wake dynamics",
+   "op": "before",
+   "paras": [
+    {
+     "text": "Wake-bout hazard and its controls",
+     "heading": true
+    },
+    {
+     "text": "Sleep and wake bouts were extracted from the 1-s counts with the laboratory pipeline (5-min sleep criterion, single active seconds bridged as described above, bouts touching the start or end of the record dropped). In constant darkness, after removal of the first 24 h of each record, this gave 4017 wake bouts from 25 *per0* flies and 3309 from 25 CS flies. The hazard of ending a wake bout was estimated as a life table on logarithmically spaced bins, discarding bins with fewer than 10 bouts at risk. The number of bins was fixed in advance at 12, 16, 20 and 24, and all four are reported, because the outcome depends on it. A rise of the hazard after a trough was summarized by the ratio of the largest hazard after the minimum to the minimum (RiseRatio). Its significance (RiseNullP) was obtained from 999 datasets of the observed size simulated from a two-exponential mixture fitted by maximum likelihood to the same bouts (left-truncated at 2 s, discrete in 1-s bins), whose hazard is strictly decreasing; each simulated dataset was passed through the whole estimator, including the choice of its own bin edges. The power to detect a rise of the size seen in *per0* at the sample sizes of CS was estimated by simulation."
+    },
+    {
+     "text": "Two controls asked whether a rise could be produced by the scoring rule acting on time-reversible activity. A scored wake bout ends at a silence that later reaches 5 min; it is therefore not a sojourn of the underlying activity process, and the monotone hazard of sojourns in reversible Markov chains (Keilson, 1979) does not apply to it, so any such comparison has to pass through the scoring. (i) Renewal null: each fly's record was rebuilt from independent alternating runs of active and inactive seconds drawn from that fly's own run lengths, a statistically time-reversible process, and scored with the identical pipeline. (ii) Reversible hidden Markov null: each fly's 1-s active/inactive sequence was fitted with an aggregated hidden Markov model with 1–3 active and 1–3 inactive hidden states, deterministic emissions and a transition matrix reversible by construction (*P*_{ij} = *F*_{ij}/π_{i} with *F* symmetric), estimated by expectation–maximization with the reversible maximum-likelihood update (Bowman et al., 2009), 10 random starts per order and the order chosen by BIC. Before use, the model had to reproduce the bout process: the median ratio, over flies, of simulated to observed wake-bout count and of total sleep had to lie within [0.85, 1.15], from 20 simulated records per fly. A control was evaluated only if it passed, with RiseNullP replaced by the fraction of 199 pooled null datasets, subsampled to the observed number of bouts, whose RiseRatio reached the observed one."
+    }
+   ]
+  },
+  {
+   "anchor": "Homeostatic response of HMM parameters to sleep deprivation",
+   "op": "delete"
+  },
+  {
+   "anchor": "To identify which hidden state’s parameters respond",
+   "op": "delete"
+  },
+  {
+   "anchor": "Three complementary sets of quantities",
+   "op": "delete"
+  },
+  {
+   "anchor": "Three complementary sets of quantities",
+   "op": "after",
+   "paras": [
+    {
+     "text": "Sleep deprivation: within-fly contrasts with a day-to-day control",
+     "heading": true
+    },
+    {
+     "text": "CS males (*n* = 26) were recorded for 9.5 days, and the sleep deprivator (above) ran during ZT 15–24 of the fourth day, after three baseline days. Symbols were assigned as above, except that each fly's wake reference *r*_{f} was computed from the three baseline days only and applied to all days, so that a change in activity after deprivation could not move the Q/W threshold. The deprivation night itself was excluded. Readouts were computed in the first 6 h of recovery (ZT 0–6 of the following day, a window chosen before the recordings were analysed) and compared within fly with the same window on the baseline days, pooled. There was no undeprived control group, so day-to-day variation was estimated in the same flies by a placebo contrast of identical form, day 3 against days 1–2 of the baseline. A readout (*c*_{obs}, *J*_{cycle} and entropy production; Holm correction over the three) was considered changed only if its change differed from zero by a Wilcoxon signed-rank test and also differed from the placebo change by a paired Wilcoxon test, in the same direction. The rebound itself was assessed as the change in sleep in the same window. Changes in the six transition probabilities were estimated from group-pooled chains with a bootstrap over flies (2000 resamples) and, as a post hoc analysis, contrasted with the placebo ratio computed on the same resampled flies (Holm correction over six); the median active fraction of wake minutes was compared in the same way (post hoc). Association with the amount of sleep lost was assessed by Spearman correlation, in all flies and in flies awake for at least 80% of the deprivation window."
     }
    ]
   }
@@ -178,8 +229,8 @@
    "text": "Built on per-window transition matrices of the binary model. In most windows H1's emission row copied H2's or H3's, and the rows involving H1 are then not identified (equal-likelihood matrices span the full range). Needs to be redone with the S/Q/W model, or dropped."
   },
   {
-   "anchor": "Homeostatic response of HMM parameters to sleep deprivation",
-   "text": "Same caveat as the synthetic-lesion section: per-window binary-model matrices, not identified for rows involving H1 in most windows. Redo with the S/Q/W model (per fly, pre/post epochs as phases) or drop."
+   "anchor": "Sleep deprivation: within-fly contrasts",
+   "text": "Replaced by the S/Q/W within-fly design with a placebo contrast (PRESPEC 20x), below. The earlier pre/post comparison had no day-to-day control; in these recordings ZT 0-6 sleep and wake activity drift across days by as much as the pre/post change (e.g. wake activity -0.017 after deprivation and -0.017 between baseline days), so an apparent emission change is not specific to deprivation."
   },
   {
    "anchor": "Multi-exponential fitting using log-transformed histogram method",
@@ -224,6 +275,10 @@
   {
    "anchor": "Onsager linear response and thermodynamic conductance",
    "text": "References to add for the S/Q/W sections: Roldán É, Parrondo JMR (2010) Estimating dissipation from single stationary trajectories. Phys Rev Lett 105:150607. Barato AC, Seifert U (2015) Thermodynamic uncertainty relation for biomolecular processes. Phys Rev Lett 114:158101. Values in this section are now observable-level (PRESPEC 20s-A); the earlier HMM-level L (CS 0.215, per0LD 0.245, per0DD 0.330, fumin 0.237, sss 0.144) is the comparison bracket. At the observable level, L differs from CS only for sss (lower, p < 0.001) and per0 DD (higher, p 0.026) by the fly-bootstrap difference."
+  },
+  {
+   "anchor": "Hidden Markov model of sleep-wake dynamics",
+   "text": "New references for the sections added 2026-11-01: Keilson J (1979) Markov Chain Models: Rarity and Exponentiality. Springer, New York. Bowman GR, Beauchamp KA, Boxer G, Pande VS (2009) Progress and challenges in the automated construction of Markov state models for full protein systems. J Chem Phys 131:124101. Martinez IA, Bisker G, Horowitz JM, Parrondo JMR (2019) Inferring broken detailed balance in the absence of observable currents. Nat Commun 10:3542. van der Meer J, Ertel B, Seifert U (2022) Thermodynamic inference in partially accessible Markov networks: a unifying perspective from transition-based waiting time distributions. Phys Rev X 12:031025. Harunari PE, Dutta A, Polettini M, Roldan E (2022) What to learn from a few visible transitions' statistics? Phys Rev X 12:041026."
   }
  ]
 }
