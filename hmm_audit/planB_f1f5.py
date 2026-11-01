@@ -188,7 +188,7 @@ def thermo(coef, H, T, step=None, Hc=0.0):
                 if i != j:
                     f = p[i] * k[i, j]
                     hk += f * np.log(s[i] * k[i, j] / (s[j] * k[j, i]))
-                    na += f * np.log(p[j] * s[i] / (p[i] * s[j]))
+                    na += f * np.log(p[i] * s[j] / (p[j] * s[i]))   # sign fixed after the 20t run (was inverted); ratios unchanged
         p = p @ expm(k); p = np.clip(p, 1e-300, None); p /= p.sum()
     return 60 * hk / T, 60 * na / T
 
