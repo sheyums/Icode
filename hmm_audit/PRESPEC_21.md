@@ -111,3 +111,16 @@ The block is therefore the 12-h HALF-DAY, within the "8 or 4 blocks per fly" cCl
 floor(bout midpoint / 43200 s). That gives 8 blocks and 256 configurations for a 4-day record (minimum p 1/256), and
 6 blocks and 64 configurations for 3 days (1/64). Configurations are enumerated exactly, identity included;
 p_fly_block = #{S* >= S} / (number of configurations), z_fly_block from the same set. Nothing else changes.
+
+## Amendment B (2026-11-01, BEFORE any data run; cClaude's fix, relayed by Sheyum) — SUPERSEDES amendment A
+cClaude independently found the same flaw (whole-day blocks: p_fly_block >= 1/16, so the binomial arm cannot pass) and
+fixed it differently. This rule replaces amendment A; blocks are back to whole 24-h days (floor(midpoint / 86400 s)).
+(a) Per-fly block null: all 2^(days) configurations enumerated (16 for 4 days, 8 for 3), z_fly_block from them. The
+    block-null rule uses ONLY the group Wilcoxon of z_fly_block against 0 (Holm over the 2 primary blocks, median > 0).
+    The binomial arm is DROPPED for this null, because with 8-16 configurations p_fly_block cannot fall below 0.0625.
+(b) Group-level block null: across all flies of a genotype, each fly-day is flipped independently (e.g. 25 x 4 = 100
+    blocks); 2000 random configurations (seed default_rng(30_000 + genotype index)); statistic = the group sum of the
+    flies' S; p = (1 + #{sum S* >= sum S}) / 2001. This is the second robustness check.
+DISAGREE now means: the per-bout rule passes AND either (a) (Holm p >= 0.05 or median <= 0) or (b) (p >= 0.05) fails.
+A disagreement is reported as "not robust to dependence between bouts within a day", with no claim.
+The per-bout rule is unchanged (Wilcoxon of z_fly with Holm, median > 0, binomial excess).
