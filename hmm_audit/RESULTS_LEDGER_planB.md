@@ -322,3 +322,40 @@ VERDICT: NULL INADEQUATE (stage 2 not run, per PRESPEC 20u)
   states). The discrete-time complete-monotonicity premise of the motivating theorem therefore does not hold for these
   fits either. It was motivation only, not the test.
 - C8 stays as written ("supported but bin-sensitive"; 20r-B inconclusive). 20u adds no evidence for or against.
+
+## PRESPEC 21 — 1-s wake-bout shape asymmetry beyond level (2026-11-01; PRESPEC b8ea542 + amendment A 92a1feb, superseded by amendment B a44ba47; code a44ba47; planB_21.log/.json)
+Go-ahead: Sheyum, 2026-11-01. Narrowest block: one fly's whole DD record (its wake bouts >= 2L). Matched nulls: the
+same bouts sign-flipped (per bout; per fly-day enumerated; group-level fly-day). Synthetic check before the run: traces
+simulated from a 20u reversible fit gave z -1.4 to +0.2, no p < 0.05.
+```
+PRIMARY setting L = 300 s, 10-s bins
+per0DD flies 25 (excl 0) | bouts/fly median 58 (30-116) | per-bout z med +0.58 Wilcoxon 0.0136 Holm 0.0136 flies p<.05 0.32 (binom 2.0e-05)
+       | per-fly day-block z med +0.93 Holm 0.0051 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE
+CSDD   flies 25 (excl 0) | bouts/fly median 67 (44-98)  | per-bout z med +1.40 Wilcoxon 1.8e-05 Holm 3.7e-05 flies p<.05 0.28 (binom 1.7e-04)
+       | per-fly day-block z med +0.97 Holm 8.3e-06 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE
+secondary: level first 60 s (start - end): per0DD +0.038 (p 1.0e-04), CSDD +0.041 (p 2.7e-05); counts-intensity shape z +0.64 (p 0.020), +1.24 (p 6.6e-06)
+descriptive LD per-bout z med: CS +0.63 (p 9e-04), per0LD +0.65 (p 0.003), fumin +1.49 (p 6e-07), sss +0.27 (p 0.020; 12 flies excluded)
+descriptive level: CS +0.032, per0LD +0.019, fumin +0.127, sss -0.030 (reversed, as sss's cycle in C2)
+SECONDARY setting L = 120 s, 5-s bins: per0DD per-bout Holm 9e-04, day-block Holm 0.028, group p 0.0005 -> TIME-ASYMMETRIC SHAPE;
+       CSDD Holm 6e-05, 1.6e-05, 0.0005 -> TIME-ASYMMETRIC SHAPE
+median per-fly d(tau) = start - end, 10-s bins from the sleep boundary (L300):
+  per0DD +0.002 +0.030 +0.045 +0.033 +0.059 +0.057 +0.038 +0.024 +0.047 +0.044 +0.040 +0.027
+  CSDD   +0.004 +0.071 +0.039 +0.043 +0.032 +0.043 +0.032 +0.025 +0.029 +0.025 +0.019 +0.035
+(bouts per fly, per block, listed in planB_21.log)
+```
+VERDICT (pre-specified, amendment B): TIME-ASYMMETRIC SHAPE in per0 DD and CS DD. Per-bout rule, per-fly day-block
+Wilcoxon and group-level fly-day block null all agree, so the result is robust to dependence between bouts within a
+day. The secondary 120-s setting agrees.
+Wording (per0 DD): "Within wake bouts, the 1-s activity trajectory into sleep is not the time-reverse of the trajectory
+out of sleep, beyond their difference in level; under stationarity and the verified time-symmetric scoring, this is
+time-irreversibility of the activity process at the seconds scale." CS DD: the same, plus "the circadian drive is not
+excluded as its source". Not "proves broken detailed balance" (whole-record stationarity is assumed).
+Description (not tested): the start-minus-end difference is ~0 in the 10 s next to the sleep boundary (the boundary
+second is active on both sides by construction) and rises to +0.03-0.07 within 10-60 s. Activity after waking climbs
+within tens of seconds to a level the end of wake has already left. Read with the level check, this means flies are
+quieter over the minutes before sleep onset than over the matching minutes after waking, and the difference has a
+different time course on the two sides. Which side is gradual and which abrupt needs the two pooled profiles
+m_start, m_end; those are in planB_21.json via mean_d only, and a figure is still to be made (descriptive).
+Consistency: the level secondary reproduces C2's signs, including sss's reversal.
+Conditional follow-up B (20u models without the reversibility constraint) is now ELIGIBLE under PRESPEC 21's rule. It
+needs its own PRESPEC and Sheyum's approval; it was not run.

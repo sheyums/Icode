@@ -1,0 +1,52 @@
+
+===== setting L300 (L 300 s, bins 10 s) =====
+per0DD  flies 25 (excluded <5 bouts: 0) | bouts/fly median 58 range 30-116 | per-bout: z med +0.58 Wilcoxon 0.0136 Holm 0.0136 flies p<.05 0.32 (binom 1.96e-05) | per-fly day-block: z med +0.93 Holm 0.00507 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE
+          secondary: level (first 60 s, start - end) median +0.038 Wilcoxon 0.000103 | counts-intensity shape z med +0.64 Wilcoxon 0.0203
+          median per-fly d(tau) start-minus-end, bins from boundary: +0.002 +0.030 +0.045 +0.033 +0.059 +0.057 +0.038 +0.024 +0.047 +0.044 +0.040 +0.027
+          bouts per fly: [63, 51, 53, 59, 42, 40, 51, 92, 58, 81, 66, 40, 38, 87, 42, 84, 74, 57, 58, 30, 43, 66, 61, 116, 105]
+CSDD    flies 25 (excluded <5 bouts: 0) | bouts/fly median 67 range 44-98 | per-bout: z med +1.40 Wilcoxon 1.83e-05 Holm 3.66e-05 flies p<.05 0.28 (binom 0.000169) | per-fly day-block: z med +0.97 Holm 8.34e-06 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE
+          secondary: level (first 60 s, start - end) median +0.041 Wilcoxon 2.66e-05 | counts-intensity shape z med +1.24 Wilcoxon 6.56e-06
+          median per-fly d(tau) start-minus-end, bins from boundary: +0.004 +0.071 +0.039 +0.043 +0.032 +0.043 +0.032 +0.025 +0.029 +0.025 +0.019 +0.035
+          bouts per fly: [44, 57, 59, 56, 77, 94, 66, 52, 77, 79, 94, 52, 54, 69, 71, 75, 82, 55, 65, 67, 63, 98, 57, 94, 81]
+CS      flies 25 (excluded <5 bouts: 0) | bouts/fly median 62 range 34-91 | [descriptive] per-bout z med +0.63 p 0.000912 flies p<.05 0.32
+          secondary: level (first 60 s, start - end) median +0.032 Wilcoxon 2.98e-07 | counts-intensity shape z med +0.90 Wilcoxon 0.000556
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.009 +0.043 +0.033 +0.045 +0.052 +0.058 +0.043 +0.056 +0.037 +0.043 +0.040 +0.046
+          bouts per fly: [73, 67, 62, 57, 37, 74, 38, 60, 56, 52, 62, 77, 71, 78, 81, 56, 52, 34, 62, 61, 60, 83, 82, 50, 91]
+per0LD  flies 27 (excluded <5 bouts: 0) | bouts/fly median 65 range 19-95 | [descriptive] per-bout z med +0.65 p 0.00325 flies p<.05 0.26
+          secondary: level (first 60 s, start - end) median +0.019 Wilcoxon 0.000536 | counts-intensity shape z med +0.61 Wilcoxon 0.0104
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.021 +0.027 +0.023 +0.024 +0.021 +0.018 +0.026 +0.022 +0.020 +0.025 +0.029 +0.025
+          bouts per fly: [19, 21, 43, 35, 30, 69, 73, 45, 29, 69, 83, 76, 65, 79, 78, 60, 75, 79, 95, 81, 50, 48, 74, 35, 89, 61, 48]
+fumin   flies 51 (excluded <5 bouts: 2) | bouts/fly median 21 range 6-54 | [descriptive] per-bout z med +1.49 p 5.85e-07 flies p<.05 0.43
+          secondary: level (first 60 s, start - end) median +0.127 Wilcoxon 5.46e-10 | counts-intensity shape z med +1.25 Wilcoxon 2.07e-07
+          median per-fly d(tau) start-minus-end, bins from boundary: +0.148 +0.097 +0.150 +0.107 +0.128 +0.115 +0.090 +0.086 +0.081 +0.079 +0.075 +0.059
+          bouts per fly: [53, 7, 49, 21, 38, 6, 51, 29, 17, 11, 7, 41, 6, 35, 20, 10, 12, 21, 33, 47, 7, 6, 54, 49, 40, 28, 15, 21, 32, 13, 27, 30, 37, 8, 19, 8, 19, 14, 25, 12, 16, 22, 6, 29, 29, 23, 25, 16, 20, 30, 42]
+sss     flies 45 (excluded <5 bouts: 12) | bouts/fly median 15 range 5-36 | [descriptive] per-bout z med +0.27 p 0.0196 flies p<.05 0.13
+          secondary: level (first 60 s, start - end) median -0.030 Wilcoxon 1.18e-05 | counts-intensity shape z med +0.42 Wilcoxon 0.0689
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.070 -0.032 -0.033 -0.028 -0.013 -0.027 -0.007 +0.000 -0.017 -0.019 -0.025 +0.000
+          bouts per fly: [30, 20, 9, 14, 17, 15, 13, 6, 32, 17, 33, 14, 5, 9, 36, 15, 16, 26, 19, 17, 12, 8, 5, 16, 13, 17, 12, 31, 8, 9, 18, 12, 24, 22, 6, 7, 19, 28, 22, 11, 6, 10, 27, 20, 8]
+
+===== setting L120 (L 120 s, bins 5 s) =====
+per0DD  flies 25 (excluded <5 bouts: 0) | bouts/fly median 104 range 51-174 | per-bout: z med +0.95 Wilcoxon 0.000912 Holm 0.000912 flies p<.05 0.44 (binom 1.13e-08) | per-fly day-block: z med +0.66 Holm 0.0275 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE [secondary setting]
+          secondary: level (first 60 s, start - end) median +0.036 Wilcoxon 0.00012 | counts-intensity shape z med +1.04 Wilcoxon 0.000631
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.007 +0.019 +0.019 +0.012 +0.038 +0.029 +0.023 +0.040 +0.055 +0.053 +0.055 +0.047
+          bouts per fly: [142, 111, 116, 104, 97, 98, 65, 107, 157, 116, 88, 109, 51, 145, 75, 143, 103, 98, 102, 64, 67, 116, 86, 174, 149]
+CSDD    flies 25 (excluded <5 bouts: 0) | bouts/fly median 90 range 67-129 | per-bout: z med +1.53 Wilcoxon 3.19e-05 Holm 6.39e-05 flies p<.05 0.40 (binom 1.59e-07) | per-fly day-block: z med +1.48 Holm 1.63e-05 | group fly-day block p 0.0005 -> TIME-ASYMMETRIC SHAPE [secondary setting]
+          secondary: level (first 60 s, start - end) median +0.036 Wilcoxon 8.8e-05 | counts-intensity shape z med +1.05 Wilcoxon 7.5e-05
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.039 +0.057 +0.078 +0.058 +0.042 +0.048 +0.037 +0.040 +0.027 +0.029 +0.018 +0.030
+          bouts per fly: [67, 80, 85, 80, 84, 123, 82, 77, 123, 91, 129, 87, 87, 90, 91, 119, 100, 83, 86, 97, 105, 129, 85, 117, 109]
+CS      flies 25 (excluded <5 bouts: 0) | bouts/fly median 95 range 52-138 | [descriptive] per-bout z med +1.47 p 1.23e-05 flies p<.05 0.40
+          secondary: level (first 60 s, start - end) median +0.028 Wilcoxon 1.97e-06 | counts-intensity shape z med +1.11 Wilcoxon 0.000329
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.037 +0.009 +0.036 +0.033 +0.040 +0.027 +0.042 +0.025 +0.048 +0.035 +0.043 +0.040
+          bouts per fly: [92, 84, 75, 91, 71, 87, 52, 105, 70, 95, 90, 123, 106, 117, 113, 99, 71, 79, 117, 98, 111, 108, 115, 90, 138]
+per0LD  flies 27 (excluded <5 bouts: 0) | bouts/fly median 103 range 49-142 | [descriptive] per-bout z med +1.79 p 2.59e-05 flies p<.05 0.48
+          secondary: level (first 60 s, start - end) median +0.013 Wilcoxon 0.000267 | counts-intensity shape z med +2.13 Wilcoxon 1.59e-05
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.052 -0.008 +0.025 +0.022 +0.022 +0.014 +0.015 +0.018 +0.026 +0.014 +0.018 +0.023
+          bouts per fly: [49, 55, 78, 88, 81, 103, 98, 92, 81, 102, 137, 126, 105, 139, 105, 97, 104, 137, 142, 129, 106, 105, 120, 73, 130, 92, 89]
+fumin   flies 51 (excluded <5 bouts: 2) | bouts/fly median 25 range 6-76 | [descriptive] per-bout z med +1.13 p 7.1e-07 flies p<.05 0.41
+          secondary: level (first 60 s, start - end) median +0.121 Wilcoxon 5.15e-10 | counts-intensity shape z med +1.10 Wilcoxon 8.2e-07
+          median per-fly d(tau) start-minus-end, bins from boundary: +0.159 +0.157 +0.055 +0.116 +0.150 +0.152 +0.127 +0.083 +0.128 +0.122 +0.116 +0.105
+          bouts per fly: [67, 7, 57, 24, 44, 7, 76, 29, 20, 13, 13, 51, 6, 42, 23, 16, 19, 23, 36, 51, 7, 6, 62, 54, 47, 34, 15, 22, 39, 15, 33, 31, 42, 8, 20, 8, 19, 17, 31, 12, 18, 25, 7, 34, 33, 28, 32, 22, 25, 33, 59]
+sss     flies 46 (excluded <5 bouts: 11) | bouts/fly median 17 range 5-44 | [descriptive] per-bout z med +0.32 p 0.249 flies p<.05 0.11
+          secondary: level (first 60 s, start - end) median -0.035 Wilcoxon 4.41e-06 | counts-intensity shape z med -0.09 Wilcoxon 0.88
+          median per-fly d(tau) start-minus-end, bins from boundary: -0.078 -0.077 -0.061 -0.028 -0.040 -0.035 -0.017 -0.033 -0.000 -0.024 -0.029 -0.014
+          bouts per fly: [44, 7, 23, 12, 17, 19, 17, 14, 7, 41, 20, 37, 14, 5, 11, 44, 15, 17, 31, 25, 21, 14, 8, 10, 17, 14, 18, 14, 38, 8, 9, 19, 17, 27, 25, 9, 7, 21, 34, 23, 12, 7, 12, 32, 22, 8]
