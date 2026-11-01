@@ -234,3 +234,32 @@ evaluates S(lefts) with lefts a ROW; FitHyperexponentialMLE's SurvivalHandle ret
 the overlay (H.ModelHazard and the model curve drawn by Plot=true); RiseNullP goes through NullSurvivalHandle and the
 C8 reproduction is exact. test_BoutHazard test 5 misses it because its handle preserves the input shape. Fix: one
 reshape in BoutHazard plus a test with a column-returning handle. figC8 computes the null hazard itself meanwhile.
+
+## 2026-11-01  BoutHazard overlay fixed; Fig A1 observed-only; Fig C7 observed — code cd2f86f (lClaude, matlab-port)
+
+Done on Sheyum's request ("port them"; "fix the error you found in BoutHazard.m") after cClaude's a450c0a.
+
+- **BoutHazard (root bout suite) fixed.** The SurvivalHandle overlay now takes the handle's output as a row, as the
+  null sampler in the same file already did. New test_BoutHazard test 11 (a row- and a column-returning handle must
+  give the same 1 x nb ModelHazard, equal to the exact rate) fails on the old code with [11 11] and passes now;
+  test_BoutHazard 11/11. On the per0 DD bouts the fixed overlay equals figC8's independent calculation to 3e-15 at
+  12/16/20/24 bins. RiseNullP never went through this path; the C8 and 20r numbers are unaffected. Root CLAUDE.md
+  counts updated (test_BoutHazard 11, 130 bout tests). The analysis-folder copy of BoutHazard.m (Icode_sync_stamp.txt)
+  is now behind; it was NOT touched.
+- **Fig A1** has no HMM markers by default (main text observed-level only); HmmMarkers=true writes the SI version
+  (figA1_direction_flux_SI_hmm). Points and medians unchanged (figA1_points.csv / _summary.csv byte-identical).
+- **Fig C7 observed** (exportFigC7; fig_R1_obs.py): routeDurationObserved / routeDurationD ported from sqw_ref and
+  checked exactly against golden G11 (47 records from the G2 trace; three D cases, diff 0). The 20k observed R1
+  statistics recomputed from the raw records, on 20k's flies (non-degenerate 20b fits: CS 25/25, fumin 53/53,
+  per0 LD 27/27, per0 DD 23/25, sss 54/57): n and mean D equal the ledger in all 9 blocks (CS L +0.087, CS D -0.293,
+  fumin -0.002 / -0.061, per0 LD -0.228 / -0.121, per0 DD -0.028, sss +0.010 / +0.008); memoryless reference 0.2016
+  (recipe 0.202).
+
+**Case (Monte Carlo, nothing changed in the ledger):** per0 LD light is Holm-significant in the ledger (p 0.005,
+Holm 0.04) because, as the second-smallest of 9 p-values, its Holm value is 8p: the star needs p < 0.00625. This
+port's own 2000-permutation run (seed 20) drew p 0.009, Holm 0.072, i.e. no star. Diagnostic only (not written to
+the repo): 20000 permutations, seeds 20 and 21, gave p 0.0041 / 0.0043, Holm 0.033 / 0.034, so the ledger's star is
+the right one and the port's draw was high (9 tail permutations where ~4 were expected). The figure therefore takes
+its stars and fading from the ledger's Holm by default (SigFrom="ledger", as Fig C12 copies its flags); figC7_blocks
+carries both. Suggestion for cClaude: 2000 permutations leave this verdict at the mercy of the draw; if 20k is ever
+re-run, more permutations would settle it.

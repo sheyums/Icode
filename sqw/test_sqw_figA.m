@@ -21,6 +21,8 @@ function test_sqw_figA()
 %    8. exportFigC10 (synthetic 20w-B file): the 24-h cosine amplitude and mean recovered exactly
 %    9. exportFigC12 (synthetic 20y file): dead flies dropped, no-cycle fly-phases out of the depth and J
 %       panels (JSON nulls), ledger stars as given, medians = point medians
+%   10. G11 golden: routeDurationObserved records from the G2 trace and routeDurationD cases (exact)
+%   (test 4 also checks: no HMM markers by default, markers and the SI file name with HmmMarkers=true)
 
 here = fileparts(mfilename('fullpath'));
 assert(isequal(fileparts(which('exportFigA1')), here), 'Run from the sqw folder.');
@@ -87,7 +89,8 @@ try
     end
     th = X.fig.Color; ax = findobj(X.fig, 'Type', 'axes');
     okTheme = isequal(th, [1 1 1]) && all(arrayfun(@(a) isequal(a.Color, [1 1 1]), ax));
-    close(X.fig);
+    okTheme = okTheme && isempty(findobj(X.fig, 'Tag', 'hmm')); close(X.fig);
+    Xs = exportFigA1(D, fullfile(tmp, 'a1s'), HmmMarkers=true); okTheme = okTheme && numel(findobj(Xs.fig, 'Tag', 'hmm')) > 0 && isfile(fullfile(tmp, 'a1s', 'figA1_direction_flux_SI_hmm.png')); close(Xs.fig);
     D2 = D; D2.order = D.order([2 1 3:6]); refused = false;
     try exportFigA1(D2, fullfile(tmp, 'a1b'), Plot=false); catch, refused = true; end
     [nP, nF] = rep(ok && okTheme && refused, nP, nF, 4, 'exportFigA1: medians = point medians, refOK, HMM over non-degenerate, order, light theme', ...
@@ -183,7 +186,38 @@ try
         sprintf('n %d stars %d median %d', okN, okS, okM));
 catch err, [nP, nF] = rep(false, nP, nF, 9, '', err.message); end
 
+%% 10. G11 golden: routeDurationObserved on G2's trace, routeDurationD cases (exact)
+try
+    g11 = jsondecode(fileread(fullfile(here, '..', 'hmm_audit', 'golden', 'G11_route_duration.json')));
+    g2 = jsondecode(fileread(fullfile(here, '..', 'hmm_audit', 'golden', 'G2_symbols.json')));
+    R = routeDurationObserved(g2.x(:), LightDark=true); gold = toRec(g11.observed_from_G2.records);
+    okR = numel(R) == numel(gold);
+    if okR
+        f = ["phase" "sleep_min" "wake_before_min" "wake_after_min" "q_in" "q_out"];
+        for k = 1:numel(f)
+            a = [R.(f(k))]; b = [gold.(f(k))];
+            okR = okR && isequaln(isnan(a), isnan(b)) && max(abs(a(~isnan(a)) - b(~isnan(b))), [], 'all') < 1e-12;
+        end
+    end
+    dc = toRec(g11.D_cases.records); rels = ["R1_exit_vs_sleep" "R2_entry_vs_wake_before" "R3_entry_vs_sleep"];
+    dD = arrayfun(@(r) abs(routeDurationD(dc, r, 1) - g11.D_cases.(r)), rels);
+    [nP, nF] = rep(okR && all(dD < 1e-12), nP, nF, 10, sprintf(['G11: routeDurationObserved records (%d) and routeDurationD ' ...
+        'cases (max diff %.2g)'], numel(gold), max(dD)), sprintf('records %d, D diff %s', okR, mat2str(dD, 3)));
+catch err, [nP, nF] = rep(false, nP, nF, 10, '', err.message); end
+
 fprintf('\n%d passed, %d failed\n', nP, nF);
+end
+
+function R = toRec(g)
+% golden records (0-based phase_on, JSON null -> []) as ROUTEDURATIONOBSERVED structs
+if iscell(g), g = [g{:}]'; end
+R = struct('phase', num2cell([g.phase_on]' + 1), 'sleep_min', {g.sleep_min}', 'wake_before_min', {g.wake_before_min}', ...
+    'wake_after_min', {g.wake_after_min}', 'q_in', cellfun(@nb, {g.q_in}', 'UniformOutput', false), ...
+    'q_out', cellfun(@nb, {g.q_out}', 'UniformOutput', false));
+end
+
+function v = nb(v)
+if isempty(v), v = NaN; else, v = double(v); end
 end
 
 function v = ifelse(c, a, b)

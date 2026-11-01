@@ -111,9 +111,10 @@ end
 
 function mh = nullHazard(h, S)
 % The null's hazard on the kept bins, by BoutHazard's own formula (interval probability
-% (S(left) - S(right)) / S(left), then -log1p(-p) / width). Computed here, not through
-% BoutHazard's SurvivalHandle option: FitHyperexponentialMLE's handle returns a COLUMN for a
-% row of edges, so there (sl - sr) ./ sl ./ width broadcasts to an n x n matrix (reported).
+% (S(left) - S(right)) / S(left), then -log1p(-p) / width). Computed here because, when
+% this figure was made, BoutHazard's SurvivalHandle overlay broadcast to an n x n matrix for
+% a handle returning a COLUMN (FitHyperexponentialMLE's does). Fixed in BoutHazard on
+% 2026-11-01 (test_BoutHazard test 11); kept here as an independent check of the overlay.
 L = h.BinEdges(1:end - 1); R = h.BinEdges(2:end);
 C = sqrt(max(L, h.SamplingInterval / 2) .* R);
 keep = ismembertol(C, h.BinCenters, 1e-12);
