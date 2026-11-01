@@ -132,3 +132,43 @@ turEstimate, turExact, turExactCT, hmmObservedChain. First test run 9/13:
   first-order data dev 0.037 > 0.03. 8: long-chain d2 0.0173 vs exact EPR 0.0218. 11: simulated symbol current -0.131
   vs exact -0.153 (about 1.3 SE: threshold likely too tight). Each may be the test, not the code; check before trusting.
 - Not started: 20p/20q group drivers, the ledger-median comparison, figure exports.
+
+## Stage 3 — PASSES (2026-11-01, code 16c3ee1; outputs sqw/validation/compare_20pq.csv, port_20p_*.csv, port_20q_blocks.csv)
+
+**Golden G12 and stress: test_sqw_stage3 13/13.** The three stress failures of the WIP entry above were the tests' own
+expectations, not the port: (6) EM also counts the first transition from the unobserved pair (y0, y1), so only rows whose
+second symbol is y1 differ from the triple MLE (all other rows agree to 1e-16); the first-order check is now a z-test
+(max |z| 1.85); (8) with Ptrue (EPR 0.02 nats/h) the sampling error of d2 at 4e5 minutes is ~20%; on a strongly driven
+chain d2 = 9.93 vs exact EPR 9.98 nats/h, D3 -0.02, D4 +0.11; (11) the simulated current was 0.98 SE from the exact.
+Test 4 checks D and B at 1e-6 relative instead of 1e-9: Q3 in QUESTIONS_lClaude.md (round-off measured, neither side changed).
+
+**Raw-data reproduction of the 20p and 20q ledger lines** (validate_20pq; all six genotypes, sss = 57 files; HMM =
+cClaude's stored 20b fits, CS DD refitted here as 20p did, K = 3, 20 starts; 200/200/50/50 records per fly for 20p,
+200/100 for 20q, as pre-specified):
+- EXACT (deterministic given the data): 160 of 160 ledger numbers agree to their printed precision: n, d2, d3, d4,
+  Delta3_obs and d3/d2 for the 10 blocks and the 4 DD halves; n, J, D, blocks, B_obs, sigma_MC, Q_MC and kappa max for
+  the 10 TUR blocks (amendment E rows for fumin and sss). The amendment-E classification of excluded fly-phases is
+  reproduced exactly (kind i fumin 2/10, sss 7/14; ii CS light 1, per0LD light 1, per0DD 1, fumin 1/2, sss 4/1;
+  iii fumin 1/2, sss 9/4).
+- MONTE CARLO: 180 statistics (E under nulls A and B, E_D4, E_D3QW, fractions with p < 0.05, HMM/MC2 predicted Delta3
+  and bracketing, S1, S2, Q_obs, Q_HMM, sigma_HMM >= B_c, HMM bracketing). z = (port - ledger) / sqrt(2 SE^2 + rounding^2/3),
+  SE from resampling each fly's own simulated records. z mean +0.07, SD 1.06; |z| > 2 in 18 (10%; 4 of them are
+  duplicates, since Q_obs IS S2_med), |z| > 3 in none, max 2.56 (CS DD S1). No statistic is biased one way across
+  blocks (per-statistic mean z between -0.44 and +0.64 over 10 blocks each). Within Monte Carlo error.
+- VERDICTS agree: 20p QUALIFIES in fumin dark, per0DD whole, CS DD whole and nowhere else (halves: none);
+  20q S1 and S2 not supported in either primary DD block.
+
+**Cases reported (nothing changed on the Python side):**
+1. G12 tolerance for the exact TUR D and B (Q3).
+2. Two stored HMM fits have an all-zero row: sss fly 1 and fly 40 (0-based), H3 in the light phase (no S there). The
+   H3 column is exactly 0 in that phase, so no exact quantity changes, but sqw_ref.simulate maps a zero row to the LAST
+   state, so a simulated fly in H3 at lights-on stays asleep through the whole light phase. The port fills such rows
+   uniform (as 20p amendment B does for the chain). Affects only those two flies' HMM-simulated records (sss light).
+3. The 20q entry's "no estimate (blocks < 4 or D <= 0)" counts are pooled over the three block lengths and divided by 3
+   (sqw16_report counts every exclusion of all three tau calls). At the primary 3 h the counts are fumin light 1 (ledger
+   15) and sss light 0 (ledger 10); the n's printed on those lines are the 3-h ones and are right.
+4. Q_obs and S2 are the same per-fly quantity (B_c / sigma_MC) in 20q; the ledger prints it twice.
+5. make_golden_planA.py labels the light matrix "forward-biased cycle"; its cycle current is negative (J = -0.23/h:
+   reverse-biased). The golden values are unaffected.
+
+Not yet done: the figure-export functions (FIGURE_RECIPES section K, A1-A4).
