@@ -230,3 +230,45 @@ F1 CSDD    flies 25 | minutes differing total 0 of 144000 | worst fly agreement 
 - reverse(sqw_symbols(x)) == sqw_symbols(reverse(x)) in EVERY minute of every per0 DD and CS DD whole-day retained trace
   (light_dark=False, theta 0.5). The one-second r_f rounding at mid = (w0+w1)//2 changed no symbol here. The scoring
   is exactly time-symmetric on these data, so F0's premise holds in the code. F2 follows.
+
+## PRESPEC 20x — sleep deprivation, within-fly contrasts at ZT0-6 (2026-11-01; PRESPEC 1502a20, code 60fce8a; planB_20x.log/.json; post hoc lines planB_20x_posthoc.log)
+Narrowest block: one fly's ZT0-6 on day 4 (360 min). Matched null: placebo day 2 vs days 0-1 (same flies, same window).
+r_f from baseline days 0-2 only. 26 flies, all 9.5127 d; one fly without a dark-phase baseline reference.
+```
+STAGE 0: sleep in ZT0-6, day 4 - days 0-2: median +42.0 min [95% CI +21.2, +57.1] (baseline median 229 min) | Wilcoxon p 6.0e-05 -> PASS
+c_obs              n 26 | baseline -0.027 | Delta -0.062 [-0.151, +0.004] p 0.084 Holm 0.168 | Delta_pl -0.014, paired p 0.635 | trend p 0.745 -> NOT SUPPORTED
+count J (cyc/h)    n 26 | baseline -0.056 | Delta -0.056 [-0.194, +0.056] p 0.246 Holm 0.246 | Delta_pl +0.000, paired p 0.957 | trend p 0.626 -> NOT SUPPORTED
+count EPR (nats/h) n 26 | baseline +0.044 | Delta +0.037 [-0.003, +0.152] p 0.024 Holm 0.071 | Delta_pl +0.091, paired p 0.617 | trend p 0.059 -> NOT SUPPORTED
+no-cycle / rule-of-three kinds (condition:kind -> flies): R:i 3, R:ii 2, P2:i 1, P2:iii 1, P01:ii 1
+transitions, pooled chain, recovery/baseline [fly-bootstrap 95% CI], Holm over 6:
+  Q->W 0.94 [0.83, 1.05] 0.542 | Q->S 1.16 [0.98, 1.35] 0.243 | W->Q 1.17 [1.05, 1.30] 0.020 | W->S 1.49 [1.24, 1.80] <0.001
+  S->Q 0.90 [0.71, 1.12] 0.542 | S->W 0.75 [0.58, 0.94] 0.040
+dose association (Spearman, sleep lost vs Delta): c_obs +0.00 (all) / +0.31 (efficacious, n 19); J +0.03 / +0.32; EPR +0.19 / -0.31; all p >= 0.19
+descriptive median Delta vs same window of days 0-2 (sleep min | c_obs | J | EPR):
+  d4 ZT6-12 +3.7 | +0.010 | +0.028 | +0.188     d4 ZT12-24 +33.9 | -0.040 | -0.056 | -0.011
+  d5 ZT0-6 +26.3 | +0.032 | +0.028 | +0.041     d6 ZT0-6 +29.9 | -0.038 | +0.028 | +0.043
+  d7 ZT0-6 +33.6 | +0.002 | +0.000 | +0.013     d8 ZT0-6 +57.6 | -0.104 | -0.111 | +0.019
+POST HOC (descriptive, not in the PRESPEC): sleep placebo day 2 - days 0-1 median +28.0 min, p 0.0073 |
+  day-4 increase minus placebo median +11.6 min, paired p 0.094
+```
+VERDICTS by the pre-specified rules:
+- Stage 0 PASS (+42 min).
+- All three primary readouts NOT SUPPORTED. Wording: "No change of c_obs, cycle flux or count EPR beyond day-to-day
+  variation was detected in the first 6 h of recovery (median Delta c_obs -0.062 [-0.151, +0.004], J -0.056 cycles/h
+  [-0.194, +0.056], EPR +0.037 nats/h [-0.003, +0.152])." EPR's nominal p 0.024 does not survive Holm (0.071), and its
+  placebo change (+0.091) is LARGER than the recovery change; its time-trend check is borderline (0.059).
+- Transitions: by the pre-specified Holm, "sleep pressure changes" W->S (x1.49), W->Q (x1.17) and S->W (x0.75).
+  Recovery flies fall asleep from active wake more readily, enter quiet wake more readily, and wake into active wake
+  less readily.
+
+CRITICAL CAVEAT (found in the pre-specified descriptive rows, confirmed by one post hoc line):
+- ZT0-6 sleep drifts upward through the recording: +26 to +58 min on days 5-8, and day 8 (+58) exceeds day 4 (+42).
+- The same placebo logic the primary readouts use, applied post hoc to sleep, is itself significant (day 2 vs days
+  0-1: +28 min, p 0.007). The day-4 increase beyond it is +11.6 min (p 0.094).
+- So the Stage 0 pass CANNOT be read as a deprivation rebound distinct from the time trend. The gate as specified had
+  no placebo; that was a design gap (mine, in writing the PRESPEC to the brief).
+- The transition ratios also had no placebo control. They may reflect the same upward drift in sleep propensity
+  rather than deprivation. They must NOT be reported as deprivation effects without that caveat.
+- Reportable reading: in these 26 flies, a 9-h night-time deprivation produced no change in the cycle's direction,
+  flux or dissipation beyond day-to-day variation; even the sleep rebound itself is not separable from a steady upward
+  trend in morning sleep across the 9.5-day recording.

@@ -1,0 +1,23 @@
+20x: 26 flies | shortest trace 9.5127 d | flies without a baseline reference: light 0, dark 1
+STAGE 0: sleep in ZT0-6, day 4 - days 0-2: median +42.0 min [95% CI +21.2, +57.1] (baseline median 229 min) | Wilcoxon p 6.03e-05 -> PASS
+c_obs                n 26 | baseline median -0.027 | Delta median -0.062 [95% CI -0.151, +0.004] p 0.0842 Holm 0.168 | vs placebo: Delta_pl median -0.014, paired p 0.635 | time-trend check Delta_pl vs 0 p 0.745 -> NOT SUPPORTED
+count J (cycles/h)   n 26 | baseline median -0.056 | Delta median -0.056 [95% CI -0.194, +0.056] p 0.246 Holm 0.246 | vs placebo: Delta_pl median +0.000, paired p 0.957 | time-trend check Delta_pl vs 0 p 0.626 -> NOT SUPPORTED
+count EPR (nats/h)   n 26 | baseline median +0.044 | Delta median +0.037 [95% CI -0.003, +0.152] p 0.0236 Holm 0.0708 | vs placebo: Delta_pl median +0.091, paired p 0.617 | time-trend check Delta_pl vs 0 p 0.0594 -> NOT SUPPORTED
+  no-cycle / rule-of-three kinds (condition:kind -> flies): {'P2:iii': 1, 'R:i': 3, 'P2:i': 1, 'R:ii': 2, 'P01:ii': 1}
+  P(Q->W) recovery/baseline 0.94 [95% CI 0.83, 1.05] bootstrap p 0.271 Holm 0.542
+  P(Q->S) recovery/baseline 1.16 [95% CI 0.98, 1.35] bootstrap p 0.081 Holm 0.243
+  P(W->Q) recovery/baseline 1.17 [95% CI 1.05, 1.30] bootstrap p 0.004 Holm 0.020  -> sleep pressure changes this transition
+  P(W->S) recovery/baseline 1.49 [95% CI 1.24, 1.80] bootstrap p 0.000 Holm 0.000  -> sleep pressure changes this transition
+  P(S->Q) recovery/baseline 0.90 [95% CI 0.71, 1.12] bootstrap p 0.318 Holm 0.542
+  P(S->W) recovery/baseline 0.75 [95% CI 0.58, 0.94] bootstrap p 0.010 Holm 0.040  -> sleep pressure changes this transition
+  dose association c_obs               : all flies rho +0.00 (p 0.98, n 26) | efficacious rho +0.31 (p 0.19, n 19)
+  dose association count J (cycles/h)  : all flies rho +0.03 (p 0.87, n 26) | efficacious rho +0.32 (p 0.19, n 19)
+  dose association count EPR (nats/h)  : all flies rho +0.19 (p 0.35, n 26) | efficacious rho -0.31 (p 0.19, n 19)
+  dose association sleep rebound: all flies rho -0.11 (p 0.61)
+  descriptive (median Delta vs the same window of days 0-2): window | sleep min | c_obs | J | EPR
+    d4_ZT6-12   |   +3.7 | +0.010 | +0.028 | +0.188
+    d4_ZT12-24  |  +33.9 | -0.040 | -0.056 | -0.011
+    d5_ZT0-6    |  +26.3 | +0.032 | +0.028 | +0.041
+    d6_ZT0-6    |  +29.9 | -0.038 | +0.028 | +0.043
+    d7_ZT0-6    |  +33.6 | +0.002 | +0.000 | +0.013
+    d8_ZT0-6    |  +57.6 | -0.104 | -0.111 | +0.019
