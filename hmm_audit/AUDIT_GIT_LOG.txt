@@ -265,3 +265,4 @@ a538d3f 2026-11-01 12:02:39 +0000 Rewordings from the 20t critique (C1, C3, C4, 
 68d4bd7 2026-11-01 17:33:39 +0000 merged paper: PLANS C9*-C11 + outline; Methods: hazard controls, waiting time, clock face, deprivation
 cbc6f87 2026-11-01 18:18:30 +0000 PRESPEC 20y (circuit silencing), before running
 cb7b90c 2026-11-01 18:19:22 +0000 sqw20y.py (PRESPEC 20y)
+216a8e4 2026-11-01 18:20:28 +0000 20y result
