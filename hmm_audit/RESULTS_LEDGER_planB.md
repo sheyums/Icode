@@ -272,3 +272,30 @@ CRITICAL CAVEAT (found in the pre-specified descriptive rows, confirmed by one p
 - Reportable reading: in these 26 flies, a 9-h night-time deprivation produced no change in the cycle's direction,
   flux or dissipation beyond day-to-day variation; even the sleep rebound itself is not separable from a steady upward
   trend in morning sleep across the 9.5-day recording.
+
+## 20x post hoc P1-P2 (2026-11-01; POST HOC, specified after the 20x results; note 3e6f979, code 78748d8; planB_20x_posthoc_P1P2.log, planB_20x_posthoc.json)
+Narrowest block: one fly's ZT0-6 on day 4. Placebo arm = day 2 vs days 0-1, same flies, same window and estimator.
+```
+P1 transition | recovery/baseline [CI] | placebo day2/days0-1 [CI] | log contrast [CI] p Holm
+  Q->W | 0.94 [0.83, 1.05] | 1.02 [0.92, 1.14] | -0.09 [-0.22, +0.06] p 0.217 Holm 0.868
+  Q->S | 1.16 [0.98, 1.34] | 0.97 [0.78, 1.18] | +0.18 [+0.01, +0.36] p 0.033 Holm 0.198
+  W->Q | 1.17 [1.05, 1.31] | 1.20 [1.04, 1.37] | -0.02 [-0.19, +0.17] p 0.857 Holm 1.000
+  W->S | 1.49 [1.24, 1.79] | 1.26 [1.00, 1.54] | +0.17 [-0.06, +0.45] p 0.160 Holm 0.800
+  S->Q | 0.90 [0.71, 1.12] | 0.90 [0.72, 1.15] | -0.00 [-0.28, +0.28] p 0.962 Holm 1.000
+  S->W | 0.75 [0.58, 0.95] | 0.86 [0.68, 1.07] | -0.13 [-0.39, +0.15] p 0.346 Holm 1.000
+P2 median active fraction of non-S minutes
+  ZT0-6   baseline 0.067 | Delta -0.0167 p 0.0048 | Delta_pl -0.0167 | Delta vs Delta_pl paired p 0.196 -> no change beyond day-to-day variation
+  ZT6-12  baseline 0.050 | Delta +0.0000 p 0.42   | Delta_pl +0.0000 | paired p 0.088 (descriptive)
+  ZT12-24 baseline 0.200 | Delta -0.0500 p 8.5e-05 | Delta_pl -0.0333 | paired p 0.033 (descriptive)
+```
+- P1: NONE of the six transitions changes beyond the day-to-day trend. All read "not separable from the trend in morning
+  sleep". The 20x transition findings do not survive a placebo arm:
+  - W->Q changes as much between baseline days (x1.20) as after deprivation (x1.17);
+  - W->S (x1.49 vs x1.26) and S->W (x0.75 vs x0.86) move in the same direction on the placebo days;
+  - Q->S has the only nominal contrast (+0.18, p 0.033, CI just excluding 0), which does not survive Holm (0.198).
+- P2: wake activity at ZT0-6 is lower after deprivation (-0.017, p 0.005), but by exactly as much between baseline days
+  (placebo -0.017): no change beyond day-to-day variation. Descriptively, day 4 ZT12-24 drops more than its placebo
+  (-0.050 vs -0.033, paired p 0.033); one descriptive line among several, not a result.
+- Combined reading of 20x: in this dataset, no measured property of the observed cycle (direction, flux, dissipation,
+  transition probabilities, wake activity level) changes after 9 h of deprivation beyond the drift seen between
+  baseline days. A parallel undeprived control cohort is needed to test the homeostat on the cycle.
