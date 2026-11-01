@@ -2168,3 +2168,11 @@ p 0.009, Holm 0.072). Diagnostic with 20000 permutations (seeds 20, 21; port, no
 0.0043, Holm 0.033 / 0.034, so the ledger's star stands. Wording: the per0 LD light memory result is significant but
 near the threshold; CS dark (p 0, Holm 0) is the robust one. Also: BoutHazard's SurvivalHandle overlay (plot/ModelHazard
 only) was fixed in cd2f86f; RiseNullP never used that path, so no C8 or 20r number changes.
+
+## 2026-11-01  DESCRIPTIVE figure (no test): direction-dependent dwells in CS at night (fig_dwell_direction.py)
+Same definitions as PRESPEC 20v (CS LD dark was a descriptive block there, E_WT +0.137 nats/h). 25 flies.
+Quiet wake: stays into sleep (W->Q->S, n 649) and out of sleep (S->Q->W, n 433) have nearly identical survival curves
+(per-fly mean 2.68 vs 2.38 min; longer into sleep in 64% of flies). Active wake: stays out of sleep (S->W->Q, n 585)
+last longer than their time-reverse into sleep (Q->W->S, n 418): per-fly mean 4.43 vs 3.47 min (medians over flies),
+longer out of sleep in 80% of flies, with a longer tail. Reading: in this block the direction dependence sits in ACTIVE
+wake, not quiet wake; the 'two kinds of quiet wake' interpretation floated in conversation is not what the data show.
