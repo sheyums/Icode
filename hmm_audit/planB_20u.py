@@ -291,8 +291,14 @@ def run(datadir):
     xObs = W[np.isfinite(W)]; nObs = len(xObs); rrObs = [rise_ratio(xObs, 2.0, 1.0, k) for k in NB]
     obs_w = np.array([np.isfinite(W[i]).sum() for i in range(n)]); obs_s = np.array([np.nansum(Sl[i]) for i in range(n)])
     # ---- stage 1
+    ck = os.path.join(HERE, 'planB_20u_fits'); os.makedirs(ck, exist_ok=True)
+    todo = [(i, A[i]) for i in range(n) if not os.path.exists(os.path.join(ck, f'fly{i:02d}.json'))]
+    print(f"stage 1: {n - len(todo)} flies already checkpointed, fitting {len(todo)}", flush=True)
     with Pool(4) as pool:
-        fits = pool.map(fit_fly, list(enumerate(A)), chunksize=1)
+        for f in pool.imap_unordered(fit_fly, todo, chunksize=1):
+            json.dump(f, open(os.path.join(ck, f"fly{f['fly']:02d}.json"), 'w'))
+            print(f"  fitted fly {f['fly']} ({time.time()-t0:.0f} s)", flush=True)
+    fits = [json.load(open(os.path.join(ck, f'fly{i:02d}.json'))) for i in range(n)]
     out = dict(stage1=fits, rrObs=rrObs, nObs=int(nObs), t_stage1=time.time() - t0)
     print(f"stage 1 done {time.time()-t0:.0f} s")
     for f in fits:
