@@ -299,3 +299,26 @@ P2 median active fraction of non-S minutes
 - Combined reading of 20x: in this dataset, no measured property of the observed cycle (direction, flux, dissipation,
   transition probabilities, wake activity level) changes after 9 h of deprivation beyond the drift seen between
   baseline days. A parallel undeprived control cohort is needed to test the homeostat on the cycle.
+
+## PRESPEC 20u — reversible-null control of the per0 DD wake-hazard rise: VERDICT NULL INADEQUATE (2026-11-01; PRESPEC ccae0e8 + amendment A 3f3f2cd; code cad83a4 + checkpointing aa026cd; planB_20u_run_part1.log + planB_20u_run.log, planB_20u_run.json)
+Stage 1 ran in two parts: the first background job was stopped by the harness's 2-h limit after 23 of 25 flies were
+checkpointed, and the resumed job fitted the last 2. Stage 1 total ~2.5 h, inside the 6-h box. The earlier crash
+(underflow) is noted above.
+```
+selected orders (Ka, Ki): (3,3) in 15 flies, (2,3) in 10; runs per fly 4,648-37,895; EM iterations 82-1999
+laziness: smallest eigenvalue of the selected P <= 0 in 24 of 25 flies (range -0.296 to -0.010; fly 16 +0.054)
+stage 1b adequacy: wake-bout count ratio median 1.225 [IQR 1.136, 1.278] | total sleep ratio median 1.015 [IQR 0.999, 1.031]
+                   | death-excluded sims 0/500 -> FAIL
+VERDICT: NULL INADEQUATE (stage 2 not run, per PRESPEC 20u)
+```
+- By the pre-specified rule the test says NOTHING either way about the per0 DD hazard rise: the best-fitting reversible
+  aggregated HMM (K <= 6) does not reproduce the bout process. It makes 22.5% MORE wake bouts than observed (20r-B's
+  renewal null: ~15% more), while total sleep is right (x1.015). Real flies' wake is broken into sleep less often than
+  reversible dynamics with the same 1-s statistics predict.
+- That over-fragmentation is itself an observation, but NOT a test of reversibility. 15/25 flies selected the
+  largest allowed order (3+3), so the model class was at its ceiling; a larger reversible model might fit. Kmax was
+  fixed in advance and is not raised (no follow-up without a new PRESPEC).
+- Laziness failed in 24/25 flies: the fitted 1-s chains have negative eigenvalues (fast flip-flop between hidden
+  states). The discrete-time complete-monotonicity premise of the motivating theorem therefore does not hold for these
+  fits either. It was motivation only, not the test.
+- C8 stays as written ("supported but bin-sensitive"; 20r-B inconclusive). 20u adds no evidence for or against.
