@@ -1,0 +1,15 @@
+Successfully processed 25 out of 25 selected files.
+extractBoutsForModelCompetition: wake bouts, phase 'entire' (tag ""), seconds
+  flies 25 | bouts 4017 (median 164/fly) | 30 censored by segmenter
+  observed range 2 to 6899 s (bin = 1 s)
+extractBoutsForModelCompetition: sleep bouts, phase 'entire' (tag ""), seconds
+  flies 25 | bouts 4022 (median 163/fly) | 20 censored by segmenter
+  observed range 300 to 12082 s (bin = 1 s)
+per0 DD: 25 flies, 4017 wake, 4022 sleep
+per0 DD wake (replication of 2026-09-15): n = 4017, xmin 2 s
+  null K=2: tau 8.27 663.45 s, q 0.0812 0.9188, logL -29523.4966, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.416, null median 1.089, 95th 1.208, RiseNullP 0.001, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.402, null median 1.136, 95th 1.283, RiseNullP 0.009, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.385, null median 1.185, 95th 1.401, RiseNullP 0.059, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.435, null median 1.231, 95th 1.503, RiseNullP 0.086, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive

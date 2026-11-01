@@ -1,0 +1,55 @@
+20r gate, 2026-10-31 18:08, MATLAB 26.1.0.3346908 (R2026a) Update 5
+stage dir: C:\Users\sheyu\AppData\Local\Temp\claude\C--Users-sheyu-AppData-Roaming-Claude-scratch-workspaces-9e28ec93-5c7e-480f-b37c-a97e2b130e27-093a3a8c-05d9-4e67-ab6f-64868e3645dc-scratch-2026-10-31-a143d5\bd9df164-1e96-44b1-8547-d710157352e4\scratchpad\per0DD
+flies 16; wake bouts >= 2 s: 2717 (below xmin: 0); sleep bouts >= 300 s: 2715 (below: 0)
+fly-days covered by bouts: 61.45
+per fly (file, wake, sleep):
+   1 12_29_2017_multibeam_pruned2_10.txt_from1stLD.txt   178  179
+   2 12_29_2017_multibeam_pruned2_12.txt_from1stLD.txt   119  118
+   3 12_29_2017_multibeam_pruned2_3.txt_from1stLD.txt    180  181
+   4 12_29_2017_multibeam_pruned2_5.txt_from1stLD.txt    119  119
+   5 12_29_2017_multibeam_pruned2_7.txt_from1stLD.txt     94   94
+   6 1_26_2018_multibeam_pruned_32.txt_from1stLD.txt     238  238
+   7 1_8_2018_multibeam_pruned_4.txt_from1stLD.txt        64   63
+   8 1_8_2018_multibeam_pruned_5.txt_from1stLD.txt       100   99
+   9 1_8_2018_multibeam_pruned_7.txt_from1stLD.txt       169  169
+  10 2_6_2018_multibeam_pruned_14.txt_from1stLD.txt      213  213
+  11 2_6_2018_multibeam_pruned_7.txt_from1stLD.txt       111  110
+  12 5_28_2020_4b_wc_pruned_11.txt_from1stLD.txt         370  371
+  13 5_28_2020_4b_wc_pruned_2.txt_from1stLD.txt          227  227
+  14 6_11_2020_4b_rc2_pruned_15.txt_from1stLD.txt        209  209
+  15 6_25_2020_4b_rc_pruned_19.txt_from1stLD.txt         178  177
+  16 6_25_2020_4b_rc_pruned_20.txt_from1stLD.txt         148  148
+16 bins: 15 kept bins
+  centre    atRisk  events   (FINDINGS: centre atRisk events)
+      1.41    2717      26   (1.41 3989 46)
+      2.45    2691      29   (2.45 3943 34)
+      3.87    2662      50   (3.87 3909 69)
+      6.71    2612      61   (6.71 3840 85)
+     12.00    2551      89   (12 3755 112)
+     21.17    2462      77   (21.2 3643 98)
+     36.66    2385     101   (36.7 3545 125)
+     63.12    2284     102   (63.1 3420 160)
+    109.33    2182     180   (109.3 3260 237)
+    190.12    2002     302   (190.1 3023 400)
+    330.81    1700     432   (330.8 2623 593)
+    574.50    1268     548   (574.5 2030 844)
+    997.72     720     427   (997.7 1186 731)
+   1733.43     293     208   (1733 455 351)
+   3012.26      85      76   (3012 104 97)
+null K=2: tau 10.3073 642.5460 s, q 0.09476 0.90524, logL -19828.8228 (recorded -29328.2460)
+bins 12: RiseRatio 1.2250, trough 57.6 s, peak 523.5 s
+bins 16: RiseRatio 1.0439, trough 1733.4 s, peak 3012.3 s
+bins 20: RiseRatio 1.3708, trough 66.3 s, peak 607.2 s
+bins 24: RiseRatio 1.4945, trough 68.8 s, peak 629.8 s
+check flies    false
+check wake     false
+check sleep    false
+check centres  true
+check atRisk   false
+check events   false
+check tau      false
+check q        false
+check logL     false
+check rise     false
+GATE FAIL
+saved C:\Users\sheyu\Icode\analysis_20r\per0DD_bouts_20r.mat

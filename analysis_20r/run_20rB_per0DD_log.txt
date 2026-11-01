@@ -1,0 +1,18 @@
+per0 DD pre-run check, fly 1 (12_29_2017_multibeam_pruned2_10.txt_from1stLD.txtcutdata_4.8.2025.txt):
+  active runs   real n 10381, quantiles [1 1 1 1 2 5]; synthetic n  9802, quantiles [1 1 1 1 2 5]
+  inactive runs real n 10381, quantiles [1 1 2 5 20 1066]; synthetic n  9802, quantiles [1 1 2 5 22 1135.4]
+  replicate 20 / 199
+  replicate 40 / 199
+  replicate 60 / 199
+  replicate 80 / 199
+  replicate 100 / 199
+  replicate 120 / 199
+  replicate 140 / 199
+  replicate 160 / 199
+  replicate 180 / 199
+per0 DD 20r-B: observed n 4017; synthetic pooled n median 4616 (min 4499, max 4763); 199 of 199 subsampled
+  bins 12: observed RiseRatio 1.416; renewal median 1.027, 95th 1.145; p_ren 0.015
+  bins 16: observed RiseRatio 1.402; renewal median 1.047, 95th 1.197; p_ren 0.015
+  bins 20: observed RiseRatio 1.385; renewal median 1.088, 95th 1.358; p_ren 0.050
+  bins 24: observed RiseRatio 1.435; renewal median 1.114, 95th 1.418; p_ren 0.050
+  verdict: inconclusive (bin-sensitive)
