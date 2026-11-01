@@ -81,3 +81,18 @@ posteriorSummaries, hmmSimulatePhased. hmmEmStep / hmmForward were validated in 
 requested in QUESTIONS_lClaude.md Q2. Timing for planning: one CS fly (5760 minutes) at K = 3, 20 starts, takes
 121 s and stops at MaxIter 1000 (16 of 20 starts at the best optimum, ll -2539.6261), so a full 20b refit of 187 flies
 x K 2-4 is ~19 h serial.
+
+## Stage 2 — real-data subset, statistical (2026-11-01, code below; fits in sqw/validation/subset20b_fits.mat)
+
+Refit of 10 flies (the first 2 per genotype in cClaude's file order: CS, per0LD, per0DD, fumin, sss) at K = 3,
+20 random starts, theta 0.5, with `checkSubset20b`; labelled, 200 FFBS paths; hidden round trips (20g, all and
+matched 5/10) per fly x phase compared with cClaude's `roundtrip_per_fly_theta0.5.csv` (made from its 20b fits):
+p_quiet_entry, p_quiet_exit and the four fractions. z = difference / (sqrt(2) x Monte Carlo SE over paths);
+in the 36 cells where all 200 paths agree (SD 0) the SE is the binomial sqrt(p(1-p)/200).
+- 204 comparisons: |z| > 2 in 0.044 (noise alone ~0.05), |z| > 3 in none, max |z| 2.96. Per fly max |z|:
+  0.3-2.96; no fly stands out, so the port reached cClaude's optimum on all 10 (a different optimum shows as |z| >> 3).
+- Per-fly log-likelihoods (K = 3) are in sqw/validation/subset20b_compare.csv's companion .mat, kept for the exact
+  check once the stored fits arrive. No H1 degeneracy in the 10.
+- Without the binomial floor, one cell gave |z| 3535 (per0LD 8_25_2017_multibeam_pruned3, light, matched,
+  p_quiet_entry: port 1.000 on all 200 paths, Python 0.995 = one path in 200): an SE of 0, not a different fit.
+- Still pending for the stage-2 pass: the exact per-fly log-likelihood check (Q2).

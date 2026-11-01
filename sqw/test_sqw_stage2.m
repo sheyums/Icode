@@ -17,6 +17,7 @@ function test_sqw_stage2()
 %    9. labelStates: invariant to how the fit's states were ordered; likelihood unchanged
 %   10. recovery: simulate a known 3-state HMM (8 days), fit, label: P and B within 0.03
 %   11. hmmSimulatePhased frequencies within sampling error; posteriorSummaries J = J of mean counts
+%   12. G7  roundTripsHidden (all, matched 5/10) and roundTripStats, exact
 
 here = fileparts(mfilename('fullpath'));
 assert(isequal(fileparts(which('hmmFitPhased')), here), 'Run from the sqw folder.');
@@ -196,6 +197,20 @@ try
     [nP, nF] = rep(zP < 5 && zB < 5 && okJ, nP, nF, 11, sprintf(['simulation: transition / emission frequencies ' ...
         'max |z| %.2f / %.2f; posterior J = J of mean counts'], zP, zB), sprintf('zP %.2f zB %.2f J %d', zP, zB, okJ));
 catch err, [nP, nF] = rep(false, nP, nF, 11, '', err.message); end
+
+%% 12. G7 round trips on a hidden path, and their statistics
+try
+    g = G('G7_roundtrips.json'); h = g.hidden_path;
+    ok = isequal(roundTripsHidden(h.z + 1, h.ph + 1, 2), h.all) && ...
+        isequal(roundTripsHidden(h.z + 1, h.ph + 1, 2, MinSleep=5, MinGap=10), h.matched_5_10);
+    for c = {'stats_single', 'stats_paths'}
+        e = g.(c{1}); s = roundTripStats(reshape(e.counts, [], 4), e.hours);
+        d = [s.n - e.n, s.frac - e.frac', s.rate - e.rate', s.p_q_entry - e.p_q_entry, ...
+            s.p_q_exit - e.p_q_exit, s.dependence - e.dependence', s.frac_paths_used - e.frac_paths_used];
+        ok = ok && max(abs(d)) < 1e-12;
+    end
+    [nP, nF] = rep(ok, nP, nF, 12, 'G7 hidden round trips (all, matched 5/10) and round-trip statistics (single, paths)', 'mismatch');
+catch err, [nP, nF] = rep(false, nP, nF, 12, '', err.message); end
 
 fprintf('\n%d passed, %d failed\n', nP, nF);
 if nF > 0, error('test_sqw_stage2:failed', '%d test(s) failed', nF); end
