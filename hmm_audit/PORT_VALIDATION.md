@@ -2,6 +2,51 @@
 
 Append-only, one entry per stage, with the commit of the code that passed. Port by lClaude.
 
+## Status at pause (2026-11-01)
+
+A summary added at the top on Sheyum's request; the dated entries below are the record. Code: Icode/sqw (functions
+listed in sqw/README.md), branch matlab-port, merged into claude/trusting-allen-7nxrsf.
+
+**Ported and validated** (MATLAB R2026a; tests run by name from Icode/sqw):
+- Stage 1, observable core (symbols, sleep bouts, wake reference, pair/route counts, c_obs, counted J and EPR, observed
+  chain, landscape, Onsager fit/bootstrap, 20s-A group tables): `test_sqw_stage1` 21/21; 20s-A ledger medians
+  reproduced from raw data (`validate_20sA`).
+- Stage 2, HMM (EM fit, labelling, BIC, Viterbi, FFBS, posterior summaries, simulation, round trips): `test_sqw_stage2`
+  11/11; exact per-fly log-likelihood check against the stored 20b fits, 10/10 flies, max |dll| 2.5e-10.
+- Stage 3, model-free probes (second-order chain, block KL, TUR estimate and exact, HMM observed chain, 20p/20q group
+  drivers): `test_sqw_stage3` 13/13; 20p/20q ledger reproduced from raw data (160/160 deterministic numbers exact, 180
+  Monte Carlo statistics within error, every verdict agrees; `validate_20pq`).
+- Route vs duration (`routeDurationObserved`, `routeDurationD`, 20k): golden G11 exact; 20k observed R1 n and D equal
+  the ledger in all 9 blocks.
+- Figure exports and helpers: `test_sqw_figA` 10/10.
+- Root bout suite: BoutHazard overlay fixed (cd2f86f), `test_BoutHazard` 11/11; root suite now 130 tests.
+
+**Figures that exist in MATLAB** (data as CSV/.mat plus PNG/PDF, theme pinned light; outputs in sqw/validation/figA,
+sqw/validation/figC, analysis_20r/figC8):
+- Fig A1 (observed only; SI variant with HMM medians via `HmmMarkers=true`), Fig A2, Fig A3, Fig A4 (with the
+  adopted panel (c) legend): `exportFigA1`..`exportFigA4`, data from `planAData`, `planALikelihoods`.
+- Fig C7 observed (`exportFigC7`), Fig C8 wake hazard (`analysis_20r/figC8_wake_hazard.m`; all 8 RiseNullP equal the
+  ledger), Fig C10 clock face (`exportFigC10`), Fig C12 Kir2.1 (`exportFigC12`).
+
+**Not ported yet:**
+- The C13 profiles figure (fig_planB_21.py).
+- The dwell-direction figure (fig_dwell_direction.py; added by cClaude at 6e96fc4).
+- The SI memory figure with the HMM panel (fig_R1_main.py; figS_C7_memory_with_hmm_check).
+- Small alignment with cClaude's 2b56d1f: the SI Fig A1 is named figS_A1_with_hmm_check there, its option
+  'IncludeHMM' and legend "hidden Markov model (check), median"; the port writes figA1_direction_flux_SI_hmm with
+  `HmmMarkers` and "HMM (model-based estimate), median". Same content; names to be aligned.
+
+**Open notes:**
+- Q3 tolerance: exact TUR D and B agree with Python to ~1e-7 (round-off amplified by the second difference), so G12
+  checks them at 1e-6 relative. cClaude accepted this on 2026-11-01 (ledger notes); recorded here for completeness.
+- Analysis-folder copy of BoutHazard.m: it WAS one fix behind after cd2f86f, but it has since been re-synced on
+  Sheyum's request (C:\Users\sheyu\Box\MATLAB scripts\Rockefeller Matlab scripts, BoutHazard.m and
+  test_BoutHazard.m from cd2f86f, 11/11 there, Icode_sync_stamp.txt updated, committed in that folder's repository
+  as a301f73). It is now current with matlab-port and claude/trusting-allen-7nxrsf. It is AHEAD of Icode main,
+  which does not have the fix yet.
+- per0 LD light (20k observed R1): the Holm star is near threshold at 2000 permutations; Fig C7 takes the ledger's
+  stars (see the cd2f86f entry).
+
 ## Stage 1 — observable core (2026-11-01, code 2bddb4d)
 
 **Functions** (Icode/sqw; map in sqw/README.md): readCounts, sleepBouts, wakeBoutEvents, wakeReference,
