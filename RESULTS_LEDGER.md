@@ -605,3 +605,33 @@ Not reportable  Not "CS DD has no rise": power is for a per0-SIZED rise in THESE
                 resampled with heavy overlap (20 of 25 flies per subsample), not for a new cohort or
                 a smaller rise. 199 null replicates per subsample: p in steps of 0.005.
 ```
+
+### 2026-10-31  20r-A follow-up (a), amendment: power to see the per0 DD rise at n = 1773
+
+```
+Commit          7bd0e99f92554a6a71eeda4604c0eb0236fcef49 (analysis_20r/run_20rA_followups.m 'power',
+                rise_test_20r.m); log analysis_20r/followup_power_n1773_log.txt (the complete
+                half-size log, n = 1536 then n = 1773), results
+                analysis_20r/followup_power_per0DD_n1773.mat
+Prespec         "Amendment to 20r-A follow-ups: power also at each half's n" (9389016).
+Data            per0 DD reference wake bouts (per0DD_bouts_20r_replication.mat, b14ba340...).
+Time window     Each subsample, pooled over the flies it holds.
+n               1773 per subsample (the CS DD record-hours 12-24 count); 199 subsamples, median 11
+                whole flies each plus part of one more; rng(3000 + b).
+Result          Power (fraction with RiseNullP < 0.05), bins 12 / 16 / 20 / 24:
+                  0.834 / 0.698 / 0.508 / 0.487
+                Median RiseRatio 1.501 / 1.588 / 1.616 / 1.771; median RiseNullP 0.010 / 0.015 /
+                0.045 / 0.055. Verdict over the four counts: "supported" 0.392; "supported" or
+                "supported but bin-sensitive" 0.869. NullDropped > 0 in none.
+Matched null    Each subsample's own two-exponential fit, 199 null datasets of n = 1773, each through
+                the whole estimator on its own bins (NullReplicates 199, Sheyum 2026-10-31).
+Verdict         Descriptive (no rule). At n = 1773 a per0-like rise is detected at 12 bins in 83% of
+                subsamples and gives a "supported" or "bin-sensitive" verdict in 87%. CS DD hours
+                12-24 (n = 1773) gave p = 1.000 / 1.000 / 1.000 / 0.993 with RiseRatio < 1 at every
+                count: not a near miss. Across the three sizes (1536, 1773, 3309) the
+                "supported or bin-sensitive" rate is 0.809, 0.869, 1.000.
+Not reportable  The power is for THESE 25 per0 flies, resampled with overlap, not for a new cohort, and
+                assumes CS DD's rise, if any, would be per0-sized. 199 null replicates per subsample:
+                p in steps of 0.005. The half-size power runs shared one MATLAB session, n = 1536
+                first; each subsample re-seeds with rng(3000 + b), so order does not change them.
+```
