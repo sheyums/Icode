@@ -29,15 +29,15 @@ beneath the observed cycle (hidden layer thin; per0 DD anomaly; TUR saturation).
 ### Frozen claim list (each claim, the level it rests on, the analysis that supports it, status)
 | # | Claim | Level | Support (ledger) | Status |
 |---|---|---|---|---|
-| C1 | Wake contains two states, quiet (Q) and active (W), defined per fly by theta x r_f | observed | 20b theta sensitivity; 20m (30 s) | done |
+| C1 | Splitting wake at theta x r_f into quiet (Q) and active (W) minutes reveals a directed cycle, robust to theta (0.33/0.5/0.75) and to 30-s resolution. NOT claimed: that wake has two discrete states (no bimodality test) | observed | 20b theta sensitivity; 20m (30 s) | DONE, REWORDED 2026-11-01 (20t critique) |
 | C2 | Sleep-wake transitions circulate W->Q->S->W: forward in CS night, per0 (LD dark, DD), fumin, CS DD; weak in CS light and per0LD light; ~0 or reversed in sss | observed (minute-level c_obs and count J, 20s-A); HMM agrees in sign in 81-100% of flies | 20b, 20d, 20e, 20m, 20s-A | DONE. NOTE per0LD: transit c (20b) ~0 but minute-level c_obs +0.04/+0.10 |
-| C3 | In CS the circulation switches on at night | observed, 6-h blocks | 20c (HMM); 20s-A observable: night - day c_obs +0.12 (80% of flies, p 0.0004) | DONE |
-| C4 | Cycle flux J, affinity A and EPR per genotype x phase: new quantities for sleep-wake | observed (count-based, rule of three; exact observed-chain values); HMM value as upper bracket (J x1.0-1.2, EPR x1.2-3.6 per fly) | 20s-A | DONE |
-| C5 | EPR grows faster than linearly with J (CS, per0LD, sss; ambiguous per0DD, fumin); Onsager L lower in sss (p < 0.001) and higher in per0 DD (p 0.026) than in CS by fly-bootstrap difference; per0 LD, fumin, CS DD not distinguishable from CS (the hidden-level per0LD > CS does NOT hold) | observed | 20s-A + addendum 2 (20j hidden for comparison) | DONE, claim REVISED |
+| C3 | In CS the circulation strengthens at night (mainly nocturnal); it is already forward late in the light (ZT 6-12 c_obs +0.043, J +0.125) | observed, 6-h blocks | 20c (HMM); 20s-A: night - day c_obs +0.12 (80% of flies, p 0.0004) | DONE, REWORDED (was 'switches on') |
+| C4 | Cycle flux J, affinity A and EPR per genotype x phase: new quantities for sleep-wake | observed (count-based, rule of three; exact observed-chain values, chain-EPR medians with Inf ranked highest); the HMM's values are a MODEL-BASED ESTIMATE, not a bound: typically larger (median x1.2-3.6 per fly) but below the observed chain in CS, fumin and sss light | 20s-A + correction 2026-11-01 | DONE, REWORDED ('upper bracket' removed) |
+| C5 | EPR grows faster than linearly with J (clear in CS, per0LD, sss count points; ambiguous per0DD, fumin) - the near-equilibrium expectation for a single cycle, a consistency result. Onsager L lower in sss than CS (fly-bootstrap difference p < 0.001, BH q 0.003); per0 DD higher than CS only nominally (p 0.026, BH q 0.065, and DD vs LD); per0 LD, fumin, CS DD not distinguishable from CS. Like-for-like per0 DD vs CS DD not tested | observed | 20s-A + addenda | DONE, REWORDED |
 | C6 | Energy landscape: E3 - E1 negative in CS/per0 (and CS DD), positive in fumin/sss | observed chain | 20s-A (20l HMM agrees) | DONE |
 | C7 | Memory: how a fly leaves sleep depends on how long it slept (CS night) | observed (within-fly null), confirmed hidden (400-sim null) | 20k, 20m | done |
 | C8 | per0 DD wake-bout hazard rises after a trough (supported but bin-sensitive: RiseNullP 0.001/0.009/0.059/0.086 at 12/16/20/24 bins; reproducible from raw files and documented code). Not produced by burst-pause scoring (renewal null makes LESS of a rise than the falling-hazard null; by rule inconclusive, p_ren 0.015/0.015/0.050/0.050). CS DD shows no rise, pooled or in either 12-h half (p ~ 1, RiseRatio < 1), with power to see a per0-sized rise at 12 bins of 1.00 at CS DD's pooled n (3309), 0.83 and 0.77 at the half sizes (1773, 1536); the per0 DD series branch (>= 2 stages) collapses to exponentials in CS DD | observed bouts, 1 s | root ledger, branch 20r-lclaude (45abec1) | DONE; all 20r analyses run and recorded (20r-lclaude head 32fe85b); CS DD 20r-B and 20r-C not run, per their rules. Not reportable: 'the rise needs a broken clock' (one cohort each); 'beyond renewal' (rule not met) |
-| C9 | Beneath the observed cycle: hidden layer thin; extra irreversibility only in per0 DD; cycle sits at the TUR bound | model-free probes | 20n, 20o, 20p, 20q | done |
+| C9 | Beneath the observed cycle: the hidden layer is thin (20n, 20o); extra irreversibility from 3-min memory in per0 DD (also without sleep) and in fumin dark (sleep-criterion caveat) (20p); no TUR evidence of hidden dissipation: the observed current is at most as precise as the observed chain allows, reaching that level only in per0 DD and CS dark (the chain itself sits at its bound by construction near equilibrium) (20q) | model-free probes | 20n, 20o, 20p, 20q | DONE, REWORDED |
 
 Supplementary (done, keep): 20e flips, 20f estimator calibration, 20g round trips, 20h dwell times, 20i
 missing-reference sensitivity, 20m resolution, 20o drift.
@@ -62,7 +62,9 @@ without it. Anything else goes to Plan B or 'future work'.
 
 ---------------------------------------------------------------------------------------------------------------
 
-## PLAN B — paper 2 (or merged): sleep-wake regulators as drives on the observed cycle
+## PLAN B — merged into ONE paper (Sheyum 2026-11-01). Per-fly Plan B failed feasibility (20t F1, F5 on planB-feasibility); group-level tests 1-3 approved: 20u reversible-null control of the per0 DD rise, 20v waiting-time EP excess, 20w clock face. Tests 4 (deprivation) and 5 (clock-cost bound; F3 gives >= ~19 k_B/h, weak) pending.
+
+## (original Plan B text below): sleep-wake regulators as drives on the observed cycle
 
 Question: which transitions of the observed S/Q/W cycle do the circadian clock and the sleep homeostat act on,
 and what do they cost?
