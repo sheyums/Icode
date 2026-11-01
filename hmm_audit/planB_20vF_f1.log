@@ -1,0 +1,3 @@
+F1 per0DD  flies 25 | minutes differing total 0 of 131040 | worst fly agreement 1.00000 | kinds (forward symbol->reversed-scored symbol; Q0 W1 S2 missing-1) {} -> PASS
+F1 CSDD    flies 25 | minutes differing total 0 of 144000 | worst fly agreement 1.00000 | kinds (forward symbol->reversed-scored symbol; Q0 W1 S2 missing-1) {} -> PASS
+F1 overall: PASS

@@ -221,3 +221,12 @@ or printed. Fix (purely numerical, same model, starts, orders and rules):
 Re-validated against the brute-force per-second forward-backward: logL agrees to 3e-14, expected counts to 1.5e-11,
 and recovery is unchanged (planB_20u_validate.py). A fast-only inactive block facing a 12,000-s silence now gives a
 finite logL with counts summing to T - 1. Re-run with the fixed code (commit below).
+
+## PRESPEC 20v amendment F — F1 gate: time symmetry of the scoring (2026-11-01; amendment 87d9d77, code 8d5192a; planB_20vF_f1.log/.json)
+```
+F1 per0DD  flies 25 | minutes differing total 0 of 131040 | worst fly agreement 1.00000 -> PASS
+F1 CSDD    flies 25 | minutes differing total 0 of 144000 | worst fly agreement 1.00000 -> PASS
+```
+- reverse(sqw_symbols(x)) == sqw_symbols(reverse(x)) in EVERY minute of every per0 DD and CS DD whole-day retained trace
+  (light_dark=False, theta 0.5). The one-second r_f rounding at mid = (w0+w1)//2 changed no symbol here. The scoring
+  is exactly time-symmetric on these data, so F0's premise holds in the code. F2 follows.
