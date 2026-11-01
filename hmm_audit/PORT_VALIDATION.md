@@ -205,3 +205,32 @@ noiseless Onsager L recovered to 1e-16; exclusion filters, order, theme, Fig A4 
 2. Panel (c): per0 DD is filled (passes the pre-registered rule, a null-based Holm test) while its fly-bootstrap 95%
    CI of the median E crosses 0 (-0.008 to 0.077). Not an error, but a reader comparing the two marks will ask.
 3. The 20o ledger's "HMM_6 - MC1_6 (gain left after drift)" is over all flies; nothing in the figure uses it.
+
+## 2026-11-01  Figs C8, C10, C12 and the Fig A4(c) legend — code 2902414 (lClaude, matlab-port)
+
+Merged claude/trusting-allen-7nxrsf (68c9c0b) first. Tests: test_sqw_figA 9/9 (adds C10: cosine amplitude and
+mean recovered to 1e-17 on a synthetic 20w-B file; C12: dead flies dropped, no-cycle fly-phases and JSON nulls out of
+the depth and J panels, ledger stars as given).
+
+- **Fig A4(c) legend** now carries cClaude's wording (filled = pre-registered test, each fly vs its own simulated
+  null; bars = descriptive bootstrap CI of the median, can cross 0 when filled). The x range is widened on the right
+  so the four-line note does not sit on the sss rows. Re-rendered from the repo copies of its inputs
+  (sqw/validation/figA/figA4_likelihoods_perfly.csv, sqw/validation/perfly_20pq).
+- **Fig C8** (analysis_20r/figC8_wake_hazard.m; outputs analysis_20r/figC8): per0 DD (replication bouts, b14ba340,
+  n 4017) and CS DD (80402183, n 3309) wake hazards at 12/16/20/24 bins, recomputed with rise_test_20r's settings and
+  999 null replicates. All eight RiseNullP equal the ledger (per0 DD 0.001 / 0.009 / 0.059 / 0.086; CS DD 1.000 /
+  1.000 / 0.994 / 0.140), and the troughs, peaks and RiseRatios equal the ledger entries. Common log axes in minutes.
+- **Fig C10** (sqw/exportFigC10; outputs sqw/validation/figC): from planB_20wB.json; the port refits the 24-h cosine
+  and its amplitude equals the stored AJ for all four genotypes (max difference 4e-17). Verdict words copied.
+- **Fig C12** (sqw/exportFigC12): from y_kir.json; flies 19 / 25 / 34, depth and J n = 33 for vnc (one no-cycle
+  fly-phase each). Medians reproduce the 20y ledger: sleep light 38.5 -> 23.9 (vnc), dark 42.6 -> 34.7 (dfb) / 25.3
+  (vnc); E31 raised by 0.37 / 0.58 (dfb light / dark) and 1.08 / 1.05 (vnc). The Holm stars copied in fig_kir.py
+  agree with the 20y ledger in every panel. The clipped depth value is found and named from the data (control dark at
+  7.7), not hard-coded.
+
+**Defect found in the bout suite, not changed (root rule: ask first):** BoutHazard's optional SurvivalHandle overlay
+evaluates S(lefts) with lefts a ROW; FitHyperexponentialMLE's SurvivalHandle returns a COLUMN, so
+(sl - sr) ./ sl ./ width broadcasts and H.ModelHazard comes back n x n (11 x 11 on per0 DD, 12 bins). It touches only
+the overlay (H.ModelHazard and the model curve drawn by Plot=true); RiseNullP goes through NullSurvivalHandle and the
+C8 reproduction is exact. test_BoutHazard test 5 misses it because its handle preserves the input shape. Fix: one
+reshape in BoutHazard plus a test with a column-returning handle. figC8 computes the null hazard itself meanwhile.
