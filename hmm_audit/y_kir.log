@@ -1,0 +1,99 @@
+flies: {'empty': 19, 'dfb': 25, 'vnc': 34} dead: []
+no Q/W reference: {'empty light': 0, 'empty dark': 0, 'dfb light': 0, 'dfb dark': 0, 'vnc light': 0, 'vnc dark': 0}
+no-cycle fly-phases by kind (i one-way, ii symmetric, iii never observed / state absent): {'vnc light ii': 1, 'vnc dark ii': 1}
+
+== POSITIVE CONTROL: sleep (min/h) (main; Holm over 4)
+ sleep light dfb vs empty  n 25/19  med +37.6771 vs +38.5000  diff -0.8229 [-5.2500, +0.7612]  PS 0.38  p 0.1657  Holm 0.1657
+ sleep light vnc vs empty  n 34/19  med +23.9115 vs +38.5000  diff -14.5885 [-18.9427, -11.4740]  PS 0.01  p 4.353e-09  Holm 1.741e-08  -> CHANGES
+ sleep dark  dfb vs empty  n 25/19  med +34.6771 vs +42.6250  diff -7.9479 [-10.6458, -1.8021]  PS 0.19  p 0.0005912  Holm 0.001182  -> CHANGES
+ sleep dark  vnc vs empty  n 34/19  med +25.2656 vs +42.6250  diff -17.3594 [-21.7059, -13.0573]  PS 0.02  p 7.579e-09  Holm 2.274e-08  -> CHANGES
+
+== PRIMARY (main; Holm over 12)
+ c_obs light dfb vs empty  n 25/19  med -0.0094 vs +0.0135  diff -0.0229 [-0.0724, +0.0435]  PS 0.44  p 0.5379  Holm 1
+ c_obs light vnc vs empty  n 34/19  med -0.0275 vs +0.0135  diff -0.0410 [-0.0950, +0.0219]  PS 0.37  p 0.1306  Holm 1
+ c_obs dark  dfb vs empty  n 25/19  med +0.1088 vs +0.0761  diff +0.0327 [-0.0240, +0.0716]  PS 0.57  p 0.4069  Holm 1
+ c_obs dark  vnc vs empty  n 34/19  med +0.0416 vs +0.0761  diff -0.0345 [-0.1075, +0.0009]  PS 0.36  p 0.1007  Holm 1
+     J light dfb vs empty  n 25/19  med -0.0104 vs +0.0104  diff -0.0208 [-0.0625, +0.0417]  PS 0.48  p 0.7939  Holm 1
+     J light vnc vs empty  n 33/19  med -0.0312 vs +0.0104  diff -0.0417 [-0.1042, +0.0104]  PS 0.39  p 0.1828  Holm 1
+     J dark  dfb vs empty  n 25/19  med +0.1875 vs +0.0833  diff +0.1042 [+0.0417, +0.1667]  PS 0.67  p 0.05482  Holm 0.6579
+     J dark  vnc vs empty  n 33/19  med +0.0417 vs +0.0833  diff -0.0417 [-0.1354, +0.0107]  PS 0.39  p 0.1958  Holm 1
+   EPR light dfb vs empty  n 25/19  med +0.0087 vs +0.0166  diff -0.0078 [-0.0131, +0.0071]  PS 0.46  p 0.6356  Holm 1
+   EPR light vnc vs empty  n 33/19  med +0.0175 vs +0.0166  diff +0.0009 [-0.0116, +0.0188]  PS 0.56  p 0.4702  Holm 1
+   EPR dark  dfb vs empty  n 25/19  med +0.1082 vs +0.0499  diff +0.0583 [-0.0093, +0.1218]  PS 0.62  p 0.1846  Holm 1
+   EPR dark  vnc vs empty  n 33/19  med +0.0221 vs +0.0499  diff -0.0277 [-0.0850, +0.0051]  PS 0.36  p 0.1022  Holm 1
+
+== S1 transitions (main; Holm over 24)
+    QW light dfb vs empty  n 25/19  med +0.3194 vs +0.3114  diff +0.0080 [-0.0412, +0.0478]  PS 0.51  p 0.9057  Holm 1
+    QW light vnc vs empty  n 34/19  med +0.3864 vs +0.3114  diff +0.0750 [+0.0507, +0.0960]  PS 0.88  p 5.766e-06  Holm 0.0001153  -> CHANGES
+    QW dark  dfb vs empty  n 25/19  med +0.3211 vs +0.2584  diff +0.0628 [-0.0103, +0.0921]  PS 0.67  p 0.06458  Holm 0.4521
+    QW dark  vnc vs empty  n 34/19  med +0.3623 vs +0.2584  diff +0.1040 [+0.0289, +0.1487]  PS 0.82  p 0.0001604  Holm 0.002888  -> CHANGES
+    QS light dfb vs empty  n 25/19  med +0.0993 vs +0.1066  diff -0.0073 [-0.0350, +0.0095]  PS 0.37  p 0.1484  Holm 0.8902
+    QS light vnc vs empty  n 34/19  med +0.0579 vs +0.1066  diff -0.0487 [-0.0692, -0.0371]  PS 0.02  p 1.31e-08  Holm 2.883e-07  -> CHANGES
+    QS dark  dfb vs empty  n 25/19  med +0.1075 vs +0.1301  diff -0.0226 [-0.0414, -0.0089]  PS 0.24  p 0.004144  Holm 0.04613  -> CHANGES
+    QS dark  vnc vs empty  n 34/19  med +0.0706 vs +0.1301  diff -0.0595 [-0.0810, -0.0505]  PS 0.01  p 4.353e-09  Holm 1.045e-07  -> CHANGES
+    WQ light dfb vs empty  n 25/19  med +0.1552 vs +0.1256  diff +0.0296 [-0.0087, +0.0494]  PS 0.62  p 0.1694  Holm 0.8902
+    WQ light vnc vs empty  n 34/19  med +0.1332 vs +0.1256  diff +0.0076 [-0.0217, +0.0280]  PS 0.53  p 0.7455  Holm 1
+    WQ dark  dfb vs empty  n 25/19  med +0.2040 vs +0.1672  diff +0.0368 [-0.0025, +0.0636]  PS 0.69  p 0.03706  Holm 0.3336
+    WQ dark  vnc vs empty  n 34/19  med +0.1660 vs +0.1672  diff -0.0013 [-0.0445, +0.0305]  PS 0.48  p 0.8023  Holm 1
+    WS light dfb vs empty  n 25/19  med +0.0301 vs +0.0163  diff +0.0139 [+0.0075, +0.0233]  PS 0.80  p 0.0009094  Holm 0.01273  -> CHANGES
+    WS light vnc vs empty  n 34/19  med +0.0222 vs +0.0163  diff +0.0059 [+0.0012, +0.0144]  PS 0.69  p 0.02542  Holm 0.2542
+    WS dark  dfb vs empty  n 25/19  med +0.0575 vs +0.0557  diff +0.0018 [-0.0186, +0.0133]  PS 0.47  p 0.7223  Holm 1
+    WS dark  vnc vs empty  n 34/19  med +0.0258 vs +0.0557  diff -0.0299 [-0.0466, -0.0190]  PS 0.11  p 2.825e-06  Holm 5.932e-05  -> CHANGES
+    SQ light dfb vs empty  n 25/19  med +0.0218 vs +0.0164  diff +0.0053 [-0.0007, +0.0073]  PS 0.68  p 0.04158  Holm 0.3336
+    SQ light vnc vs empty  n 34/19  med +0.0256 vs +0.0164  diff +0.0092 [+0.0037, +0.0124]  PS 0.79  p 0.0005806  Holm 0.00929  -> CHANGES
+    SQ dark  dfb vs empty  n 25/19  med +0.0231 vs +0.0168  diff +0.0063 [+0.0019, +0.0114]  PS 0.76  p 0.003844  Holm 0.04613  -> CHANGES
+    SQ dark  vnc vs empty  n 34/19  med +0.0262 vs +0.0168  diff +0.0094 [+0.0054, +0.0154]  PS 0.85  p 2.658e-05  Holm 0.0005051  -> CHANGES
+    SW light dfb vs empty  n 25/19  med +0.0129 vs +0.0058  diff +0.0072 [+0.0036, +0.0138]  PS 0.80  p 0.0007667  Holm 0.0115  -> CHANGES
+    SW light vnc vs empty  n 34/19  med +0.0260 vs +0.0058  diff +0.0202 [+0.0155, +0.0232]  PS 0.99  p 5.441e-09  Holm 1.251e-07  -> CHANGES
+    SW dark  dfb vs empty  n 25/19  med +0.0272 vs +0.0149  diff +0.0123 [+0.0053, +0.0177]  PS 0.83  p 0.0002634  Holm 0.004478  -> CHANGES
+    SW dark  vnc vs empty  n 34/19  med +0.0232 vs +0.0149  diff +0.0083 [+0.0030, +0.0126]  PS 0.78  p 0.0009943  Holm 0.01293  -> CHANGES
+
+== S2 landscape (main; Holm over 8)
+   E21 light dfb vs empty  n 25/19  med -0.6694 vs -0.9592  diff +0.2899 [-0.0911, +0.4075]  PS 0.67  p 0.05203  Holm 0.1561
+   E21 light vnc vs empty  n 33/19  med -1.0967 vs -0.9592  diff -0.1374 [-0.5069, +0.0604]  PS 0.35  p 0.06811  Holm 0.1561
+   E21 dark  dfb vs empty  n 25/19  med -0.4789 vs -0.4841  diff +0.0052 [-0.2528, +0.2837]  PS 0.51  p 0.9622  Holm 0.9622
+   E21 dark  vnc vs empty  n 33/19  med -0.7043 vs -0.4841  diff -0.2203 [-0.6006, +0.0734]  PS 0.30  p 0.01581  Holm 0.06322
+   E31 light dfb vs empty  n 25/19  med -1.5718 vs -1.9388  diff +0.3670 [+0.0918, +0.5096]  PS 0.77  p 0.002239  Holm 0.0112  -> CHANGES
+   E31 light vnc vs empty  n 33/19  med -0.8598 vs -1.9388  diff +1.0790 [+0.7289, +1.3200]  PS 0.95  p 6.784e-08  Holm 4.748e-07  -> CHANGES
+   E31 dark  dfb vs empty  n 25/19  med -1.3732 vs -1.9560  diff +0.5828 [+0.2583, +0.7980]  PS 0.84  p 0.00015  Holm 0.0009001  -> CHANGES
+   E31 dark  vnc vs empty  n 33/19  med -0.9036 vs -1.9560  diff +1.0525 [+0.7953, +1.4096]  PS 0.99  p 6.797e-09  Holm 5.437e-08  -> CHANGES
+
+== S3 Onsager L (light+dark pooled; fly bootstrap)
+empty: L 0.250 [0.239, 0.283]
+dfb: L 0.376 [0.292, 0.434]
+vnc: L 0.284 [0.251, 0.326]
+dfb - empty: +0.126, bootstrap p 0.0030
+vnc - empty: +0.034, bootstrap p 0.1440
+
+== Monitor check (descriptive, uncorrected)
+vnc  sleep light rc2 +21.5312 (n 10) vs wc +25.1615 (n 24)  diff -3.6302  p 0.249
+vnc  sleep dark  rc2 +24.7031 (n 10) vs wc +26.3125 (n 24)  diff -1.6094  p 0.821
+vnc  c_obs light rc2 +0.0051 (n 10) vs wc -0.0349 (n 24)  diff +0.0400  p 0.299
+vnc  c_obs dark  rc2 +0.0145 (n 10) vs wc +0.0416 (n 24)  diff -0.0271  p 0.806
+vnc      J light rc2 +0.0104 (n 9) vs wc -0.0312 (n 24)  diff +0.0417  p 0.362
+vnc      J dark  rc2 +0.0156 (n 10) vs wc +0.0417 (n 23)  diff -0.0260  p 0.969
+vnc    EPR light rc2 +0.0174 (n 9) vs wc +0.0239 (n 24)  diff -0.0065  p 0.558
+vnc    EPR dark  rc2 +0.0488 (n 10) vs wc +0.0210 (n 23)  diff +0.0278  p 0.264
+empty  sleep light rc2 +37.4271 (n 3) vs rc +39.5990 (n 16)  diff -2.1719  p 0.211
+empty  sleep dark  rc2 +42.0938 (n 3) vs rc +42.8333 (n 16)  diff -0.7396  p 0.359
+empty  c_obs light rc2 -0.0186 (n 3) vs rc +0.0138 (n 16)  diff -0.0324  p 0.559
+empty  c_obs dark  rc2 +0.0792 (n 3) vs rc +0.0746 (n 16)  diff +0.0046  p 0.712
+empty      J light rc2 -0.0104 (n 3) vs rc +0.0104 (n 16)  diff -0.0208  p 0.286
+empty      J dark  rc2 +0.1042 (n 3) vs rc +0.0833 (n 16)  diff +0.0208  p 0.401
+empty    EPR light rc2 +0.0147 (n 3) vs rc +0.0166 (n 16)  diff -0.0019  p 0.875
+empty    EPR dark  rc2 +0.0499 (n 3) vs rc +0.0511 (n 16)  diff -0.0012  p 0.712
+
+== SENSITIVITY: primary without day 0 (nod0; Holm over 12)
+ c_obs light dfb vs empty  n 25/19  med -0.0222 vs +0.0372  diff -0.0594 [-0.1027, +0.0270]  PS 0.39  p 0.2092  Holm 1
+ c_obs light vnc vs empty  n 34/19  med -0.0289 vs +0.0372  diff -0.0661 [-0.1103, +0.0000]  PS 0.34  p 0.06222  Holm 0.6574
+ c_obs dark  dfb vs empty  n 25/19  med +0.1108 vs +0.0917  diff +0.0191 [-0.0558, +0.0819]  PS 0.54  p 0.6526  Holm 1
+ c_obs dark  vnc vs empty  n 34/19  med +0.0367 vs +0.0917  diff -0.0551 [-0.1380, -0.0006]  PS 0.34  p 0.05976  Holm 0.6574
+     J light dfb vs empty  n 25/19  med -0.0238 vs +0.0238  diff -0.0476 [-0.1071, +0.0357]  PS 0.42  p 0.3482  Holm 1
+     J light vnc vs empty  n 32/19  med -0.0298 vs +0.0238  diff -0.0536 [-0.1190, -0.0119]  PS 0.33  p 0.05107  Holm 0.6129
+     J dark  dfb vs empty  n 25/19  med +0.1667 vs +0.0833  diff +0.0833 [-0.0238, +0.1670]  PS 0.64  p 0.1176  Holm 0.9394
+     J dark  vnc vs empty  n 34/19  med +0.0476 vs +0.0833  diff -0.0357 [-0.1548, +0.0119]  PS 0.36  p 0.1044  Holm 0.9394
+   EPR light dfb vs empty  n 25/19  med +0.0185 vs +0.0197  diff -0.0012 [-0.0138, +0.0160]  PS 0.51  p 0.9245  Holm 1
+   EPR light vnc vs empty  n 32/19  med +0.0303 vs +0.0197  diff +0.0106 [-0.0120, +0.0310]  PS 0.57  p 0.4301  Holm 1
+   EPR dark  dfb vs empty  n 25/19  med +0.1232 vs +0.0660  diff +0.0572 [-0.0658, +0.1306]  PS 0.57  p 0.4069  Holm 1
+   EPR dark  vnc vs empty  n 34/19  med +0.0293 vs +0.0660  diff -0.0367 [-0.1310, +0.0039]  PS 0.37  p 0.1128  Holm 0.9394
+EXIT 0

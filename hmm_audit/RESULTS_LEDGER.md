@@ -2084,3 +2084,66 @@ The MATLAB port reproduces every 20s-A median at printed precision (0 disagreeme
   The Inf-ranked median, with the Inf share, is the value to report. Count-based EPR (rule of three) was unaffected.
 - Port calibration (400 null replicates, equal L, EPR-proportional noise): Wald p < 0.05 in 22% (nominal 5%), fly-bootstrap
   difference 5.2%; supports the bootstrap difference for the L comparisons (addendum 2).
+
+## PRESPEC 20y — circuit silencing (constitutive Kir2.1; empty / dfb / vnc split-GAL4), observable cycle (2026-11-01; PRESPEC 7088f64, committed before running; code cd8aaf2; y_kir.log / y_kir.json)
+Flies: empty 19, dfb 25, vnc 34; none dead; every fly x phase has a Q/W reference; no-cycle fly-phases: vnc light 1, vnc
+dark 1 (both kind ii, symmetric counts). Common non-CS background; males; LD; one run, one incubator. Narrowest block:
+one fly's light (or dark) minutes over 8 days. Tests two-sided Mann-Whitney vs empty; diff = median difference with
+fly-bootstrap 95% CI; PS = probability of superiority.
+POSITIVE CONTROL (sleep, min/h; Holm over 4):
+  light: dfb -0.8 [-5.3, +0.8] Holm 0.17 | vnc -14.6 [-18.9, -11.5] Holm 2e-08 (38.5 -> 23.9)
+  dark : dfb -7.9 [-10.6, -1.8] Holm 0.001 (42.6 -> 34.7) | vnc -17.4 [-21.7, -13.1] Holm 2e-08 (42.6 -> 25.3)
+PRIMARY (c_obs, J, EPR x light/dark x dfb/vnc; Holm over 12): NO CHANGE in any of the 12 (all Holm >= 0.66).
+  Largest: J dark dfb +0.104 cycles/h [+0.042, +0.167] (MW p 0.055, Holm 0.66: the bootstrap CI excludes 0, the
+  pre-specified test does not); EPR dark dfb +0.058 [-0.009, +0.122]. The control's own cycle is weak in this background
+  (J light +0.010, dark +0.083 cycles/h).
+S1 transitions (Holm over 24): vnc: Q->S down (light 0.107 -> 0.058, dark 0.130 -> 0.071), S->W up (light 0.006 ->
+  0.026, dark 0.015 -> 0.023), S->Q up (both), Q->W up (both), W->S down in dark (0.056 -> 0.026). dfb: S->W up (both),
+  S->Q up (dark), Q->S down (dark, Holm 0.046), W->S up (light). All Holm < 0.05 as listed; others ns.
+S2 landscape (Holm over 8): E_S - E_Q (E31) RAISED in all four (dfb +0.37 light, +0.58 dark; vnc +1.08 light, +1.05
+  dark nats); E21 unchanged.
+S3 Onsager L: empty 0.250 [0.239, 0.283], dfb 0.376 [0.292, 0.434] (diff p 0.003), vnc 0.284 [0.251, 0.326] (p 0.14).
+MONITOR CHECK: within-genotype monitor differences (vnc rc2 vs wc; empty rc2 vs rc) are all small against the genotype
+  effects (largest: vnc sleep light -3.6 min/h vs genotype -14.6) and none p < 0.2 -> no result flagged.
+SENSITIVITY (day 0 excluded): primary unchanged (all Holm >= 0.61).
+VERDICT: constitutive silencing of the vnc population reduces sleep by ~40% in light and dark, and of the dfb population
+  by ~19% at night only; NEITHER changes the direction, flux or dissipation of the W->Q->S->W circulation detectably. The
+  changes sit in the sleep transitions (entry from Q less likely, exit more likely) and in the energy of S relative to Q
+  (shallower sleep state), i.e. in the symmetric (landscape) part of the dynamics, not in its driving.
+Caveats (from the PRESPEC): constitutive (developmental effects not excluded); control is enhancerless full GAL4, drivers
+  are split-GAL4 (hemidriver insertions not controlled); background not CS, so no comparison with the main cohorts;
+  primary nulls are 'not detected' with the CIs above, in a background whose cycle is weak.
+
+## PRESPEC 20z Part C — exit route vs time asleep in the Kir2.1 flies (2026-11-01; PRESPEC 24c358b; code 2d92d67; z_partC.log/.json)
+Also: sleep bouts exported for Part A (kir_sleep_bouts_20z.csv): empty 5132, dfb 8671, vnc 9149 bouts (>= 300 s; record
+edges dropped). Part A (MATLAB, lClaude) not yet run.
+C1 (descriptive; group mean D = mean ln(sleep length | quiet exit) - mean ln(... | active exit); within-fly
+permutation null, 2000):
+  empty light +0.253 (p 0.006) | dark -0.086 (p 0.41)
+  dfb   light +0.344 (p 0.0005) | dark -0.077 (p 0.028)
+  vnc   light +0.100 (p 0.0055) | dark -0.078 (p 0.0135)
+  The exit route depends on time asleep in this background, with OPPOSITE signs by phase: in the light, flies leave
+  longer bouts through quiet wake; in the dark, longer bouts tend to end in active wake (the CS dark direction of 20k,
+  where D was -0.293, but weaker here). Different background from CS: not compared.
+C2 (PRIMARY for Part C; per-fly D vs empty, Mann-Whitney, Holm over 4): NO CHANGE (dfb light Holm 1, vnc light 0.32,
+  dfb dark 1, vnc dark 1).
+Verdict Part C: silencing does not detectably change how the exit from sleep depends on time asleep. The footprint of
+  sleep-length memory is present in all three groups.
+
+## 2026-11-01  Corrections and notes from the MATLAB port, stage 3 (lClaude, matlab-port 4448209); no number re-run
+- 20q entry: the "no estimate (blocks < 4 or D <= 0)" counts were pooled over the three block lengths (2, 3, 6 h) by
+  sqw16_report. At the primary 3 h they are fumin light 1 (printed 15) and sss light 0 (printed 10). The n's printed on
+  those lines are the 3-h ones and are correct; no verdict changes.
+- 20q entry: Q_obs and S2 are the same per-fly quantity (B_c / sigma_MC), printed twice.
+- sqw_ref.simulate maps an all-zero transition row to the LAST state. Two stored 20b fits (sss flies 1 and 40, 0-based)
+  have such a row (H3, light phase, no S there), so in those two flies' HMM-simulated records a fly in H3 at lights-on
+  stays asleep through the light phase. Affects only sss-light HMM-simulated statistics of 20p/20q (descriptive; no
+  primary or verdict involves them; the port, which fills such rows uniformly, reproduces every verdict). Not re-run;
+  the defect is recorded here and in sqw_ref's docstring is to be read with this note.
+- make_golden_planA.py: the light matrix was labelled "forward-biased"; its cycle current is negative (reverse-biased).
+  Label corrected; golden values unchanged.
+- G12 tolerance (lClaude Q3): the exact TUR D and B are second central differences of the log Perron root (h = 1e-3);
+  eigenvalue round-off ~1e-16 is amplified ~6e7, so agreement between two implementations is ~1e-7. Accepted: D and B
+  are checked at 1e-6 relative.
+- Wording: Fig A1 legend, FIGURE_RECIPES K and PORTING_GUIDE section 11 said "model-based upper bracket"; changed to
+  "model-based estimate (not a bound)", as in PLANS C4 since 2026-11-01. Fig A1 regenerated.

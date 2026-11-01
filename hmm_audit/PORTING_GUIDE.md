@@ -440,7 +440,7 @@ which pooled bouts across flies with no within-fly null.
 ## 11. Plan A (2026-10-31): the observed S/Q/W chain and model-free probes (`sqw_ref.py` section 15; golden G12)
 
 Plan A (PLANS.md) makes the OBSERVED first-order chain on S/Q/W the primary object; the HMM is a robustness check and a
-model-based upper bracket. Every number below is per fly x phase; group values are medians over flies with
+model-based estimate (not a bound). Every number below is per fly x phase; group values are medians over flies with
 fly-bootstrap intervals; every observable-vs-hidden comparison is paired within fly.
 
 ### 11.1 Function map (add to section 2)
