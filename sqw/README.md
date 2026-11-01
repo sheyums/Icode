@@ -69,3 +69,19 @@ Tests: `test_sqw_stage2`.
 | `sqwListFiles`, `sqwFlyInput`, `wilcoxonP`, `binomGreater`, `holmAdjust` | — | helpers |
 
 Tests: `test_sqw_stage3`. Raw-data check: `validate_20pq(dataRoot, jsonlFile, outDir)`.
+
+## Figure exports — Plan A Figs A1–A4 (FIGURE_RECIPES section K)
+Each export writes the plotted per-fly points and the per-block medians / CIs as CSV (for Origin) and .mat, and
+draws the figure (theme pinned light, genotype order CS → CS DD → per0 LD → per0 DD → fumin → sss, light before dark)
+as PNG and vector PDF.
+
+| MATLAB | Python | notes |
+|---|---|---|
+| `planAData` | `sqw17.py` | six `sqwObservableGroup` outputs in paper order (sss = the 54-file 20s-A set) plus the HMM triangles; stored 20b fits matched to files BY NAME |
+| `planAFlyHMM` | `sqw17.py` "hid", `sqw2.decode` | HMM count J and EPR, mean over 200 FFBS paths, per fly x phase |
+| `planALikelihoods` | `sqw13.py`, `sqw14.py` | per-fly 20n / 20o log-likelihoods (MC1, HMM, MC2 at 12 h; MC1, HMM at 6 h), dBIC, R_mem, R_drift |
+| `exportFigA1` .. `exportFigA3` | `fig_planA.py` | direction and flux; EPR vs J and Onsager L; energy landscape |
+| `exportFigA4` | `fig_beneath.py` | reads the per-fly CSVs `sqwMemoryGroup` / `sqwTURGroup` write, plus `planALikelihoods` |
+| `planAStyle`, `planAFigure`, `planAStrip` | — | colours, fonts, blocks; figure with theme pinned; strip panel |
+
+Tests: `test_sqw_figA`.
