@@ -108,12 +108,17 @@ def _kernel(sym, L, P, Ka, K, lam1, V1, Vi1, lam0, V0, Vi0, pi):
         at = np.zeros(3)
         for k in range(m):
             for i in range(m): at[k] += f[i] * V[i, k]
+        lmx = 0.0
+        for k in range(m): lmx = max(lmx, lam[k])
+        if lmx <= 0.0: lmx = 1e-300
+        ll += (L[r] - 1.0) * math.log(lmx)
         u = np.zeros(3)
         for j in range(m):
-            for k in range(m): u[j] += at[k] * math.pow(lam[k], L[r] - 1.0) * Vi[k, j]
+            for k in range(m): u[j] += at[k] * math.pow(lam[k] / lmx, L[r] - 1.0) * Vi[k, j]
         if r == nR - 1:
             s = 0.0
             for j in range(m): s += u[j]
+            if not (s > 0.0): return -np.inf, np.zeros((K, K))
             ll += math.log(s)
             for j in range(m): U[r, j] = u[j] / s
             break
@@ -122,6 +127,7 @@ def _kernel(sym, L, P, Ka, K, lam1, V1, Vi1, lam0, V0, Vi0, pi):
         for j in range(m2):
             for i in range(m): fn[j] += u[i] * P[off + i, off2 + j]
             s += fn[j]
+        if not (s > 0.0): return -np.inf, np.zeros((K, K))
         ll += math.log(s)
         for j in range(m2): f[j] = fn[j] / s
         for i in range(m): U[r, i] = u[i] / s
@@ -133,14 +139,18 @@ def _kernel(sym, L, P, Ka, K, lam1, V1, Vi1, lam0, V0, Vi0, pi):
         bt = np.zeros(3)
         for k in range(m2):
             for j in range(m2): bt[k] += Vi[k, j] * Bk[r + 1, j]
+        lmx2 = 0.0
+        for k in range(m2): lmx2 = max(lmx2, lam[k])
+        if lmx2 <= 0.0: lmx2 = 1e-300
         g = np.zeros(3)
         for j in range(m2):
-            for k in range(m2): g[j] += V[j, k] * math.pow(lam[k], L[r + 1] - 1.0) * bt[k]
+            for k in range(m2): g[j] += V[j, k] * math.pow(lam[k] / lmx2, L[r + 1] - 1.0) * bt[k]
         for j in range(m2): G[r + 1, j] = g[j]
         s = 0.0; bb = np.zeros(3)
         for i in range(m):
             for j in range(m2): bb[i] += P[off + i, off2 + j] * g[j]
             s += bb[i]
+        if not (s > 0.0): return -np.inf, np.zeros((K, K))
         for i in range(m): Bk[r, i] = bb[i] / s
     C = np.zeros((K, K))
     for r in range(nR):
@@ -151,15 +161,18 @@ def _kernel(sym, L, P, Ka, K, lam1, V1, Vi1, lam0, V0, Vi0, pi):
             for k in range(m):
                 for i in range(m):
                     at[k] += F[r, i] * V[i, k]; bt[k] += Vi[k, i] * Bk[r, i]
+            lmx = 0.0
+            for k in range(m): lmx = max(lmx, lam[k])
+            if lmx <= 0.0: lmx = 1e-300
             Z = 0.0
-            for k in range(m): Z += at[k] * math.pow(lam[k], L[r] - 1.0) * bt[k]
+            for k in range(m): Z += at[k] * math.pow(lam[k] / lmx, L[r] - 1.0) * bt[k]
             Gm = np.zeros((3, 3))
             for k in range(m):
                 for l in range(m):
                     if abs(lam[k] - lam[l]) < 1e-12:
-                        Gm[k, l] = (L[r] - 1.0) * math.pow(lam[k], L[r] - 2.0)
+                        Gm[k, l] = (L[r] - 1.0) * math.pow(lam[k] / lmx, L[r] - 2.0) / lmx
                     else:
-                        Gm[k, l] = (math.pow(lam[k], L[r] - 1.0) - math.pow(lam[l], L[r] - 1.0)) / (lam[k] - lam[l])
+                        Gm[k, l] = (math.pow(lam[k] / lmx, L[r] - 1.0) - math.pow(lam[l] / lmx, L[r] - 1.0)) / (lam[k] - lam[l])
             for i in range(m):
                 for j in range(m):
                     Mij = 0.0
@@ -209,6 +222,7 @@ def fit_order(sym, L, Ka, Ki, rng, starts=10, maxit=2000, tol=1e-9):
         X = random_start(K, rng); old = -np.inf; it = 0
         for it in range(maxit):
             ll, C = loglik_counts(X, Ka, sym, L)
+            if not np.isfinite(ll): break
             if it > 0 and ll - old < tol * abs(ll): break
             old = ll; X = reversible_mle(C, X)
         if ll > best[0]: best = (ll, X, it)

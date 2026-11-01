@@ -209,3 +209,15 @@ per0 DD null (p >= 0.05): no flag
   sss around a mean flux of ~0.
 - This supersedes the 20w range summary as the clock-face statistic. 20w stands as recorded (descriptive, no
   genotype rhythmic by its rule).
+
+## Note (2026-11-01): 20u stage 1 crashed; numerical fix, no result seen
+The first 20u run (code 0fd7221) died in stage 1 with ZeroDivisionError inside the forward-backward kernel
+(planB_20u_crash1.log). Cause: a random EM start can give an inactive block whose largest eigenvalue, raised to a run
+length up to 11,881 s, underflows to 0, so a normalisation was 0. No fit, adequacy number or null had been produced
+or printed. Fix (purely numerical, same model, starts, orders and rules):
+- lambda_max^(L-1) is factored out of each run's propagation, with (L-1) log lambda_max added to the log-likelihood;
+- the counts use the identically rescaled G and Z;
+- a zero normalisation now returns logL = -Inf, ending that start.
+Re-validated against the brute-force per-second forward-backward: logL agrees to 3e-14, expected counts to 1.5e-11,
+and recovery is unchanged (planB_20u_validate.py). A fast-only inactive block facing a 12,000-s silence now gives a
+finite logL with counts summing to T - 1. Re-run with the fixed code (commit below).
