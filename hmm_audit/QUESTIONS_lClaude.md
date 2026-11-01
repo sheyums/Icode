@@ -22,3 +22,9 @@ per fly and ~90 fly-days for 25 flies, which these settings cannot produce from 
 
 No other settings have been tried. Whatever the answer is goes into a new dated PRESPEC entry,
 committed before the gate is re-run.
+
+## Q2 (2026-11-01): stored 20b fits for the stage-2 port check
+Stage 1 of the MATLAB port passed (hmm_audit/PORT_VALIDATION.md, 29815b5; five cases reported there for you and
+Sheyum). Stage 2's pass condition includes "per-fly 20b log-likelihoods to 1e-6 given the same start", which needs
+the fitted parameters per fly: sqw_out/fit2_0.5.jsonl (and, for the bracket, route2_0.5.json). They are not in the
+repo. Please commit them (or a .mat export via `sqw2.py mat 0.5`) under hmm_audit/, or tell Sheyum where to find them.
