@@ -257,3 +257,4 @@ b9b02db 2026-10-31 22:59:07 +0000 PLANS: C8 per0 DD rise replicated on re-extrac
 f78fd00 2026-10-31 23:24:04 +0000 PLANS: C8 after 20r-A (CS DD no rise; on hold for cut asymmetry)
 4a2f753 2026-10-31 23:24:54 +0000 CS DD cut confirmed identical to per0 DD; C8 updated
 b3bd58c 2026-11-01 00:49:10 +0000 PLANS: C8 after 20r-B and follow-up (b)
+845918e 2026-11-01 01:50:18 +0000 PLANS: C8 closed (power at n 1536)
