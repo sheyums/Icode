@@ -464,7 +464,7 @@ dark. Colours: CS #2a78d6, CS DD #6250d6, per0 LD #1baf7a, per0 DD #eda100, fumi
 ### K1. Fig A1 (direction and flux; replaces Figs 6/6b), 3 stacked panels, 7.0 x 6.6 in
 Per fly x phase from `observable_quantities` with `mc_fit` matrices: (a) c_obs, (b) count J (cycles/h), (c) count EPR
 (nats/h, rule of three). In (b) and (c) a grey triangle beside each group = median of the HMM value over
-non-degenerate flies (20b FFBS counts), labelled "model-based upper bracket". Exclude fly-phases without a Q/W
+non-degenerate flies (20b FFBS counts), labelled "model-based estimate" (not a bound; wording changed 2026-11-01). Exclude fly-phases without a Q/W
 reference. Check: medians equal the 20s-A ledger (e.g. CS dark c_obs +0.147, J +0.167, EPR 0.116).
 
 ### K2. Fig A2 (EPR vs J and Onsager L; replaces Figs 11/12)

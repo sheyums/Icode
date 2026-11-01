@@ -2129,3 +2129,21 @@ C2 (PRIMARY for Part C; per-fly D vs empty, Mann-Whitney, Holm over 4): NO CHANG
   dfb dark 1, vnc dark 1).
 Verdict Part C: silencing does not detectably change how the exit from sleep depends on time asleep. The footprint of
   sleep-length memory is present in all three groups.
+
+## 2026-11-01  Corrections and notes from the MATLAB port, stage 3 (lClaude, matlab-port 4448209); no number re-run
+- 20q entry: the "no estimate (blocks < 4 or D <= 0)" counts were pooled over the three block lengths (2, 3, 6 h) by
+  sqw16_report. At the primary 3 h they are fumin light 1 (printed 15) and sss light 0 (printed 10). The n's printed on
+  those lines are the 3-h ones and are correct; no verdict changes.
+- 20q entry: Q_obs and S2 are the same per-fly quantity (B_c / sigma_MC), printed twice.
+- sqw_ref.simulate maps an all-zero transition row to the LAST state. Two stored 20b fits (sss flies 1 and 40, 0-based)
+  have such a row (H3, light phase, no S there), so in those two flies' HMM-simulated records a fly in H3 at lights-on
+  stays asleep through the light phase. Affects only sss-light HMM-simulated statistics of 20p/20q (descriptive; no
+  primary or verdict involves them; the port, which fills such rows uniformly, reproduces every verdict). Not re-run;
+  the defect is recorded here and in sqw_ref's docstring is to be read with this note.
+- make_golden_planA.py: the light matrix was labelled "forward-biased"; its cycle current is negative (reverse-biased).
+  Label corrected; golden values unchanged.
+- G12 tolerance (lClaude Q3): the exact TUR D and B are second central differences of the log Perron root (h = 1e-3);
+  eigenvalue round-off ~1e-16 is amplified ~6e7, so agreement between two implementations is ~1e-7. Accepted: D and B
+  are checked at 1e-6 relative.
+- Wording: Fig A1 legend, FIGURE_RECIPES K and PORTING_GUIDE section 11 said "model-based upper bracket"; changed to
+  "model-based estimate (not a bound)", as in PLANS C4 since 2026-11-01. Fig A1 regenerated.

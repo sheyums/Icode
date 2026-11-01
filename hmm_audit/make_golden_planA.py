@@ -3,7 +3,7 @@ import os,json,numpy as np
 import sqw_ref as R
 from make_golden import clean, dump
 rng=np.random.default_rng(1212)
-P=np.array([[[0.80,0.15,0.05],[0.06,0.90,0.04],[0.02,0.03,0.95]],      # light: forward-biased cycle
+P=np.array([[[0.80,0.15,0.05],[0.06,0.90,0.04],[0.02,0.03,0.95]],      # light: reverse-biased cycle (J < 0; label corrected 2026-11-01, values unchanged)
             [[0.70,0.20,0.10],[0.10,0.85,0.05],[0.03,0.05,0.92]]])     # dark
 T=2*1440; ph=R.phases(T); z,_=R.simulate(np.ones(3)/3,P,np.eye(3),ph,rng); y=z.copy(); y[500:530]=-1; y[2000:2003]=-1
 ll,pi,Pm=R.mc_fit(y,ph,2); ll2,_,_=R.mc2_fit(y,ph,2)
