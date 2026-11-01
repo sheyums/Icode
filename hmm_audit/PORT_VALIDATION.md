@@ -118,3 +118,17 @@ in the 57-file set, per A2), raw data re-extracted from the user's zips (SHA-256
 - Not checked here: the remaining 177 flies (seconds each by forward evaluation, if wanted), and
   sqw20b_route2_theta0.5.json (route/pair counts per path are FFBS draws; stage 3's G12 and the subset entry cover
   them statistically).
+
+## Stage 3 — IN PROGRESS, NOT PASSED (2026-11-01, work in progress; see test_sqw_stage3.m)
+Ported: chain2FitPhased (mc2_fit), pairChainStructure, fillEmptyRows (sim_rows), blockKL, blockKLStats, cycleIncrements,
+turEstimate, turExact, turExactCT, hmmObservedChain. First test run 9/13:
+- PASS golden: mc2 loglik (1e-6), blockKL/QW/stats (3e-16), turEstimate (0), fillEmptyRows; stress: blockKL and
+  turEstimate = literal loops, exact J = sum pi T d = 3 x cycle J, continuous-time TUR B <= sigma over 1000 chains,
+  pair-chain simulation, 20p null p-values uniform (p < .05 in 0.09 of 100).
+- FAIL test 4 (to REPORT, not tweak): turExact/turExactCT/hmmObservedChain match G12 to 1.5e-7, not the golden's 1e-9.
+  The differences are in D (second central difference of log Perron root, h = 1e-3: eigenvalue round-off ~1e-16 is
+  amplified by 1/h^2 x 60 ~ 6e7). Probably unattainable at 1e-9 in any second implementation; to agree with cClaude.
+- FAIL tests 6, 8, 11 (stress): not yet diagnosed. 6: pair-chain P on a complete record 1e-3 from the triple MLE, and
+  first-order data dev 0.037 > 0.03. 8: long-chain d2 0.0173 vs exact EPR 0.0218. 11: simulated symbol current -0.131
+  vs exact -0.153 (about 1.3 SE: threshold likely too tight). Each may be the test, not the code; check before trusting.
+- Not started: 20p/20q group drivers, the ledger-median comparison, figure exports.
