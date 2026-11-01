@@ -1,0 +1,1398 @@
+per0 DD subsample 1 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.47 660.38 s, q 0.0715 0.9285, logL -24364.9864, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.323, null median 1.101, 95th 1.211, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.335, null median 1.161, 95th 1.344, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.316, null median 1.215, 95th 1.461, RiseNullP 0.255, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.380, null median 1.267, 95th 1.575, RiseNullP 0.240, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 2 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.10 640.26 s, q 0.0805 0.9195, logL -24210.0889, degenerate 0
+  bins 12: trough    93.3 s, peak   758.7 s, RiseRatio 1.488, null median 1.086, 95th 1.207, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough    85.6 s, peak  1981.2 s, RiseRatio 1.644, null median 1.144, 95th 1.319, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    81.2 s, peak  2318.0 s, RiseRatio 1.859, null median 1.198, 95th 1.386, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    78.3 s, peak  2574.2 s, RiseRatio 2.085, null median 1.248, 95th 1.471, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 3 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.05 664.64 s, q 0.0849 0.9151, logL -24311.0028, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.446, null median 1.083, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.411, null median 1.145, 95th 1.295, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.466, null median 1.205, 95th 1.409, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.502, null median 1.233, 95th 1.531, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 4 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.05 660.00 s, q 0.0833 0.9167, logL -24283.9727, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.595, null median 1.092, 95th 1.203, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.723, null median 1.150, 95th 1.310, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.677, null median 1.215, 95th 1.447, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  3629.2 s, RiseRatio 1.792, null median 1.233, 95th 1.584, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 5 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.87 665.17 s, q 0.0711 0.9289, logL -24382.2570, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.730, null median 1.100, 95th 1.225, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.745, null median 1.158, 95th 1.352, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  3253.5 s, RiseRatio 1.768, null median 1.215, 95th 1.471, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   136.7 s, peak  3629.2 s, RiseRatio 1.903, null median 1.266, 95th 1.593, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 6 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.23 689.28 s, q 0.0912 0.9088, logL -24378.1492, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.332, null median 1.088, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   190.1 s, peak   997.7 s, RiseRatio 1.274, null median 1.148, 95th 1.317, RiseNullP 0.100, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.409, null median 1.196, 95th 1.411, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.410, null median 1.229, 95th 1.536, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 7 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.22 657.16 s, q 0.0842 0.9158, logL -24265.9342, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.353, null median 1.087, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.415, null median 1.146, 95th 1.310, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.391, null median 1.208, 95th 1.435, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.453, null median 1.241, 95th 1.553, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 8 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.54 653.67 s, q 0.0845 0.9155, logL -24252.8190, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.352, null median 1.088, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.434, null median 1.145, 95th 1.315, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.405, null median 1.192, 95th 1.411, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.464, null median 1.241, 95th 1.534, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 9 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.63 654.96 s, q 0.0846 0.9154, logL -24259.9922, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.385, null median 1.088, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.383, null median 1.144, 95th 1.310, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.419, null median 1.193, 95th 1.411, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.491, null median 1.237, 95th 1.546, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 10 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.88 671.90 s, q 0.0881 0.9119, logL -24297.4882, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.603, null median 1.090, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.754, null median 1.149, 95th 1.308, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.658, null median 1.211, 95th 1.446, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.835, null median 1.242, 95th 1.550, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 11 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.65 659.50 s, q 0.0788 0.9212, logL -24326.5194, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.440, null median 1.092, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.418, null median 1.150, 95th 1.348, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.394, null median 1.199, 95th 1.410, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.473, null median 1.256, 95th 1.551, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 12 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.40 668.73 s, q 0.0863 0.9137, logL -24288.7453, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.375, null median 1.090, 95th 1.201, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.341, null median 1.149, 95th 1.326, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.389, null median 1.213, 95th 1.460, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.465, null median 1.245, 95th 1.546, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 13 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.02 664.45 s, q 0.0781 0.9219, logL -24345.4960, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.427, null median 1.097, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak  3012.3 s, RiseRatio 1.421, null median 1.159, 95th 1.358, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.505, null median 1.209, 95th 1.406, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.480, null median 1.259, 95th 1.562, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 14 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.91 676.45 s, q 0.0876 0.9124, logL -24358.9671, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.386, null median 1.082, 95th 1.183, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.391, null median 1.139, 95th 1.288, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.368, null median 1.192, 95th 1.428, RiseNullP 0.100, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.413, null median 1.230, 95th 1.510, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 15 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.10 667.28 s, q 0.0869 0.9131, logL -24290.8424, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.358, null median 1.082, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.327, null median 1.150, 95th 1.312, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.356, null median 1.208, 95th 1.417, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.422, null median 1.247, 95th 1.530, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 16 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.10 691.71 s, q 0.0848 0.9152, logL -24420.5988, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.284, null median 1.093, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.262, null median 1.149, 95th 1.332, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.361, null median 1.207, 95th 1.447, RiseNullP 0.120, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.359, null median 1.245, 95th 1.570, RiseNullP 0.255, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 17 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.61 676.67 s, q 0.0671 0.9329, logL -24478.9125, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.576, null median 1.093, 95th 1.219, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.554, null median 1.156, 95th 1.349, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.497, null median 1.222, 95th 1.464, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.622, null median 1.257, 95th 1.548, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 18 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.62 638.81 s, q 0.0818 0.9182, logL -24183.9856, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.490, null median 1.098, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.643, null median 1.152, 95th 1.332, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.616, null median 1.219, 95th 1.453, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    65.9 s, peak  2521.0 s, RiseRatio 1.771, null median 1.239, 95th 1.570, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 19 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.04 668.88 s, q 0.0766 0.9234, logL -24393.8613, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.614, null median 1.095, 95th 1.206, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.619, null median 1.148, 95th 1.333, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.551, null median 1.196, 95th 1.425, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.654, null median 1.255, 95th 1.509, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 20 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.99 673.84 s, q 0.0678 0.9322, logL -24478.8808, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.449, null median 1.087, 95th 1.211, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.432, null median 1.150, 95th 1.331, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.470, null median 1.212, 95th 1.465, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.565, null median 1.256, 95th 1.564, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 21 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.56 659.71 s, q 0.0851 0.9149, logL -24294.8210, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.323, null median 1.086, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.305, null median 1.143, 95th 1.311, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.299, null median 1.189, 95th 1.410, RiseNullP 0.220, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.348, null median 1.233, 95th 1.514, RiseNullP 0.210, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 22 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.11 688.06 s, q 0.0895 0.9105, logL -24367.0744, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.397, null median 1.088, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.405, null median 1.152, 95th 1.316, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.336, null median 1.211, 95th 1.444, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.464, null median 1.250, 95th 1.522, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 23 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.97 667.36 s, q 0.0832 0.9168, logL -24336.2534, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.292, null median 1.088, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.282, null median 1.145, 95th 1.316, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.346, null median 1.205, 95th 1.414, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.399, null median 1.240, 95th 1.554, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 24 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.54 651.35 s, q 0.0929 0.9071, logL -24174.7226, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.334, null median 1.091, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.349, null median 1.144, 95th 1.314, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.317, null median 1.190, 95th 1.419, RiseNullP 0.175, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.389, null median 1.245, 95th 1.516, RiseNullP 0.190, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 25 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.77 671.45 s, q 0.0938 0.9062, logL -24285.1022, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.311, null median 1.088, 95th 1.183, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.295, null median 1.143, 95th 1.317, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.270, null median 1.182, 95th 1.410, RiseNullP 0.265, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.353, null median 1.238, 95th 1.506, RiseNullP 0.215, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 26 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.37 661.58 s, q 0.0707 0.9293, logL -24375.4048, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.356, null median 1.100, 95th 1.215, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.391, null median 1.161, 95th 1.354, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.355, null median 1.218, 95th 1.467, RiseNullP 0.180, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.449, null median 1.265, 95th 1.609, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 27 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.16 651.63 s, q 0.0873 0.9127, logL -24214.5355, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.311, null median 1.093, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.372, null median 1.148, 95th 1.332, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.337, null median 1.200, 95th 1.415, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.408, null median 1.241, 95th 1.516, RiseNullP 0.140, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 28 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.36 634.91 s, q 0.0813 0.9187, logL -24163.9443, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.654, null median 1.099, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.670, null median 1.154, 95th 1.335, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.602, null median 1.219, 95th 1.447, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.889, null median 1.246, 95th 1.595, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 29 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.67 661.30 s, q 0.0774 0.9226, logL -24329.3499, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.580, null median 1.096, 95th 1.208, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.542, null median 1.154, 95th 1.359, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   944.3 s, RiseRatio 1.530, null median 1.207, 95th 1.414, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.683, null median 1.261, 95th 1.568, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 30 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.66 680.03 s, q 0.0686 0.9314, logL -24484.4431, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.544, null median 1.093, 95th 1.222, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.527, null median 1.164, 95th 1.344, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.509, null median 1.217, 95th 1.465, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.563, null median 1.258, 95th 1.583, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 31 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.28 677.63 s, q 0.0785 0.9215, logL -24409.2828, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.646, null median 1.096, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.598, null median 1.155, 95th 1.362, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.513, null median 1.192, 95th 1.418, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.717, null median 1.258, 95th 1.541, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 32 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.27 661.49 s, q 0.0877 0.9123, logL -24259.8064, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.450, null median 1.094, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.426, null median 1.157, 95th 1.320, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.395, null median 1.203, 95th 1.406, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.477, null median 1.233, 95th 1.525, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 33 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 10.02 647.22 s, q 0.0788 0.9212, logL -24286.8667, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.390, null median 1.085, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.437, null median 1.143, 95th 1.322, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.397, null median 1.200, 95th 1.404, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.485, null median 1.243, 95th 1.507, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 34 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.07 658.12 s, q 0.0748 0.9252, logL -24340.9986, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.695, null median 1.099, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.715, null median 1.163, 95th 1.359, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.680, null median 1.205, 95th 1.453, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.781, null median 1.260, 95th 1.518, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 35 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.91 651.70 s, q 0.0873 0.9127, logL -24209.3031, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.649, null median 1.092, 95th 1.201, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.778, null median 1.154, 95th 1.322, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.719, null median 1.200, 95th 1.410, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.886, null median 1.241, 95th 1.537, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 36 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.87 645.35 s, q 0.0913 0.9087, logL -24164.1279, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.292, null median 1.091, 95th 1.194, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.296, null median 1.142, 95th 1.310, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.307, null median 1.192, 95th 1.421, RiseNullP 0.190, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.364, null median 1.240, 95th 1.513, RiseNullP 0.215, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 37 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.62 645.37 s, q 0.0851 0.9149, logL -24190.2641, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.500, null median 1.092, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.646, null median 1.150, 95th 1.320, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.593, null median 1.197, 95th 1.408, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.736, null median 1.245, 95th 1.562, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 38 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.36 658.87 s, q 0.0824 0.9176, logL -24290.8423, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.451, null median 1.096, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.446, null median 1.146, 95th 1.328, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.374, null median 1.218, 95th 1.421, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.508, null median 1.235, 95th 1.554, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 39 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.34 639.21 s, q 0.0813 0.9187, logL -24219.1879, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.357, null median 1.089, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.372, null median 1.144, 95th 1.307, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak  2285.0 s, RiseRatio 1.359, null median 1.195, 95th 1.408, RiseNullP 0.100, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.450, null median 1.231, 95th 1.522, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 40 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.13 655.50 s, q 0.0899 0.9101, logL -24228.8928, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.307, null median 1.090, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.316, null median 1.146, 95th 1.323, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.281, null median 1.188, 95th 1.417, RiseNullP 0.255, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.341, null median 1.231, 95th 1.500, RiseNullP 0.220, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 41 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.56 670.64 s, q 0.0645 0.9355, logL -24454.1658, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.766, null median 1.096, 95th 1.233, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.864, null median 1.170, 95th 1.381, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  3253.5 s, RiseRatio 1.801, null median 1.233, 95th 1.495, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   136.7 s, peak  3629.2 s, RiseRatio 1.940, null median 1.265, 95th 1.613, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 42 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 10.44 661.18 s, q 0.0820 0.9180, logL -24336.1932, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.313, null median 1.085, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.319, null median 1.140, 95th 1.290, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.333, null median 1.194, 95th 1.403, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.413, null median 1.239, 95th 1.539, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 43 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.26 672.36 s, q 0.0797 0.9203, logL -24375.9557, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.469, null median 1.094, 95th 1.204, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.456, null median 1.149, 95th 1.353, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.458, null median 1.207, 95th 1.411, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.531, null median 1.253, 95th 1.566, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 44 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.04 681.04 s, q 0.0853 0.9147, logL -24366.0323, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.311, null median 1.090, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.320, null median 1.147, 95th 1.323, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.382, null median 1.213, 95th 1.442, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.430, null median 1.249, 95th 1.541, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 45 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.71 655.68 s, q 0.0725 0.9275, logL -24321.4968, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.420, null median 1.101, 95th 1.216, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.326, null median 1.166, 95th 1.349, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.494, null median 1.220, 95th 1.432, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  3629.2 s, RiseRatio 2.008, null median 1.261, 95th 1.556, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 46 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.24 654.22 s, q 0.0898 0.9102, logL -24207.8404, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.433, null median 1.095, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.405, null median 1.148, 95th 1.327, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.352, null median 1.194, 95th 1.453, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.487, null median 1.243, 95th 1.509, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 47 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.51 656.60 s, q 0.0665 0.9335, logL -24369.6545, degenerate 0
+  bins 12: trough    93.3 s, peak   758.7 s, RiseRatio 1.537, null median 1.089, 95th 1.217, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough    85.6 s, peak  1981.2 s, RiseRatio 1.651, null median 1.151, 95th 1.338, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    81.2 s, peak  2318.0 s, RiseRatio 1.900, null median 1.207, 95th 1.441, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    78.3 s, peak  2574.2 s, RiseRatio 2.097, null median 1.259, 95th 1.531, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 48 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.66 642.89 s, q 0.0780 0.9220, logL -24251.2152, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.407, null median 1.094, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.475, null median 1.148, 95th 1.335, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.449, null median 1.207, 95th 1.405, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.525, null median 1.244, 95th 1.544, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 49 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.17 691.21 s, q 0.0887 0.9113, logL -24406.5501, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.361, null median 1.085, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.368, null median 1.147, 95th 1.290, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.403, null median 1.198, 95th 1.416, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.423, null median 1.245, 95th 1.508, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 50 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.13 669.70 s, q 0.0894 0.9106, logL -24282.4293, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.481, null median 1.093, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.444, null median 1.149, 95th 1.329, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.440, null median 1.195, 95th 1.419, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.531, null median 1.240, 95th 1.514, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 51 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.63 687.32 s, q 0.0961 0.9039, logL -24318.5052, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.429, null median 1.086, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.393, null median 1.141, 95th 1.316, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.409, null median 1.189, 95th 1.421, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.503, null median 1.245, 95th 1.539, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 52 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.62 663.29 s, q 0.0844 0.9156, logL -24299.8338, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.428, null median 1.090, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak   535.9 s, RiseRatio 1.334, null median 1.144, 95th 1.308, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  2101.6 s, RiseRatio 1.471, null median 1.205, 95th 1.419, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.622, null median 1.235, 95th 1.546, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 53 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.15 647.19 s, q 0.0800 0.9200, logL -24265.6758, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.283, null median 1.090, 95th 1.189, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.302, null median 1.144, 95th 1.333, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.330, null median 1.200, 95th 1.412, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.432, null median 1.244, 95th 1.532, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 54 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.75 664.58 s, q 0.0691 0.9309, logL -24436.6560, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.597, null median 1.085, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.553, null median 1.145, 95th 1.311, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.564, null median 1.204, 95th 1.442, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.710, null median 1.244, 95th 1.522, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 55 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.04 693.48 s, q 0.0736 0.9264, logL -24497.3872, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.389, null median 1.099, 95th 1.224, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.371, null median 1.170, 95th 1.342, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.346, null median 1.225, 95th 1.484, RiseNullP 0.210, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.447, null median 1.261, 95th 1.550, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 56 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.38 674.57 s, q 0.0712 0.9288, logL -24449.3456, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.447, null median 1.095, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.432, null median 1.156, 95th 1.349, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.421, null median 1.216, 95th 1.463, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.496, null median 1.259, 95th 1.528, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 57 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.09 675.79 s, q 0.0686 0.9314, logL -24484.5030, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.585, null median 1.089, 95th 1.211, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.576, null median 1.153, 95th 1.328, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.518, null median 1.211, 95th 1.447, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.643, null median 1.257, 95th 1.535, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 58 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.77 651.93 s, q 0.0796 0.9204, logL -24285.5848, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.404, null median 1.089, 95th 1.199, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.431, null median 1.147, 95th 1.330, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.486, null median 1.207, 95th 1.414, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.591, null median 1.258, 95th 1.564, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 59 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.09 653.62 s, q 0.0776 0.9224, logL -24297.7817, degenerate 0
+  bins 12: trough    93.3 s, peak   758.7 s, RiseRatio 1.484, null median 1.090, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough    85.6 s, peak  1981.2 s, RiseRatio 1.614, null median 1.144, 95th 1.318, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    81.2 s, peak  2318.0 s, RiseRatio 1.738, null median 1.192, 95th 1.415, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    78.3 s, peak  2574.2 s, RiseRatio 1.983, null median 1.255, 95th 1.471, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 60 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.35 687.45 s, q 0.0874 0.9126, logL -24402.5897, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.537, null median 1.089, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.569, null median 1.141, 95th 1.291, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.512, null median 1.196, 95th 1.448, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.581, null median 1.233, 95th 1.507, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 61 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.97 686.28 s, q 0.0852 0.9148, logL -24391.0360, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.450, null median 1.093, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.422, null median 1.148, 95th 1.323, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.486, null median 1.208, 95th 1.450, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.494, null median 1.240, 95th 1.561, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 62 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.01 659.71 s, q 0.0834 0.9166, logL -24297.7246, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.434, null median 1.084, 95th 1.194, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.489, null median 1.148, 95th 1.322, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.452, null median 1.211, 95th 1.413, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.513, null median 1.234, 95th 1.535, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 63 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.18 667.47 s, q 0.0888 0.9112, logL -24294.5745, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.266, null median 1.086, 95th 1.190, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.287, null median 1.146, 95th 1.316, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.312, null median 1.195, 95th 1.412, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.378, null median 1.237, 95th 1.524, RiseNullP 0.165, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 64 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.18 672.19 s, q 0.0860 0.9140, logL -24322.6589, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.326, null median 1.086, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.301, null median 1.149, 95th 1.318, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.314, null median 1.204, 95th 1.436, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.430, null median 1.244, 95th 1.525, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 65 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.85 666.08 s, q 0.0850 0.9150, logL -24296.3991, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.459, null median 1.093, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.494, null median 1.152, 95th 1.326, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.468, null median 1.216, 95th 1.442, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.519, null median 1.244, 95th 1.557, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 66 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.10 668.81 s, q 0.0856 0.9144, logL -24308.8925, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.463, null median 1.088, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.474, null median 1.149, 95th 1.314, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.488, null median 1.215, 95th 1.447, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.551, null median 1.243, 95th 1.552, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 67 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.21 644.39 s, q 0.0847 0.9153, logL -24217.3363, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.322, null median 1.089, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.294, null median 1.144, 95th 1.315, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.325, null median 1.190, 95th 1.403, RiseNullP 0.175, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.399, null median 1.230, 95th 1.524, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 68 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.71 671.56 s, q 0.0703 0.9297, logL -24415.5918, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.353, null median 1.105, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.346, null median 1.171, 95th 1.365, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.333, null median 1.222, 95th 1.480, RiseNullP 0.240, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.473, null median 1.273, 95th 1.584, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 69 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.24 676.45 s, q 0.0889 0.9111, logL -24319.7870, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.378, null median 1.091, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.378, null median 1.147, 95th 1.315, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.370, null median 1.206, 95th 1.446, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.427, null median 1.236, 95th 1.521, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 70 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.81 672.17 s, q 0.0876 0.9124, logL -24302.2295, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.689, null median 1.087, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.792, null median 1.147, 95th 1.319, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.703, null median 1.212, 95th 1.422, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.870, null median 1.250, 95th 1.551, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 71 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.13 639.69 s, q 0.0836 0.9164, logL -24183.3217, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.587, null median 1.095, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.710, null median 1.152, 95th 1.317, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.630, null median 1.199, 95th 1.409, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.881, null median 1.243, 95th 1.529, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 72 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.97 665.36 s, q 0.0820 0.9180, logL -24318.8124, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.248, null median 1.090, 95th 1.200, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.297, null median 1.148, 95th 1.326, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.297, null median 1.213, 95th 1.431, RiseNullP 0.240, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.365, null median 1.249, 95th 1.574, RiseNullP 0.225, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 73 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.83 683.76 s, q 0.0735 0.9265, logL -24466.8685, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.566, null median 1.099, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.483, null median 1.164, 95th 1.352, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.508, null median 1.216, 95th 1.460, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.723, null median 1.254, 95th 1.519, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 74 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.92 680.18 s, q 0.0729 0.9271, logL -24438.6195, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.545, null median 1.102, 95th 1.224, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.539, null median 1.166, 95th 1.357, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.544, null median 1.224, 95th 1.458, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.672, null median 1.277, 95th 1.592, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 75 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.82 661.86 s, q 0.0836 0.9164, logL -24286.0258, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.399, null median 1.091, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.427, null median 1.150, 95th 1.323, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.395, null median 1.212, 95th 1.414, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.480, null median 1.236, 95th 1.578, RiseNullP 0.100, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 76 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.95 643.98 s, q 0.0733 0.9267, logL -24281.2199, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.464, null median 1.098, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.427, null median 1.162, 95th 1.340, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  1469.0 s, RiseRatio 1.379, null median 1.199, 95th 1.436, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.531, null median 1.250, 95th 1.507, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 77 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.35 658.70 s, q 0.0824 0.9176, logL -24271.7959, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.297, null median 1.097, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough    63.1 s, peak   997.7 s, RiseRatio 1.278, null median 1.156, 95th 1.339, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.331, null median 1.225, 95th 1.457, RiseNullP 0.185, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.500, null median 1.252, 95th 1.589, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 78 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.44 664.45 s, q 0.0727 0.9273, logL -24375.3689, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.387, null median 1.102, 95th 1.213, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.434, null median 1.155, 95th 1.344, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.382, null median 1.221, 95th 1.428, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.480, null median 1.262, 95th 1.573, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 79 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.54 666.05 s, q 0.0893 0.9107, logL -24273.8358, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.375, null median 1.094, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.376, null median 1.149, 95th 1.333, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.352, null median 1.193, 95th 1.420, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.417, null median 1.244, 95th 1.531, RiseNullP 0.120, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 80 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.46 655.53 s, q 0.0701 0.9299, logL -24335.1926, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.683, null median 1.104, 95th 1.225, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.824, null median 1.165, 95th 1.349, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.770, null median 1.227, 95th 1.465, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.900, null median 1.284, 95th 1.583, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 81 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.14 633.66 s, q 0.0829 0.9171, logL -24140.1229, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.600, null median 1.093, 95th 1.206, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.578, null median 1.150, 95th 1.343, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.552, null median 1.212, 95th 1.416, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.801, null median 1.248, 95th 1.547, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 82 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.22 659.42 s, q 0.0827 0.9173, logL -24288.5072, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.606, null median 1.089, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.719, null median 1.145, 95th 1.314, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  3253.5 s, RiseRatio 1.642, null median 1.217, 95th 1.433, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  3629.2 s, RiseRatio 1.823, null median 1.234, 95th 1.575, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 83 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.02 659.33 s, q 0.0769 0.9231, logL -24330.9485, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.555, null median 1.098, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.591, null median 1.156, 95th 1.358, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.571, null median 1.200, 95th 1.417, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.623, null median 1.262, 95th 1.544, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 84 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.10 663.05 s, q 0.0909 0.9091, logL -24238.4715, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.447, null median 1.092, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.438, null median 1.149, 95th 1.326, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.427, null median 1.196, 95th 1.436, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.455, null median 1.252, 95th 1.511, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 85 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.48 684.37 s, q 0.0754 0.9246, logL -24448.0510, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.346, null median 1.101, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   190.1 s, peak   997.7 s, RiseRatio 1.284, null median 1.165, 95th 1.339, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.369, null median 1.216, 95th 1.457, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.402, null median 1.261, 95th 1.533, RiseNullP 0.205, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 86 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.69 663.62 s, q 0.0898 0.9102, logL -24241.1964, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.702, null median 1.093, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.769, null median 1.150, 95th 1.337, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.694, null median 1.200, 95th 1.429, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.879, null median 1.249, 95th 1.536, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 87 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.80 673.40 s, q 0.0725 0.9275, logL -24425.5717, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.540, null median 1.098, 95th 1.215, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.530, null median 1.162, 95th 1.349, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.439, null median 1.216, 95th 1.440, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.572, null median 1.262, 95th 1.599, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 88 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.75 657.33 s, q 0.0868 0.9132, logL -24255.6895, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.409, null median 1.090, 95th 1.190, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.350, null median 1.148, 95th 1.328, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.337, null median 1.201, 95th 1.431, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.495, null median 1.240, 95th 1.504, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 89 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.30 685.19 s, q 0.0637 0.9363, logL -24539.7791, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.535, null median 1.096, 95th 1.225, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.479, null median 1.159, 95th 1.326, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  1469.0 s, RiseRatio 1.468, null median 1.226, 95th 1.462, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.585, null median 1.261, 95th 1.576, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 90 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.84 668.05 s, q 0.0824 0.9176, logL -24326.3134, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.299, null median 1.090, 95th 1.204, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.336, null median 1.153, 95th 1.321, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.381, null median 1.211, 95th 1.438, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.471, null median 1.247, 95th 1.576, RiseNullP 0.120, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 91 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.23 656.76 s, q 0.0788 0.9212, logL -24305.8235, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.614, null median 1.097, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.567, null median 1.153, 95th 1.354, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.520, null median 1.209, 95th 1.410, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.682, null median 1.262, 95th 1.534, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 92 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.64 656.60 s, q 0.0786 0.9214, logL -24328.5697, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.364, null median 1.088, 95th 1.189, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.382, null median 1.145, 95th 1.343, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.400, null median 1.196, 95th 1.409, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.505, null median 1.255, 95th 1.518, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 93 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.68 657.14 s, q 0.0898 0.9102, logL -24229.7637, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.420, null median 1.089, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.415, null median 1.147, 95th 1.326, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.391, null median 1.191, 95th 1.421, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.462, null median 1.242, 95th 1.503, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 94 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.85 628.87 s, q 0.0782 0.9218, logL -24183.8021, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.723, null median 1.097, 95th 1.194, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.552, null median 1.147, 95th 1.345, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  2101.6 s, RiseRatio 1.581, null median 1.208, 95th 1.415, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.982, null median 1.246, 95th 1.574, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 95 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.40 686.02 s, q 0.0804 0.9196, logL -24435.6487, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.436, null median 1.095, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.466, null median 1.150, 95th 1.351, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.446, null median 1.204, 95th 1.411, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.466, null median 1.262, 95th 1.554, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 96 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.43 664.70 s, q 0.0595 0.9405, logL -24488.4508, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.389, null median 1.093, 95th 1.214, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.415, null median 1.148, 95th 1.315, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.378, null median 1.210, 95th 1.449, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.486, null median 1.250, 95th 1.560, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 97 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.26 681.79 s, q 0.0793 0.9207, logL -24402.8425, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.361, null median 1.095, 95th 1.220, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.335, null median 1.158, 95th 1.365, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.289, null median 1.207, 95th 1.426, RiseNullP 0.305, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.451, null median 1.264, 95th 1.583, RiseNullP 0.155, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 98 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.71 691.04 s, q 0.0728 0.9272, logL -24503.6388, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.584, null median 1.096, 95th 1.221, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.551, null median 1.166, 95th 1.350, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.591, null median 1.219, 95th 1.456, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.673, null median 1.262, 95th 1.580, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 99 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.61 680.89 s, q 0.0952 0.9048, logL -24315.4051, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.293, null median 1.085, 95th 1.181, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.260, null median 1.143, 95th 1.295, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.284, null median 1.182, 95th 1.409, RiseNullP 0.245, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.330, null median 1.238, 95th 1.502, RiseNullP 0.235, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 100 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.77 674.62 s, q 0.0762 0.9238, logL -24404.9107, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.583, null median 1.102, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.598, null median 1.158, 95th 1.355, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.503, null median 1.210, 95th 1.455, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.670, null median 1.255, 95th 1.526, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 101 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.34 677.96 s, q 0.0854 0.9146, logL -24357.5516, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.488, null median 1.087, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.456, null median 1.152, 95th 1.304, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.456, null median 1.209, 95th 1.449, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.526, null median 1.244, 95th 1.529, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 102 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.43 662.64 s, q 0.0881 0.9119, logL -24282.6925, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.336, null median 1.088, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.340, null median 1.146, 95th 1.311, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.336, null median 1.190, 95th 1.401, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.378, null median 1.230, 95th 1.527, RiseNullP 0.170, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 103 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.01 662.56 s, q 0.0879 0.9121, logL -24258.5489, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.736, null median 1.095, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.806, null median 1.149, 95th 1.321, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.742, null median 1.202, 95th 1.406, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 2.047, null median 1.243, 95th 1.533, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 104 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.96 654.61 s, q 0.0875 0.9125, logL -24239.5179, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.354, null median 1.092, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.356, null median 1.144, 95th 1.332, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.335, null median 1.188, 95th 1.420, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.407, null median 1.234, 95th 1.493, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 105 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.16 646.38 s, q 0.0822 0.9178, logL -24245.1012, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.411, null median 1.092, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak   925.6 s, RiseRatio 1.373, null median 1.146, 95th 1.315, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak   876.4 s, RiseRatio 1.378, null median 1.206, 95th 1.406, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.534, null median 1.227, 95th 1.543, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 106 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.29 689.25 s, q 0.0847 0.9153, logL -24413.3620, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.316, null median 1.093, 95th 1.206, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.323, null median 1.146, 95th 1.332, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.308, null median 1.208, 95th 1.442, RiseNullP 0.215, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.350, null median 1.242, 95th 1.551, RiseNullP 0.255, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 107 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.33 662.19 s, q 0.0855 0.9145, logL -24281.1318, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.453, null median 1.091, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.444, null median 1.146, 95th 1.314, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.359, null median 1.205, 95th 1.416, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.518, null median 1.238, 95th 1.530, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 108 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.54 672.47 s, q 0.0721 0.9279, logL -24420.2930, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.459, null median 1.102, 95th 1.223, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.395, null median 1.164, 95th 1.348, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.462, null median 1.221, 95th 1.435, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.559, null median 1.271, 95th 1.609, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 109 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 10.24 650.65 s, q 0.0864 0.9136, logL -24250.0150, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.298, null median 1.086, 95th 1.182, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.306, null median 1.141, 95th 1.317, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.298, null median 1.188, 95th 1.402, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.398, null median 1.226, 95th 1.493, RiseNullP 0.140, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 110 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.89 656.06 s, q 0.0789 0.9211, logL -24297.1121, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.658, null median 1.095, 95th 1.207, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.646, null median 1.157, 95th 1.357, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.589, null median 1.213, 95th 1.411, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.726, null median 1.262, 95th 1.561, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 111 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.77 653.01 s, q 0.0831 0.9169, logL -24263.4927, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.369, null median 1.090, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.385, null median 1.147, 95th 1.311, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.341, null median 1.204, 95th 1.427, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.412, null median 1.233, 95th 1.541, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 112 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.28 669.39 s, q 0.0924 0.9076, logL -24259.0033, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.401, null median 1.089, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.390, null median 1.152, 95th 1.326, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.409, null median 1.197, 95th 1.426, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.429, null median 1.252, 95th 1.514, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 113 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.72 672.12 s, q 0.0872 0.9128, logL -24322.6436, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.268, null median 1.086, 95th 1.189, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.272, null median 1.147, 95th 1.309, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.267, null median 1.199, 95th 1.453, RiseNullP 0.300, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.346, null median 1.241, 95th 1.535, RiseNullP 0.240, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 114 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.35 653.99 s, q 0.0811 0.9189, logL -24293.1673, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.337, null median 1.088, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough    63.1 s, peak   997.7 s, RiseRatio 1.330, null median 1.145, 95th 1.308, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   944.3 s, RiseRatio 1.411, null median 1.201, 95th 1.411, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.537, null median 1.237, 95th 1.533, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 115 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.74 676.66 s, q 0.0749 0.9251, logL -24440.1494, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.403, null median 1.095, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.390, null median 1.156, 95th 1.318, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.485, null median 1.197, 95th 1.417, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.473, null median 1.253, 95th 1.506, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 116 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.01 671.33 s, q 0.0807 0.9193, logL -24357.6667, degenerate 0
+  bins 12: trough   104.3 s, peak   886.7 s, RiseRatio 1.458, null median 1.095, 95th 1.233, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   162.1 s, peak   810.7 s, RiseRatio 1.348, null median 1.151, 95th 1.338, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   138.4 s, peak   768.7 s, RiseRatio 1.429, null median 1.205, 95th 1.410, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    87.1 s, peak  1060.5 s, RiseRatio 1.657, null median 1.258, 95th 1.499, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 117 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.04 659.82 s, q 0.0892 0.9108, logL -24235.4832, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.357, null median 1.091, 95th 1.205, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.397, null median 1.152, 95th 1.333, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.329, null median 1.195, 95th 1.423, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.397, null median 1.243, 95th 1.533, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 118 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.69 662.65 s, q 0.0812 0.9188, logL -24305.9702, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.667, null median 1.090, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.747, null median 1.150, 95th 1.328, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  3253.5 s, RiseRatio 1.685, null median 1.203, 95th 1.428, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.822, null median 1.255, 95th 1.579, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 119 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.85 649.43 s, q 0.0872 0.9128, logL -24216.6565, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.287, null median 1.090, 95th 1.185, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.315, null median 1.147, 95th 1.318, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.352, null median 1.192, 95th 1.416, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.408, null median 1.230, 95th 1.494, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 120 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.67 669.09 s, q 0.0886 0.9114, logL -24296.5511, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.442, null median 1.086, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.423, null median 1.150, 95th 1.315, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  2285.0 s, RiseRatio 1.392, null median 1.199, 95th 1.432, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.472, null median 1.234, 95th 1.526, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 121 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.42 645.59 s, q 0.0835 0.9165, logL -24218.6492, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.382, null median 1.090, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.437, null median 1.143, 95th 1.318, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.390, null median 1.198, 95th 1.415, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.466, null median 1.232, 95th 1.558, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 122 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.75 644.01 s, q 0.0845 0.9155, logL -24191.4270, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.697, null median 1.095, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.753, null median 1.149, 95th 1.320, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.737, null median 1.201, 95th 1.398, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 2.134, null median 1.244, 95th 1.563, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 123 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.96 652.89 s, q 0.0897 0.9103, logL -24214.6644, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.301, null median 1.090, 95th 1.190, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.314, null median 1.144, 95th 1.319, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.331, null median 1.191, 95th 1.413, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.382, null median 1.234, 95th 1.510, RiseNullP 0.180, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 124 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.32 669.93 s, q 0.0863 0.9137, logL -24312.4797, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.414, null median 1.088, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.466, null median 1.147, 95th 1.313, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  2285.0 s, RiseRatio 1.468, null median 1.198, 95th 1.450, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.486, null median 1.240, 95th 1.526, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 125 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.72 675.43 s, q 0.0698 0.9302, logL -24454.3768, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.466, null median 1.099, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.518, null median 1.158, 95th 1.357, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.445, null median 1.214, 95th 1.470, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.577, null median 1.263, 95th 1.585, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 126 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.26 676.96 s, q 0.0816 0.9184, logL -24381.5166, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.425, null median 1.093, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.388, null median 1.150, 95th 1.328, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak  1469.0 s, RiseRatio 1.356, null median 1.210, 95th 1.421, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.538, null median 1.251, 95th 1.553, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 127 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.01 690.24 s, q 0.0693 0.9307, logL -24531.1073, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.535, null median 1.092, 95th 1.228, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.527, null median 1.162, 95th 1.348, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.543, null median 1.211, 95th 1.458, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.634, null median 1.254, 95th 1.591, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 128 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.62 676.62 s, q 0.0632 0.9368, logL -24493.1687, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.753, null median 1.097, 95th 1.239, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.700, null median 1.166, 95th 1.332, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  1469.0 s, RiseRatio 1.596, null median 1.238, 95th 1.486, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.862, null median 1.264, 95th 1.593, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 129 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.05 660.73 s, q 0.0906 0.9094, logL -24247.2313, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.312, null median 1.089, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.345, null median 1.149, 95th 1.319, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.308, null median 1.190, 95th 1.415, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.384, null median 1.230, 95th 1.501, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 130 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.08 653.02 s, q 0.0712 0.9288, logL -24325.4125, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.376, null median 1.104, 95th 1.208, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.374, null median 1.162, 95th 1.347, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.422, null median 1.215, 95th 1.458, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.474, null median 1.273, 95th 1.613, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 131 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.44 667.27 s, q 0.0769 0.9231, logL -24375.2693, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.384, null median 1.093, 95th 1.210, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.433, null median 1.155, 95th 1.348, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.382, null median 1.198, 95th 1.431, RiseNullP 0.085, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.474, null median 1.252, 95th 1.526, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 132 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.32 681.75 s, q 0.0705 0.9295, logL -24472.3144, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.489, null median 1.101, 95th 1.214, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.507, null median 1.164, 95th 1.349, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.481, null median 1.222, 95th 1.457, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.580, null median 1.271, 95th 1.572, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 133 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.30 659.21 s, q 0.0879 0.9121, logL -24227.6807, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.623, null median 1.098, 95th 1.207, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.573, null median 1.159, 95th 1.333, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.536, null median 1.207, 95th 1.426, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.745, null median 1.247, 95th 1.536, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 134 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.30 670.29 s, q 0.0793 0.9207, logL -24384.9034, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.254, null median 1.094, 95th 1.191, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.265, null median 1.148, 95th 1.338, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.308, null median 1.197, 95th 1.405, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.327, null median 1.251, 95th 1.529, RiseNullP 0.270, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 135 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.09 673.42 s, q 0.0896 0.9104, logL -24296.8695, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.599, null median 1.094, 95th 1.190, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.763, null median 1.148, 95th 1.310, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.684, null median 1.206, 95th 1.424, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.826, null median 1.232, 95th 1.551, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 136 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.15 656.12 s, q 0.0796 0.9204, logL -24312.6150, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.312, null median 1.086, 95th 1.189, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.327, null median 1.145, 95th 1.333, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak  2285.0 s, RiseRatio 1.326, null median 1.203, 95th 1.403, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.427, null median 1.249, 95th 1.510, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 137 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.31 652.52 s, q 0.0886 0.9114, logL -24210.4570, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.411, null median 1.095, 95th 1.201, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.347, null median 1.147, 95th 1.332, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.375, null median 1.197, 95th 1.423, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.513, null median 1.237, 95th 1.541, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 138 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.09 651.37 s, q 0.0766 0.9234, logL -24294.3539, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.614, null median 1.095, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.568, null median 1.149, 95th 1.343, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.481, null median 1.202, 95th 1.413, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.701, null median 1.258, 95th 1.533, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 139 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.92 648.04 s, q 0.0711 0.9289, logL -24317.0992, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.795, null median 1.100, 95th 1.208, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.941, null median 1.159, 95th 1.349, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  2101.6 s, RiseRatio 1.665, null median 1.212, 95th 1.438, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   136.7 s, peak  2521.0 s, RiseRatio 1.932, null median 1.269, 95th 1.557, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 140 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.66 690.18 s, q 0.0892 0.9108, logL -24387.6359, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.445, null median 1.085, 95th 1.185, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.399, null median 1.147, 95th 1.293, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.394, null median 1.208, 95th 1.412, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.533, null median 1.242, 95th 1.516, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 141 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.33 675.79 s, q 0.0882 0.9118, logL -24324.3568, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.395, null median 1.087, 95th 1.190, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.375, null median 1.149, 95th 1.317, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.413, null median 1.203, 95th 1.432, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.459, null median 1.239, 95th 1.506, RiseNullP 0.100, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 142 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.94 657.63 s, q 0.0865 0.9135, logL -24279.2840, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.341, null median 1.086, 95th 1.184, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.310, null median 1.142, 95th 1.314, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.323, null median 1.188, 95th 1.411, RiseNullP 0.155, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.392, null median 1.229, 95th 1.496, RiseNullP 0.150, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 143 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.35 676.16 s, q 0.0838 0.9162, logL -24361.9887, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.370, null median 1.092, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.361, null median 1.148, 95th 1.330, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.411, null median 1.213, 95th 1.438, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.460, null median 1.250, 95th 1.526, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 144 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.20 651.46 s, q 0.0727 0.9273, logL -24326.1273, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.504, null median 1.095, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak   925.6 s, RiseRatio 1.457, null median 1.163, 95th 1.326, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak   566.0 s, RiseRatio 1.495, null median 1.209, 95th 1.434, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   136.7 s, peak  2521.0 s, RiseRatio 1.563, null median 1.249, 95th 1.517, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 145 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.73 664.15 s, q 0.0910 0.9090, logL -24255.1437, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.485, null median 1.093, 95th 1.199, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.502, null median 1.150, 95th 1.325, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.472, null median 1.195, 95th 1.417, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.512, null median 1.244, 95th 1.507, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 146 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.56 657.09 s, q 0.0768 0.9232, logL -24312.3859, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.826, null median 1.099, 95th 1.211, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.733, null median 1.154, 95th 1.365, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  1469.0 s, RiseRatio 1.735, null median 1.208, 95th 1.437, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 2.033, null median 1.262, 95th 1.594, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 147 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.64 677.08 s, q 0.0869 0.9131, logL -24346.2140, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.320, null median 1.084, 95th 1.186, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.341, null median 1.145, 95th 1.299, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.367, null median 1.201, 95th 1.432, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.394, null median 1.247, 95th 1.512, RiseNullP 0.160, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 148 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.52 668.59 s, q 0.0662 0.9338, logL -24445.3668, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.472, null median 1.096, 95th 1.219, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.497, null median 1.161, 95th 1.345, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.424, null median 1.231, 95th 1.451, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.526, null median 1.264, 95th 1.575, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 149 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.25 684.04 s, q 0.0677 0.9323, logL -24503.5922, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.719, null median 1.092, 95th 1.231, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.689, null median 1.162, 95th 1.351, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.580, null median 1.221, 95th 1.481, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.816, null median 1.260, 95th 1.561, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 150 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.75 682.06 s, q 0.0740 0.9260, logL -24454.6272, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.603, null median 1.098, 95th 1.206, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.595, null median 1.164, 95th 1.335, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.605, null median 1.220, 95th 1.431, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.645, null median 1.258, 95th 1.527, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 151 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.74 661.81 s, q 0.0745 0.9255, logL -24353.9096, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.370, null median 1.100, 95th 1.208, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.406, null median 1.163, 95th 1.351, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.356, null median 1.211, 95th 1.453, RiseNullP 0.155, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.467, null median 1.242, 95th 1.536, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 152 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.60 660.93 s, q 0.0721 0.9279, logL -24365.5456, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.317, null median 1.104, 95th 1.207, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.332, null median 1.164, 95th 1.343, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.312, null median 1.215, 95th 1.433, RiseNullP 0.255, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.374, null median 1.262, 95th 1.554, RiseNullP 0.245, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 153 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.85 648.74 s, q 0.0867 0.9133, logL -24198.4081, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.495, null median 1.091, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.661, null median 1.149, 95th 1.321, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.628, null median 1.202, 95th 1.406, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.750, null median 1.243, 95th 1.514, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 154 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.79 673.91 s, q 0.0763 0.9237, logL -24400.5204, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.465, null median 1.101, 95th 1.213, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.537, null median 1.159, 95th 1.350, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.432, null median 1.214, 95th 1.448, RiseNullP 0.075, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.523, null median 1.255, 95th 1.514, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 155 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.98 677.09 s, q 0.0904 0.9096, logL -24325.4004, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.352, null median 1.088, 95th 1.180, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.407, null median 1.146, 95th 1.324, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.370, null median 1.195, 95th 1.438, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.422, null median 1.236, 95th 1.519, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 156 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 10.07 659.58 s, q 0.0907 0.9093, logL -24258.6207, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.301, null median 1.089, 95th 1.183, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.250, null median 1.146, 95th 1.321, RiseNullP 0.120, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.292, null median 1.185, 95th 1.410, RiseNullP 0.215, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.379, null median 1.230, 95th 1.502, RiseNullP 0.165, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 157 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.07 673.46 s, q 0.0669 0.9331, logL -24456.3560, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.481, null median 1.097, 95th 1.219, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.463, null median 1.163, 95th 1.364, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.416, null median 1.232, 95th 1.461, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.506, null median 1.269, 95th 1.570, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 158 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.77 672.28 s, q 0.0808 0.9192, logL -24373.8306, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.423, null median 1.091, 95th 1.200, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.471, null median 1.150, 95th 1.335, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.445, null median 1.202, 95th 1.418, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.531, null median 1.251, 95th 1.525, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 159 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.19 659.15 s, q 0.0887 0.9113, logL -24238.9448, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.419, null median 1.093, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.372, null median 1.150, 95th 1.328, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.333, null median 1.195, 95th 1.418, RiseNullP 0.170, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.507, null median 1.243, 95th 1.525, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 160 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.54 650.23 s, q 0.0749 0.9251, logL -24292.9998, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.716, null median 1.097, 95th 1.212, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.873, null median 1.154, 95th 1.346, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.675, null median 1.211, 95th 1.452, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.926, null median 1.261, 95th 1.552, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 161 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.00 652.31 s, q 0.0867 0.9133, logL -24219.0252, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.316, null median 1.092, 95th 1.204, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.319, null median 1.148, 95th 1.325, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   944.3 s, RiseRatio 1.340, null median 1.200, 95th 1.426, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.428, null median 1.243, 95th 1.526, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 162 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.13 674.89 s, q 0.0885 0.9115, logL -24331.5560, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.294, null median 1.085, 95th 1.182, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.288, null median 1.146, 95th 1.305, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.337, null median 1.194, 95th 1.435, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.417, null median 1.231, 95th 1.501, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 163 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.06 649.11 s, q 0.0840 0.9160, logL -24225.7034, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.591, null median 1.092, 95th 1.204, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.734, null median 1.145, 95th 1.315, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.696, null median 1.208, 95th 1.412, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  3629.2 s, RiseRatio 1.860, null median 1.239, 95th 1.556, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 164 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.85 661.63 s, q 0.0838 0.9162, logL -24300.9669, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.411, null median 1.087, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.381, null median 1.146, 95th 1.321, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.434, null median 1.200, 95th 1.410, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.467, null median 1.237, 95th 1.544, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 165 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.50 649.68 s, q 0.0802 0.9198, logL -24265.9285, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.763, null median 1.089, 95th 1.194, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.683, null median 1.146, 95th 1.327, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.597, null median 1.196, 95th 1.418, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 1.960, null median 1.245, 95th 1.539, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 166 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.65 648.39 s, q 0.0857 0.9143, logL -24201.3693, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.367, null median 1.091, 95th 1.194, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.412, null median 1.148, 95th 1.321, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.352, null median 1.196, 95th 1.435, RiseNullP 0.140, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.459, null median 1.249, 95th 1.533, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 167 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.34 659.66 s, q 0.0706 0.9294, logL -24397.7657, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.491, null median 1.090, 95th 1.196, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.455, null median 1.157, 95th 1.310, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.470, null median 1.204, 95th 1.436, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.541, null median 1.261, 95th 1.503, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 168 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.85 640.38 s, q 0.0757 0.9243, logL -24243.5675, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.546, null median 1.098, 95th 1.206, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.525, null median 1.155, 95th 1.343, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.468, null median 1.207, 95th 1.418, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.632, null median 1.260, 95th 1.528, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 169 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.41 666.55 s, q 0.0870 0.9130, logL -24309.5190, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.394, null median 1.076, 95th 1.188, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.421, null median 1.144, 95th 1.293, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.399, null median 1.189, 95th 1.416, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   910.0 s, RiseRatio 1.424, null median 1.231, 95th 1.527, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 170 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.67 678.91 s, q 0.0810 0.9190, logL -24402.3384, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.326, null median 1.093, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.320, null median 1.149, 95th 1.352, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.330, null median 1.206, 95th 1.412, RiseNullP 0.145, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.382, null median 1.256, 95th 1.552, RiseNullP 0.235, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 171 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.94 637.70 s, q 0.0866 0.9134, logL -24147.1617, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.382, null median 1.099, 95th 1.200, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.363, null median 1.153, 95th 1.322, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.358, null median 1.203, 95th 1.434, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.417, null median 1.246, 95th 1.511, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 172 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.86 662.46 s, q 0.0658 0.9342, logL -24411.0950, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.606, null median 1.101, 95th 1.230, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.581, null median 1.165, 95th 1.381, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.527, null median 1.233, 95th 1.469, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.649, null median 1.269, 95th 1.605, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 173 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.70 670.39 s, q 0.0855 0.9145, logL -24308.6811, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.256, null median 1.089, 95th 1.193, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.265, null median 1.155, 95th 1.329, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.312, null median 1.220, 95th 1.447, RiseNullP 0.230, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.418, null median 1.246, 95th 1.536, RiseNullP 0.165, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 174 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.53 661.41 s, q 0.0798 0.9202, logL -24341.0002, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.423, null median 1.088, 95th 1.189, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.403, null median 1.145, 95th 1.345, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.428, null median 1.199, 95th 1.397, RiseNullP 0.040, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.542, null median 1.253, 95th 1.549, RiseNullP 0.065, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 175 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.03 673.27 s, q 0.0710 0.9290, logL -24423.1729, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.599, null median 1.101, 95th 1.213, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.526, null median 1.164, 95th 1.362, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.526, null median 1.221, 95th 1.466, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.727, null median 1.278, 95th 1.601, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 176 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.95 676.04 s, q 0.0809 0.9191, logL -24392.5250, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.517, null median 1.092, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.477, null median 1.145, 95th 1.355, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  1469.0 s, RiseRatio 1.480, null median 1.207, 95th 1.422, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.606, null median 1.256, 95th 1.554, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 177 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.83 644.22 s, q 0.0775 0.9225, logL -24249.3146, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.558, null median 1.096, 95th 1.202, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.550, null median 1.156, 95th 1.348, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.517, null median 1.213, 95th 1.414, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.638, null median 1.263, 95th 1.545, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 178 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.43 672.96 s, q 0.0859 0.9141, logL -24332.2130, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.283, null median 1.086, 95th 1.187, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak  3012.3 s, RiseRatio 1.287, null median 1.147, 95th 1.291, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.263, null median 1.209, 95th 1.434, RiseNullP 0.335, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.319, null median 1.233, 95th 1.542, RiseNullP 0.310, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 179 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.42 662.08 s, q 0.0891 0.9109, logL -24254.2640, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.356, null median 1.092, 95th 1.191, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.375, null median 1.149, 95th 1.326, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.366, null median 1.190, 95th 1.410, RiseNullP 0.105, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   910.0 s, RiseRatio 1.441, null median 1.244, 95th 1.508, RiseNullP 0.110, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 180 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.80 693.25 s, q 0.0867 0.9133, logL -24425.0298, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.353, null median 1.090, 95th 1.195, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.382, null median 1.144, 95th 1.296, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak  2285.0 s, RiseRatio 1.383, null median 1.200, 95th 1.416, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.390, null median 1.241, 95th 1.509, RiseNullP 0.195, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 181 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.19 635.34 s, q 0.0843 0.9157, logL -24157.8459, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.642, null median 1.091, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.687, null median 1.152, 95th 1.318, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.647, null median 1.203, 95th 1.410, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 2.020, null median 1.237, 95th 1.512, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 182 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.61 664.40 s, q 0.0771 0.9229, logL -24361.5922, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.387, null median 1.095, 95th 1.209, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.375, null median 1.155, 95th 1.346, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.382, null median 1.199, 95th 1.432, RiseNullP 0.090, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.439, null median 1.247, 95th 1.555, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 183 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.71 656.32 s, q 0.0873 0.9127, logL -24246.0203, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.301, null median 1.093, 95th 1.189, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.308, null median 1.149, 95th 1.327, RiseNullP 0.070, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   607.2 s, RiseRatio 1.372, null median 1.195, 95th 1.419, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.477, null median 1.239, 95th 1.518, RiseNullP 0.080, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 184 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.54 668.93 s, q 0.0837 0.9163, logL -24331.4495, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.652, null median 1.088, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.605, null median 1.145, 95th 1.327, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.523, null median 1.210, 95th 1.435, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.795, null median 1.240, 95th 1.566, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 185 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.11 657.97 s, q 0.0883 0.9117, logL -24252.9119, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.336, null median 1.089, 95th 1.192, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.390, null median 1.148, 95th 1.328, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.356, null median 1.190, 95th 1.411, RiseNullP 0.115, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak   629.8 s, RiseRatio 1.421, null median 1.232, 95th 1.512, RiseNullP 0.135, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 186 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.51 640.36 s, q 0.0816 0.9184, logL -24191.7018, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.771, null median 1.096, 95th 1.203, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 2.115, null median 1.153, 95th 1.330, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 2.041, null median 1.222, 95th 1.449, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 2.209, null median 1.245, 95th 1.606, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 187 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.88 677.09 s, q 0.0683 0.9317, logL -24475.4050, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.490, null median 1.094, 95th 1.221, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.497, null median 1.160, 95th 1.347, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.489, null median 1.218, 95th 1.457, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.586, null median 1.262, 95th 1.586, RiseNullP 0.055, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 188 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.52 653.15 s, q 0.0623 0.9377, logL -24400.8774, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.743, null median 1.096, 95th 1.217, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   104.0 s, peak  2761.3 s, RiseRatio 1.750, null median 1.160, 95th 1.351, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.728, null median 1.231, 95th 1.435, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  2521.0 s, RiseRatio 2.014, null median 1.260, 95th 1.581, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 189 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 9.09 680.43 s, q 0.0830 0.9170, logL -24399.5777, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.539, null median 1.089, 95th 1.197, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.529, null median 1.147, 95th 1.314, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak  1469.0 s, RiseRatio 1.507, null median 1.204, 95th 1.425, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak  1315.1 s, RiseRatio 1.609, null median 1.250, 95th 1.550, RiseNullP 0.030, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 190 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.96 683.59 s, q 0.0913 0.9087, logL -24346.0917, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.361, null median 1.084, 95th 1.189, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.324, null median 1.145, 95th 1.321, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.374, null median 1.194, 95th 1.443, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.415, null median 1.233, 95th 1.526, RiseNullP 0.130, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 191 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.93 664.03 s, q 0.0756 0.9244, logL -24359.8300, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.402, null median 1.100, 95th 1.214, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.390, null median 1.167, 95th 1.339, RiseNullP 0.025, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   607.2 s, RiseRatio 1.337, null median 1.208, 95th 1.453, RiseNullP 0.185, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.434, null median 1.257, 95th 1.542, RiseNullP 0.140, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 192 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.72 664.87 s, q 0.0687 0.9313, logL -24412.2699, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.385, null median 1.095, 95th 1.226, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.449, null median 1.164, 95th 1.357, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.405, null median 1.217, 95th 1.463, RiseNullP 0.120, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    99.8 s, peak   629.8 s, RiseRatio 1.513, null median 1.268, 95th 1.583, RiseNullP 0.095, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 193 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.68 662.44 s, q 0.0789 0.9211, logL -24339.5405, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.590, null median 1.096, 95th 1.198, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.539, null median 1.149, 95th 1.348, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    66.3 s, peak   944.3 s, RiseRatio 1.455, null median 1.203, 95th 1.405, RiseNullP 0.035, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    68.8 s, peak  1315.1 s, RiseRatio 1.714, null median 1.253, 95th 1.539, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 194 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.88 652.41 s, q 0.0875 0.9125, logL -24209.8655, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.515, null median 1.090, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.613, null median 1.154, 95th 1.322, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   152.9 s, peak  3253.5 s, RiseRatio 1.564, null median 1.200, 95th 1.415, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    94.9 s, peak  3629.2 s, RiseRatio 1.713, null median 1.236, 95th 1.537, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 195 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.32 673.38 s, q 0.0837 0.9163, logL -24349.4395, degenerate 0
+  bins 12: trough   119.8 s, peak   523.5 s, RiseRatio 1.277, null median 1.092, 95th 1.202, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   574.5 s, RiseRatio 1.322, null median 1.145, 95th 1.327, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   607.2 s, RiseRatio 1.299, null median 1.204, 95th 1.452, RiseNullP 0.240, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   629.8 s, RiseRatio 1.367, null median 1.237, 95th 1.552, RiseNullP 0.200, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 196 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.02 661.78 s, q 0.0865 0.9135, logL -24266.8548, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.443, null median 1.092, 95th 1.190, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.455, null median 1.150, 95th 1.312, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   103.5 s, peak   944.3 s, RiseRatio 1.430, null median 1.212, 95th 1.412, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.448, null median 1.241, 95th 1.531, RiseNullP 0.125, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 197 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 6.73 671.28 s, q 0.0707 0.9293, logL -24411.2415, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.491, null median 1.103, 95th 1.223, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.484, null median 1.168, 95th 1.374, RiseNullP 0.015, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.483, null median 1.225, 95th 1.470, RiseNullP 0.045, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak   910.0 s, RiseRatio 1.564, null median 1.275, 95th 1.586, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+per0 DD subsample 198 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 7.45 651.63 s, q 0.0817 0.9183, logL -24245.1268, degenerate 0
+  bins 12: trough   113.8 s, peak  2101.5 s, RiseRatio 1.506, null median 1.093, 95th 1.201, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   179.8 s, peak  2761.3 s, RiseRatio 1.693, null median 1.150, 95th 1.339, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough    98.6 s, peak  3253.5 s, RiseRatio 1.639, null median 1.216, 95th 1.439, RiseNullP 0.010, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough    65.9 s, peak  2521.0 s, RiseRatio 1.728, null median 1.245, 95th 1.579, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported
+per0 DD subsample 199 at n = 3309: n = 3309, xmin 2 s
+  null K=2: tau 8.84 675.69 s, q 0.0916 0.9084, logL -24306.2344, degenerate 0
+  bins 12: trough   119.8 s, peak  1094.0 s, RiseRatio 1.424, null median 1.093, 95th 1.193, RiseNullP 0.005, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 16: trough   109.3 s, peak   997.7 s, RiseRatio 1.387, null median 1.144, 95th 1.318, RiseNullP 0.020, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 20: trough   161.0 s, peak   944.3 s, RiseRatio 1.411, null median 1.195, 95th 1.429, RiseNullP 0.060, NullDropped 0 (bins dropped 1, saturated 1)
+  bins 24: trough   144.1 s, peak  1315.1 s, RiseRatio 1.519, null median 1.232, 95th 1.510, RiseNullP 0.050, NullDropped 0 (bins dropped 1, saturated 1)
+  verdict: supported but bin-sensitive
+
+Follow-up (a): power at n = 3309, 199 subsamples (whole flies per subsample: median 20)
+  bins 12/16/20/24: power 1.000 0.789 0.422 0.347
+  median RiseRatio 1.428 1.427 1.421 1.507; median RiseNullP 0.005 0.010 0.060 0.070
+  verdict "supported": 0.332; "supported" or "bin-sensitive": 1.000; NullDropped > 0: 0

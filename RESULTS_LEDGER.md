@@ -576,3 +576,32 @@ Not reportable  The power is for THESE 25 per0 flies, resampled with overlap, no
                 assumes CS DD's rise, if any, would be per0-sized. 199 null replicates per subsample:
                 p in steps of 0.005.
 ```
+
+### 2026-10-31  20r-A follow-up (a): power to see the per0 DD rise at CS DD's n = 3309
+
+```
+Commit          043e13b7deff16001c0fc67bce88ba2e9f00f8fc (analysis_20r/run_20rA_followups.m 'power', rise_test_20r.m; the run started
+                before 7bd0e99, which only adds the n argument and leaves n = 3309 unchanged); log
+                analysis_20r/followup_power_log.txt, results analysis_20r/followup_power_per0DD.mat
+Prespec         "2026-10-31 20r-A follow-ups" (a) (203166a).
+Data            per0 DD reference wake bouts (per0DD_bouts_20r_replication.mat, b14ba340...).
+Time window     Each subsample, pooled over the flies it holds.
+n               3309 per subsample (the pooled CS DD wake count); 199 subsamples, median 20 whole
+                flies each plus part of one more; rng(3000 + b).
+Result          Power (fraction with RiseNullP < 0.05), bins 12 / 16 / 20 / 24:
+                  1.000 / 0.789 / 0.422 / 0.347
+                Median RiseRatio 1.428 / 1.427 / 1.421 / 1.507; median RiseNullP 0.005 / 0.010 /
+                0.060 / 0.070. Verdict over the four counts: "supported" 0.332; "supported" or
+                "supported but bin-sensitive" 1.000. NullDropped > 0 in none.
+Matched null    Each subsample's own two-exponential fit, 199 null datasets of n = 3309, each through
+                the whole estimator on its own bins (NullReplicates 199, Sheyum 2026-10-31).
+Verdict         Descriptive (no rule). At CS DD's n a per0-like rise is detected at 12 bins in every
+                subsample and gives a "supported" or "bin-sensitive" verdict in every subsample. CS DD
+                pooled (n = 3309) gave p = 1.000 / 1.000 / 0.994 / 0.140 with RiseRatio < 1 at 12-20
+                bins: the CS DD "not supported" is not a power failure at this n. The per0 pattern
+                itself is bin-sensitive at this n (20 and 24 bins detect it < 50% of the time),
+                matching the replication's own 0.001 / 0.009 / 0.059 / 0.086.
+Not reportable  Not "CS DD has no rise": power is for a per0-SIZED rise in THESE 25 per0 flies,
+                resampled with heavy overlap (20 of 25 flies per subsample), not for a new cohort or
+                a smaller rise. 199 null replicates per subsample: p in steps of 0.005.
+```
