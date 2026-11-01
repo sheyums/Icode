@@ -379,9 +379,12 @@ try
         Gs(k).genotype = "g" + k; Gs(k).perFly = T;
     end
     O = sqwOnsagerGroup(Gs, Reference="g1", NBoot=500);
-    ok = all(abs(O.L - Ls') ./ Ls' < 0.03) && O.diff_p(2) > 0.05 && O.diff_p(3) < 0.01 && ...
+    % One seed cannot show "equal L is not called different": that is a rate. Calibrated
+    % separately (400 null replicates, 2026-11-01): bootstrap-difference p < 0.05 in 0.052,
+    % Wald in 0.220 (it overstates under EPR-proportional noise), L CI coverage 0.932.
+    ok = all(abs(O.L - Ls') ./ Ls' < 0.03) && O.diff_p(3) < 0.01 && ...
         O.wald_p(3) < 0.01 && isnan(O.wald_p(1)) && all(O.L_lo < O.L & O.L < O.L_hi);
-    [nP, nF] = rep(ok, nP, nF, 21, sprintf('Onsager group recovers L %s; equal L not different, lower L detected', ...
+    [nP, nF] = rep(ok, nP, nF, 21, sprintf('Onsager group recovers L %s within 3%%; a 40%% lower L is detected', ...
         mat2str(round(O.L', 3))), sprintf('L %s diff p %s', mat2str(O.L', 3), mat2str(O.diff_p', 3)));
 catch err, [nP, nF] = rep(false, nP, nF, 21, '', err.message); end
 

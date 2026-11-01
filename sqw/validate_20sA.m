@@ -50,11 +50,11 @@ fprintf('\nA1 / A3 medians: port vs ledger (rounded to the ledger''s decimals)\n
 for b = 1:size(blk, 1)
     S = G(blk(b, 1)).summary; s = S(S.phase == blk(b, 2), :);
     v = arrayfun(@(c) s.(c), cols);
-    ok = abs(round(v, dec, 'decimals') - L(b, :)) <= 10 .^ -dec / 2 + 1e-12;
+    ok = abs(v - L(b, :)) <= 10 .^ -dec / 2 + 1e-9;      % agrees at the printed precision
     nBad = nBad + nnz(~ok);
     lab = G(blk(b, 1)).genotype + " " + s.phaseName;
     mark = repmat("", 1, 10); mark(~ok) = "*";
-    fprintf('%-13s port   %s\n%-13s ledger %s %s\n', lab, strjoin(compose('%g', round(v, dec, 'decimals')) + mark, '  '), ...
+    fprintf('%-13s port   %s\n%-13s ledger %s %s\n', lab, strjoin(arrayfun(@(a, k) string(sprintf('%.*f', k, a)), v, dec) + mark, '  '), ...
         '', strjoin(compose('%g', L(b, :)), '  '), okStr(all(ok)));
     r = array2table([v; L(b, :)], 'VariableNames', cellstr(names)); r.block = [lab; lab]; r.source = ["port"; "ledger"];
     cmp = [cmp; r]; %#ok<AGROW>

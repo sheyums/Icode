@@ -60,7 +60,7 @@ for g = 1:numel(G)
     O = [O; r]; %#ok<AGROW>
     boot.(matlab.lang.makeValidName(G(g).genotype)) = Lb;
     T.genotype = repmat(G(g).genotype, height(T), 1);
-    pts = [pts; T(:, {'genotype', 'fly', 'file', 'phaseName', kJ, kE})]; %#ok<AGROW>
+    pts = [pts; T(:, ["genotype" "fly" "file" "phaseName" kJ kE])]; %#ok<AGROW>
 end
 
 % comparisons with the reference genotype
