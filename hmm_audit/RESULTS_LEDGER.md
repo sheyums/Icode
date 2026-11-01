@@ -2160,3 +2160,11 @@ not an independent result; the cycle's drive did not change detectably in a back
 
 ## 2026-11-01  Note (lClaude, figure exports 6b8c6bb): the 20o line "HMM_6 - MC1_6 (gain left after drift)" is computed
 over ALL flies, while R_mem / R_drift use flies with HMM gain > 3 nats; no figure or claim uses the all-fly line.
+
+## 2026-11-01  Note (lClaude, matlab-port cd2f86f / 2ab85b0): Monte Carlo sensitivity of one 20k star; no verdict changed
+20k R1 observed, per0 LD light: ledger p 0.005 (2000 within-fly permutations, seed 20), Holm 0.04 (*). Holm here is 8p,
+so the star needs p < 0.00625, inside Monte Carlo error at 2000 permutations (the port's own 2000-permutation draw gave
+p 0.009, Holm 0.072). Diagnostic with 20000 permutations (seeds 20, 21; port, not committed as a result): p 0.0041 /
+0.0043, Holm 0.033 / 0.034, so the ledger's star stands. Wording: the per0 LD light memory result is significant but
+near the threshold; CS dark (p 0, Holm 0) is the robust one. Also: BoutHazard's SurvivalHandle overlay (plot/ModelHazard
+only) was fixed in cd2f86f; RiseNullP never used that path, so no C8 or 20r number changes.
