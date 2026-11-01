@@ -57,3 +57,27 @@ are not compared (numpy and MATLAB streams differ).
    other row that does not sum to 1.
 5. *Wald overstates* under EPR-proportional noise (22% false positives at nominal 5% in the calibration above), which
    supports the ledger's choice of the bootstrap difference for the L comparisons (20s-A addendum 2).
+
+## Stage 2 — HMM bracket, golden and stress part (2026-11-01, code 74cfead); real-data part PENDING
+
+**Functions:** hmmFitPhased (em_fit; all starts batched with sqw_ref's joint stopping rule), labelStates,
+isDegenerateH1, hmmBic (n_params, bic, n_eff), hmmViterbiPhased, hmmFFBS, pairCounts, routeCounts (stage 1),
+posteriorSummaries, hmmSimulatePhased. hmmEmStep / hmmForward were validated in stage 1 (G3, G9).
+
+**Tests** (`test_sqw_stage2`): 11/11 pass.
+- G3 parameter counts (9 cases) and BIC exact; G3 and G9 Viterbi paths exact (2880 minutes each); G4 labelling and
+  degeneracy exact.
+- G6 (statistical, 4000 FFBS paths on the G3 inputs): mean route counts max |z| 1.80 (bound 4); J |z| 0.84,
+  EPR bound |z| 0.88; Xn, Yn, c within 0.006.
+- hmmFitPhased on G3 reaches ll -781.466688, equal to the G3 parameters after 300 EM steps.
+- Batched fit = 40 iterated hmmEmStep calls from the same start (3 random starts, unknown-wake minutes): max diff 1e-15.
+- Viterbi = brute force over all 3^7 paths (50 random models with gaps and unknown wake).
+- FFBS one- and two-minute marginals = exact forward-backward posteriors (20000 paths, max |z| 2.30).
+- Labelling invariant to 20 random state orders, likelihood unchanged; recovery of a known HMM from 8 simulated
+  days (|dP| <= 0.024, |dB| <= 0.013; fitted ll above the true-parameter ll); simulation frequencies within
+  sampling error.
+
+**Pending:** per-fly 20b log-likelihoods to 1e-6 from the same start needs the stored fits (sqw_out/fit2_0.5.jsonl),
+requested in QUESTIONS_lClaude.md Q2. Timing for planning: one CS fly (5760 minutes) at K = 3, 20 starts, takes
+121 s and stops at MaxIter 1000 (16 of 20 starts at the best optimum, ll -2539.6261), so a full 20b refit of 187 flies
+x K 2-4 is ~19 h serial.
