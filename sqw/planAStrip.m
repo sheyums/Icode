@@ -47,7 +47,7 @@ for b = 1:nB
         if ~isempty(h)
             r.nHmm = numel(h); r.hmmMedian = median(h);
             plot(ax, x + 0.36, r.hmmMedian, '<', 'MarkerSize', 4, 'MarkerFaceColor', [0.35 0.35 0.35], ...
-                'MarkerEdgeColor', [0.35 0.35 0.35]);
+                'MarkerEdgeColor', [0.35 0.35 0.35], 'Tag', 'hmm');
         end
     end
     T = [T; r]; %#ok<AGROW>

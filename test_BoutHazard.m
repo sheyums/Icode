@@ -281,6 +281,29 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 10, '', err.message);
 end
 
+%% Test 11: the model overlay does not depend on the handle's output shape
+%  FitHyperexponentialMLE's SurvivalHandle returns a COLUMN for a row of
+%  edges; ModelHazard was then broadcast into an nb x nb matrix. A handle
+%  returning a row and one returning a column must give the same 1 x nb
+%  vector, equal to the exact rate.
+try
+    lam = 1/300; xm = 50; dt = 1;
+    Srow = @(t) exp(-lam*(t - xm));
+    Scol = @(t) reshape(exp(-lam*(t - xm)), [], 1);
+    rs = RandStream('twister', 'Seed', 11);
+    x = xm + ceil(-log(rand(rs, 3000, 1)) / lam);
+    A = bh(x, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Srow);
+    B = bh(x, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Scol);
+    nb = numel(A.BinCenters);
+    ok = isequal(size(A.ModelHazard), [1 nb]) && isequal(size(B.ModelHazard), [1 nb]) && ...
+        max(abs(B.ModelHazard - A.ModelHazard)) == 0 && max(abs(A.ModelHazard - lam)) / lam < 1e-9;
+    [nPassed, nFailed] = rep(ok, nPassed, nFailed, 11, ...
+        sprintf('row and column handles give the same 1 x %d model hazard', nb), ...
+        sprintf('sizes %s and %s', mat2str(size(A.ModelHazard)), mat2str(size(B.ModelHazard))));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 11, '', err.message);
+end
+
 fprintf('\nSummary: %d passed, %d failed, %d total\n', ...
     nPassed, nFailed, nPassed + nFailed);
 end

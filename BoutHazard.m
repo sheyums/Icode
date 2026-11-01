@@ -248,7 +248,12 @@ H.Alpha       = options.Alpha;
 H.ModelHazard = [];
 if ~isempty(options.SurvivalHandle)
     S = options.SurvivalHandle;
+    % Rows, as the null sampler below does: a handle may return a column for
+    % a row of edges (FitHyperexponentialMLE's SurvivalHandle does), and a
+    % column here broadcast against the row of widths into an nb x nb
+    % ModelHazard (found 2026-11-01 drawing the C8 figure).
     sl = S(lefts); sr = S(rights);
+    sl = sl(:).'; sr = sr(:).';
     pm = zeros(size(sl));
     ok = sl > 0;
     pm(ok) = (sl(ok) - sr(ok)) ./ sl(ok);      % same estimand as d_j/n_j

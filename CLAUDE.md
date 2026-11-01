@@ -63,7 +63,7 @@ a bout comparison, whatever its AIC.
 | `CompareBoutModels.m` | Fits the whole library, ranks by AICc/BIC, G-tests the winner, plots it. `pearson3` and `beta` are **opt-in**, not part of a default run. |
 | `HyperexponentialLRT.m` | Parametric bootstrap LRT for mixture order. |
 | `BoutHazard.m` | Life-table hazard with Wilson bands. Does NOT rank models — it decides whether a whole FAMILY can work, by asking whether the hazard rises. |
-| `test_*.m` (6 files) | 129 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
+| `test_*.m` (6 files) | 130 tests. Run each by name from this directory **in MATLAB**. See Testing for the Octave caveat. |
 
 **The bout-duration library is CLOSED.** The families `CompareBoutModels`
 fits are the only ones to be used for bout distributions -- the user's
@@ -471,7 +471,7 @@ test_FitHyperexponentialMLE       % 26
 test_FitExponentiatedWeibullMLE   % 23
 test_CompareBoutModels            % 29
 test_HyperexponentialLRT          % 13
-test_BoutHazard                   % 10
+test_BoutHazard                   % 11
 ```
 
 **In MATLAB, run them by name from this directory.** Check `which
@@ -535,5 +535,5 @@ suite (verified on `origin/main` by grepping for calls outside comments):
 | `chi2p` + `stressTest_chi2p` | **Statistics** (`chi2cdf` line 271, `chi2inv` line 347). Also `parfor` at line 309, which runs SERIALLY without the Parallel Computing Toolbox -- correct results, just slower |
 
 The two stress suites for `chi2p` and GH make no toolbox calls of their own;
-they need them through the functions they test. So a machine that runs all 129
+they need them through the functions they test. So a machine that runs all 130
 bout tests can still fail on six of these files.

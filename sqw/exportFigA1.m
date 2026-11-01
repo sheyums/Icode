@@ -2,17 +2,21 @@ function X = exportFigA1(D, outDir, options)
 %EXPORTFIGA1  Fig A1, direction and flux at the observable level (FIGURE_RECIPES K1; fig_planA.py): data and figure.
 %
 %   X = exportFigA1(D, outDir)
-%   X = exportFigA1(D, outDir, RandomSeed=20, Plot=true)
+%   X = exportFigA1(D, outDir, RandomSeed=20, Plot=true, HmmMarkers=false)
 %
 %   D       PLANADATA output (six genotypes in the paper's order)
 %   outDir  folder for figA1_points.csv, figA1_summary.csv, figA1.mat and the
-%           figure (figA1_direction_flux_observable.png / .pdf)
+%           figure (figA1_direction_flux_observable.png / .pdf; with HmmMarkers,
+%           figA1_direction_flux_SI_hmm.png / .pdf)
 %
 %   Per fly x phase with a Q/W reference (the others excluded):
 %     (a) c_obs, (b) counted J (cycles/h), (c) counted EPR (nats/h, rule of three)
-%   In (b) and (c) a grey triangle beside each block is the median over
-%   NON-DEGENERATE flies of the HMM's value, averaged over 200 FFBS paths per fly
-%   (PLANAFLYHMM): "HMM (model-based estimate), median" -- not a bound.
+%   The main text is observed-level only (Sheyum, 2026-11-01; FIGURE_RECIPES L note), so
+%   the figure has no HMM markers by default. HmmMarkers=true draws the SI version: in
+%   (b) and (c) a grey triangle beside each block is the median over NON-DEGENERATE flies
+%   of the HMM's value, averaged over 200 FFBS paths per fly (PLANAFLYHMM): "HMM
+%   (model-based estimate), median" -- not a bound. The summary carries those medians
+%   (nHmm, hmmMedian) either way.
 %   Each block: points (light open, dark / DD filled), median, fly-bootstrap 95% CI.
 %
 %   X  struct: points (table, one row per fly x phase plotted), summary (one row per
@@ -26,6 +30,7 @@ arguments
     outDir (1,1) string
     options.RandomSeed (1,1) double {mustBeNonnegative, mustBeInteger} = 20
     options.Plot (1,1) logical = true
+    options.HmmMarkers (1,1) logical = false
 end
 if ~isfolder(outDir), mkdir(outDir); end
 S = planAStyle(); B = S.blocks; nB = height(B);
@@ -70,12 +75,17 @@ if options.Plot
     l1 = plot(ax(1), NaN, NaN, 'o', 'MarkerSize', 3, 'MarkerFaceColor', 'w', 'MarkerEdgeColor', 'k');
     l2 = plot(ax(1), NaN, NaN, 'o', 'MarkerSize', 3, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k');
     l3 = plot(ax(1), NaN, NaN, 'k-', 'LineWidth', 1.2);
-    l4 = plot(ax(1), NaN, NaN, '<', 'MarkerSize', 4, 'MarkerFaceColor', [0.35 0.35 0.35], 'MarkerEdgeColor', [0.35 0.35 0.35]);
-    lg = legend(ax(1), [l1 l2 l3 l4], {'light (one point per fly)', 'dark / DD', 'median, 95% CI', ...
-        'HMM (model-based estimate), median'}, 'NumColumns', 4, 'Box', 'off', 'FontSize', 6.5);
+    hl = [l1 l2 l3]; lt = {'light (one point per fly)', 'dark / DD', 'median, 95% CI'}; stem = "figA1_direction_flux_observable";
+    if options.HmmMarkers
+        hl(4) = plot(ax(1), NaN, NaN, '<', 'MarkerSize', 4, 'MarkerFaceColor', [0.35 0.35 0.35], 'MarkerEdgeColor', [0.35 0.35 0.35]);
+        lt{4} = 'HMM (model-based estimate), median'; stem = "figA1_direction_flux_SI_hmm";
+    else
+        delete(findobj(fh, 'Tag', 'hmm'));        % main text: observed level only
+    end
+    lg = legend(ax(1), hl, lt, 'NumColumns', numel(hl), 'Box', 'off', 'FontSize', 6.5);
     lg.Layout.Tile = 'north';
-    exportgraphics(fh, fullfile(outDir, "figA1_direction_flux_observable.png"), 'Resolution', 300);
-    exportgraphics(fh, fullfile(outDir, "figA1_direction_flux_observable.pdf"), 'ContentType', 'vector');
+    exportgraphics(fh, fullfile(outDir, stem + ".png"), 'Resolution', 300);
+    exportgraphics(fh, fullfile(outDir, stem + ".pdf"), 'ContentType', 'vector');
 else
     close(fh);
 end

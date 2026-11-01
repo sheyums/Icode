@@ -80,7 +80,9 @@ as PNG and vector PDF.
 | `planAData` | `sqw17.py` | six `sqwObservableGroup` outputs in paper order (sss = the 54-file 20s-A set) plus the HMM triangles; stored 20b fits matched to files BY NAME |
 | `planAFlyHMM` | `sqw17.py` "hid", `sqw2.decode` | HMM count J and EPR, mean over 200 FFBS paths, per fly x phase |
 | `planALikelihoods` | `sqw13.py`, `sqw14.py` | per-fly 20n / 20o log-likelihoods (MC1, HMM, MC2 at 12 h; MC1, HMM at 6 h), dBIC, R_mem, R_drift |
-| `exportFigA1` .. `exportFigA3` | `fig_planA.py` | direction and flux; EPR vs J and Onsager L; energy landscape |
+| `exportFigA1` .. `exportFigA3` | `fig_planA.py` | direction and flux (main text observed-level only; `HmmMarkers=true` for the SI version); EPR vs J and Onsager L; energy landscape |
+| `routeDurationObserved`, `routeDurationD` | `route_duration_observed`, `route_duration_D` | 20k route-vs-duration records and D (golden G11) |
+| `exportFigC7` | `fig_R1_obs.py`, `sqw10_report.py`, `route_bins.py` | Fig C7, sleep-length memory, observed only: recomputes 20k observed R1 from raw data (stars from the ledger by default) |
 | `exportFigA4` | `fig_beneath.py` | reads the per-fly CSVs `sqwMemoryGroup` / `sqwTURGroup` write, plus `planALikelihoods` |
 | `exportFigC10` | `fig_clockface.py` | Fig C10 clock face, from `planB_20wB.json` (20w-B); the cosine is refitted, its amplitude checked against the stored AJ |
 | `exportFigC12` | `fig_kir.py` | Fig C12 Kir2.1 silencing, from `y_kir.json` (20y); ledger Holm stars copied, not recomputed |
