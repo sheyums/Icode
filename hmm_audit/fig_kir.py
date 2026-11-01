@@ -11,7 +11,7 @@ PANELS = [  # key, transform, y label, title, Holm-significant (group, phase) fr
     ('sleep', lambda r: r['sleep'], 'sleep (min per hour)', 'Sleep amount', {('vnc', 0), ('dfb', 1), ('vnc', 1)}),
     ('QS', lambda r: r['P']['QS'], 'P(quiet wake → sleep) per min', 'Falling asleep', {('vnc', 0), ('dfb', 1), ('vnc', 1)}),
     ('SW', lambda r: r['P']['SW'], 'P(sleep → active wake) per min', 'Waking up', {('dfb', 0), ('vnc', 0), ('dfb', 1), ('vnc', 1)}),
-    ('E31', lambda r: -r['E31'], 'depth of the sleep well,\n$E_Q - E_S$ (nats)', 'Depth of sleep', {('dfb', 0), ('vnc', 0), ('dfb', 1), ('vnc', 1)}),
+    ('E31', lambda r: -r['E31'], 'depth of the sleep well,\n$E_Q - E_S$ (nats)', 'Sleep vs quiet wake (occupancy)', {('dfb', 0), ('vnc', 0), ('dfb', 1), ('vnc', 1)}),
     ('J', lambda r: r['J'], 'cycle flux $J$ (cycles h$^{-1}$)', 'Drive around W→Q→S→W', set())]
 def mci(v):
     v = np.asarray(v, float); b = [np.median(rng.choice(v, len(v))) for _ in range(2000)]; return np.median(v), *np.percentile(b, [2.5, 97.5])

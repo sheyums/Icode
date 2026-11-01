@@ -2147,3 +2147,13 @@ Verdict Part C: silencing does not detectably change how the exit from sleep dep
   are checked at 1e-6 relative.
 - Wording: Fig A1 legend, FIGURE_RECIPES K and PORTING_GUIDE section 11 said "model-based upper bracket"; changed to
   "model-based estimate (not a bound)", as in PLANS C4 since 2026-11-01. Fig A1 regenerated.
+
+## 2026-11-01  PRESPEC 20z Part A — NOT RUN, by decision (Sheyum); ANALYSIS FREEZE
+Part A (sleep-bout duration law of the Kir2.1 flies, MATLAB) was pre-registered (24c358b) and handed to lClaude, and is
+withdrawn before any fit was run. Reason: silenced flies already leave sleep sooner (20y S1), so a shorter slow
+component would restate the sleep loss; nothing in 20y suggested a disproportionate loss of a long-lived component.
+kir_sleep_bouts_20z.csv stays in the repository, unused. Part C (run, ledger above) stands.
+ANALYSIS FREEZE from this entry: no new PRESPEC unless a referee asks or the controlled deprivation experiment is run.
+Still to finish (already running, pre-registered): 20v amendment F, CS DD verdict (cClaudeII). C12 toned down
+(see PLANS.md): silencing reduces sleep through fewer entries and earlier exits; E_S - E_Q follows from occupancy and is
+not an independent result; the cycle's drive did not change detectably in a background where the cycle is weak.
