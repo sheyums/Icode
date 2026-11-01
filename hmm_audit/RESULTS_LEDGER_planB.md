@@ -178,3 +178,34 @@ sss     dark  n 53 [descr.] | 12-h null: E -0.0000 p 0.449 frac 0.02  | 6-h null
 - LD (descriptive): excess in CS dark and fumin light and dark, not CS light, per0LD or sss. It is unchanged by the
   6-h-rate null, so within-phase drift does not explain it.
 - Not a bound by itself: the lower-bound statement is sigma_MC + E_WT per fly, which was not computed here.
+
+## PRESPEC 20w-B — clock-face cosine test (2026-11-01; PRESPEC 43d0e34, code 5bdf525; planB_20wB.log/.json)
+Narrowest block: each genotype's whole recording, pooled in 2-h clock-time bins (20w's data, bins and pooling).
+Null: 999 per-fly circular rotations by uniform whole-minute offsets in [0, 24 h); sample-size matched by construction.
+```
+check: max |J_vec - model_energetics| = 8.33e-15
+CALIBRATION: fraction p < 0.05 = 0.045 over 200 per0-DD-matched constant-chain datasets (gate [0.02, 0.09]) -> PASS
+POWER at per0 DD size vs CS LD's pooled modulation (no heterogeneity, optimistic): 0.80 (100 datasets)
+CS      n 25 | J amplitude 0.0774 (null 95th 0.0618) peak 16.2 h | p 0.005 | Holm 0.015 -> CLOCK-LOCKED MODULATION | c_obs amp 0.0691 (null 95th 0.0517) peak 17.5 h p 0.003
+CSDD    n 25 | J amplitude 0.0628 (null 95th 0.0551) peak 22.9 h | p 0.015 | Holm 0.030 -> CLOCK-LOCKED MODULATION | c_obs amp 0.0468 (null 95th 0.0438) peak 23.4 h p 0.034
+per0LD  n 27 | J amplitude 0.0711 (null 95th 0.0725) peak 22.7 h | p 0.059 | Holm 0.059 -> not detected | c_obs amp 0.0422 (null 95th 0.0516) peak 23.8 h p 0.140
+per0DD  n 25 | J amplitude 0.0058 (null 95th 0.0503) peak 18.3 h | p 0.959 | NEGATIVE CONTROL | c_obs amp 0.0042 (null 95th 0.0312) p 0.953
+fumin   n 53 | J amplitude 0.0700 (null 95th 0.0455) peak 11.0 h | p 0.001 | descriptive | c_obs amp 0.0515 (null 95th 0.0564) peak 13.7 h p 0.091
+sss     n 57 | J amplitude 0.0334 (null 95th 0.0242) peak 16.5 h | p 0.002 | descriptive | c_obs amp 0.0893 (null 95th 0.0604) peak 17.5 h p 0.002
+per0 DD null (p >= 0.05): no flag
+```
+- Calibration gate PASSED (0.045, close to nominal). The per0 DD control is clean (p 0.96; amplitude 0.006 against a
+  null 95th of 0.050), so there is NO flag.
+- VERDICT (Holm over CS LD, CS DD, per0 LD): clock-locked modulation of the cycle flux J in CS LD (Holm 0.015, peak
+  ZT16) and CS DD (Holm 0.030, peak CT23); per0 LD not detected (Holm 0.059; amplitude 0.071 against a null 95th of
+  0.0725, a near miss, not a positive).
+- The CS LD positive is light plus clock; this test does not separate them. CS DD has no light, so its positive is the
+  clock's own modulation of J (flies sharing phase after release into DD), DILUTED by the free-running smear. Its
+  amplitude (0.063) is therefore a lower estimate.
+- per0 LD's near miss is consistent with light-driven modulation without a clock, but it is not a result.
+  Optimistic power is 0.80 against CS LD's amplitude at per0 DD's size; per0 LD's own amplitude (0.071) is similar.
+- Secondary c_obs (outside the family) agrees in sign and phase: CS 0.003, CS DD 0.034, per0 LD 0.14, per0 DD 0.95.
+- Descriptive: fumin (p 0.001, peak ~ZT11) and sss (p 0.002, peak ~ZT16-17) also have a clock-locked J modulation,
+  sss around a mean flux of ~0.
+- This supersedes the 20w range summary as the clock-face statistic. 20w stands as recorded (descriptive, no
+  genotype rhythmic by its rule).
