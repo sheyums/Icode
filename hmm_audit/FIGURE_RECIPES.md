@@ -485,3 +485,17 @@ R_drift = 1 - (LL_HMM6 - LL_MC1_6)/(LL_HMM - LL_MC1), flies with HMM gain > 3 na
 (c) 20p: excess E per block (CS DD as its two 12-h halves, amendment A), filled = passes the pre-registered rule.
 (d) 20q: B_c/sigma_chain per block (tau 3 h, amendment-D set), filled = primary DD blocks, line at 1.
 Schematic explainers (Figs 18a-c, 19a-b) go to the supplement.
+
+## L. Figures for C10 (clock face) and C12 (circuit silencing) — added 2026-11-01; Python references fig_clockface.py, fig_kir.py
+**Fig C10 (figC10_clock_face).** Source planB_20wB.json ('real': per genotype J (12 bins), AJ, phJ, pJ, nullJ95).
+(a) 2x2 small multiples CS LD, CS DD, per0 LD, per0 DD: points = pooled J per 2-h clock bin at bin centres 1,3,..,23 h;
+line = least-squares 24-h cosine on the 12 bins (design [1, cos(2 pi b/12), sin(2 pi b/12)], b = 0..11, plotted against
+t - 1); grey band = cosine mean +/- nullJ95; shading = dark phase (LD) or whole panel (DD); ylim -0.02..0.30; verdict
+word per panel (clock-locked rhythm / not detected / none (control)). (b) per genotype: grey bar 0..nullJ95, dot = AJ,
+text p. Colours as Fig A1 (CS #2a78d6, CS DD #6250d6, per0 LD #1baf7a, per0 DD #eda100).
+**Fig C12 (figC12_kir_silencing).** Source y_kir.json (20y). Five panels, each light | dark, groups control (#8a8a8a),
+dFB (#2a78d6), VNC (#eb6834): sleep (min/h); P(Q->S); P(S->W); depth of the sleep well = -(E_S - E_Q) = -E31;
+cycle flux J (count, cycles/h). Fly x phases without a Q/W reference excluded (none here); E31 and J only for fly x
+phases with a cycle. Per-fly points (open light, filled dark), median with fly-bootstrap 95% CI (2000), '*' = Holm <
+0.05 in the 20y ledger (flags hard-coded, not recomputed). Depth panel ylim -0.6..3.3 with the one clipped control fly
+noted on the panel.
