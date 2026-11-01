@@ -68,8 +68,13 @@ try
     [Th, dh] = hmmObservedChain(Ptrue, [0.9 0.1 0; 0.05 0.95 0; 0 0 1]); [Jh, Dh, Bh] = turExact(Th, dh);
     e = [[J Dd B] - g.tur_exact_true_light', [Jc Dc Bc] - g.tur_exact_ct_true_light', en.EPR - g.sigma_true_light, ...
         [Jh Dh Bh] - g.hmm_observed_chain_check'];
-    [nP, nF] = rep(max(abs(e)) < 1e-9, nP, nF, 4, sprintf(['G12 turExact, turExactCT, sigma, hmmObservedChain (max diff %.1g); ' ...
-        'B/sigma discrete %.4f, continuous %.4f'], max(abs(e)), B / en.EPR, Bc / en.EPR), mat2str(e, 3));
+    % D (and B = J^2/D) is a second central difference of a log Perron root: a 1e-15 change in T
+    % moves it by ~2e-8, so the golden 1e-9 is unattainable for D in a second implementation
+    % (QUESTIONS_lClaude Q3). J and sigma at 1e-9; D and B at 1e-6 relative.
+    gold = [g.tur_exact_true_light', g.tur_exact_ct_true_light', g.sigma_true_light, g.hmm_observed_chain_check'];
+    tolv = 1e-9 * ones(1, 10); tolv([2 3 5 6 9 10]) = 1e-6 * abs(gold([2 3 5 6 9 10]));
+    [nP, nF] = rep(all(abs(e) <= tolv), nP, nF, 4, sprintf(['G12 turExact, turExactCT, sigma, hmmObservedChain (J, sigma 1e-9; D, B 1e-6 rel; max rel %.1g); ' ...
+        'B/sigma discrete %.4f, continuous %.4f'], max(abs(e ./ max(abs(gold), 1))), B / en.EPR, Bc / en.EPR), mat2str(e, 3));
 catch err, [nP, nF] = rep(false, nP, nF, 4, '', err.message); end
 
 %% 5. fillEmptyRows example
@@ -92,7 +97,11 @@ try
     Pmle = C ./ sum(C, 2);
     Pfit = zeros(9, 3);
     for k = 1:9, b = mod(k - 1, 3) + 1; Pfit(k, :) = Pc(k, 3 * (b - 1) + (1:3)); end
-    okA = max(abs(Pfit - Pmle), [], 'all') < 1e-6;
+    % EM also counts the first transition, from the unobserved pair (y0, y1): one fractional
+    % count lands in the rows whose second symbol is y1. Other rows must equal the triple MLE.
+    nRow = sum(C, 2); r1 = mod((1:9)' - 1, 3) + 1 == yy(1);
+    dA = max(abs(Pfit - Pmle), [], 2);
+    okA = all(dA(~r1) < 1e-6) && all(dA(r1) <= 1 ./ nRow(r1));
     yg = yy; yg(1000:1040) = 0; yg(3000:3002) = 0; yg(4000) = 4;
     [llg, ~, Pg, info] = chain2FitPhased(yg, php, 1);
     [~, Allow] = pairChainStructure();
@@ -103,11 +112,13 @@ try
     dev = 0;
     for b = 1:3
         rows = 3 * ((1:3) - 1) + b; cols = 3 * (b - 1) + (1:3);
-        M = Pf(rows, cols); dev = max(dev, max(abs(M - Ptrue(b, :)), [], 'all'));
+        n = arrayfun(@(a) nnz(yf(1:end - 2) == a & yf(2:end - 1) == b), (1:3)');
+        M = Pf(rows, cols); se = sqrt(Ptrue(b, :) .* (1 - Ptrue(b, :)) ./ n);
+        dev = max(dev, max(abs(M - Ptrue(b, :)) ./ se, [], 'all'));
     end
-    okC = dev < 0.03;
+    okC = dev < 4.5;                                       % max |z| over 27 cells
     [nP, nF] = rep(okA && okB && okC, nP, nF, 6, sprintf(['chain2FitPhased: complete = triple MLE (%.1g), structure kept ' ...
-        'with gaps, first-order data max |P(c|a,b) - P(c|b)| %.3f'], max(abs(Pfit - Pmle), [], 'all'), dev), ...
+        'with gaps, first-order data max |z| of P(c|a,b) - P(c|b) %.2f'], max(dA(~r1)), dev), ...
         sprintf('MLE %d gaps %d first-order %d', okA, okB, okC));
 catch err, [nP, nF] = rep(false, nP, nF, 6, '', err.message); end
 
@@ -129,8 +140,10 @@ catch err, [nP, nF] = rep(false, nP, nF, 7, '', err.message); end
 %% 8. blockKL on a long first-order chain
 try
     rs = RandStream('twister', 'Seed', 8);
-    T = 400000; yl = simChain(rs, Ptrue, ones(T, 1));
-    S = blockKLStats(yl, ones(T, 1), 1); en = modelEnergetics(Ptrue);
+    % a strongly driven chain: with Ptrue (EPR 0.02 nats/h) the sampling error of d2 is ~20%
+    Pd = [0.80 0.04 0.16; 0.16 0.80 0.04; 0.04 0.16 0.80];   % forward W->Q, Q->S, S->W = 0.16
+    T = 400000; yl = simChain(rs, Pd, ones(T, 1));
+    S = blockKLStats(yl, ones(T, 1), 1); en = modelEnergetics(Pd);
     ok = abs(S.d2 - en.EPR) < 0.1 * en.EPR && abs(S.D3) < 0.1 * en.EPR && abs(S.D4) < 0.1 * en.EPR;
     [nP, nF] = rep(ok, nP, nF, 8, sprintf('long first-order chain (4e5 min): d2 %.4f vs exact EPR %.4f; D3 %+.4f D4 %+.4f nats/h', ...
         S.d2, en.EPR, S.D3, S.D4), 'd2 differs from the chain EPR or D3/D4 not ~0');
@@ -161,7 +174,8 @@ try
     en = modelEnergetics(Ptrue);
     okA = abs(J - Jdirect) < 1e-6 && abs(J - 3 * en.J) < 1e-6;
     T = 1e6; yl = simChain(rs, Ptrue, ones(T, 1)); R = turEstimate(yl, ones(T, 1), 1);
-    okB = abs(R.J - J) < 0.05 * abs(J) + 0.01 && abs(R.D(1) - Dd) < 0.15 * Dd;
+    seJ = sqrt(2 * Dd / (T / 60)); seD = Dd * sqrt(2 / (R.n(1) - 1));
+    okB = abs(R.J - J) < 4 * seJ && abs(R.D(1) - Dd) < 4 * seD;
     worst = 0; worstD = 0;
     for k = 1:1000
         P = randDir(rs, 3, 3)'; P = 0.5 * P + 0.5 * eye(3) * 1.9 * rand(rs); P = P ./ sum(P, 2);
@@ -187,9 +201,10 @@ try
     Jh = turExact(Th, dh);
     T = 1e6; [~, ys] = hmmSimulatePhased([1 0 0]', Ptrue, Bm, ones(T, 1), rs);
     R = turEstimate(ys, ones(T, 1), 1);
-    okC = abs(R.J - Jh) < 0.05 * abs(Jh) + 0.01;
+    [~, Dh] = turExact(Th, dh); seJ = sqrt(2 * Dh / (T / 60));
+    okC = abs(R.J - Jh) < 4 * seJ;
     [nP, nF] = rep(okA && okB && okC, nP, nF, 11, sprintf(['hmmObservedChain: B = I reproduces the chain, stochastic; ' ...
-        'symbol current exact %.4f vs 1e6-min simulation %.4f'], Jh, R.J), sprintf('B=I %d rows %d sim %d', okA, okB, okC));
+        'symbol current exact %.4f vs 1e6-min simulation %.4f (z %.2f)'], Jh, R.J, (R.J - Jh) / seJ), sprintf('B=I %d rows %d sim %d', okA, okB, okC));
 catch err, [nP, nF] = rep(false, nP, nF, 11, '', err.message); end
 
 %% 12. fillEmptyRows and pair-chain simulation
