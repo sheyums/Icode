@@ -1,3 +1,5 @@
+# DROPPED (2026-11-01, Sheyum's decision): follow-up B will not be run. Kept as a record of the draft only.
+
 # PRESPEC 22 — DRAFT, NOT APPROVED: does the bout process need time-irreversible hidden dynamics? (follow-up B)
 Date 2026-11-01. Drafted by cClaudeII at Sheyum's request, for review by cClaude and approval by Sheyum. Nothing runs
 until it is approved and committed as PRESPEC_22.md. Number 22 to be confirmed free on the shared branch.

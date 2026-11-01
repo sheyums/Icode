@@ -406,3 +406,7 @@ per0DD DESCRIPTIVE ONLY: sigma_WT obs median 0.2756 (= 20v original 0.2756) | sc
   criterion cannot produce this from reversible dynamics. A reversible 1-s model adequate to the bout process could not
   be built within K <= 6, so no scoring-matched null verdict exists." Together with PRESPEC 21 (seconds-scale shape
   asymmetry in per0 DD and CS DD), this is consistent with irreversibility at the seconds scale.
+
+## Note (2026-11-01): follow-up B dropped
+Sheyum dropped follow-up B (PRESPEC_22_DRAFT, unconstrained aggregated HMM vs reversible). Nothing from it was run. The
+draft is kept, marked DROPPED. The reversible-null results stand as recorded (20u and 20v-F: NULL INADEQUATE).
