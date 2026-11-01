@@ -1,0 +1,6 @@
+CS      n 25 | r(6h,3h) median 0.47 IQR [0.33,0.65] max 0.89 | r<0.8 in 0.96 -> PASS | grid: median of per-fly max r 0.48, r<0.8 at worst grid point in 0.88
+   identity check CS c_obs median light +0.042 dark +0.147 (20s-A: +0.042, +0.147)
+per0LD  n 27 | r(6h,3h) median 0.59 IQR [0.41,0.70] max 0.87 | r<0.8 in 0.89 -> PASS | grid: median of per-fly max r 0.60, r<0.8 at worst grid point in 0.85
+fumin   n 53 | r(6h,3h) median 0.58 IQR [0.41,0.77] max 0.96 | r<0.8 in 0.81 -> PASS | grid: median of per-fly max r 0.67, r<0.8 at worst grid point in 0.74
+sss     n 57 | r(6h,3h) median 0.59 IQR [0.42,0.73] max 0.89 | r<0.8 in 0.91 -> PASS | grid: median of per-fly max r 0.63, r<0.8 at worst grid point in 0.82
+per0DD  n 25 | r(6h,3h) median 0.28 IQR [0.22,0.34] max 0.52 | r<0.8 in 1.00 -> PASS | grid: median of per-fly max r 0.30, r<0.8 at worst grid point in 1.00

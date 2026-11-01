@@ -60,3 +60,20 @@ and so did the formula in PRESPEC_20t.md line 62. The correct Esposito & Van den
 sum p_i k_ij ln[p_i pi_j / (p_j pi_i)], the one the PRESPEC's own "total = hk + na" requires. The sign flips truth and
 fit identically, so every ratio and verdict above is unchanged; only the printed sign of na was wrong (shown corrected
 above). The code line was fixed in the commit that adds this entry; no re-run was needed.
+
+## PRESPEC 20t F2 — separability of clock and homeostat, real flies (2026-11-01; PRESPEC 3465f69, code 6698097; planB_f2.json, planB_f2.log)
+Narrowest block: one fly's whole record (LD 3-4 d, per0 DD 3-4 d). Data: the user's upload of 2026-11-01 (CS 25, per0LD 27,
+fumin 53, sss 57, per0DD 25 files). Identity check: CS c_obs medians light +0.042, dark +0.147 = 20s-A exactly.
+CS DD was NOT in the upload, so F2 for CS DD, the genotype the criterion matters most for, is not done.
+```
+CS      n 25 | r(6h,3h) median 0.47 IQR [0.33,0.65] max 0.89 | r<0.8 in 0.96 -> PASS | worst grid point: r<0.8 in 0.88
+per0LD  n 27 | r(6h,3h) median 0.59 IQR [0.41,0.70] max 0.87 | r<0.8 in 0.89 -> PASS | worst grid point: r<0.8 in 0.85
+fumin   n 53 | r(6h,3h) median 0.58 IQR [0.41,0.77] max 0.96 | r<0.8 in 0.81 -> PASS | worst grid point: r<0.8 in 0.74
+sss     n 57 | r(6h,3h) median 0.59 IQR [0.42,0.73] max 0.89 | r<0.8 in 0.91 -> PASS | worst grid point: r<0.8 in 0.82
+per0DD  n 25 | r(6h,3h) median 0.28 IQR [0.22,0.34] max 0.52 | r<0.8 in 1.00 -> PASS | worst grid point: r<0.8 in 1.00
+```
+- F2 PASS in all 5 available genotypes. Real-fly collinearity (0.47-0.59 in LD) is close to the synthetic DD-CH flies'
+  (0.47), so F1's low per-fly power was NOT caused by an unrealistically collinear synthetic design.
+- Does not change the step-4 decision (F1 failed). In LD the cos term also stands in for the light step, so r here
+  measures H vs 24-h periodicity, not H vs the clock alone.
+- F3 (needs CS DD) and F4 (needs deprivation recordings): still not runnable; neither was in this upload.
