@@ -359,3 +359,19 @@ m_start, m_end; those are in planB_21.json via mean_d only, and a figure is stil
 Consistency: the level secondary reproduces C2's signs, including sss's reversal.
 Conditional follow-up B (20u models without the reversibility constraint) is now ELIGIBLE under PRESPEC 21's rule. It
 needs its own PRESPEC and Sheyum's approval; it was not run.
+
+## PRESPEC 21 / C13 — descriptive figure (2026-11-01; script fig_planB_21.py, this commit; figures/fig_planB21_profiles_{primary,supp}.{png,pdf}; fig_planB21_profiles.json)
+DESCRIPTIVE ONLY, no test. Same bouts as PRESPEC 21 (wake bouts >= 2L between sleep bouts; flies with >= 5 bouts), both
+pre-declared settings (L 300 s / 10-s bins; L 120 s / 5-s bins). m_start(tau) and m_end(tau) are fly means of each fly's
+mean over bouts; d(tau) = median over flies of (m_start - m_end); 95% fly-bootstrap bands (2000, seed 2026).
+Primary panel: per0 DD, CS DD. Supplementary: CS, per0LD, fumin, sss (LD).
+Reading of the plotted profiles (description, not a result):
+- Both curves start with a high boundary bin: the second next to the sleep bout is active by construction.
+- per0 DD (L300): before onset, activity falls gradually over the last ~5 min of wake, from ~0.14 at 300 s before onset
+  to ~0.08 in the last 30-60 s. After waking, activity is back near ~0.13-0.15 within ~20 s and stays roughly flat.
+  So: a gradual wind-down into sleep and an abrupt return to the wake level after it.
+- CS DD: the same ordering (before-onset below after-waking), largest in the first ~60 s. Both curves rise with distance
+  from the boundary over 300 s, i.e. activity rises towards the middle of long wake bouts.
+- LD (supplementary): CS LD and per0 LD resemble the DD pattern. fumin is very active right after waking, decaying over
+  minutes, and low and flat before onset. sss is reversed near the boundary (more active before onset than after
+  waking), matching its reversed cycle in C2.
