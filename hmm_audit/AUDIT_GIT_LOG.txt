@@ -288,3 +288,4 @@ b94200a 2026-11-02 01:29:03 +0000 sss mean in A1, note in A2
 1ce8c66 2026-11-02 01:30:27 +0000 HMM motivation draft
 1588b1f 2026-11-02 01:32:05 +0000 outline + emission panel
 173c89e 2026-11-02 01:34:37 +0000 A_eff panel
+0e89939 2026-11-02 01:37:44 +0000 HMM order SI

@@ -2176,3 +2176,13 @@ Quiet wake: stays into sleep (W->Q->S, n 649) and out of sleep (S->Q->W, n 433) 
 last longer than their time-reverse into sleep (Q->W->S, n 418): per-fly mean 4.43 vs 3.47 min (medians over flies),
 longer out of sleep in 80% of flies, with a longer tail. Reading: in this block the direction dependence sits in ACTIVE
 wake, not quiet wake; the 'two kinds of quiet wake' interpretation floated in conversation is not what the data show.
+
+## 2026-11-02  Summary note: HMM order selection, K = 2, 3, 4 (stored 20b fits; fig_hmm_order.py; no new fit)
+BIC (k = (K-1) + nP K(K-1) + 2K) per fly; fraction of flies with the lowest BIC at K = 2 / 3 / 4:
+  n = minutes:        CS 0/96/4%, per0 LD 15/78/7%, per0 DD 8/76/16%, fumin 6/85/9%, sss 5/95/0%
+  n = symbol changes: CS 0/88/12%, per0 LD 4/89/7%, per0 DD 4/56/40%, fumin 2/72/26%, sss 5/91/4%
+Median BIC(2) - BIC(3): +187 to +334 (n = minutes); median BIC(4) - BIC(3): +22 to +81. Flies flagged (K = 2 or 4
+better than 3 by > 10): CS 1, per0 LD 3, per0 DD 5, fumin 7, sss 3. Reading: K = 3 is selected among HMMs in most
+flies of every genotype; the lighter penalty (n = changes) moves some per0 DD (40%) and fumin (26%) flies to K = 4,
+descriptive only. Separately (20n), the K = 3 HMM is itself not preferred over the plain observed chain in 72-77% of
+flies: the order question and the hidden-vs-observed question are different comparisons.
