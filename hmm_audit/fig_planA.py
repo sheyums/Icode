@@ -27,6 +27,9 @@ def strip(ax,key,ylabel,hmm=None,ref0=True):
         R_=rows(g,p); v=np.array([r[key] for r in R_],float); fill=(p==1 or g in DDg)
         ax.plot(x+rng.uniform(-0.18,0.18,len(v)),v,'o',ms=2.6,mfc=COL[g] if fill else 'white',mec=COL[g],mew=0.6,alpha=0.8,zorder=2)
         m,lo,hi=med_ci(v); ax.plot([x-0.3,x+0.3],[m,m],color='k',lw=1.2,zorder=3); ax.plot([x,x],[lo,hi],color='k',lw=0.8,zorder=3)
+        if g=='sss' and key in ('c_obs','J'):   # sss: median is 0 (flies without qualifying transitions); show the mean too
+            vv=v[np.isfinite(v)]; bm=[rng.choice(vv,len(vv)).mean() for _ in range(2000)]; ml,mh=np.percentile(bm,[2.5,97.5])
+            ax.plot([x-0.38,x-0.38],[ml,mh],color='#b0306a',lw=0.8,zorder=3); ax.plot(x-0.38,vv.mean(),marker='D',ms=3.6,mfc='#b0306a',mec='white',mew=0.4,zorder=4)
         if hmm:
             hv=[r[hmm] for r in R_ if hmm in r and not r.get('hmm_deg',True)]
             if hv: ax.plot(x+0.36,np.median(hv),marker='<',ms=4,color='0.35',zorder=3)
@@ -43,8 +46,9 @@ for SI in (False, True):
     for a,l in zip(axs,'abc'): a.text(-0.07,1.02,l,transform=a.transAxes,fontsize=10,fontweight='bold')
     axs[0].plot([],[],'o',ms=3,mfc='white',mec='k',mew=0.6,label='light (one point per fly)'); axs[0].plot([],[],'o',ms=3,mfc='k',mec='k',label='dark / DD')
     axs[0].plot([],[],'-',color='k',lw=1.2,label='median, 95% CI')
+    axs[0].plot([],[],'D',ms=3.6,mfc='#b0306a',mec='white',ls='none',label='$sss$: mean, 95% CI (median is 0: many flies have no qualifying transitions)')
     if SI: axs[0].plot([],[],'<',ms=4,color='0.35',ls='none',label='HMM (model-based estimate), median')
-    axs[0].legend(frameon=False,fontsize=6.5,ncol=4,loc='lower left',bbox_to_anchor=(0.04,1.03))
+    axs[0].legend(frameon=False,fontsize=6.3,ncol=3,loc='lower left',bbox_to_anchor=(0.0,1.03))
     name='figA1_direction_flux_SI_hmm' if SI else 'figA1_direction_flux_observable'
     for ext in ('png','pdf'): fig.savefig(f'figures/{name}.{ext}',dpi=300)
 # ---------------- Fig A2 ----------------
@@ -63,6 +67,8 @@ for k,g in enumerate(GO):
     Ls[g]=(1/s,*np.percentile(B,[2.5,97.5]))
     ax.set_title(NAME[g],fontsize=8,color=COL[g]); ax.set_xlabel('$J$ (cycles h$^{-1}$)'); ax.set_ylabel('EPR (nats h$^{-1}$)') if k%3==0 else None
     ax.text(0.04,0.92,f'$L$ = {1/s:.2f}',transform=ax.transAxes,fontsize=7)
+    if g=='sss':
+        ax.text(0.5,0.72,'light (open points):\nmostly $J<0$, cycle reversed;\ncost depends on $J^2$ only',transform=ax.transAxes,fontsize=5.8,ha='center',va='top')
     for sp in ('top','right'): ax.spines[sp].set_visible(False)
 ax=fig.add_subplot(gs[:,3])
 for k,g in enumerate(GO):

@@ -514,3 +514,9 @@ noted on the panel.
 - 2026-11-01 NAMES ALIGNED WITH THE PORT (lClaude's note): the SI variant of Fig A1 is figA1_direction_flux_SI_hmm
   (MATLAB: exportFigA1(..., HmmMarkers=true)); legend 'HMM (model-based estimate), median' in both. The earlier Python
   name figS_A1_with_hmm_check is retired.
+- 2026-11-02 SLEEPLESS REVERSAL made visible (C2 highlight). Fig A1 (a, b): for sss only, a diamond = per-fly MEAN with
+  fly-bootstrap 95% CI (2000), placed left of the median, because the sss median is 0 (many flies have no qualifying
+  transitions, value exactly 0); legend says so. Fig A2: sss panel note 'light (open points): mostly J<0, cycle
+  reversed; cost depends on J^2 only'. New main-figure candidate fig_sss_reversal (fig_sss_reversal.py): per-fly
+  observed chain J (circle) joined to HMM J (triangle), CS and sss, light and dark; % with J < 0 and Wilcoxon p.
+  Port: add the sss mean marker to exportFigA1 and the note to exportFigA2; port fig_sss_reversal.
