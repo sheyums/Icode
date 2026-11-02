@@ -2257,3 +2257,12 @@ Code: `sqw_ref.rule_of_three_matrix` / `model_energetics_r3`, `sqw_r3.py`, `sqw1
   F_SW fumin D −0.74 → −0.65. All F values are finite before and after.
 - **Hidden r3 count.** It depends on the posterior paths: 59 in this Python run, 63 in one MATLAB run. Methods V8
   now says "about 60 (59–63)".
+
+## 2026-11-02 — One-way transitions: hidden model vs observed chain (SI S3 sentence; descriptive, no test)
+
+From `r3_model.json` after the edge-case revision, over 332 fly–phases with both a chain and a hidden model:
+one-way edge in the hidden model only, 31; in the observed chain only (the hidden model fills it), 6; at both levels, 27.
+Earlier I reported "32 vs 6". The one-fewer is sss 15 L, whose absorbing row is no longer filled.
+By group, hidden only: fumin L 6, fumin D 8, sss L 8, sss D 7, per0 LD L 1, per0 LD D 1.
+Observed only: sss L 2, sss D 2, fumin L 1, fumin D 1.
+Hidden r3 total in this run is 58 (31 + 27), so the Methods range now reads 58–63.
