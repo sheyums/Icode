@@ -42,6 +42,7 @@ TAB('Order selection and the identity of the extra state in the four-state model
      ['per0 DD', '8 / 76 / 16%', '4 / 56 / 40%', '+213', '+22', 'second sleep (16/25)'],
      ['fumin', '6 / 85 / 9%', '2 / 72 / 26%', '+221', '+60', 'second active wake (47/53)'],
      ['sleepless', '5 / 95 / 0%', '5 / 91 / 4%', '+187', '+77', 'second active wake (49/57)']])
+P('An independent MATLAB refit of all 187 flies from the raw counts reproduced these selections fly for fly with n = minutes, and with n = symbol changes in all but one fly. With 20 random starts the four-state optimum is not always found on either platform, so the four-state share is a lower bound set partly by the optimizer; the three-state majority is robust.')
 P('This establishes three dynamically distinct states. It does not test whether activity within wake falls into two '
   'discrete levels: the quiet/active boundary is a threshold (θ = 0.5 of each fly\'s typical wake activity).')
 FIG(F + 'fig1_hmm_emissions.png', 'Median emission matrices of the three-state hidden Markov model: each hidden state emits mostly one symbol (quiet 80–94%, active 91–96%, sleep 100%).')
