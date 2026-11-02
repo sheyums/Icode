@@ -130,7 +130,7 @@ try
     cf = fullfile(d, "r_fits", "fly1.mat"); C = load(cf); C.F{1}.ll = -12345.678; save(cf, '-struct', 'C');
     R2 = sqwBatchHMM(d, fast{:}, Ks=[2 3], Name="r");
     R3 = sqwBatchHMM(d, fast{:}, Ks=[2 3], Name="r", Starts=5);
-    ok = R2.perFly.ll_K2 == -12345.678 && R3.perFly.ll_K2 == R1.perFly.ll_K2 && R3.perFly.ll_K2 ~= -12345.678;
+    ok = R2.perFly.ll_K2 == -12345.678 && abs(R3.perFly.ll_K2 - R1.perFly.ll_K2) < 1 && R3.perFly.ll_K2 ~= -12345.678;   % refitted: near the old optimum, not the planted value
     [nP, nF] = rep(ok, nP, nF, 9, 'Resume: matching cache reused, cache with other Starts ignored', ...
         sprintf('%.3f %.3f %.3f', R1.perFly.ll_K2, R2.perFly.ll_K2, R3.perFly.ll_K2));
 catch e, [nP, nF] = rep(false, nP, nF, 9, 'Resume', e.message); end
