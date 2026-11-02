@@ -373,3 +373,23 @@ re-run, more permutations would settle it.
   N(b,a) = 0 while P(b,a) >= 1e-10 (possible for the marginalised chain fit), and a row with P(a,a) = 1 (n_a = 0/0).
 - Not yet wired into observableQuantities / planAFlyHMM / energyLandscape: waiting for the reference to see exactly
   which N each caller uses (observed counts per phase; mean posterior-path counts).
+
+## 2026-11-02  sqwBatchSymbols + sqwBatchHMM: HMM order selection (ledger 2026-11-02, fig_hmm_order.py) REPRODUCED
+- All 187 flies refitted FROM SCRATCH (count files -> sqwBatchSymbols -> sqwBatchHMM, K = 2/3/4, 20 starts, seed 20;
+  MATLAB streams, so not numpy's starts). 3.2 h on 8 workers. Outputs: sqw/validation/batchHMM (per-genotype per-fly
+  CSVs, compare_order.csv, compare_perfly_ll.csv, figS_hmm_order_port.png/pdf).
+- Fraction of flies with the lowest BIC at K = 2 / 3 / 4, port (= stored-fit recomputation unless noted):
+    n = minutes:  CS 0/96/4, per0 LD 15/78/7, per0 DD 8/76/16, fumin 6/85/9, sss 5/95/0       -- identical, fly for fly
+    n = changes:  CS 0/88/12, per0 LD 4/89/7, per0 DD 4/56/40, fumin 2/72/26, sss 5/89/5 (stored 5/91/4)
+  Median BIC(2) - BIC(3): 334.5, 273.4, 212.7, 221.5, 186.8 (stored 186.7); BIC(4) - BIC(3): 70.4 (70.6), 80.9, 22.3,
+  60.4, 76.7 (77.1). Flagged flies (K = 2 or 4 better than 3 by > 10, n = minutes): 1, 3, 5, 7, 3 -- as the ledger.
+- Per-fly log-likelihood, port - stored: K = 2 within 0.03 for all 187; K = 3 within 0.01 for 181, one fly 5.3 nats
+  LOWER (fumin 10_22_2018_4b_RC2_pruned_5: 20 MATLAB starts missed the best optimum; its K pick unchanged); K = 4
+  within 0.01 for 129, otherwise -6.1 to +13.0 (11 flies lower by > 0.5), i.e. 20 starts do not reliably find the
+  K = 4 optimum on either platform. The one changed pick: sss 6_15_2018_4boardmb_pruned_18, where MATLAB's K = 4 is
+  6.7 nats HIGHER than the stored one, so under n = changes K = 4 beats K = 3 by 5.5 (under 10, not flagged).
+  Reading: the K = 4 share is a lower bound set by optimizer luck as much as by data; the K = 3 majority is robust.
+- K = 3 emission medians (non-degenerate, n 25/27/23/53/54): Q 0.92/0.84/0.94/0.85/0.80, W 0.91/0.93/0.91/0.96/0.95
+  (Fig 1 recipe: Q 0.916/0.838/0.936/0.831/0.802, W 0.910/0.935/0.912/0.962/0.946).
+- New, descriptive, no Python counterpart: among the K = 4 fits, flies with TWO states emitting mostly S: CS 8%,
+  per0 LD 22%, per0 DD 68%, fumin 6%, sss 7%. Depends on which K = 4 optimum was found (see above); not a test.
