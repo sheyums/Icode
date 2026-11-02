@@ -182,7 +182,7 @@ try
     [ll, ~, P] = chainFitPhased(y, ph, 2);
     okA = abs(ll - g.mc_fit.loglik) < 1e-6 && max(abs(P - pyP(g.mc_fit.P)), [], 'all') < 1e-9;
     okB = isequal(routeCountsObserved(y, ph, 2), g.routes_observed);
-    Q = observableQuantities(y, ph, 2, pyP(g.mc_fit.P));
+    Q = observableQuantities(y, ph, 2, pyP(g.mc_fit.P), RuleOfThree=false);   % golden file: pre-2026-11-02 convention
     fl = {'c_obs', 'J', 'EPR', 'rule_of_three', 'J_chain', 'A_chain', 'EPR_chain', 'E21', 'E31', ...
         'F_SW', 'F_WS', 'Xn_cnt', 'Yn_cnt'};
     d = zeros(2, numel(fl));

@@ -37,7 +37,7 @@ obsFolder = ["CS" "CSDD" "per0LD" "per0DD" "fumin" "sss54"];
 fitFolder = ["CS" "" "per0LD" "per0DD" "fumin" "sss"];
 dd = [false true false true false false];
 fits = readStored20bFits(jsonlFile);
-hmmCols = ["hmm_deg" "J_hmm" "EPR_hmm" "J_hmm_model" "EPR_hmm_model"];
+hmmCols = ["hmm_deg" "J_hmm" "EPR_hmm" "J_hmm_model" "EPR_hmm_model" "r3_hmm"];
 for k = 1:6
     t0 = tic;
     G = sqwObservableGroup(fullfile(dataRoot, obsFolder(k)), D.order(k), LightDark=~dd(k), NBoot=options.NBoot);
