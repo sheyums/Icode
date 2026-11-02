@@ -66,7 +66,7 @@ TAB('Onsager conductance and affinity per turn, observed and hidden (fly bootstr
      ['CS DD', '0.26 [0.22, 0.31]', '—', '—', '0.51 / —', '0.50'],
      ['per0 LD', '0.29 [0.26, 0.32]', '0.25 [0.23, 0.27]', '0.25 [0.23, 0.29]', '0.43 / 0.95', '0.42'],
      ['per0 DD', '0.35 [0.29, 0.40]', '0.33 [0.20, 0.36]', '0.34 [0.22, 0.37]', '0.64 / 0.97', '0.64'],
-     ['fumin', '0.24 [0.19, 0.26]', '0.24 [0.17, 0.28]', '0.22 [0.17, 0.24]', '1.11 / 1.45', '1.09'],
+     ['fumin', '0.24 [0.19, 0.26]', '0.24 [0.17, 0.28]', '0.22 [0.17, 0.24]', '1.11 / 1.45', '1.04'],
      ['sleepless', '0.15 [0.12, 0.18]', '0.14 [0.12, 0.18]', '0.11 [0.08, 0.15]', '0.70 / 1.10', '0.79']])
 P('L in cycles² nats⁻¹ h⁻¹. No hidden models were fitted to CS in constant darkness. Sleepless has the lowest conductance '
   'at both levels. The observed A_eff agrees with the affinity of the fitted chain, as single-cycle thermodynamics requires; '
@@ -138,8 +138,8 @@ P('Sleep fell by about 40% after VNC silencing (light 38.5 → 23.9, dark 42.6 �
   'exit route on sleep length was present in all three groups and unchanged by silencing (all Holm ≥ 0.32).')
 
 H('S10. Statistical and numerical notes')
-P('No-cycle fly–phases (|J| < 10⁻¹²) are counted, set to zero and never assigned a sign. Infinite values (a transition '
-  'seen in one direction only) are ranked highest in medians. Edges seen in one direction only enter the entropy production '
+P('No-cycle fly–phases (|J| < 10⁻¹²) are counted, set to zero and never assigned a sign. Model-based quantities (affinity, model '
+  'entropy production, barriers) use the rule of three where a transition was seen in one direction only, so none is infinite. Edges seen in one direction only enter the entropy production '
   'through a rule-of-three bound. Wilcoxon signed-rank tests with ties use the normal approximation; the exact and '
   'approximate p differ by less than 0.02 in the one affected comparison (sleepless dark, p ≈ 0.66).')
 

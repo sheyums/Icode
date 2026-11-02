@@ -2217,3 +2217,16 @@ Branching-corrected landscape prediction F_SW: same sign in 84-100% of flies and
 fumin; weaker in sss (same sign 70%, rho 0.51-0.56; light median -0.12 observed vs +0.23 hidden). Reading: the landscape
 energies are robust to the quiet/active boundary; the routing prediction, which depends on the sparse S->Q rate, is
 robust except in sss, where it should not be interpreted.
+
+## 2026-11-02  AMENDMENT (estimator convention, Sheyum): rule of three for model-based quantities; no 'infinite'
+sqw_ref section 16 (rule_of_three_matrix, model_energetics_r3); sqw_r3.py -> sqw_out/r3_model.json. For a one-way edge
+the fitted matrix is completed with the unseen count min(3, k) (row renormalized); pairs unseen both ways stay zero
+(no cycle). Applies to chain affinity A, chain (model) EPR, landscape barriers, and the HMM's model EPR. Count-based
+EPR (epr_count_bound) unchanged. Used in 33 observed fly-phases (fumin 2/10, sss 7/14; light/dark) and 59 hidden.
+Medians over fly-phases with a cycle, old (infinite ranked highest) -> rule of three:
+  chain A:   fumin L +1.03 -> +0.88, D +1.54 -> +1.03; sss L -0.01 -> -0.41 (reversed, as C2), D +0.52 -> -0.05
+  chain EPR: fumin L 0.170 -> 0.135, D 0.189 -> 0.093; sss L 0.090 -> 0.035, D 0.109 -> 0.019 (nats/h)
+  HMM model EPR: per0 LD 0.017 -> 0.013 / 0.179 -> 0.147; fumin 0.239 -> 0.115 / 0.490 -> 0.116; sss 0.078 -> 0.010 / 0.196 -> 0.009
+  CS, CS DD, per0 DD and per0 LD chain values unchanged (no one-way edges). No fly-phase with a cycle remains non-finite.
+SI Table S2 'chain affinity |A|' (pooled phases): fumin 1.09 -> 1.04, sss 0.79 -> 0.51 (earlier values had dropped the
+infinite cases). Count-based results (Figs A1, A2, L, A_eff) are unaffected.
