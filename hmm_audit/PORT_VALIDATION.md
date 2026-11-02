@@ -432,3 +432,20 @@ re-run, more permutations would settle it.
   do not. The Python fig_planA / observable_quantities still use the old convention (sqw_ref line 784, sqw17.py), so
   the Python A3 will differ by these amounts until it is switched. Not changed: Fig C12 (reads y_kir.json), Fig C7 SI
   panel (c) (HMM-matrix landscape, not in the amendment).
+
+## 2026-11-02  Rule of three, revision 663a0c2 (order-free fill, no-exit rows, no-cycle wrapper) — matched
+- ruleOfThreeMatrix: n_a once from the ORIGINAL row, every one-way edge with N(b,a) > 0 set to min(3, N(b,a)) against
+  that row, renormalised once; a row with no observed exit or P(a,a) = 1 left unchanged (info.noExit); no fallback.
+  modelEnergeticsR3: |J| < 1e-12 and EPR or A non-finite -> EPR = 0, A = NaN (E.noCycle). test_sqw_r3 11/11 (test 4
+  back to order-independence with hand value [34 2 3 2 4]/45; test 11 new: absorbing -> 0/NaN, reversible round-off
+  untouched).
+- r3_check re-run (sqw/validation/r3; r3_model.json is STILL not committed -- sqw_out/ is not in the repo -- so the
+  check is again against the ledger, not per fly): observed level unchanged (every chain median as the amendment; 33
+  observed fly-phases, none non-finite). Hidden: the only model EPR that changed by > 1e-12 vs the previous run is
+  sss 15 L, 0.0088 -> 0, as cClaude reports. The five fly-phases cClaude names (fumin 10 L, 12 D; sss 15, 22, 28 L;
+  Python 0-based numbering) all come out A = NaN, EPR = 0. The wrapper also fires on 13 more hidden fly-phases whose
+  EPR was already round-off (~1e-29) and A non-finite: their EPR becomes exactly 0 -- the same condition in sqw_ref,
+  so the Python does the same; nothing visible. Hidden r3 used: 58 (fumin 12 D no longer filled).
+- Medians: all amendment values reproduced except the HMM model EPR for sss LIGHT, 0.0096 -> 0.0094: removing the
+  0.0088 artefact moves the lower middle value from 0.00876 to 0.00834 (n 50), which in MATLAB crosses the rounding
+  boundary (0.010 -> 0.009). The Python, with its own paths, may sit on the other side; quote 0.009-0.010.
