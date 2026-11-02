@@ -308,3 +308,32 @@ the right one and the port's draw was high (9 tail permutations where ~4 were ex
 its stars and fading from the ledger's Holm by default (SigFrom="ledger", as Fig C12 copies its flags); figC7_blocks
 carries both. Suggestion for cClaude: 2000 permutations leave this verdict at the mercy of the draw; if 20k is ever
 re-run, more permutations would settle it.
+
+## 2026-11-02  Fig A1 sss mean marker, Fig A2 sss note and panel (c) A_eff (lClaude; FIGURE_RECIPES notes 2026-11-02)
+- exportFigA2 panel (c): A_eff = EPR/|J| medians reproduce fig_planA.py's printout exactly: CS 0.57, CS DD 0.51,
+  per0 LD 0.43, per0 DD 0.64, fumin 1.11, sss 0.70 nats/cycle (n 48, 25, 51, 24, 88, 76 fly-phases); L unchanged.
+  sss title notes '(open = light: reversed)'; top scale e^A (odds forward : backward). Output figA2_Aeff.csv.
+- exportFigA1: sss mean (diamond, fly-bootstrap 95% CI, left of the median) in (a) and (b), main and SI variants.
+  Values (no Python printout to compare): c_obs light -0.111 [-0.187, -0.042], dark -0.068 [-0.150, +0.001]; count J
+  light -0.037 [-0.061, -0.013], dark -0.005 [-0.030, +0.021] cycles/h. Summary CSV gains mean, mean_lo, mean_hi.
+- fig_sss_reversal (exportFigSssReversal): against PLANS C2 (fig_sss_reversal.py printout): sss light n 50, chain J mean
+  -0.0377 (-0.038), p 0.0045 (0.004); HMM J -0.061 (-0.062) and p 3e-5 (7e-5) are FFBS Monte Carlo. Two deterministic
+  numbers differ: J < 0 in 62% (Python 64%) and sss dark p 0.63 (0.59). CASE for cClaude: 13 of 50 sss-light flies
+  (5 of 53 dark) have no cycle in their observed chain, so J_chain is round-off (+-1e-15) and its SIGN differs between
+  numpy and MATLAB; the "% J < 0" and, through tiny Wilcoxon ranks, p depend on it. Counting |J| < 1e-12 as 0: sss
+  light J < 0 in 52% (26/50), p 0.0016; sss dark 51%, p 0.67 (summary columns neg_obs_cycleOnly, p_obs_zeroed).
+  The reversal conclusion stands either way; the printed 64% is not a stable number. Figure text mirrors the Python.
+- fig1_hmm_emissions (exportFig1Emissions): n 25 / 27 / 23 / 53 / 54 non-degenerate fits; diagonals Q 0.80-0.94,
+  W 0.91-0.96, S 1.00 (recipe ranges reproduced: Q 0.916 0.838 0.936 0.831 0.802; W 0.910 0.935 0.912 0.962 0.946).
+- fig_dwell_direction_CS_night (exportFigDwellDirection): reproduces the ledger entry exactly (deterministic): 25 CS
+  flies; Q into / out of sleep n 649 / 433, per-fly mean 2.68 vs 2.38 min (medians over flies), into longer in 64%;
+  W into / out n 418 / 585, 3.47 vs 4.43 min, out longer in 80%.
+- C13 profiles fig_planB21_profiles_primary / _supp (exportFigC13Profiles; fig_planB_21.py): against the Python's
+  stored fig_planB21_profiles.json, all 12 genotype x setting rows agree: fly counts equal (L300: 25 25 25 27 51 45;
+  L120: 25 25 25 27 51 46) and m_start, m_end and median d agree to <= 6e-16 at every bin. Bands are bootstrap.
+  per0 DD traces cut to the 20r replication traceLen, as planB_21.traces. Check table fig_planB21_check.csv.
+- SI memory figure with HMM panel (fig_R1_main.py): NOT finished. routeDurationHidden ported (golden G11 exact;
+  test_sqw_figA 11/11) and planARouteHidden written (per-fly hidden R1 D over 200 FFBS paths, 400-simulation null with
+  20 paths each, path records, landscape line), smoke-tested on 2 CS flies with 10 sims (26 s). At 400 sims the full
+  run is estimated at many hours on 2 workers; not started. Still to do: the full run, exportFigC7SI (hidden panel,
+  hidden Holm), and validation against the 20k ledger's hidden R1 lines (D, null mean, p, Holm).

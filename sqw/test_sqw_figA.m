@@ -205,6 +205,16 @@ try
         'cases (max diff %.2g)'], numel(gold), max(dD)), sprintf('records %d, D diff %s', okR, mat2str(dD, 3)));
 catch err, [nP, nF] = rep(false, nP, nF, 10, '', err.message); end
 
+%% 11. G11 golden: routeDurationHidden on the hidden path (exact)
+try
+    h = g11.hidden_path; R = routeDurationHidden(h.z(:) + 1, h.ph(:) + 1); gold = toRec(h.records);
+    ok = numel(R) == numel(gold);
+    for f = ["phase" "sleep_min" "wake_before_min" "wake_after_min" "q_in" "q_out"]
+        ok = ok && isequaln([R.(f)], [gold.(f)]);
+    end
+    [nP, nF] = rep(ok, nP, nF, 11, sprintf('G11: routeDurationHidden records (%d) exact', numel(gold)), 'mismatch');
+catch err, [nP, nF] = rep(false, nP, nF, 11, '', err.message); end
+
 fprintf('\n%d passed, %d failed\n', nP, nF);
 end
 
