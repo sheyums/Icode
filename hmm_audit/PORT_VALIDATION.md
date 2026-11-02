@@ -412,3 +412,23 @@ re-run, more permutations would settle it.
   steps (diagonal included) are known for the observed chain.
 - NOT yet wired into the callers (observableQuantities' A_chain / EPR_chain, planAFlyHMM's EPR_hmm_model,
   energyLandscape inputs in the figure exports); modelEnergetics itself is unchanged.
+
+## 2026-11-02  Rule of three WIRED IN (default) — code 19fb9af; Fig A3 re-exported
+- observableQuantities (RuleOfThree=true default): A_chain, EPR_chain, E21, E31, F_SW, F_WS from the rule-of-three matrix
+  of the chain fit with the phase's observed counts; J_chain stays on the FITTED matrix (it defines the cycle, as
+  sqw_r3.py takes 'cycle' from the old J_chain). New column r3_chain. planAFlyHMM: EPR_hmm_model from the K = 3 matrix
+  filled with the MEAN posterior-path counts (sqw_r3.py), J_hmm_model unchanged, new column r3_hmm. RuleOfThree=false
+  restores the pre-2026-11-02 numbers (Inf kept); the G12 golden comparison in test_sqw_stage1 pins it.
+  Tests: test_sqw_r3 10/10 (2 new wiring tests), test_sqw_stage1 21/21, test_sqw_stage3 13/13, test_sqw_figA 11/11.
+- planAData rebuilt (scratch cache planAData_r3_cache.mat). Against the old cache: where r3 was not used, A_chain,
+  EPR_chain, E21 bit-identical in every genotype; J_chain and count EPR identical everywhere; where used, equal to
+  sqw/validation/r3/r3_port.csv (the run that reproduced the ledger amendment) to <= 4.9e-15. Chain r3 used in fumin 12,
+  sss 21 fly-phases (all refOK rows; 33 among those with a cycle, as the ledger).
+- Hidden r3 count is path-dependent: 63 here (per0 LD 2, per0 DD 2, fumin 27, sss 32) vs 59 in r3_check (per0 DD 0,
+  fumin 25) -- whether a one-way edge gets filled needs its reverse MEAN path count > 0, which for very rare hidden
+  transitions varies with the FFBS draw. Same for the Python; worth a line in Methods if 59 is quoted.
+- Fig A3 (validation/figA, exportFigA3): only sss summary rows move: E21 sss dark median -1.1272 -> -1.1278 (CI hi
+  -1.0360 -> -1.0359); E31 sss light CI lo 0.804 -> 0.715, sss dark CI hi 1.670 -> 1.601. Fumin points change, medians
+  do not. The Python fig_planA / observable_quantities still use the old convention (sqw_ref line 784, sqw17.py), so
+  the Python A3 will differ by these amounts until it is switched. Not changed: Fig C12 (reads y_kir.json), Fig C7 SI
+  panel (c) (HMM-matrix landscape, not in the amendment).
