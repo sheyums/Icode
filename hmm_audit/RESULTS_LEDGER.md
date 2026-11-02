@@ -2195,3 +2195,25 @@ cycle, J < 0 in 70%, Wilcoxon p 0.0016 (was 64% / p 0.0037 over 50); HMM unchang
 unchanged (-0.038). sss dark: 48 with a cycle, 56% negative, p 0.66 (was 0.59). Verdict unchanged (reversal by day).
 Also recorded (lClaude): the hidden-level 20k CS dark star rests on the resolution of 400 simulations (smallest p 2/401,
 Holm 9p = 0.045); the observed-level CS dark result (p 0, Holm 0) is the robust statement of C7.
+
+## 2026-11-02  Note (lClaude): Wilcoxon tie handling, sss dark sign test (fig_sss_reversal); no verdict affected
+48 flies with a cycle; one exact tie in |J| (two flies at -1/24 and +1/24). Python (scipy 1.18.1, wilcoxon default
+method='auto'): with ties it uses the normal approximation without continuity correction, p = 0.6554797630917468
+(method='exact' gives 0.6656758094474071). MATLAB signrank: exact with average ranks 0.675; normal approximation 0.670.
+Each side keeps its default. sss light (37 flies) has no tie, so both sides run the exact test and agree.
+
+## 2026-11-02  Note: what the K = 2 and K = 4 HMMs are (stored 20b fits; no new fit) - evidence for W/Q/S
+Dominant emitted symbol of each hidden state. K = 2: one wake state (emitting Q and W) + one sleep state in every fly
+(the W/S description with Q/W as emission noise); rejected against K = 3 by BIC (median dBIC +187 to +334, ledger note
+above). K = 4, the extra state is: a second ACTIVE-wake state (Q,W,W,S) in CS 17/25, per0 LD 17/27, fumin 47/53, sss
+49/57; a second SLEEP state (Q,W,S,S, i.e. W/Q/S/deep-sleep) in per0 DD 16/25 (CS 2, per0 LD 6, fumin 3, sss 2).
+K = 4 is rejected against K = 3 in most flies (median dBIC +22 to +81); per0 DD, where the extra state is a second
+sleep state, is the genotype with most K = 4 support (16% / 40% of flies by the two BIC penalties).
+
+## 2026-11-02  Descriptive check (no test): landscape quantities, observed chain vs HMM, per fly (s_observable.json, l_landscape.json)
+E_S - E_Q (state energy): medians observed / hidden CS L -0.94/-1.08, CS D -1.78/-1.85, per0 LD -1.74/-1.73 and
+-1.58/-1.61, per0 DD -1.75/-1.85, fumin 0.64/0.74 and 0.97/1.07, sss 1.19/1.13 and 1.38/1.38; per-fly Spearman 0.83-0.97.
+Branching-corrected landscape prediction F_SW: same sign in 84-100% of flies and rho 0.58-0.90 in CS, per0 LD/DD and
+fumin; weaker in sss (same sign 70%, rho 0.51-0.56; light median -0.12 observed vs +0.23 hidden). Reading: the landscape
+energies are robust to the quiet/active boundary; the routing prediction, which depends on the sparse S->Q rate, is
+robust except in sss, where it should not be interpreted.

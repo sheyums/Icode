@@ -40,7 +40,7 @@
      "text": "The HMM has *K* hidden states, a *K* × 3 emission matrix *B* shared by all times of day, an initial distribution *π*_{0}, and phase-specific transition matrices: *P*^{L} for transitions into minutes at ZT 0–12 and *P*^{D} for transitions into minutes at ZT 12–24 (a single matrix *P* in constant darkness). Within each phase the dynamics are assumed time-homogeneous. One model was fitted per fly to its entire recording by maximum likelihood, using Baum–Welch expectation–maximization in which the expected transition counts are accumulated separately by the phase of the arrival minute and the emission counts are pooled. Each fit was started from 20 random initializations (half with diagonally dominant transition matrices) and iterated until the relative gain in log-likelihood fell below 10^{-7} for every initialization, or for at most 1000 iterations; the best final likelihood was retained."
     },
     {
-     "text": "Models with *K* = 2, 3 and 4 were fitted, and the order was selected by the Bayesian information criterion, BIC = −2*LL* + *k* ln *n*, with *k* = (*K* − 1) + *n*_{P}*K*(*K* − 1) + 2*K* free parameters (*n*_{P} = 2 phases) and *n* the number of minutes; as a sensitivity analysis *n* was replaced by the number of symbol changes. A fly was flagged, not excluded, when *K* = 2 or 4 improved BIC over *K* = 3 by more than 10. Routing and thermodynamic quantities are defined for *K* = 3. The three states were labelled by their emissions: H_{3} has the largest P(S | H), H_{2} the larger P(W | H) of the remaining two, and H_{1} is the third. H_{1} was considered unidentified in a fly if its emission row lay within total-variation distance 0.05 of the row of H_{2} or H_{3}; such flies were excluded from routing and thermodynamic summaries and counted. BIC selected *K* = 3 in 76–96% of flies of each genotype (with *n* the number of symbol changes, 56–91%; under this lighter penalty 40% of *per0* (DD) and 26% of *fumin* flies preferred *K* = 4), and *K* = 3 was used throughout. No hidden Markov models were fitted to CS in constant darkness. Whether the *K* = 3 model improves on the observed chain is a separate comparison (Observable and hidden levels compared, below)."
+     "text": "Models with *K* = 2, 3 and 4 were fitted, and the order was selected by the Bayesian information criterion, BIC = −2*LL* + *k* ln *n*, with *k* = (*K* − 1) + *n*_{P}*K*(*K* − 1) + 2*K* free parameters (*n*_{P} = 2 phases) and *n* the number of minutes; as a sensitivity analysis *n* was replaced by the number of symbol changes. A fly was flagged, not excluded, when *K* = 2 or 4 improved BIC over *K* = 3 by more than 10. Routing and thermodynamic quantities are defined for *K* = 3. The three states were labelled by their emissions: H_{3} has the largest P(S | H), H_{2} the larger P(W | H) of the remaining two, and H_{1} is the third. H_{1} was considered unidentified in a fly if its emission row lay within total-variation distance 0.05 of the row of H_{2} or H_{3}; such flies were excluded from routing and thermodynamic summaries and counted. BIC selected *K* = 3 in 76–96% of flies of each genotype (with *n* the number of symbol changes, 56–91%; under this lighter penalty 40% of *per0* (DD) and 26% of *fumin* flies preferred *K* = 4), and *K* = 3 was used throughout. To interpret the alternatives, each hidden state was characterized by the symbol it emitted most often. At *K* = 2 the model had one wake state emitting both Q and W and one sleep state in every fly, so the comparison of *K* = 2 with *K* = 3 tests a sleep/wake description, in which quiet and active minutes are noisy readings of one wake state, against three states. At *K* = 4 the additional state was a second active-wake state in most flies of CS, *per0* (LD), *fumin* and *sss*, and a second sleep state in 16 of 25 *per0* (DD) flies. This comparison establishes three dynamically distinct states; it does not test whether activity within wake falls into two discrete levels, since the quiet/active boundary is a threshold. No hidden Markov models were fitted to CS in constant darkness. Whether the *K* = 3 model improves on the observed chain is a separate comparison (Observable and hidden levels compared, below)."
     },
     {
      "text": "Single 4-hour windows were not fitted separately, because one window does not contain enough sleep–wake transitions to resolve routing: on synthetic sequences with a distinct H_{1} and known routing, a single 240-minute window selected *K* = 3 in only 4% of cases and gave routing fractions with a standard deviation of 0.75 (Validation of the inference, below). As a secondary design with finer time resolution, CS, *per0* (LD) and *fumin* flies were also fitted with four transition matrices, one for each 6-hour block (ZT 0–6, 6–12, 12–18, 18–24), with shared emissions."
@@ -238,6 +238,107 @@
      "text": "In the S/Q/W analysis, *A*_{eff} = EPR/|*J*_{cycle}| was computed per fly and phase from the observed symbol-change counts (Eqs. 20, 22), for fly–phases with a cycle, finite entropy production and *J*_{cycle} ≠ 0. For a single cycle in a steady state, entropy production equals current times affinity, so *A*_{eff} estimates the cycle affinity; it agreed with the affinity of the fitted chain (Eq. 21) in every genotype. exp(*A*_{eff}) is the ratio of the probabilities of a forward and a backward turn of the cycle."
     }
    ]
+  },
+  {
+   "anchor": "Jensen-Shannon distance between bout-duration distributions",
+   "op": "delete"
+  },
+  {
+   "anchor": "To test whether observable bouts exiting a sleep or wake state via the direct",
+   "op": "delete"
+  },
+  {
+   "anchor": "For two densities",
+   "op": "delete"
+  },
+  {
+   "anchor": "For two densities",
+   "op": "delete_next"
+  },
+  {
+   "anchor": "where  is the Kullback-Leibler divergence",
+   "op": "delete"
+  },
+  {
+   "anchor": "Because bout durations are continuous and right-skewed",
+   "op": "delete"
+  },
+  {
+   "anchor": "A bootstrap standard error and percentile confidence interval for",
+   "op": "delete"
+  },
+  {
+   "anchor": "A bootstrap standard error and percentile confidence interval for",
+   "op": "after",
+   "paras": [
+    {
+     "text": "Kullback–Leibler divergence and time irreversibility",
+     "heading": true
+    },
+    {
+     "text": "The Kullback–Leibler divergence between two distributions *p* and *q* on the same outcomes is *D*_{KL}(*p*‖*q*) = Σ_{x} *p*(*x*) ln[*p*(*x*)/*q*(*x*)], in nats (Kullback & Leibler, 1951). It is zero only when the distributions coincide and is not symmetric. We use it in one way only: to compare a process with its time reverse. For a stationary process, the divergence between the probability of a trajectory and that of the same trajectory played backwards, per unit time, is the entropy production rate, and any coarse-grained version of the trajectory gives a lower bound on it (Kawai, Parrondo & Van den Broeck, 2007; Roldán & Parrondo, 2010). Two such estimators were applied to the observed symbols: blocks of *n* consecutive minutes against their reverses (Observable and hidden levels compared), and dwell-time distributions in the two directions of passage through quiet and active wake (Waiting-time irreversibility). Empirical distributions were estimated from counts with a pseudocount of 0.5 per outcome, so that an outcome seen in one direction only contributes a finite term; the estimators' positive bias was handled by comparing each fly with records simulated from its own observed chain, never by interpreting the divergence alone."
+    },
+    {
+     "text": "The Jensen–Shannon distance used in an earlier version of this analysis to compare bout-duration distributions by exit route was not used. Its question, whether sleep bouts that end through quiet wake differ in length from those that end in active wake, is answered by the within-fly route-duration test (Dependence of routing on bout duration), which compares bouts within each fly against a permutation null rather than pooling flies; and, unlike the Kullback–Leibler divergence between a process and its time reverse, the Jensen–Shannon distance has no thermodynamic interpretation."
+    }
+   ]
+  },
+  {
+   "anchor": "Observability threshold for transition probabilities",
+   "op": "before",
+   "paras": [
+    {
+     "text": "Thermodynamic quantities: what is computed, and from what",
+     "heading": true
+    },
+    {
+     "text": "The quantities defined in the following sections (Eqs. 5–25) were computed per fly and light phase (whole record in constant darkness) at two levels. At the observed level, the primary description, the transition matrices are the fitted observed S/Q/W chains (Observed S/Q/W chain), with Q, W and S in the roles of H₁, H₂ and H₃, and the counts are the observed symbol changes, with the recorded hours of the phase in place of the duration of valid windows. At the hidden level, used as a check, the transition matrices are the fitted phase-specific hidden-Markov-model matrices (*K* = 3, labelled states), and every count-based quantity is evaluated on each of 200 paths drawn from the posterior distribution of hidden paths and then averaged over paths. Where the sections below refer to 4-hour windows, per-window matrices, valid windows or averages over windows, they describe an earlier per-window binary-state model that is not used in this study; in each such place the computation is per fly and phase. Transitions observed in one direction only are handled by the rule-of-three bound (Entropy production rate) rather than by an observability threshold, and fly–phases whose chain carries no net cycle (|*J*| < 10^{-12}) are counted and excluded from directional and thermodynamic summaries."
+    },
+    {
+     "text": "Per fly and phase this gives: the cycle flux from symbol-change counts (Eq. 20) and from the fitted matrix, *J* = π₂*P*(2,1) − π₁*P*(1,2) per step, converted to cycles per hour; the cycle affinity *A* from the fitted matrix (Eq. 21); the entropy production from counts (Eq. 22, with the rule-of-three bound) and, for the fitted chain, the stationary value *J*·*A*; the effective affinity *A*_{eff} = EPR/|*J*_{cycle}|; the state energies and landscape routing predictions from the fitted matrix (Eqs. 5–19); and, across the fly–phases of a genotype, the Onsager conductance (Eq. 25). The stationary distribution of every fitted matrix was obtained by the QR solve described under Energy landscape quantification."
+    }
+   ]
+  },
+  {
+   "anchor": "Observability threshold for transition probabilities",
+   "op": "delete"
+  },
+  {
+   "anchor": "Because a 4-hour window at 1-second resolution",
+   "op": "delete"
+  },
+  {
+   "anchor": "Per-window affinities",
+   "op": "delete"
+  },
+  {
+   "anchor": "We additionally quantified how often the full three-state cycle",
+   "op": "delete"
+  },
+  {
+   "anchor": "Statistical comparison of HMM transition matrices",
+   "op": "delete"
+  },
+  {
+   "anchor": "For each element",
+   "op": "delete"
+  },
+  {
+   "anchor": "Effect sizes were quantified as Cliff’s delta (",
+   "op": "delete"
+  },
+  {
+   "anchor": "Group comparisons of derived quantities",
+   "op": "before",
+   "paras": [
+    {
+     "text": "Software",
+     "heading": true
+    },
+    {
+     "text": "All computations were carried out in MATLAB (R2026a; The MathWorks, Natick, MA) with custom code. Bout-duration distributions were fitted by maximum likelihood using fmincon (Optimization Toolbox), as described above. Random numbers for simulations, permutations and bootstrap resampling were drawn from RandStream objects with fixed seeds. Stationary distributions were obtained by QR decomposition (qr), and the exact quantities of the thermodynamic uncertainty relation from the leading eigenvalue of the tilted transition matrix (eig). Wilcoxon signed-rank tests used signrank (Statistics and Machine Learning Toolbox; exact distribution for *n* ≤ 50, normal approximation otherwise), Student-*t* quantiles used betaincinv, and normal tail probabilities used erfc. Mann–Whitney tests, Holm and Benjamini–Hochberg corrections, Spearman correlations and percentile bootstrap intervals were implemented directly; percentiles used linear interpolation between order statistics."
+    }
+   ]
   }
  ],
  "comments": [
@@ -262,10 +363,6 @@
    "text": "If the H2/H3 dwell times come from Viterbi paths of the binary model, they inherit its non-identifiability where H1 is degenerate. Check which decoding was used."
   },
   {
-   "anchor": "Observability threshold for transition probabilities",
-   "text": "Specific to per-window fits at 1-s resolution. The S/Q/W analysis uses no P_min gate: zero counts get the rule-of-three bound (Entropy production rate), and a transition absent in one direction is reported as infinite / no cycle. Keep only if the per-window sections are kept."
-  },
-  {
    "anchor": "Energy landscape quantification",
    "text": "All quantities here come from per-window binary-model matrices; state energies and barriers involving H1 are not identified in windows where H1 is degenerate. Recompute from the S/Q/W phase matrices or drop."
   },
@@ -278,10 +375,6 @@
    "text": "The routing deviation compares counts with the landscape prediction from the same per-window binary model. In the S/Q/W analysis the posterior-predictive check (Validation) plays this role; suggest dropping Eqs. 18-19 or recomputing them per phase."
   },
   {
-   "anchor": "We additionally quantified how often the full three-state cycle",
-   "text": "A per-window concept. In the S/Q/W analysis this is replaced by the per-phase 'no cycle' flag (|J| < 1e-12)."
-  },
-  {
    "anchor": "Onsager linear response and thermodynamic conductance",
    "text": "The original fit used EPR_obs under the P_min 'drop' rule on binary-model counts. Redone for the S/Q/W model (new paragraphs at the end of this section): per-fly points, rule-of-three bound, linear vs quadratic comparison, L through the origin with fit and fly-bootstrap intervals. Consider replacing the old genotype-level description with the new one."
   },
@@ -290,12 +383,8 @@
    "text": "In the binary model, a per0 fly's position in (F_S->W, F_W->S) is predicted by how often its degenerate H1 copied the SLEEP emission row (Spearman -0.94, 25 flies; RESULTS_LEDGER, post hoc). In the S/Q/W model per0 forms one group (85-89% of flies with forward circulation, LD and DD). Recommend removing this section and the subgroup comparisons in 'Group comparisons'."
   },
   {
-   "anchor": "Statistical comparison of HMM transition matrices",
-   "text": "Not re-analysed here (dFB/vnc data were not part of this work). If these are per-window binary-model fits, the identifiability caveat applies to all elements involving H1."
-  },
-  {
-   "anchor": "Jensen-Shannon distance between bout-duration distributions by exit route",
-   "text": "Exit routes here come from Viterbi paths of the binary model. With the S/Q/W model, assign exit routes from posterior paths (or posterior route probabilities) instead."
+   "anchor": "Kullback–Leibler divergence and time irreversibility",
+   "text": "Replaces the Jensen-Shannon section (tracked deletion above). The exit-route question it addressed is now the within-fly test in \"Dependence of routing on bout duration\". New references: Kullback S, Leibler RA (1951) On information and sufficiency. Ann Math Stat 22:79-86. Kawai R, Parrondo JMR, Van den Broeck C (2007) Dissipation: the phase-space perspective. Phys Rev Lett 98:080602. Roldan E, Parrondo JMR (2010) Estimating dissipation from single stationary trajectories. Phys Rev Lett 105:150607."
   },
   {
    "anchor": "Onsager linear response and thermodynamic conductance",
@@ -304,6 +393,14 @@
   {
    "anchor": "Hidden Markov model of sleep-wake dynamics",
    "text": "New references for the sections added 2026-11-01: Keilson J (1979) Markov Chain Models: Rarity and Exponentiality. Springer, New York. Bowman GR, Beauchamp KA, Boxer G, Pande VS (2009) Progress and challenges in the automated construction of Markov state models for full protein systems. J Chem Phys 131:124101. Martinez IA, Bisker G, Horowitz JM, Parrondo JMR (2019) Inferring broken detailed balance in the absence of observable currents. Nat Commun 10:3542. van der Meer J, Ertel B, Seifert U (2022) Thermodynamic inference in partially accessible Markov networks: a unifying perspective from transition-based waiting time distributions. Phys Rev X 12:031025. Harunari PE, Dutta A, Polettini M, Roldan E (2022) What to learn from a few visible transitions' statistics? Phys Rev X 12:041026. Added 2026-11-02: Esposito M (2012) Stochastic thermodynamics under coarse graining. Phys Rev E 85:041125. van Alphen B, Yap MHW, Kirszenblat L, Kottler B, van Swinderen B (2013) A dynamic deep sleep stage in Drosophila. J Neurosci 33:6917-6927. Tainton-Heap LAL, Kirszenblat LC, Notaras ET, et al. (2021) A paradoxical kind of sleep in Drosophila melanogaster. Curr Biol 31:578-590. Wiggin TD, Goodwin PR, Donelson NC, et al. (2020) Covert sleep-related biological processes are revealed by probabilistic analysis in Drosophila. PNAS 117:10024-10034."
+  },
+  {
+   "anchor": "Thermodynamic quantities: what is computed, and from what",
+   "text": "Replaces, for this study, the per-window binary-model machinery: tracked deletions of the observability-threshold section, the per-window affinity average, the cycle-active fraction and the old 'Statistical comparison of HMM transition matrices' for the silenced genotypes (superseded by 'Silencing of dorsal fan-shaped body and ventral nerve cord neurons'). The equation sections are kept; their remaining window wording is overridden by this paragraph. If you prefer, those sentences can be rewritten one by one instead."
+  },
+  {
+   "anchor": "Software",
+   "text": "CHECK BEFORE SUBMISSION. This paragraph is true today for: S/Q/W symbols, the observed chain, the hidden Markov model, all thermodynamic quantities, block irreversibility and TUR (20p, 20q), sleep-length memory (20k), the wake-hazard analyses (20r, bout suite) and all figures. These analyses were computed in Python and are NOT yet ported to MATLAB: the reversible-model controls (20u, 20v amendment F), the waiting-time test (20v), the clock-face test and its null (20w-B), sleep deprivation (20x), the Kir2.1 analysis (20y, 20z Part C) and the 1-s wake-bout test (21). Either port them (lClaude) or name Python 3 with NumPy and SciPy for those analyses."
   }
  ]
 }
