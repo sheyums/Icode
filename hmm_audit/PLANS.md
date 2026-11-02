@@ -130,21 +130,21 @@ outlook; Plan B becomes paper 2.
 
 ---------------------------------------------------------------------------------------------------------------
 
-## The merged paper (outline, 2026-11-01)
-Working title: *A directed sleep-wake cycle in Drosophila: its thermodynamics, its dissection by mutants, and its
-modulation by the circadian clock.* Everything at the observable level, per fly; genotype order rule for figures.
+## The merged paper (outline, REVISED 2026-11-02: HMM introduced early, brought in where a result could be a scoring artefact)
+Working title (PNAS): *Fruit flies circulate through sleep and wake with a direction, and the circadian clock modulates
+the cycle.* Everything at the observable level, per fly; genotype order rule for figures. Draft HMM text:
+DRAFT_HMM_motivation.md.
 
-| section | content | claims | figures |
-|---|---|---|---|
-| 1 | Wake splits into Q and W; robust to theta and 30-s resolution | C1 | old 1-2 |
-| 2 | Direction of circulation per genotype x phase | C2 | A1 |
-| 3 | J, affinity, EPR; EPR vs J; Onsager L (sss < CS) | C4, C5 | A1, A2 |
-| 4 | Energy landscape (sleep lowest round the clock) | C6 | A3 (+ 20w E3-E1 by bin, descriptive) |
-| 4b | Circuit control: dfb / vnc silencing reduces sleep (fewer entries, earlier exits) without detectably changing the cycle | C12 | new Kir figure (sleep, six transitions, E_S - E_Q per fly) |
-| 5 | The clock modulates the cycle: night excess and clock-locked modulation, absent in per0 DD | C3, C10 | new clock-face figure (2-h profiles, cosine, null band) |
-| 6 | Memory and hazards: sleep-length memory; per0 DD wake-hazard rise and its controls | C7, C8 | 7-9, 16-17 |
-| 7 | Beneath the observed cycle: thin hidden layer, 3-min memory excess, TUR, waiting-time excess; the cycle's asymmetry seen in raw 1-s activity (wind-down over minutes, waking within seconds) | C9, C9*, C13 (confirmation) | A4 extended (+ 20v panel, + 1-s start/end profiles) |
-| 8 | Discussion: what regulators can and cannot be read from behaviour; clock-cost bound; deprivation null and the controlled experiment | test 5, C11 | supplement |
+| section | content | claims | HMM role | figures |
+|---|---|---|---|---|
+| 1 | Three behavioural states and a model of them: wake splits into Q and W; each fly described by the observed S/Q/W chain AND a 3-state HMM allowing misclassification | C1 | INTRODUCED with three reasons (scoring error, hidden dissipation, internal states of sleep/wake); hidden states = observed symbols (emissions 80-100% diagonal) -> licenses the observed chain | old 1-2 + fig1_hmm_emissions |
+| 2 | A directed cycle; SLEEPLESS REVERSES IT BY DAY | C2 | sign agreement 81-100% of flies; sss reversal at both levels | A1 (sss mean marker) + fig_sss_reversal (HMM triangles) |
+| 3 | Thermodynamics: J, EPR, Onsager L, affinity per cycle A_eff | C4, C5 | one line + SI table: same L ranking (sss lowest at both levels); hidden A_eff ~2x (observed EPR is a lower bound) -> motivates section 7 | A2 |
+| 4 | Energy landscape | C6 | none | A3 |
+| 5 | The clock modulates the cycle | C3, C10 | none | C10 |
+| 6 | Memory and hazards | C7, C8 | one line: memory also at the hidden level (CS night) | C7 observed, C8 |
+| 7 | What lies beneath the observed cycle | C9, C9*, C13 | full test: BIC vs chain, gain = one extra minute of memory, TUR, waiting-time asymmetry (in active wake) | A4 (HMM panels), dwell-direction figure, 1-s profiles |
+| 8 | Circuits (dfb/vnc control), deprivation null, Discussion (clock-cost bound; what neural recordings could add to a hidden layer) | C11, C12 | none | C12 (SI or small main panel) |
 
 NOT claimed: hidden states are regulators; the HMM's EPR is the dissipation; the rise needs a broken clock; detailed
 balance proven broken; any per-fly regulator parameter; any deprivation effect.

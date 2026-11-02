@@ -520,3 +520,6 @@ noted on the panel.
   reversed; cost depends on J^2 only'. New main-figure candidate fig_sss_reversal (fig_sss_reversal.py): per-fly
   observed chain J (circle) joined to HMM J (triangle), CS and sss, light and dark; % with J < 0 and Wilcoxon p.
   Port: add the sss mean marker to exportFigA1 and the note to exportFigA2; port fig_sss_reversal.
+- 2026-11-02 Fig 1 panel fig1_hmm_emissions (fig_emission.py): per genotype (CS, per0 LD, per0 DD, fumin, sss), the
+  median over non-degenerate flies of the labelled K = 3 emission matrix B3 from sqw20b_fit2_theta0.5.jsonl; greyscale
+  0-1, values printed. Diagonals: Q 0.80-0.94, W 0.91-0.96, S 1.00. Port: one heat-map per genotype.
