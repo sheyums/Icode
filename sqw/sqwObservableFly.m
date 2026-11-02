@@ -14,7 +14,8 @@ function F = sqwObservableFly(source, options)
 %   Plot         draw the fly's symbol raster and its per-phase numbers
 %
 %   F   struct:
-%     file, T (minutes), y (symbols), ph, nP, phaseNames
+%     file, T (minutes), symbols (lab coding: S 0, Q 1, W 2, NaN missing; SQWTOLABCODE),
+%     y (the same in the port's internal 1 = Q, 2 = W, 3 = S, 0 = missing), ph, nP, phaseNames
 %     refs        SQWSYMBOLS references; refOK (nP x 1) true if the phase has one
 %     chain       struct ll, pi, P (3 x 3 x nP), iterations, converged
 %     Q           (nP x 1) OBSERVABLEQUANTITIES; Q(p).refOK and Q(p).hasCycle added
@@ -41,7 +42,7 @@ else
 end
 [y, refs, info] = sqwSymbols(x, Theta=options.Theta, LightDark=options.LightDark, ...
     UnknownWake=options.UnknownWake);
-F.T = numel(y); F.y = y; F.refs = refs; F.nBouts = size(info.bouts, 1); F.nWakeEvents = numel(info.events);
+F.T = numel(y); F.symbols = sqwToLabCode(y); F.y = y; F.refs = refs; F.nBouts = size(info.bouts, 1); F.nWakeEvents = numel(info.events);
 if options.LightDark
     F.ph = minutePhases(F.T); F.nP = 2; F.phaseNames = ["light"; "dark"];
     F.refOK = [isfinite(refs.light); isfinite(refs.dark)];
