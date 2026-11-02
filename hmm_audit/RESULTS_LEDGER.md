@@ -2195,3 +2195,9 @@ cycle, J < 0 in 70%, Wilcoxon p 0.0016 (was 64% / p 0.0037 over 50); HMM unchang
 unchanged (-0.038). sss dark: 48 with a cycle, 56% negative, p 0.66 (was 0.59). Verdict unchanged (reversal by day).
 Also recorded (lClaude): the hidden-level 20k CS dark star rests on the resolution of 400 simulations (smallest p 2/401,
 Holm 9p = 0.045); the observed-level CS dark result (p 0, Holm 0) is the robust statement of C7.
+
+## 2026-11-02  Note (lClaude): Wilcoxon tie handling, sss dark sign test (fig_sss_reversal); no verdict affected
+48 flies with a cycle; one exact tie in |J| (two flies at -1/24 and +1/24). Python (scipy 1.18.1, wilcoxon default
+method='auto'): with ties it uses the normal approximation without continuity correction, p = 0.6554797630917468
+(method='exact' gives 0.6656758094474071). MATLAB signrank: exact with average ranks 0.675; normal approximation 0.670.
+Each side keeps its default. sss light (37 flies) has no tie, so both sides run the exact test and agree.
