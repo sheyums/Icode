@@ -99,7 +99,7 @@ Added 2026-11-02 (FIGURE_RECIPES notes dated 2026-11-02):
 | MATLAB | Python | notes |
 |---|---|---|
 | `exportFigA1` / `exportFigA2` | `fig_planA.py` | sss mean marker in A1 (a, b); A2 sss title note and panel (c) A_eff = EPR/\|J\| |
-| `exportFigSssReversal` | `fig_sss_reversal.py` | per-fly chain J beside HMM J, CS and sss; no-cycle flies (|J| < 1e-12) plotted at 0, left out of the % and the test |
+| `exportFigSssReversal` | `fig_sss_reversal.py` | per-fly chain J beside HMM J, CS and sss; no-cycle flies (\|J\| < 1e-12) plotted at 0, left out of the % and the test |
 | `exportFig1Emissions` | `fig_emission.py` | median labelled B3 per genotype |
 | `exportFigDwellDirection` | `fig_dwell_direction.py` | CS night, direction-dependent Q and W dwells |
 | `exportFigC13Profiles` | `fig_planB_21.py` | C13 / PRESPEC 21 profiles; checks itself against fig_planB21_profiles.json |
