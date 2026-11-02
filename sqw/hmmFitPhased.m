@@ -62,13 +62,13 @@ idx = arrayfun(@(p) find(ph(2:end) == p) + 1, 1:nP, 'UniformOutput', false);
 llOld = -Inf(1, S);
 for it = 1:options.MaxIter
     E = emissionBatch(B, y);                            % K x S x T
-    [A, c] = fwdBatch(pi0, P, E, ph);
+    Pp = cell(1, nP); for p = 1:nP, Pp{p} = squeeze4(P(:, :, p, :)); end   % K x K x S per phase, once per iteration
+    [A, c] = fwdBatch(pi0, Pp, E, ph);
     ll = sum(log(c), 1);                                % 1 x S
-    Bk = ones(K, S, T);
+    Bk = ones(K, S, T); b = ones(K, S);
     for t = T - 1:-1:1
-        Pt = squeeze4(P(:, :, ph(t + 1), :));           % K x K x S
-        v = reshape(E(:, :, t + 1) .* Bk(:, :, t + 1), 1, K, S);
-        Bk(:, :, t) = reshape(sum(Pt .* v, 2), K, S) ./ c(t + 1, :);
+        v = reshape(E(:, :, t + 1) .* b, 1, K, S);
+        b = reshape(sum(Pp{ph(t + 1)} .* v, 2), K, S) ./ c(t + 1, :); Bk(:, :, t) = b;
     end
     G = A .* Bk; G = G ./ sum(G, 1);
     R = E .* Bk ./ reshape(c', 1, S, T);
@@ -93,7 +93,8 @@ for it = 1:options.MaxIter
     llOld = ll;
 end
 E = emissionBatch(B, y);
-[~, c] = fwdBatch(pi0, P, E, ph);
+Pp = cell(1, nP); for p = 1:nP, Pp{p} = squeeze4(P(:, :, p, :)); end
+[~, c] = fwdBatch(pi0, Pp, E, ph);
 ll = sum(log(c), 1); ll(~isfinite(ll)) = -Inf;
 [best, s] = max(ll);
 fit = struct('ll', best, 'pi', pi0(:, s), 'P', P(:, :, :, s), 'B', B(:, :, s), ...
@@ -119,13 +120,13 @@ Bx = cat(2, ones(K, 1, S), B, B(:, 1, :) + B(:, 2, :));   % columns: missing, Q,
 E = permute(Bx(:, y + 1, :), [1 3 2]);
 end
 
-function [A, c] = fwdBatch(pi0, P, E, ph)
+function [A, c] = fwdBatch(pi0, Pp, E, ph)
+% Pp{p}: K x K x S transition matrices of phase p (one copy per iteration, not per minute)
 [K, S, T] = size(E);
 A = zeros(K, S, T); c = zeros(T, S);
-a = pi0 .* E(:, :, 1); c(1, :) = sum(a, 1); A(:, :, 1) = a ./ c(1, :);
+a = pi0 .* E(:, :, 1); c(1, :) = sum(a, 1); a = a ./ c(1, :); A(:, :, 1) = a;
 for t = 2:T
-    Pt = squeeze4(P(:, :, ph(t), :));
-    a = reshape(sum(reshape(A(:, :, t - 1), K, 1, S) .* Pt, 1), K, S) .* E(:, :, t);
-    c(t, :) = sum(a, 1); A(:, :, t) = a ./ c(t, :);
+    a = reshape(sum(reshape(a, K, 1, S) .* Pp{ph(t)}, 1), K, S) .* E(:, :, t);
+    c(t, :) = sum(a, 1); a = a ./ c(t, :); A(:, :, t) = a;
 end
 end

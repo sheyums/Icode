@@ -104,3 +104,24 @@ Added 2026-11-02 (FIGURE_RECIPES notes dated 2026-11-02):
 | `exportFigDwellDirection` | `fig_dwell_direction.py` | CS night, direction-dependent Q and W dwells |
 | `exportFigC13Profiles` | `fig_planB_21.py` | C13 / PRESPEC 21 profiles; checks itself against fig_planB21_profiles.json |
 | `routeDurationHidden`, `planARouteHidden`, `exportFigC7SI` | `route_duration_hidden`, `sqw10.py`, `fig_R1_main.py` | SI memory figure with the hidden panel; the hidden 20k null takes ~1 h on 2 workers (cache it) |
+
+## Batch tools for new data — lab coding (added 2026-11-02)
+Every file these write uses the lab's coding **S = 0, Q = 1, W = 2, missing = NaN** (sleep stays 0, as in
+`sleeptrace`). Internally the port keeps 1 = Q, 2 = W, 3 = S, 0 = missing, which MATLAB needs to index by symbol;
+`sqwToLabCode` / `labCodeToSqw` convert, and `sqwObservableFly` returns both (`F.symbols`, `F.y`).
+
+| MATLAB | does | notes |
+|---|---|---|
+| `sqwBatchSymbols(folder)` | count files -> one `<fly>_symbols.csv` per fly (minute, zt_h, phase, symbol, active_frac, sleep_s) + `symbols_summary.csv` | `LightDark=false` for DD; theta 0.5; output folder `<folder>_symbols` BESIDE the input. Scoring = `sqwSymbols`, NOT `sleeptrace` + `ironout` |
+| `sqwBatchHMM(folder)` | K = 2, 3, 4 per fly on symbol files (or count files): ll, BIC (n = minutes, n = changes), selected K, PRESPEC 20 flag, labelled K = 3 B and P, dominant symbol per state for K = 2 / 4 | `<Name>_perfly.csv`, `<Name>.mat`, `<Name>_order.png`; per-fly fits cached in `<Name>_fits/` so an interrupted batch resumes; ~3 min per fly per worker (20 starts) |
+| `plotSqwHMMOrder(R)` / `({R1,...}, names)` | K = 3 emissions, BIC selection (both n), K = 4 "states emitting mostly S" | one row for one batch, grid for several |
+
+Tests: `test_sqw_batch` (12). Validation against the stored 20b fits: `hmm_audit/PORT_VALIDATION.md`.
+
+Typical use:
+```matlab
+X = sqwBatchSymbols("D:\data\CS");                 % writes D:\data\CS_symbols\...
+R = sqwBatchHMM(X.outDir);                          % writes hmm_perfly.csv, hmm.mat, hmm_order.png there
+Xdd = sqwBatchSymbols("D:\data\per0DD", LightDark=false); Rdd = sqwBatchHMM(Xdd.outDir);
+plotSqwHMMOrder({R, Rdd}, ["CS" "\itper^0\rm DD"]);
+```
