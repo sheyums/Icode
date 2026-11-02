@@ -56,8 +56,8 @@ NEWGC = ("Group values are medians over flies with 95% intervals from a bootstra
  "Comparisons between independent groups (silenced lines against the control) used two-sided Mann-Whitney tests, with the "
  "probability of superiority, equivalently Cliff's delta (δ = 2P − 1), as the effect size. Differences between genotypes in "
  "quantities estimated per genotype (the Onsager conductance) were tested by a bootstrap over flies in which each fly's phases were "
- "resampled together. Multiple comparisons were corrected by Holm's method within each pre-specified family, or by the "
- "Benjamini-Hochberg procedure where stated. Each test and its family were fixed in a written analysis plan before the data were "
+ "resampled together. Multiple comparisons were corrected by Holm's method (Holm, 1979) within each pre-specified family, or by the "
+ "Benjamini-Hochberg procedure (Benjamini & Hochberg, 1995) where stated. Each test and its family were fixed in a written analysis plan before the data were "
  "analysed; analyses added afterwards are labelled post hoc.")
 for el in els:
     if el.tag == W+'p' and ptext(el).startswith('Per-fly scalar quantities derived from the fitted models'):
@@ -74,7 +74,7 @@ for el in els:
                 e = rp.find(W+tag)
                 if e is not None: rp.remove(e)
 # ---- 1c. per-window paragraphs rewritten (v8_rewrites.py)
-from v8_rewrites import REWRITE, NOTE_AFTER, DEL_TABLE_AFTER, INSERT_AFTER
+from v8_rewrites import REWRITE, NOTE_AFTER, DEL_TABLE_AFTER, INSERT_AFTER, REFERENCES
 def set_text(el, text):
     runs = [r for r in el.iter(W+'r')]
     for m in list(el.iter(M+'oMath')) + list(el.iter(M+'oMathPara')):
@@ -168,6 +168,11 @@ for rel in D.part.rels.values():
         for c in list(root):
             if c.get(W+'id') in dropped_ids: root.remove(c)
         cp._blob = etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
+# ---- 3. reference list at the end
+body.insert(len(body) - 1, group_head('References'))
+proto = next(el for el in body if el.tag == W+'p' and ptext(el).startswith('All computations were carried out in MATLAB'))
+for ref in REFERENCES:
+    rp_ = copy.deepcopy(proto); set_text(rp_, ref); body.insert(len(body) - 1, rp_)
 D.save(OUT)
 print('dropped comments:', sorted(dropped_ids))
 print('equation numbers seen:', sorted(eq_done)); print('reference replacements:', nref); print('sections:', len(used))

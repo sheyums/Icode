@@ -80,3 +80,34 @@ INSERT_AFTER = {
  "A fly was flagged, not excluded":
   "Hidden paths and likelihoods. Quantities defined on hidden-state sequences (transition and route counts, round trips, sleep-bout lengths at the hidden level) were computed on 200 paths per fly drawn from the posterior distribution of hidden paths given the fly's record and fitted parameters, by forward filtering–backward sampling (Chib, 1996; Scott, 2002): forward probabilities were computed with the phase-specific transition matrices, and each path was sampled backwards from the last minute. Every quantity was evaluated on each path and averaged over paths. The single most probable path (Viterbi decoding) was computed for comparison only, because a function of the most probable path is a biased estimate of the posterior expectation of that function. Log-likelihoods of the observed chain and of the hidden model were computed with the forward algorithm, which marginalizes unclassified minutes exactly; they enter the fitting, the BIC comparisons (order selection; hidden model against observed chain) and the parametric-bootstrap test of the hidden layer.",
 }
+
+# 2026-11-02: reference list (V6 and V7 cited in the text only). Alphabetical, author-year, matching the in-text citations.
+REFERENCES = [
+ "Barato AC, Seifert U (2015) Thermodynamic uncertainty relation for biomolecular processes. Phys Rev Lett 114:158101.",
+ "Benjamini Y, Hochberg Y (1995) Controlling the false discovery rate: a practical and powerful approach to multiple testing. J R Stat Soc B 57:289–300.",
+ "Bowman GR, Beauchamp KA, Boxer G, Pande VS (2009) Progress and challenges in the automated construction of Markov state models for full protein systems. J Chem Phys 131:124101.",
+ "Chib S (1996) Calculating posterior distributions and modal estimates in Markov mixture models. J Econometrics 75:79–97.",
+ "de Groot SR, Mazur P (1962) Non-Equilibrium Thermodynamics. North-Holland, Amsterdam.",
+ "Duffy JB (2002) GAL4 system in Drosophila: a fly geneticist's Swiss army knife. Genesis 34:1–15.",
+ "Esposito M (2012) Stochastic thermodynamics under coarse graining. Phys Rev E 85:041125.",
+ "Fredkin DR, Rice JA (1986) On aggregated Markov processes. J Appl Probab 23:208–214.",
+ "Harunari PE, Dutta A, Polettini M, Roldán É (2022) What to learn from a few visible transitions' statistics? Phys Rev X 12:041026.",
+ "Holm S (1979) A simple sequentially rejective multiple test procedure. Scand J Stat 6:65–70.",
+ "Kawai R, Parrondo JMR, Van den Broeck C (2007) Dissipation: the phase-space perspective. Phys Rev Lett 98:080602.",
+ "Keilson J (1979) Markov Chain Models — Rarity and Exponentiality. Springer, New York.",
+ "Kienker P (1989) Equivalence of aggregated Markov models of ion-channel gating. Proc R Soc Lond B 236:269–309.",
+ "Kullback S, Leibler RA (1951) On information and sufficiency. Ann Math Stat 22:79–86.",
+ "Luan H, Diao F, Scott RL, White BH (2020) The Drosophila split Gal4 system for neural circuit mapping. Front Neural Circuits 14:603397.",
+ "Martínez IA, Bisker G, Horowitz JM, Parrondo JMR (2019) Inferring broken detailed balance in the absence of observable currents. Nat Commun 10:3542.",
+ "Onsager L (1931) Reciprocal relations in irreversible processes. I. Phys Rev 37:405–426.",
+ "Roldán É, Parrondo JMR (2010) Estimating dissipation from single stationary trajectories. Phys Rev Lett 105:150607.",
+ "Romano J, Kromrey JD, Coraggio J, Skowronek J (2006) Appropriate statistics for ordinal level data: should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys? Annual Meeting of the Florida Association of Institutional Research, Cocoa Beach, FL.",
+ "Schnakenberg J (1976) Network theory of microscopic and macroscopic behavior of master equation systems. Rev Mod Phys 48:571–585.",
+ "Scott SL (2002) Bayesian methods for hidden Markov models: recursive computing in the 21st century. J Am Stat Assoc 97:337–351.",
+ "Sokal RR, Rohlf FJ (1995) Biometry, 3rd ed. W. H. Freeman, New York.",
+ "Tainton-Heap LAL, Kirszenblat LC, Notaras ET, et al. (2021) A paradoxical kind of sleep in Drosophila melanogaster. Curr Biol 31:578–590.",
+ "van Alphen B, Yap MHW, Kirszenblat L, Kottler B, van Swinderen B (2013) A dynamic deep sleep stage in Drosophila. J Neurosci 33:6917–6927.",
+ "van der Meer J, Ertel B, Seifert U (2022) Thermodynamic inference in partially accessible Markov networks: a unifying perspective from transition-based waiting time distributions. Phys Rev X 12:031025.",
+ "Wiggin TD, Goodwin PR, Donelson NC, et al. (2020) Covert sleep-related biological processes are revealed by probabilistic analysis in Drosophila. Proc Natl Acad Sci USA 117:10024–10034.",
+ "Wilks SS (1938) The large-sample distribution of the likelihood ratio for testing composite hypotheses. Ann Math Stat 9:60–62.",
+]
