@@ -2201,3 +2201,11 @@ Holm 9p = 0.045); the observed-level CS dark result (p 0, Holm 0) is the robust 
 method='auto'): with ties it uses the normal approximation without continuity correction, p = 0.6554797630917468
 (method='exact' gives 0.6656758094474071). MATLAB signrank: exact with average ranks 0.675; normal approximation 0.670.
 Each side keeps its default. sss light (37 flies) has no tie, so both sides run the exact test and agree.
+
+## 2026-11-02  Note: what the K = 2 and K = 4 HMMs are (stored 20b fits; no new fit) - evidence for W/Q/S
+Dominant emitted symbol of each hidden state. K = 2: one wake state (emitting Q and W) + one sleep state in every fly
+(the W/S description with Q/W as emission noise); rejected against K = 3 by BIC (median dBIC +187 to +334, ledger note
+above). K = 4, the extra state is: a second ACTIVE-wake state (Q,W,W,S) in CS 17/25, per0 LD 17/27, fumin 47/53, sss
+49/57; a second SLEEP state (Q,W,S,S, i.e. W/Q/S/deep-sleep) in per0 DD 16/25 (CS 2, per0 LD 6, fumin 3, sss 2).
+K = 4 is rejected against K = 3 in most flies (median dBIC +22 to +81); per0 DD, where the extra state is a second
+sleep state, is the genotype with most K = 4 support (16% / 40% of flies by the two BIC penalties).
