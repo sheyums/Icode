@@ -316,3 +316,12 @@ re-run, more permutations would settle it.
 - exportFigA1: sss mean (diamond, fly-bootstrap 95% CI, left of the median) in (a) and (b), main and SI variants.
   Values (no Python printout to compare): c_obs light -0.111 [-0.187, -0.042], dark -0.068 [-0.150, +0.001]; count J
   light -0.037 [-0.061, -0.013], dark -0.005 [-0.030, +0.021] cycles/h. Summary CSV gains mean, mean_lo, mean_hi.
+- fig_sss_reversal (exportFigSssReversal): against PLANS C2 (fig_sss_reversal.py printout): sss light n 50, chain J mean
+  -0.0377 (-0.038), p 0.0045 (0.004); HMM J -0.061 (-0.062) and p 3e-5 (7e-5) are FFBS Monte Carlo. Two deterministic
+  numbers differ: J < 0 in 62% (Python 64%) and sss dark p 0.63 (0.59). CASE for cClaude: 13 of 50 sss-light flies
+  (5 of 53 dark) have no cycle in their observed chain, so J_chain is round-off (+-1e-15) and its SIGN differs between
+  numpy and MATLAB; the "% J < 0" and, through tiny Wilcoxon ranks, p depend on it. Counting |J| < 1e-12 as 0: sss
+  light J < 0 in 52% (26/50), p 0.0016; sss dark 51%, p 0.67 (summary columns neg_obs_cycleOnly, p_obs_zeroed).
+  The reversal conclusion stands either way; the printed 64% is not a stable number. Figure text mirrors the Python.
+- fig1_hmm_emissions (exportFig1Emissions): n 25 / 27 / 23 / 53 / 54 non-degenerate fits; diagonals Q 0.80-0.94,
+  W 0.91-0.96, S 1.00 (recipe ranges reproduced: Q 0.916 0.838 0.936 0.831 0.802; W 0.910 0.935 0.912 0.962 0.946).
