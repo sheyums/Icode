@@ -787,3 +787,30 @@ def observable_quantities(y, ph, nph, P_chain):
                         E21=float(ls['E2_minus_E1']), E31=float(ls['E3_minus_E1']), F_SW=float(ls['F_SW']), F_WS=float(ls['F_WS']),
                         Xn_cnt=float(X[p]), Yn_cnt=float(Y[p])))
     return out
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 16. Rule of three for model-based quantities (2026-11-02, Sheyum's decision; replaces 'infinite')
+# ---------------------------------------------------------------------------------------------------------
+def rule_of_three_matrix(P, N, zero=1e-10):
+    """Transition matrix with every ONE-WAY edge filled by the rule of three. P: fitted 3x3 matrix (one phase);
+    N: off-diagonal transition counts of the same phase (N[i,j], i != j). For an edge with P[a,b] < zero and
+    P[b,a] >= zero, the unseen count is set to min(3, N[b,a]) and row a is renormalized, with row a's total
+    number of steps recovered as n_a = sum_{j != a} N[a,j] / (1 - P[a,a]). Pairs unseen in BOTH directions are
+    left at zero (no cycle through that edge). Returns (P_r3, changed)."""
+    P = np.array(P, float); N = np.asarray(N, float); Z = P < zero; changed = False
+    for a in range(3):
+        for b in range(3):
+            if a == b or not (Z[a, b] and not Z[b, a]): continue
+            k = N[b, a]
+            if k <= 0: continue
+            off = sum(N[a, j] for j in range(3) if j != a)
+            n_a = off / max(1.0 - P[a, a], 1e-12) if off > 0 else max(k, 1.0)
+            row = P[a] * n_a; row[b] = min(3.0, k); P[a] = row / row.sum(); changed = True
+    return P, changed
+
+def model_energetics_r3(P, N, zero=1e-10, per_hour=60.0):
+    """model_energetics on the rule-of-three matrix: finite 95% lower bounds on |A| and EPR where an edge is
+    one-way; identical to model_energetics otherwise. Adds 'r3' (bool)."""
+    Pr, ch = rule_of_three_matrix(P, N, zero)
+    e = model_energetics(Pr, zero, per_hour); e['r3'] = ch; return e

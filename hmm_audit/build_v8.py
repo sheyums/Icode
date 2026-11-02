@@ -50,8 +50,7 @@ for el in els:
         s = re.sub(r'(Eq\. \(?)(\d+)(?=[\)\.,;: ])', rs, s) if 'Eqs.' not in s else re.sub(r'(Eq\. \(?)(\d+)(?=[\)\.,;: ])', rs, s)
         node.text = s
 # ---- 1b. rewrite the group-comparison paragraph (it described the per0 subgroups and the cycle-active fraction)
-NEWGC = ("Group values are medians over flies with 95% intervals from a bootstrap over flies (2000 resamples); where infinite "
- "values occur (a transition observed in one direction only), they are ranked highest. Within-fly contrasts (light against dark, "
+NEWGC = ("Group values are medians over flies with 95% intervals from a bootstrap over flies (2000 resamples). Within-fly contrasts (light against dark, "
  "recovery against baseline, an observed statistic against its simulated null) used two-sided Wilcoxon signed-rank tests. "
  "Comparisons between independent groups (silenced lines against the control) used two-sided Mann-Whitney tests, with the "
  "probability of superiority, equivalently Cliff's delta (δ = 2P − 1), as the effect size. Differences between genotypes in "
