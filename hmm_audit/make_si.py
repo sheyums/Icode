@@ -149,4 +149,7 @@ P('All analyses of the observed chain, the hidden model, the thermodynamic quant
   'original computation: 21 of 21 reference tests and every reported group median of the observable analysis; per-fly '
   'hidden-model log-likelihoods to 2.5 × 10⁻¹⁰; all 160 deterministic numbers of the irreversibility and uncertainty-relation '
   'analyses exactly, and 180 Monte Carlo statistics within sampling error, with every verdict identical.')
+from docx.oxml.ns import qn
+z = d.settings.element.find(qn('w:zoom'))
+if z is not None and z.get(qn('w:percent')) is None: z.set(qn('w:percent'), '100')
 d.save('SupplementaryInformation_draft.docx'); print('figures', nfig[0], 'tables', ntab[0])
