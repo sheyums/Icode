@@ -22,5 +22,5 @@ arguments
 end
 [Q, info] = ruleOfThreeMatrix(P, N, Zero=options.Zero);
 E = modelEnergetics(Q, Zero=options.Zero, StepsPerHour=options.StepsPerHour);
-E.r3 = any(info.filled(:)); E.r3info = info; E.Pr3 = Q;
+E.r3 = info.changed; E.r3info = info; E.Pr3 = Q;
 end
