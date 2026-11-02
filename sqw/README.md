@@ -93,3 +93,14 @@ Tests: `test_sqw_figA`.
 Fig C8 (per0 DD and CS DD wake hazards at 12/16/20/24 bins) is a bout-suite figure, not an sqw one:
 `analysis_20r/figC8_wake_hazard.m`, run by name from the Icode folder; it recomputes the ledgered rise tests from the
 saved 20r bouts and checks every RiseNullP against the ledger. Outputs in `analysis_20r/figC8`.
+
+Added 2026-11-02 (FIGURE_RECIPES notes dated 2026-11-02):
+
+| MATLAB | Python | notes |
+|---|---|---|
+| `exportFigA1` / `exportFigA2` | `fig_planA.py` | sss mean marker in A1 (a, b); A2 sss title note and panel (c) A_eff = EPR/\|J\| |
+| `exportFigSssReversal` | `fig_sss_reversal.py` | per-fly chain J beside HMM J, CS and sss; summary also gives the no-cycle-zeroed share and p |
+| `exportFig1Emissions` | `fig_emission.py` | median labelled B3 per genotype |
+| `exportFigDwellDirection` | `fig_dwell_direction.py` | CS night, direction-dependent Q and W dwells |
+| `exportFigC13Profiles` | `fig_planB_21.py` | C13 / PRESPEC 21 profiles; checks itself against fig_planB21_profiles.json |
+| `routeDurationHidden`, `planARouteHidden`, `exportFigC7SI` | `route_duration_hidden`, `sqw10.py`, `fig_R1_main.py` | SI memory figure with the hidden panel; the hidden 20k null takes ~1 h on 2 workers (cache it) |
