@@ -332,8 +332,17 @@ re-run, more permutations would settle it.
   stored fig_planB21_profiles.json, all 12 genotype x setting rows agree: fly counts equal (L300: 25 25 25 27 51 45;
   L120: 25 25 25 27 51 46) and m_start, m_end and median d agree to <= 6e-16 at every bin. Bands are bootstrap.
   per0 DD traces cut to the 20r replication traceLen, as planB_21.traces. Check table fig_planB21_check.csv.
-- SI memory figure with HMM panel (fig_R1_main.py): NOT finished. routeDurationHidden ported (golden G11 exact;
+- SI memory figure with HMM panel (fig_R1_main.py): NOT finished at the time of this line; completed in the next entry. routeDurationHidden ported (golden G11 exact;
   test_sqw_figA 11/11) and planARouteHidden written (per-fly hidden R1 D over 200 FFBS paths, 400-simulation null with
   20 paths each, path records, landscape line), smoke-tested on 2 CS flies with 10 sims (26 s). At 400 sims the full
   run is estimated at many hours on 2 workers; not started. Still to do: the full run, exportFigC7SI (hidden panel,
   hidden Holm), and validation against the 20k ledger's hidden R1 lines (D, null mean, p, Holm).
+- SI memory figure figS_C7_memory_with_hmm_check (exportFigC7SI, planARouteHidden; fig_R1_main.py), completed:
+  hidden-level 20k R1 recomputed from the stored fits (182 non-degenerate flies; 200 FFBS paths per fly; null = 400
+  records per fly simulated from its fit, unmasked, each decoded with 20 paths; ~56 min on 2 workers). Against the
+  ledger's hidden R1 lines: verdicts identical (only CS dark significant: p 0.0050 = the 400-simulation floor, Holm
+  0.0449, as the ledger); mean D within 0.006 in all 9 blocks (CS D -0.280 vs -0.275); n equal in 8 of 9 (sss dark 22
+  vs 23: one fly at the "finite in half the paths" threshold, which flips with the path draw); null means and p
+  within Monte Carlo error (largest: fumin dark p 0.22 vs 0.35). Stars from the ledger by default (SigFrom), port
+  values in figS_C7_hidden_blocks.csv. Panel (c): landscape prediction 0.349 (mean over CS flies of (F_SW+1)/2).
+  The per-fly cache (550 MB) stays in the session scratchpad, not the repo.
