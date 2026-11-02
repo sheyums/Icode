@@ -77,6 +77,14 @@ def group_head(text):
     for t in ts[1:]: t.text = ''
     return p
 for el in els: body.remove(el)
+DROP = 'Sections from the earlier version not used in this study (to be deleted)'   # deleted at Sheyum's request, 2026-11-02
+dropped_ids = set()
+for g, hs in GROUPS:
+    if g == DROP:
+        for h in hs:
+            for el in secs[h]:
+                for cr in el.iter(W+'commentReference'): dropped_ids.add(cr.get(W+'id'))
+GROUPS = [(g, hs) for g, hs in GROUPS if g != DROP]
 for gi, (g, hs) in enumerate(GROUPS, 1):
     body.insert(len(body) - 1, group_head(f'{gi}. {g}'))
     for h in hs:
@@ -85,5 +93,13 @@ for gi, (g, hs) in enumerate(GROUPS, 1):
                 ts = list(el.iter(W+'t')); ts[0].text = RENAME[h]
                 for t in ts[1:]: t.text = ''
             body.insert(len(body) - 1, el)
+# remove the dropped sections' comments from the comments part
+for rel in D.part.rels.values():
+    if rel.reltype.endswith('/comments'):
+        cp = rel.target_part; from lxml import etree; root = etree.fromstring(cp.blob)
+        for c in list(root):
+            if c.get(W+'id') in dropped_ids: root.remove(c)
+        cp._blob = etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
 D.save(OUT)
+print('dropped comments:', sorted(dropped_ids))
 print('equation numbers seen:', sorted(eq_done)); print('reference replacements:', nref); print('sections:', len(used))
