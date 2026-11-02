@@ -325,3 +325,6 @@ re-run, more permutations would settle it.
   The reversal conclusion stands either way; the printed 64% is not a stable number. Figure text mirrors the Python.
 - fig1_hmm_emissions (exportFig1Emissions): n 25 / 27 / 23 / 53 / 54 non-degenerate fits; diagonals Q 0.80-0.94,
   W 0.91-0.96, S 1.00 (recipe ranges reproduced: Q 0.916 0.838 0.936 0.831 0.802; W 0.910 0.935 0.912 0.962 0.946).
+- fig_dwell_direction_CS_night (exportFigDwellDirection): reproduces the ledger entry exactly (deterministic): 25 CS
+  flies; Q into / out of sleep n 649 / 433, per-fly mean 2.68 vs 2.38 min (medians over flies), into longer in 64%;
+  W into / out n 418 / 585, 3.47 vs 4.43 min, out longer in 80%.
