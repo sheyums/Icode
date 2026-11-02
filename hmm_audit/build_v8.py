@@ -44,6 +44,30 @@ for el in els:
             return f"{m.group(1)}{SINGLE[n]}" if n in SINGLE else m.group(0)
         s = re.sub(r'(Eq\. \(?)(\d+)(?=[\)\.,;: ])', rs, s) if 'Eqs.' not in s else re.sub(r'(Eq\. \(?)(\d+)(?=[\)\.,;: ])', rs, s)
         node.text = s
+# ---- 1b. rewrite the group-comparison paragraph (it described the per0 subgroups and the cycle-active fraction)
+NEWGC = ("Group values are medians over flies with 95% intervals from a bootstrap over flies (2000 resamples); where infinite "
+ "values occur (a transition observed in one direction only), they are ranked highest. Within-fly contrasts (light against dark, "
+ "recovery against baseline, an observed statistic against its simulated null) used two-sided Wilcoxon signed-rank tests. "
+ "Comparisons between independent groups (silenced lines against the control) used two-sided Mann-Whitney tests, with the "
+ "probability of superiority, equivalently Cliff's delta (δ = 2P − 1), as the effect size. Differences between genotypes in "
+ "quantities estimated per genotype (the Onsager conductance) were tested by a bootstrap over flies in which each fly's phases were "
+ "resampled together. Multiple comparisons were corrected by Holm's method within each pre-specified family, or by the "
+ "Benjamini-Hochberg procedure where stated. Each test and its family were fixed in a written analysis plan before the data were "
+ "analysed; analyses added afterwards are labelled post hoc.")
+for el in els:
+    if el.tag == W+'p' and ptext(el).startswith('Per-fly scalar quantities derived from the fitted models'):
+        runs = [r for r in el.iter(W+'r')]
+        for r in runs[1:]:
+            par = r.getparent(); par.remove(r)
+        for m in list(el.iter(M+'oMath')): m.getparent().remove(m)
+        ts = list(runs[0].iter(W+'t')); ts[0].text = NEWGC
+        ts[0].set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+        for t in ts[1:]: t.text = ''
+        rp = runs[0].find(W+'rPr')
+        if rp is not None:
+            for tag in ('i', 'iCs', 'b', 'bCs', 'vertAlign'):
+                e = rp.find(W+tag)
+                if e is not None: rp.remove(e)
 # ---- 2. sections
 secs = {}; order0 = []; cur = None
 for el in els:
