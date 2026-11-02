@@ -68,6 +68,36 @@ for el in els:
             for tag in ('i', 'iCs', 'b', 'bCs', 'vertAlign'):
                 e = rp.find(W+tag)
                 if e is not None: rp.remove(e)
+# ---- 1c. per-window paragraphs rewritten (v8_rewrites.py)
+from v8_rewrites import REWRITE, NOTE_AFTER
+def set_text(el, text):
+    runs = [r for r in el.iter(W+'r')]
+    for m in list(el.iter(M+'oMath')) + list(el.iter(M+'oMathPara')):
+        if m.getparent() is not None: m.getparent().remove(m)
+    runs = [r for r in el.iter(W+'r')]
+    for r in runs[1:]: r.getparent().remove(r)
+    r = runs[0]; ts = list(r.iter(W+'t')); ts[0].text = text; ts[0].set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    for t in ts[1:]: t.text = ''
+    rp = r.find(W+'rPr')
+    if rp is not None:
+        for tag in ('i', 'iCs', 'b', 'bCs', 'vertAlign', 'highlight'):
+            e = rp.find(W+tag)
+            if e is not None: rp.remove(e)
+hits = {}
+for key in list(REWRITE) + list(NOTE_AFTER):
+    m = [el for el in els if el.tag == W+'p' and re.sub(r'\s+', ' ', key) in re.sub(r'\s+', ' ', ptext(el))]
+    assert len(m) == 1, (key, len(m)); hits[key] = m[0]
+for key, txt in REWRITE.items():
+    el = hits[key]
+    if txt is None: el.getparent().remove(el); els.remove(el)
+    else: set_text(el, txt)
+for key, txt in NOTE_AFTER.items():
+    el = hits[key]; note = copy.deepcopy(el); set_text(note, txt)
+    r = next(note.iter(W+'r')); rp = r.find(W+'rPr')
+    if rp is None: rp = r.makeelement(W+'rPr', {}); r.insert(0, rp)
+    c = rp.makeelement(W+'color', {W+'val': 'C00000'}); rp.append(c)
+    el.addnext(note); els.insert(els.index(el) + 1, note)
+print('rewritten', sum(1 for v in REWRITE.values() if v), 'deleted', sum(1 for v in REWRITE.values() if v is None), 'notes', len(NOTE_AFTER))
 # ---- 2. sections
 secs = {}; order0 = []; cur = None
 for el in els:
