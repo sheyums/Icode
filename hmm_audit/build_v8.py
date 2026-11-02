@@ -13,8 +13,9 @@ def is_head(el):
     return all(bi(r) for r in runs) and len(ptext(el)) < 130
 els = [e for e in body if e.tag != W+'sectPr']; sect = body.find(W+'sectPr')
 # ---- 1. equation renumbering (document order of V7 -> new numbers); None = unnumbered
-MAP = {20:1, 21:2, 22:3, 23:4, 24:5, 25:6, 5:7, 6:8, 7:9, 8:10, 9:11, 10:None, 11:12, 12:13, 13:None,
-       14:14, 15:15, 16:16, 17:17, 18:18, 19:19, 1:20, 2:21, 3:None, 4:None}
+MAP = {20:1, 21:2, 22:3, 23:4, 24:5, 25:6, 5:7, 6:8, 7:9, 8:'DEL', 9:'DEL', 10:None, 11:10, 12:11, 13:None,
+       14:12, 15:13, 16:14, 17:'DEL', 18:15, 19:16, 1:17, 2:18, 3:None, 4:None}
+eq_del = []
 eq_done = set()
 for el in els:
     t = ptext(el).strip()
@@ -23,14 +24,18 @@ for el in els:
     for node in el.iter(W+'t'):
         def rep(m):
             n = int(m.group(1)); eq_done.add(n); new = MAP.get(n, n)
+            if new == 'DEL': eq_del.append(el); return ''
             return '' if new is None else f'({new})'
         if node.text and re.fullmatch(r'\s*(\(\d+\)\s*)+', node.text):
             node.text = re.sub(r'\((\d+)\)', rep, node.text)
 # references: explicit forms found in V7 (checked by hand), replaced within single text nodes
-REF = [('Eqs. 5–25', 'Eqs. 1–19'), ('Eqs. 5–19', 'Eqs. 7–19'), ('Eqs. (7)-(9)', 'Eqs. (9)–(11)'), ('Eqs. 11, 6', 'Eqs. 12, 8'),
-       ('Eqs. 14–15', 'Eqs. 14–15'), ('Eq. 14, 15', 'Eqs. 14, 15'), ('Eqs. 14, 15', 'Eqs. 14, 15'), ('Eqs. 18, 19', 'Eqs. 18, 19'),
+REF = [('Eqs. 5–25', 'Eqs. 1–16'), ('Eqs. 5–19', 'Eqs. 7–16'), ('Eqs. (7)-(9)', 'Eqs. (9)–(10)'), ('Eqs. 11, 6', 'Eqs. 10, 8'),
+       ('Eqs. 14–15', 'Eqs. 12–13'), ('Eq. 14, 15', 'Eqs. 12, 13'), ('Eqs. 14, 15', 'Eqs. 12, 13'), ('Eqs. 18, 19', 'Eqs. 15, 16'),
        ('Eqs. 20, 22', 'Eqs. 1, 3'), ('Eqs. 5 ', 'Eqs. 7 ')]
-SINGLE = {20:1, 21:2, 22:3, 23:4, 24:5, 25:6, 5:7, 6:8, 7:9, 9:11, 11:12, 12:13, 16:16, 14:14}
+SINGLE = {20:1, 21:2, 22:3, 23:4, 24:5, 25:6, 5:7, 6:8, 7:9, 11:10, 12:11, 16:14, 14:12}
+for el in eq_del:
+    if el.getparent() is not None: el.getparent().remove(el)
+    if el in els: els.remove(el)
 nref = 0; missed = []
 for el in els:
     for node in el.iter(W+'t'):
