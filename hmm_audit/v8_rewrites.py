@@ -59,3 +59,24 @@ for k in ["To identify the rate-limiting step", "which combines the baseline ene
           "[EQ - set as Word equation, replacing", "consistent with Kramers/Arrhenius", "Figures 5E and 5F compare",
           "[EQ - set as Word equation, and number it", "using E_23 and E_barrier,max"]:
     REWRITE[k] = None
+
+# 2026-11-02: bout-fitting section brought to the analysis actually used (left-truncated discrete MLE, AICc/BIC, G-test
+# walk-down, bootstrap LRT; inferential use = the two-exponential null of the wake-hazard test). AIC + Wilks removed.
+REWRITE.update({
+ "Unlike the hidden Markov model analyses described below, which operate on the native 1-second":
+  "Sleep and wake bouts were analysed at 1-s resolution, as extracted for the wake-bout hazard (below). Bouts shorter than a protocol threshold do not exist in the data (5 min for sleep; 2 s for wake, the shortest bout that survives the bridging of single active seconds), so every likelihood was conditioned on a bout being at least that threshold, x_min, and was discrete on the 1-s recording grid.",
+ "We fitted empirical distributions of fly sleep and wake bouts with 10 parametric models":
+  "For a model with survival function S(t), a bout lasting k seconds has probability [S((k − 1)Δt) − S(kΔt)]/S(x_min), with Δt = 1 s: the bin probability of Eq. (17) divided by the probability of surviving the threshold. The log-likelihood of a set of bouts is the sum of the logarithms of these probabilities (Eq. 18).",
+ "The function in this form was implemented in a custom-written Matlab code":
+  "Parameters were estimated by minimizing the negative log-likelihood with fmincon from multiple starting points, positive parameters in log space. Mixtures were parametrized by their observed weights (the fraction of retained bouts from each component), and a guard rejected any component that carried essentially none of the retained bouts.",
+ "Model selection was performed using Akaike information criterion":
+  "Models of a fixed library (mixtures of one to five exponentials, Weibull and exponentiated Weibull, gamma, Erlang, a two-component Weibull mixture, a mixture of Erlangs, and power laws with and without an exponential cutoff) were ranked by AICc and BIC. The selected model was the best-ranked one whose fit passed the G-test below; rows below it are untested rather than accepted. Where two mixture orders were close, the order was tested by a parametric-bootstrap likelihood-ratio test, because the chi-square limit (Wilks, 1938) does not hold for mixture order. In this study the library was used descriptively. The inferential use of a bout model is as the null of the wake-hazard test: a two-exponential mixture fitted to the same bouts, whose hazard can only decrease.",
+ "are the likelihoods of two models": None,
+ "is the observed count in the":
+  "where o_i is the observed count in bin i of N bins and e_i the count expected under the fitted model, computed from its survival function; edge bins with fewer than 10 observations were merged with their neighbours. G is distributed as χ² with N − k − 1 degrees of freedom, k being the number of free parameters.",
+})
+DEL_TABLE_AFTER = ["Model selection was performed using Akaike information criterion"]
+INSERT_AFTER = {
+ "A fly was flagged, not excluded":
+  "Hidden paths and likelihoods. Quantities defined on hidden-state sequences (transition and route counts, round trips, sleep-bout lengths at the hidden level) were computed on 200 paths per fly drawn from the posterior distribution of hidden paths given the fly's record and fitted parameters, by forward filtering–backward sampling (Chib, 1996; Scott, 2002): forward probabilities were computed with the phase-specific transition matrices, and each path was sampled backwards from the last minute. Every quantity was evaluated on each path and averaged over paths. The single most probable path (Viterbi decoding) was computed for comparison only, because a function of the most probable path is a biased estimate of the posterior expectation of that function. Log-likelihoods of the observed chain and of the hidden model were computed with the forward algorithm, which marginalizes unclassified minutes exactly; they enter the fitting, the BIC comparisons (order selection; hidden model against observed chain) and the parametric-bootstrap test of the hidden layer.",
+}

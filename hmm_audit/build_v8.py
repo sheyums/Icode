@@ -74,7 +74,7 @@ for el in els:
                 e = rp.find(W+tag)
                 if e is not None: rp.remove(e)
 # ---- 1c. per-window paragraphs rewritten (v8_rewrites.py)
-from v8_rewrites import REWRITE, NOTE_AFTER
+from v8_rewrites import REWRITE, NOTE_AFTER, DEL_TABLE_AFTER, INSERT_AFTER
 def set_text(el, text):
     runs = [r for r in el.iter(W+'r')]
     for m in list(el.iter(M+'oMath')) + list(el.iter(M+'oMathPara')):
@@ -89,13 +89,22 @@ def set_text(el, text):
             e = rp.find(W+tag)
             if e is not None: rp.remove(e)
 hits = {}
-for key in list(REWRITE) + list(NOTE_AFTER):
+for key in DEL_TABLE_AFTER:
+    m = [el for el in els if el.tag == W+'p' and re.sub(r'\s+', ' ', key) in re.sub(r'\s+', ' ', ptext(el))]
+    assert len(m) == 1, key
+    nx = m[0].getnext()
+    while nx is not None and nx.tag == W+'p' and not ptext(nx).strip() and not any(True for _ in nx.iter(M+'oMath')): nx = nx.getnext()
+    assert nx is not None and nx.tag == W+'tbl', 'no table after ' + key
+    nx.getparent().remove(nx); els.remove(nx)
+for key in list(REWRITE) + list(NOTE_AFTER) + list(INSERT_AFTER):
     m = [el for el in els if el.tag == W+'p' and re.sub(r'\s+', ' ', key) in re.sub(r'\s+', ' ', ptext(el))]
     assert len(m) == 1, (key, len(m)); hits[key] = m[0]
 for key, txt in REWRITE.items():
     el = hits[key]
     if txt is None: el.getparent().remove(el); els.remove(el)
     else: set_text(el, txt)
+for key, txt in INSERT_AFTER.items():
+    el = hits[key]; newp = copy.deepcopy(el); set_text(newp, txt); el.addnext(newp); els.insert(els.index(el) + 1, newp)
 for key, txt in NOTE_AFTER.items():
     el = hits[key]; note = copy.deepcopy(el); set_text(note, txt)
     r = next(note.iter(W+'r')); rp = r.find(W+'rPr')
