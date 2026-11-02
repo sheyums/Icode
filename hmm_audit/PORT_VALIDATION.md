@@ -361,3 +361,15 @@ re-run, more permutations would settle it.
   (no Python or s_observable.json here); its full-precision p and scipy version would settle it. Far from 0.05 either
   way, so the verdict is unaffected. (sss light has no exact tie; closest pair 1.8e-14 relative, p matches.)
 - CS for reference: light 24 of 25 with a cycle, 33% negative, p 0.15; dark 25 of 25, 4%, p 3e-7.
+
+## 2026-11-02  Rule of three for one-way edges (convention change, Sheyum) — PORTED FROM THE SPEC, NOT YET VALIDATED
+- sqw/ruleOfThreeMatrix.m, sqw/modelEnergeticsR3.m written from the spec relayed by cClaude (sqw_ref section 16 is NOT
+  on claude/trusting-allen-7nxrsf or any remote branch as of a33a73f, nor are sqw_r3.py / sqw_out/r3_model.json).
+  test_sqw_r3: 8/8 (hand example [180 3 20]/203, min(3, N(b,a)), both-way-unseen pairs kept 0, order independence,
+  n_a = actual row steps for an empirical P, finite EPR / A where modelEnergetics gave Inf).
+- Interpretations to confirm against the Python: (i) all of a row's one-way edges are filled together from the
+  ORIGINAL P (order-free); (ii) the count n_a P(a,b) of the unseen edge (< 1e-10 n_a) is kept, not zeroed, before
+  adding min(3, N(b,a)). Corners the spec does not cover, REPORTED not floored (info.stillOneWay, EPR stays Inf):
+  N(b,a) = 0 while P(b,a) >= 1e-10 (possible for the marginalised chain fit), and a row with P(a,a) = 1 (n_a = 0/0).
+- Not yet wired into observableQuantities / planAFlyHMM / energyLandscape: waiting for the reference to see exactly
+  which N each caller uses (observed counts per phase; mean posterior-path counts).
