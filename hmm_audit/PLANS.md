@@ -130,7 +130,25 @@ outlook; Plan B becomes paper 2.
 
 ---------------------------------------------------------------------------------------------------------------
 
-## The merged paper (outline, REVISED 2026-11-02: HMM introduced early, brought in where a result could be a scoring artefact)
+## The story (Sheyum, 2026-11-02): broken detailed balance in three acts. SUPERSEDES the section order of the outline below
+Thesis: *sleep-wake transitions run a directed cycle W->Q->S->W that breaks detailed balance; the clock shapes it but does
+not create it, and how much a fly sleeps sets neither its direction nor its strength.* Genotype order as the rule
+(CS -> CS DD -> per0 LD -> per0 DD -> fumin -> sss). The observed S/Q/W chain carries every act; the HMM is brought in
+ONLY where a result could be a scoring artefact or where the hidden level adds something, otherwise it runs in the SI.
+
+| act | question | content (claims) | HMM brought in (main text) | SI |
+|---|---|---|---|---|
+| 0 Setup | what is measured | S/Q/W symbols, observed chain, J / A / EPR; HMM introduced with its three reasons (C1) | emissions 80-100% diagonal -> hidden states = observed symbols, which licenses the chain (fig1_hmm_emissions) | K=2/3/4 order selection (K=3 in 76-96%); BIC chain vs HMM |
+| 1 Wild type (CS LD) | does the cycle exist, and what shapes it | forward cycle, strong at night, already forward late in the light (C2, C3); clock-locked daily rhythm of J, peak ~ZT16 (C10); A, EPR, superlinear EPR(J), Onsager L (C4, C5); landscape, sleep a deep well (C6); the forward step S->W is carried by LONG sleep bouts (C7) | direction agrees in 81-100% of flies; memory C7 also at the hidden level (CS night, beyond all 400 Markov simulations) | hidden A_eff ~2x (observed EPR a lower bound); landscape obs vs hidden (rho 0.83-0.97) |
+| 2 Remove the clock (CS DD, then per0 DD; per0 LD one line/SI) | does the drive need the clock | per0 DD still circulates forward with finite A and EPR, but its daily rhythm is flat (A 0.006, p 0.96) while CS DD keeps one (C10): the clock modulates, does not generate. Beneath the chain, in BOTH CS DD and per0 DD: direction-dependent dwells (C9*), 1-s asymmetry (C13). per0 DD only: wake hazard falls then rises, sequential exit route (C8); the waiting-time signature expected of broken detailed balance (reversible finite Markov sojourns have falling hazards, Keilson 1979), with the sleep-criterion and bin-sensitivity caveats | the hidden layer is thin: its gain over the chain equals one extra minute of memory (C9, 20n/20o) - the irreversibility beneath the chain is NOT a missing hidden state of the K=3 kind | K=4 composition (second sleep state in 16/25 per0 DD flies; lower bound); TUR; 20u null inadequate |
+| 3 Dial sleep down (fumin, sss) | does sleep amount set the drive | both invert the sleep well (E_S > E_Q, C6); opposite thermodynamic phenotypes: fumin drives the cycle hardest (chain abs A 1.04, forward in both phases), sss REVERSES it by day, no net direction at night, lowest Onsager L (C2, C5). Sleep amount and the breaking of detailed balance are dissociable | sss reversal at the hidden level (p 7e-5; fig_sss_reversal triangles); L lowest at both levels; inverted well at both levels -> none of these is a Q/W scoring artefact in the mutants, where scoring is most suspect | HMM creates more one-way edges than it rescues (31 vs 6, mostly fumin/sss); routing prediction unreliable in sss |
+| Support | - | dFB/VNC silencing: a circuit-level sleep reduction that leaves the drive unchanged, supports act 3 (one sentence; C12); memory not abolished by either line. Deprivation null with placebo arm (one line; C11) | none | C12, C11 sections |
+
+Structural point (decided with the story): the reference for per0 DD is CS DD, not CS LD (light and clock otherwise
+confounded). Act 2 panels put CS DD and per0 DD side by side, DESCRIPTIVELY; the like-for-like per0 DD vs CS DD L
+comparison was never tested and is not added (freeze).
+
+## The merged paper (outline, section order SUPERSEDED by the story above; REVISED 2026-11-02: HMM introduced early, brought in where a result could be a scoring artefact)
 Working title (PNAS): *Fruit flies circulate through sleep and wake with a direction, and the circadian clock modulates
 the cycle.* Everything at the observable level, per fly; genotype order rule for figures. Draft HMM text:
 DRAFT_HMM_motivation.md.
