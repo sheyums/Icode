@@ -2209,3 +2209,11 @@ above). K = 4, the extra state is: a second ACTIVE-wake state (Q,W,W,S) in CS 17
 49/57; a second SLEEP state (Q,W,S,S, i.e. W/Q/S/deep-sleep) in per0 DD 16/25 (CS 2, per0 LD 6, fumin 3, sss 2).
 K = 4 is rejected against K = 3 in most flies (median dBIC +22 to +81); per0 DD, where the extra state is a second
 sleep state, is the genotype with most K = 4 support (16% / 40% of flies by the two BIC penalties).
+
+## 2026-11-02  Descriptive check (no test): landscape quantities, observed chain vs HMM, per fly (s_observable.json, l_landscape.json)
+E_S - E_Q (state energy): medians observed / hidden CS L -0.94/-1.08, CS D -1.78/-1.85, per0 LD -1.74/-1.73 and
+-1.58/-1.61, per0 DD -1.75/-1.85, fumin 0.64/0.74 and 0.97/1.07, sss 1.19/1.13 and 1.38/1.38; per-fly Spearman 0.83-0.97.
+Branching-corrected landscape prediction F_SW: same sign in 84-100% of flies and rho 0.58-0.90 in CS, per0 LD/DD and
+fumin; weaker in sss (same sign 70%, rho 0.51-0.56; light median -0.12 observed vs +0.23 hidden). Reading: the landscape
+energies are robust to the quiet/active boundary; the routing prediction, which depends on the sparse S->Q rate, is
+robust except in sss, where it should not be interpreted.
