@@ -15,10 +15,11 @@ def routes_obs(y,ph,nph):
 def block_stats(y,ph,nph,Pm,refok):
     T=len(y); N=R.observable_pair_counts(y,ph,nph); c=R.c_obs_minutes(y,ph,nph); rc=routes_obs(y,ph,nph); X,Y=R.xy_counts(rc); out=[]
     for p in range(nph):
-        h=np.sum(ph==p)/60; e=R.model_energetics(Pm[p]) if Pm is not None else None; ls=R.landscape(Pm[p]) if Pm is not None else None
+        h=np.sum(ph==p)/60; e=R.model_energetics_r3(Pm[p],N[p]) if Pm is not None else None; ls=R.landscape(R.rule_of_three_matrix(Pm[p],N[p])[0]) if Pm is not None else None
+        Jf=R.model_energetics(Pm[p])['J'] if Pm is not None else None  # J on the fitted matrix; A/EPR/landscape on the r3 matrix (2026-11-02)
         out.append(dict(ok=bool(refok[p]),hours=float(h),c_obs=float(c[p]),J=float(R.j_cycle_count(N[p],h)),EPR=float(R.epr_count_bound(N[p],h)[0]),
                         r3=bool(R.epr_count_bound(N[p],h)[1]),N=N[p].tolist(),
-                        J_chain=None if e is None else float(e['J']),A_chain=None if e is None else float(e['A']),EPR_chain=None if e is None else float(e['EPR']),
+                        J_chain=None if e is None else float(Jf),A_chain=None if e is None else float(e['A']),EPR_chain=None if e is None else float(e['EPR']),
                         E21=None if ls is None else float(ls['E2_minus_E1']),E31=None if ls is None else float(ls['E3_minus_E1']),
                         F_SW=None if ls is None else float(ls['F_SW']),F_WS=None if ls is None else float(ls['F_WS']),Xn_cnt=float(X[p]),Yn_cnt=float(Y[p])))
     return out

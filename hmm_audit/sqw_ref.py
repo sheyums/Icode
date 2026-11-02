@@ -777,13 +777,14 @@ def routes_observed(y, ph, nph):
 
 def observable_quantities(y, ph, nph, P_chain):
     """PLAN A per phase (PRESPEC 20s-A): c_obs, count J (cycles/h), count EPR (rule-of-three bound) and whether the rule
-    was used, exact chain J / affinity A / EPR (model_energetics of mc_fit's matrix), landscape energies and predicted
-    routing, counted routing Xn, Yn on the observed symbols. hours = minutes in the phase / 60."""
+    was used, chain J on mc_fit's matrix; chain affinity A / EPR and landscape on the rule-of-three matrix (section 16;
+    2026-11-02 amendment, finite where an edge is one-way), predicted routing, counted routing Xn, Yn on the observed symbols. hours = minutes in the phase / 60."""
     N = observable_pair_counts(y, ph, nph); c = c_obs_minutes(y, ph, nph); X, Y = xy_counts(routes_observed(y, ph, nph)); out = []
     for p in range(nph):
-        h = np.sum(np.asarray(ph) == p) / 60; e = model_energetics(P_chain[p]); ls = landscape(P_chain[p]); epr, sub = epr_count_bound(N[p], h)
+        h = np.sum(np.asarray(ph) == p) / 60; e = model_energetics_r3(P_chain[p], N[p]); ls = landscape(rule_of_three_matrix(P_chain[p], N[p])[0]); epr, sub = epr_count_bound(N[p], h)
+        J_fit = model_energetics(P_chain[p])['J']
         out.append(dict(c_obs=float(c[p]), J=float(j_cycle_count(N[p], h)), EPR=float(epr), rule_of_three=bool(sub),
-                        J_chain=float(e['J']), A_chain=float(e['A']), EPR_chain=float(e['EPR']),
+                        J_chain=float(J_fit), A_chain=float(e['A']), EPR_chain=float(e['EPR']),
                         E21=float(ls['E2_minus_E1']), E31=float(ls['E3_minus_E1']), F_SW=float(ls['F_SW']), F_WS=float(ls['F_WS']),
                         Xn_cnt=float(X[p]), Yn_cnt=float(Y[p])))
     return out
@@ -795,22 +796,32 @@ def observable_quantities(y, ph, nph, P_chain):
 def rule_of_three_matrix(P, N, zero=1e-10):
     """Transition matrix with every ONE-WAY edge filled by the rule of three. P: fitted 3x3 matrix (one phase);
     N: off-diagonal transition counts of the same phase (N[i,j], i != j). For an edge with P[a,b] < zero and
-    P[b,a] >= zero, the unseen count is set to min(3, N[b,a]) and row a is renormalized, with row a's total
-    number of steps recovered as n_a = sum_{j != a} N[a,j] / (1 - P[a,a]). Pairs unseen in BOTH directions are
-    left at zero (no cycle through that edge). Returns (P_r3, changed)."""
-    P = np.array(P, float); N = np.asarray(N, float); Z = P < zero; changed = False
+    P[b,a] >= zero, the unseen count is set to min(3, N[b,a]). Row a's total number of steps is recovered once,
+    from the ORIGINAL row, as n_a = sum_{j != a} N[a,j] / (1 - P[a,a]); all of the row's fills are made against
+    that original row and the row is renormalized ONCE, so the result does not depend on the order in which the
+    one-way edges are visited (2026-11-02 revision; the first version renormalized after each fill).
+    A row with no observed exit (sum_{j != a} N[a,j] = 0) is left unchanged: the state is never left, there is no
+    cycle through it, and such a fly-phase is excluded as no-cycle. Pairs unseen in BOTH directions are left at
+    zero. Returns (P_r3, changed)."""
+    P0 = np.array(P, float); P = P0.copy(); N = np.asarray(N, float); Z = P0 < zero; changed = False
     for a in range(3):
-        for b in range(3):
-            if a == b or not (Z[a, b] and not Z[b, a]): continue
-            k = N[b, a]
-            if k <= 0: continue
-            off = sum(N[a, j] for j in range(3) if j != a)
-            n_a = off / max(1.0 - P[a, a], 1e-12) if off > 0 else max(k, 1.0)
-            row = P[a] * n_a; row[b] = min(3.0, k); P[a] = row / row.sum(); changed = True
+        off = sum(N[a, j] for j in range(3) if j != a)
+        if off <= 0 or P0[a, a] >= 1.0: continue
+        fills = {b: min(3.0, N[b, a]) for b in range(3)
+                 if b != a and Z[a, b] and not Z[b, a] and N[b, a] > 0}
+        if not fills: continue
+        row = P0[a] * (off / (1.0 - P0[a, a]))
+        for b, c in fills.items(): row[b] = c
+        P[a] = row / row.sum(); changed = True
     return P, changed
 
 def model_energetics_r3(P, N, zero=1e-10, per_hour=60.0):
     """model_energetics on the rule-of-three matrix: finite 95% lower bounds on |A| and EPR where an edge is
     one-way; identical to model_energetics otherwise. Adds 'r3' (bool)."""
     Pr, ch = rule_of_three_matrix(P, N, zero)
-    e = model_energetics(Pr, zero, per_hour); e['r3'] = ch; return e
+    e = model_energetics(Pr, zero, per_hour); e['r3'] = ch
+    # No-cycle convention: a chain whose stationary flux vanishes (e.g. a state that is never left, so the stationary
+    # mass sits in it) carries no cycle; EPR is 0 and the affinity is undefined, and the fly-phase is excluded.
+    # Applied only where the value would otherwise be non-finite; finite round-off values are left as computed.
+    if abs(e['J']) < 1e-12 and not (np.isfinite(e['EPR']) and np.isfinite(e['A'])): e['EPR'] = 0.0; e['A'] = np.nan
+    return e

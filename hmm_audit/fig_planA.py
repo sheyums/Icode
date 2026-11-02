@@ -5,6 +5,13 @@ import os,sys,json,numpy as np, matplotlib; matplotlib.use('Agg'); import matplo
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import sqw
 O=json.load(open(sqw.OUTD+'s_observable.json')); rng=np.random.default_rng(20)
+# Rule of three (2026-11-02 amendment): chain A / EPR and landscape quantities from r3_model.json (sqw_r3.py), which
+# replace the infinite-convention values stored in s_observable.json; J and all count-based values are unchanged.
+_R3={(x['g'],x['fly'],x['p']):x for x in json.load(open(sqw.OUTD+'r3_model.json'))}
+for d in O:
+    for p,r in enumerate(d['main']):
+        x=_R3.get((d['g'],d['fly'],p))
+        if x: r.update(A_chain=x['A_r3'],EPR_chain=x['EPR_r3'],E21=x['E21_r3'],E31=x['E31_r3'],F_SW=x['F_SW_r3'],F_WS=x['F_WS_r3'])
 plt.rcParams.update({'font.family':'STIXGeneral','mathtext.fontset':'stix','font.size':8,'axes.linewidth':0.6,'xtick.direction':'in','ytick.direction':'in'})
 COL={'CS':'#2a78d6','CSDD':'#6250d6','per0LD':'#1baf7a','per0DD':'#eda100','fumin':'#eb6834','sss':'#e87ba4'}
 NAME={'CS':'CS','CSDD':'CS DD','per0LD':'$per^0$ LD','per0DD':'$per^0$ DD','fumin':'$fmn$','sss':'$sss$'}

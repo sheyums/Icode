@@ -2230,3 +2230,30 @@ Medians over fly-phases with a cycle, old (infinite ranked highest) -> rule of t
   CS, CS DD, per0 DD and per0 LD chain values unchanged (no one-way edges). No fly-phase with a cycle remains non-finite.
 SI Table S2 'chain affinity |A|' (pooled phases): fumin 1.09 -> 1.04, sss 0.79 -> 0.51 (earlier values had dropped the
 infinite cases). Count-based results (Figs A1, A2, L, A_eff) are unaffected.
+
+## 2026-11-02 — Rule of three: edge-case revision (lClaude review of 045407f)
+
+Code: `sqw_ref.rule_of_three_matrix` / `model_energetics_r3`, `sqw_r3.py`, `sqw17.py`, `fig_planA.py` (this commit).
+
+- **(i) Order dependence.** With three states, a row can carry two one-way edges only if it has NO observed exit,
+  so (i) and (ii) were the same case. The function now recovers n_a once from the ORIGINAL row,
+  n_a = sum_{j!=a} N[a,j] / (1 - P[a,a]), fills every one-way edge of that row against it, and renormalizes once.
+- **(ii) Fallback.** Removed. A row with no observed exit (a state entered and never left in the phase) is left
+  unchanged: the stationary chain has no cycle there. If the result would be non-finite and |J| < 1e-12,
+  `model_energetics_r3` returns EPR = 0 and A = undefined (the existing no-cycle convention, excluded from summaries).
+  Finite round-off values are left as computed.
+- **Effect.** Observed level: no value changed, apart from round-off. Hidden level: 5 fly–phases where the HMM made
+  a state absorbing (fumin 10 L, fumin 12 D, sss 15 L, sss 22 L, sss 28 L). Their A_hmm changed from ±inf or a
+  fabricated value to undefined, and sss 15 L's model EPR changed from 0.0088 (an artefact of the sequential
+  fallback) to 0. Every group median in the amendment table is unchanged, except the HMM model EPR for fumin D,
+  which is 0.116 (it was 0.121 in the run just before this revision; the amendment entry already says 0.116).
+- **Python reference now matches MATLAB's default.** `observable_quantities` and `sqw17.block_stats` compute chain
+  A/EPR and the landscape on the rule-of-three matrix; J stays on the fitted matrix. `s_observable.json` was NOT
+  regenerated, so it still holds the infinite convention for the 33 observed fly–phases. `fig_planA.py` overlays
+  `r3_model.json` onto it. `verify_planA`'s check of observable_quantities = 20s-A will therefore differ on those
+  33 fly–phases, which is expected.
+- **Landscape (Fig A3).** E_W − E_Q and E_S − E_Q medians are unchanged in every group. The predicted routing
+  changed in 2/10/7/14 fly–phases (fumin L/D, sss L/D). The medians that moved: F_WS sss D −0.50 → −0.36,
+  F_SW fumin D −0.74 → −0.65. All F values are finite before and after.
+- **Hidden r3 count.** It depends on the posterior paths: 59 in this Python run, 63 in one MATLAB run. Methods V8
+  now says "about 60 (59–63)".
