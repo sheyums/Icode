@@ -17,6 +17,11 @@ function test_sqw_r3()
 %    7. modelEnergeticsR3 on a one-way chain: EPR and A finite, EPR > 0, Pr3 = Q, r3 true, J sign
 %       as the forward cycle
 %    8. size checks: non-square P, N of another size refused
+%    9. observableQuantities wiring: on a record with a one-way chain edge, A_chain / EPR_chain / E21 / E31
+%       = modelEnergeticsR3 and energyLandscape of the filled matrix, r3_chain true, J_chain from the
+%       FITTED matrix; RuleOfThree=false restores modelEnergetics (Inf) exactly
+%   10. planAFlyHMM wiring with B = I (paths = the record): EPR_hmm_model = modelEnergeticsR3(P, counts),
+%       r3_hmm true; RuleOfThree=false gives the old Inf
 
 here = fileparts(mfilename('fullpath'));
 assert(isequal(fileparts(which('ruleOfThreeMatrix')), here), 'Run from the sqw folder.');
@@ -83,6 +88,30 @@ cnt = 0;
 try, ruleOfThreeMatrix(ones(3, 2) / 2, ones(3, 2)); catch, cnt = cnt + 1; end
 try, ruleOfThreeMatrix(eye(3), ones(4)); catch, cnt = cnt + 1; end
 [nP, nF] = rep(cnt == 2, nP, nF, 8, 'size checks', sprintf('%d of 2 refused', cnt));
+
+%% 9-10. wiring
+try
+    rs = RandStream('twister', 'Seed', 11); T = 2880; ph = minutePhases(T);
+    P = repmat([0.90 0 0.10; 0.08 0.90 0.02; 0.02 0.06 0.92], 1, 1, 2);       % Q -> W never: one-way edge
+    [~, y] = hmmSimulatePhased([1 1 1]' / 3, P, eye(3), ph, rs);
+    [~, ~, Pc] = chainFitPhased(y, ph, 2); N = observablePairCounts(y, ph, 2);
+    Q = observableQuantities(y, ph, 2, Pc); Q0 = observableQuantities(y, ph, 2, Pc, RuleOfThree=false); ok = true;
+    for p = 1:2
+        e = modelEnergeticsR3(Pc(:, :, p), N(:, :, p)); L = energyLandscape(e.Pr3); e0 = modelEnergetics(Pc(:, :, p));
+        ok = ok && Q(p).A_chain == e.A && Q(p).EPR_chain == e.EPR && Q(p).E21 == L.E2_minus_E1 && Q(p).E31 == L.E3_minus_E1 ...
+            && Q(p).r3_chain && Q(p).J_chain == e0.J && isfinite(Q(p).EPR_chain) && isinf(Q0(p).EPR_chain) && ~Q0(p).r3_chain ...
+            && Q0(p).A_chain == e0.A;
+    end
+    [nP, nF] = rep(ok, nP, nF, 9, 'observableQuantities: r3 for A, EPR, landscape; J_chain fitted; RuleOfThree=false = old', '');
+    f = struct('pi', [1 1 1]' / 3, 'P', P, 'B', eye(3), 'deg', false);
+    H = planAFlyHMM(y, ph, 2, f, NPaths=5, RandomSeed=1); H0 = planAFlyHMM(y, ph, 2, f, NPaths=5, RandomSeed=1, RuleOfThree=false);
+    ok = true;
+    for p = 1:2
+        e = modelEnergeticsR3(P(:, :, p), N(:, :, p));
+        ok = ok && abs(H(p).EPR_hmm_model - e.EPR) < 1e-12 && H(p).r3_hmm && isinf(H0(p).EPR_hmm_model) && H(p).J_hmm_model == H0(p).J_hmm_model;
+    end
+    [nP, nF] = rep(ok, nP, nF, 10, 'planAFlyHMM: EPR_hmm_model = r3 on mean path counts; RuleOfThree=false = old Inf', '');
+catch err, [nP, nF] = rep(false, nP, nF, 9, 'wiring', err.message); end
 
 fprintf('\n%d passed, %d failed\n', nP, nF);
 if nF > 0, error('test_sqw_r3:failed', '%d test(s) failed.', nF); end

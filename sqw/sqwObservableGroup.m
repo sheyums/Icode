@@ -15,6 +15,7 @@ function G = sqwObservableGroup(files, genotype, options)
 %                <genotype>_observable_summary.csv  one row per phase
 %                <genotype>_observable_sixhour_*.csv (SixHour)
 %   Plot       draw PLOTSQWGROUP
+%   RuleOfThree  passed to SQWOBSERVABLEFLY (default true, convention of 2026-11-02)
 %
 %   G   struct:
 %     genotype, files, flies (SQWOBSERVABLEFLY outputs)
@@ -48,6 +49,7 @@ arguments
     options.RandomSeed (1,1) double {mustBeNonnegative, mustBeInteger} = 20
     options.OutDir (1,1) string = ""
     options.Plot (1,1) logical = false
+    options.RuleOfThree (1,1) logical = true
 end
 files = string(files);
 if isscalar(files) && isfolder(files)
@@ -62,7 +64,7 @@ nF = numel(files);
 flies = cell(nF, 1);
 for i = 1:nF
     flies{i} = sqwObservableFly(files(i), LightDark=options.LightDark, Theta=options.Theta, ...
-        UnknownWake=options.UnknownWake, SixHour=options.SixHour);
+        UnknownWake=options.UnknownWake, SixHour=options.SixHour, RuleOfThree=options.RuleOfThree);
 end
 G.flies = vertcat(flies{:});
 

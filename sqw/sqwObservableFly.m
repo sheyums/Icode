@@ -12,6 +12,8 @@ function F = sqwObservableFly(source, options)
 %   UnknownWake  "missing" (ledger) or "unknown" (SQWSYMBOLS)
 %   SixHour      also fit and summarise the four 6-h ZT blocks (LD only; C3)
 %   Plot         draw the fly's symbol raster and its per-phase numbers
+%   RuleOfThree  true (default, 2026-11-02): A_chain, EPR_chain and the landscape use the rule-of-three
+%                filled matrix (OBSERVABLEQUANTITIES); false: the fitted matrix, Inf kept
 %
 %   F   struct:
 %     file, T (minutes), symbols (lab coding: S 0, Q 1, W 2, NaN missing; SQWTOLABCODE),
@@ -32,6 +34,7 @@ arguments
     options.UnknownWake (1,1) string {mustBeMember(options.UnknownWake, ["missing" "unknown"])} = "missing"
     options.SixHour (1,1) logical = false
     options.Plot (1,1) logical = false
+    options.RuleOfThree (1,1) logical = true
 end
 if ischar(source) || isstring(source)
     F.file = string(source);
@@ -54,7 +57,7 @@ if F.T == 0
     error('sqwObservableFly:short', 'The record holds less than one whole day.');
 end
 F.chain = fitChain(y, F.ph, F.nP);
-F.Q = annotate(observableQuantities(y, F.ph, F.nP, F.chain.P), F.refOK);
+F.Q = annotate(observableQuantities(y, F.ph, F.nP, F.chain.P, RuleOfThree=options.RuleOfThree), F.refOK);
 
 if options.SixHour
     if ~options.LightDark
@@ -63,7 +66,7 @@ if options.SixHour
     s.ph = minutePhases(F.T, Scheme="6h");
     s.refOK = F.refOK([1 1 2 2]);
     s.chain = fitChain(y, s.ph, 4);
-    s.Q = annotate(observableQuantities(y, s.ph, 4, s.chain.P), s.refOK);
+    s.Q = annotate(observableQuantities(y, s.ph, 4, s.chain.P, RuleOfThree=options.RuleOfThree), s.refOK);
     s.phaseNames = ["ZT0-6"; "ZT6-12"; "ZT12-18"; "ZT18-24"];
     F.six = s;
 end
