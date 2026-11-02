@@ -238,6 +238,50 @@
      "text": "In the S/Q/W analysis, *A*_{eff} = EPR/|*J*_{cycle}| was computed per fly and phase from the observed symbol-change counts (Eqs. 20, 22), for fly–phases with a cycle, finite entropy production and *J*_{cycle} ≠ 0. For a single cycle in a steady state, entropy production equals current times affinity, so *A*_{eff} estimates the cycle affinity; it agreed with the affinity of the fitted chain (Eq. 21) in every genotype. exp(*A*_{eff}) is the ratio of the probabilities of a forward and a backward turn of the cycle."
     }
    ]
+  },
+  {
+   "anchor": "Jensen-Shannon distance between bout-duration distributions",
+   "op": "delete"
+  },
+  {
+   "anchor": "To test whether observable bouts exiting a sleep or wake state via the direct",
+   "op": "delete"
+  },
+  {
+   "anchor": "For two densities",
+   "op": "delete"
+  },
+  {
+   "anchor": "For two densities",
+   "op": "delete_next"
+  },
+  {
+   "anchor": "where  is the Kullback-Leibler divergence",
+   "op": "delete"
+  },
+  {
+   "anchor": "Because bout durations are continuous and right-skewed",
+   "op": "delete"
+  },
+  {
+   "anchor": "A bootstrap standard error and percentile confidence interval for",
+   "op": "delete"
+  },
+  {
+   "anchor": "A bootstrap standard error and percentile confidence interval for",
+   "op": "after",
+   "paras": [
+    {
+     "text": "Kullback–Leibler divergence and time irreversibility",
+     "heading": true
+    },
+    {
+     "text": "The Kullback–Leibler divergence between two distributions *p* and *q* on the same outcomes is *D*_{KL}(*p*‖*q*) = Σ_{x} *p*(*x*) ln[*p*(*x*)/*q*(*x*)], in nats (Kullback & Leibler, 1951). It is zero only when the distributions coincide and is not symmetric. We use it in one way only: to compare a process with its time reverse. For a stationary process, the divergence between the probability of a trajectory and that of the same trajectory played backwards, per unit time, is the entropy production rate, and any coarse-grained version of the trajectory gives a lower bound on it (Kawai, Parrondo & Van den Broeck, 2007; Roldán & Parrondo, 2010). Two such estimators were applied to the observed symbols: blocks of *n* consecutive minutes against their reverses (Observable and hidden levels compared), and dwell-time distributions in the two directions of passage through quiet and active wake (Waiting-time irreversibility). Empirical distributions were estimated from counts with a pseudocount of 0.5 per outcome, so that an outcome seen in one direction only contributes a finite term; the estimators' positive bias was handled by comparing each fly with records simulated from its own observed chain, never by interpreting the divergence alone."
+    },
+    {
+     "text": "The Jensen–Shannon distance used in an earlier version of this analysis to compare bout-duration distributions by exit route was not used. Its question, whether sleep bouts that end through quiet wake differ in length from those that end in active wake, is answered by the within-fly route-duration test (Dependence of routing on bout duration), which compares bouts within each fly against a permutation null rather than pooling flies; and, unlike the Kullback–Leibler divergence between a process and its time reverse, the Jensen–Shannon distance has no thermodynamic interpretation."
+    }
+   ]
   }
  ],
  "comments": [
@@ -294,8 +338,8 @@
    "text": "Not re-analysed here (dFB/vnc data were not part of this work). If these are per-window binary-model fits, the identifiability caveat applies to all elements involving H1."
   },
   {
-   "anchor": "Jensen-Shannon distance between bout-duration distributions by exit route",
-   "text": "Exit routes here come from Viterbi paths of the binary model. With the S/Q/W model, assign exit routes from posterior paths (or posterior route probabilities) instead."
+   "anchor": "Kullback–Leibler divergence and time irreversibility",
+   "text": "Replaces the Jensen-Shannon section (tracked deletion above). The exit-route question it addressed is now the within-fly test in \"Dependence of routing on bout duration\". New references: Kullback S, Leibler RA (1951) On information and sufficiency. Ann Math Stat 22:79-86. Kawai R, Parrondo JMR, Van den Broeck C (2007) Dissipation: the phase-space perspective. Phys Rev Lett 98:080602. Roldan E, Parrondo JMR (2010) Estimating dissipation from single stationary trajectories. Phys Rev Lett 105:150607."
   },
   {
    "anchor": "Onsager linear response and thermodynamic conductance",

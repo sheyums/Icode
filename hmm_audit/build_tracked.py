@@ -75,6 +75,7 @@ def find(prefix):
 ops = []   # (para index, 'before'|'after'|'delete', xml)
 for e in TXT['edits']:
     i = find(e['anchor'])
+    if e['op'] == 'delete_next': ops.append((i + 1, 'delete', None)); continue   # e.g. an equation paragraph with no text
     if e['op'] == 'delete': ops.append((i, 'delete', None))
     else:
         xml = ''.join(ins_para(t['text'], t.get('heading', False)) for t in e['paras'])
