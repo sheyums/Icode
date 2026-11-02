@@ -1,7 +1,7 @@
 # Plan A figures at the observable level (PRESPEC 20s-A data, s_observable.json). Genotype order rule: wild type -> clock
 # mutant -> sleep mutants; light before dark. Fig A1: direction and flux (replaces 6/6b); Fig A2: EPR vs J and Onsager L
 # (replaces 11/12); Fig A3: energy landscape (replaces 14/15). Per fly points; medians with fly-bootstrap 95% CIs.
-import os,sys,json,numpy as np, matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
+import os,sys,json,numpy as np, matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt, matplotlib.ticker
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import sqw
 O=json.load(open(sqw.OUTD+'s_observable.json')); rng=np.random.default_rng(20)
@@ -52,7 +52,7 @@ for SI in (False, True):
     name='figA1_direction_flux_SI_hmm' if SI else 'figA1_direction_flux_observable'
     for ext in ('png','pdf'): fig.savefig(f'figures/{name}.{ext}',dpi=300)
 # ---------------- Fig A2 ----------------
-fig=plt.figure(figsize=(7.0,5.0)); gs=fig.add_gridspec(2,4,width_ratios=[1,1,1,1.25],hspace=0.45,wspace=0.45); Ls={}
+fig=plt.figure(figsize=(7.2,5.0)); gs=fig.add_gridspec(2,5,width_ratios=[1,1,1,1.05,1.05],hspace=0.45,wspace=0.62); Ls={}
 for k,g in enumerate(GO):
     ax=fig.add_subplot(gs[k//3,k%3]); pts=[]
     for p in ([0] if g in DDg else [0,1]):
@@ -66,17 +66,29 @@ for k,g in enumerate(GO):
         pick=rng.choice(flies,len(flies)); qq=[q for f in pick for q in pts if q[0]==f]; Jb=np.array([q[2] for q in qq]); Eb=np.array([q[3] for q in qq]); B.append((Jb**2@Jb**2)/(Jb**2@Eb))
     Ls[g]=(1/s,*np.percentile(B,[2.5,97.5]))
     ax.set_title(NAME[g],fontsize=8,color=COL[g]); ax.set_xlabel('$J$ (cycles h$^{-1}$)'); ax.set_ylabel('EPR (nats h$^{-1}$)') if k%3==0 else None
-    ax.text(0.04,0.92,f'$L$ = {1/s:.2f}',transform=ax.transAxes,fontsize=7)
+    ax.text(0.04,0.92,f'$L$ = {1/s:.2f}',transform=ax.transAxes,fontsize=7); ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
     if g=='sss':
-        ax.text(0.5,0.72,'light (open points):\nmostly $J<0$, cycle reversed;\ncost depends on $J^2$ only',transform=ax.transAxes,fontsize=5.8,ha='center',va='top')
+        ax.set_title(NAME[g]+'\n(open = light: reversed)',fontsize=7,color=COL[g])
     for sp in ('top','right'): ax.spines[sp].set_visible(False)
 ax=fig.add_subplot(gs[:,3])
 for k,g in enumerate(GO):
     L,lo,hi=Ls[g]; y=len(GO)-1-k; ax.plot([lo,hi],[y,y],color=COL[g],lw=1.6); ax.plot(L,y,'o',ms=5,color=COL[g])
-ax.set_yticks(range(len(GO))); ax.set_yticklabels([NAME[g] for g in GO][::-1]); ax.set_xlabel('Onsager conductance $L$\n(cycles$^2$ nats$^{-1}$ h$^{-1}$; EPR $=J^2/L$)')
+ax.set_yticks(range(len(GO))); ax.set_yticklabels([NAME[g] for g in GO][::-1]); ax.set_ylim(-0.6,len(GO)-0.4); ax.set_xlabel('conductance $L$\n(cycles$^2$ nats$^{-1}$ h$^{-1}$)')
 ax.axvline(Ls['CS'][0],color='0.6',lw=0.5,ls='--')
 for sp in ('top','right'): ax.spines[sp].set_visible(False)
-fig.text(0.01,0.97,'a',fontsize=10,fontweight='bold'); fig.text(0.70,0.97,'b',fontsize=10,fontweight='bold')
+ax=fig.add_subplot(gs[:,4]); AE={}
+for k,g in enumerate(GO):
+    a=np.array([r['EPR']/abs(r['J']) for p in ([0] if g in DDg else [0,1]) for r in rows(g,p,cyc=True) if np.isfinite(r['EPR']) and abs(r['J'])>0],float)
+    m,lo,hi=med_ci(a); y=len(GO)-1-k; AE[g]=(m,lo,hi,len(a))
+    ax.plot(np.clip(a,0,3),y+rng.uniform(-0.18,0.18,len(a)),'o',ms=1.8,mfc='none',mec=COL[g],mew=0.4,alpha=0.6)
+    ax.plot([lo,hi],[y,y],color='k',lw=1.4); ax.plot(m,y,'o',ms=5,color=COL[g],mec='k',mew=0.5)
+ax.set_yticks(range(len(GO))); ax.set_yticklabels([]); ax.set_xlim(0,3); ax.set_ylim(-0.6,len(GO)-0.4)
+ax.set_xlabel('$A_{eff}$ = EPR/$|J|$\n(nats per cycle)')
+sec=ax.secondary_xaxis('top',functions=(lambda x: np.exp(x), lambda o: np.log(np.clip(o,1e-9,None))))
+sec.set_xticks([1,2,5,10,20]); sec.set_xlabel('odds forward : backward, $e^{A}$',fontsize=6.5)
+for sp in ('right',): ax.spines[sp].set_visible(False)
+print('A_eff medians:',{g:tuple(round(float(v),2) for v in AE[g][:3])+(AE[g][3],) for g in GO})
+fig.text(0.01,0.97,'a',fontsize=10,fontweight='bold'); fig.text(0.60,0.97,'b',fontsize=10,fontweight='bold'); fig.text(0.80,0.97,'c',fontsize=10,fontweight='bold')
 for ext in ('png','pdf'): fig.savefig(f'figures/figA2_epr_j_onsager_observable.{ext}',dpi=300,bbox_inches='tight')
 # ---------------- Fig A3 ----------------
 fig,axs=plt.subplots(1,3,figsize=(7.0,2.8),gridspec_kw=dict(width_ratios=[1.3,1.3,1]),constrained_layout=True)

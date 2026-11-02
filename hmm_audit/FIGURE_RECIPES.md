@@ -523,3 +523,7 @@ noted on the panel.
 - 2026-11-02 Fig 1 panel fig1_hmm_emissions (fig_emission.py): per genotype (CS, per0 LD, per0 DD, fumin, sss), the
   median over non-degenerate flies of the labelled K = 3 emission matrix B3 from sqw20b_fit2_theta0.5.jsonl; greyscale
   0-1, values printed. Diagonals: Q 0.80-0.94, W 0.91-0.96, S 1.00. Port: one heat-map per genotype.
+- 2026-11-02 Fig A2 panel (c): A_eff = EPR/|J| per fly x phase (count EPR, rule of three; fly x phases with a cycle,
+  finite EPR, J != 0), points clipped at 3, median with 95% bootstrap CI (2000); top axis e^A (odds forward:backward).
+  Medians CS 0.57, CS DD 0.51, per0 LD 0.43, per0 DD 0.64, fumin 1.11, sss 0.70 nats/cycle (matches chain affinity A).
+  sss panel title notes 'open = light: reversed'. Port: add panel c to exportFigA2.
