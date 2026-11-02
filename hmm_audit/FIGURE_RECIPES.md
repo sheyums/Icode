@@ -527,3 +527,7 @@ noted on the panel.
   finite EPR, J != 0), points clipped at 3, median with 95% bootstrap CI (2000); top axis e^A (odds forward:backward).
   Medians CS 0.57, CS DD 0.51, per0 LD 0.43, per0 DD 0.64, fumin 1.11, sss 0.70 nats/cycle (matches chain affinity A).
   sss panel title notes 'open = light: reversed'. Port: add panel c to exportFigA2.
+- 2026-11-02 DECISION on lClaude's question (fig_sss_reversal): no-cycle fly-phases (|J_chain| < 1e-12, the 20s-A rule)
+  are set to exactly 0, PLOTTED at 0, and EXCLUDED from the '% J < 0' and from the Wilcoxon test; the count of no-cycle
+  flies is printed under the panel. sss light: 37 of 50 with a cycle, 70% negative, p 0.0016. MATLAB should switch its
+  default to this (neg_obs_cycleOnly, test on cycle flies), keeping n_noCycle in the summary.

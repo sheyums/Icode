@@ -2186,3 +2186,12 @@ better than 3 by > 10): CS 1, per0 LD 3, per0 DD 5, fumin 7, sss 3. Reading: K =
 flies of every genotype; the lighter penalty (n = changes) moves some per0 DD (40%) and fumin (26%) flies to K = 4,
 descriptive only. Separately (20n), the K = 3 HMM is itself not preferred over the plain observed chain in 72-77% of
 flies: the order question and the hidden-vs-observed question are different comparisons.
+
+## 2026-11-02  Correction (found by lClaude, MATLAB port 19d0ed6): sss reversal figure counted round-off signs
+fig_sss_reversal first counted the sign of J_chain for flies whose observed chain has NO cycle (|J| ~ 1e-15, sign set by
+floating-point round-off; 13 of 50 sss-light flies, 5 of 53 sss-dark). Fixed by the 20s-A rule: |J| < 1e-12 is a
+no-cycle fly-phase, set to 0, plotted at 0, left out of the % and of the Wilcoxon test. sss light: 37 flies with a
+cycle, J < 0 in 70%, Wilcoxon p 0.0016 (was 64% / p 0.0037 over 50); HMM unchanged (56%, p 7e-5); mean over all 50
+unchanged (-0.038). sss dark: 48 with a cycle, 56% negative, p 0.66 (was 0.59). Verdict unchanged (reversal by day).
+Also recorded (lClaude): the hidden-level 20k CS dark star rests on the resolution of 400 simulations (smallest p 2/401,
+Holm 9p = 0.045); the observed-level CS dark result (p 0, Holm 0) is the robust statement of C7.
