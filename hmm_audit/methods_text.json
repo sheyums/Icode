@@ -282,6 +282,63 @@
      "text": "The Jensen–Shannon distance used in an earlier version of this analysis to compare bout-duration distributions by exit route was not used. Its question, whether sleep bouts that end through quiet wake differ in length from those that end in active wake, is answered by the within-fly route-duration test (Dependence of routing on bout duration), which compares bouts within each fly against a permutation null rather than pooling flies; and, unlike the Kullback–Leibler divergence between a process and its time reverse, the Jensen–Shannon distance has no thermodynamic interpretation."
     }
    ]
+  },
+  {
+   "anchor": "Observability threshold for transition probabilities",
+   "op": "before",
+   "paras": [
+    {
+     "text": "Thermodynamic quantities: what is computed, and from what",
+     "heading": true
+    },
+    {
+     "text": "The quantities defined in the following sections (Eqs. 5–25) were computed per fly and light phase (whole record in constant darkness) at two levels. At the observed level, the primary description, the transition matrices are the fitted observed S/Q/W chains (Observed S/Q/W chain), with Q, W and S in the roles of H₁, H₂ and H₃, and the counts are the observed symbol changes, with the recorded hours of the phase in place of the duration of valid windows. At the hidden level, used as a check, the transition matrices are the fitted phase-specific hidden-Markov-model matrices (*K* = 3, labelled states), and every count-based quantity is evaluated on each of 200 paths drawn from the posterior distribution of hidden paths and then averaged over paths. Where the sections below refer to 4-hour windows, per-window matrices, valid windows or averages over windows, they describe an earlier per-window binary-state model that is not used in this study; in each such place the computation is per fly and phase. Transitions observed in one direction only are handled by the rule-of-three bound (Entropy production rate) rather than by an observability threshold, and fly–phases whose chain carries no net cycle (|*J*| < 10^{-12}) are counted and excluded from directional and thermodynamic summaries."
+    },
+    {
+     "text": "Per fly and phase this gives: the cycle flux from symbol-change counts (Eq. 20) and from the fitted matrix, *J* = π₂*P*(2,1) − π₁*P*(1,2) per step, converted to cycles per hour; the cycle affinity *A* from the fitted matrix (Eq. 21); the entropy production from counts (Eq. 22, with the rule-of-three bound) and, for the fitted chain, the stationary value *J*·*A*; the effective affinity *A*_{eff} = EPR/|*J*_{cycle}|; the state energies and landscape routing predictions from the fitted matrix (Eqs. 5–19); and, across the fly–phases of a genotype, the Onsager conductance (Eq. 25). The stationary distribution of every fitted matrix was obtained by the QR solve described under Energy landscape quantification."
+    }
+   ]
+  },
+  {
+   "anchor": "Observability threshold for transition probabilities",
+   "op": "delete"
+  },
+  {
+   "anchor": "Because a 4-hour window at 1-second resolution",
+   "op": "delete"
+  },
+  {
+   "anchor": "Per-window affinities",
+   "op": "delete"
+  },
+  {
+   "anchor": "We additionally quantified how often the full three-state cycle",
+   "op": "delete"
+  },
+  {
+   "anchor": "Statistical comparison of HMM transition matrices",
+   "op": "delete"
+  },
+  {
+   "anchor": "For each element",
+   "op": "delete"
+  },
+  {
+   "anchor": "Effect sizes were quantified as Cliff’s delta (",
+   "op": "delete"
+  },
+  {
+   "anchor": "Group comparisons of derived quantities",
+   "op": "before",
+   "paras": [
+    {
+     "text": "Software",
+     "heading": true
+    },
+    {
+     "text": "All computations were carried out in MATLAB (R2026a; The MathWorks, Natick, MA) with custom code. Bout-duration distributions were fitted by maximum likelihood using fmincon (Optimization Toolbox), as described above. Random numbers for simulations, permutations and bootstrap resampling were drawn from RandStream objects with fixed seeds. Stationary distributions were obtained by QR decomposition (qr), and the exact quantities of the thermodynamic uncertainty relation from the leading eigenvalue of the tilted transition matrix (eig). Wilcoxon signed-rank tests used signrank (Statistics and Machine Learning Toolbox; exact distribution for *n* ≤ 50, normal approximation otherwise), Student-*t* quantiles used betaincinv, and normal tail probabilities used erfc. Mann–Whitney tests, Holm and Benjamini–Hochberg corrections, Spearman correlations and percentile bootstrap intervals were implemented directly; percentiles used linear interpolation between order statistics."
+    }
+   ]
   }
  ],
  "comments": [
@@ -306,10 +363,6 @@
    "text": "If the H2/H3 dwell times come from Viterbi paths of the binary model, they inherit its non-identifiability where H1 is degenerate. Check which decoding was used."
   },
   {
-   "anchor": "Observability threshold for transition probabilities",
-   "text": "Specific to per-window fits at 1-s resolution. The S/Q/W analysis uses no P_min gate: zero counts get the rule-of-three bound (Entropy production rate), and a transition absent in one direction is reported as infinite / no cycle. Keep only if the per-window sections are kept."
-  },
-  {
    "anchor": "Energy landscape quantification",
    "text": "All quantities here come from per-window binary-model matrices; state energies and barriers involving H1 are not identified in windows where H1 is degenerate. Recompute from the S/Q/W phase matrices or drop."
   },
@@ -322,20 +375,12 @@
    "text": "The routing deviation compares counts with the landscape prediction from the same per-window binary model. In the S/Q/W analysis the posterior-predictive check (Validation) plays this role; suggest dropping Eqs. 18-19 or recomputing them per phase."
   },
   {
-   "anchor": "We additionally quantified how often the full three-state cycle",
-   "text": "A per-window concept. In the S/Q/W analysis this is replaced by the per-phase 'no cycle' flag (|J| < 1e-12)."
-  },
-  {
    "anchor": "Onsager linear response and thermodynamic conductance",
    "text": "The original fit used EPR_obs under the P_min 'drop' rule on binary-model counts. Redone for the S/Q/W model (new paragraphs at the end of this section): per-fly points, rule-of-three bound, linear vs quadratic comparison, L through the origin with fit and fly-bootstrap intervals. Consider replacing the old genotype-level description with the new one."
   },
   {
    "anchor": "Detection of routing subgroups within per0",
    "text": "In the binary model, a per0 fly's position in (F_S->W, F_W->S) is predicted by how often its degenerate H1 copied the SLEEP emission row (Spearman -0.94, 25 flies; RESULTS_LEDGER, post hoc). In the S/Q/W model per0 forms one group (85-89% of flies with forward circulation, LD and DD). Recommend removing this section and the subgroup comparisons in 'Group comparisons'."
-  },
-  {
-   "anchor": "Statistical comparison of HMM transition matrices",
-   "text": "Not re-analysed here (dFB/vnc data were not part of this work). If these are per-window binary-model fits, the identifiability caveat applies to all elements involving H1."
   },
   {
    "anchor": "Kullback–Leibler divergence and time irreversibility",
@@ -348,6 +393,14 @@
   {
    "anchor": "Hidden Markov model of sleep-wake dynamics",
    "text": "New references for the sections added 2026-11-01: Keilson J (1979) Markov Chain Models: Rarity and Exponentiality. Springer, New York. Bowman GR, Beauchamp KA, Boxer G, Pande VS (2009) Progress and challenges in the automated construction of Markov state models for full protein systems. J Chem Phys 131:124101. Martinez IA, Bisker G, Horowitz JM, Parrondo JMR (2019) Inferring broken detailed balance in the absence of observable currents. Nat Commun 10:3542. van der Meer J, Ertel B, Seifert U (2022) Thermodynamic inference in partially accessible Markov networks: a unifying perspective from transition-based waiting time distributions. Phys Rev X 12:031025. Harunari PE, Dutta A, Polettini M, Roldan E (2022) What to learn from a few visible transitions' statistics? Phys Rev X 12:041026. Added 2026-11-02: Esposito M (2012) Stochastic thermodynamics under coarse graining. Phys Rev E 85:041125. van Alphen B, Yap MHW, Kirszenblat L, Kottler B, van Swinderen B (2013) A dynamic deep sleep stage in Drosophila. J Neurosci 33:6917-6927. Tainton-Heap LAL, Kirszenblat LC, Notaras ET, et al. (2021) A paradoxical kind of sleep in Drosophila melanogaster. Curr Biol 31:578-590. Wiggin TD, Goodwin PR, Donelson NC, et al. (2020) Covert sleep-related biological processes are revealed by probabilistic analysis in Drosophila. PNAS 117:10024-10034."
+  },
+  {
+   "anchor": "Thermodynamic quantities: what is computed, and from what",
+   "text": "Replaces, for this study, the per-window binary-model machinery: tracked deletions of the observability-threshold section, the per-window affinity average, the cycle-active fraction and the old 'Statistical comparison of HMM transition matrices' for the silenced genotypes (superseded by 'Silencing of dorsal fan-shaped body and ventral nerve cord neurons'). The equation sections are kept; their remaining window wording is overridden by this paragraph. If you prefer, those sentences can be rewritten one by one instead."
+  },
+  {
+   "anchor": "Software",
+   "text": "CHECK BEFORE SUBMISSION. This paragraph is true today for: S/Q/W symbols, the observed chain, the hidden Markov model, all thermodynamic quantities, block irreversibility and TUR (20p, 20q), sleep-length memory (20k), the wake-hazard analyses (20r, bout suite) and all figures. These analyses were computed in Python and are NOT yet ported to MATLAB: the reversible-model controls (20u, 20v amendment F), the waiting-time test (20v), the clock-face test and its null (20w-B), sleep deprivation (20x), the Kir2.1 analysis (20y, 20z Part C) and the 1-s wake-bout test (21). Either port them (lClaude) or name Python 3 with NumPy and SciPy for those analyses."
   }
  ]
 }
