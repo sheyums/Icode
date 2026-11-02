@@ -64,6 +64,24 @@ T1 = planAStrip(ax(1), S, v.c_obs, Stream=rs);
 T2 = planAStrip(ax(2), S, v.J, Hmm=h.J, Stream=rs);
 T3 = planAStrip(ax(3), S, v.EPR, Hmm=h.EPR, Stream=rs, Zero=false);
 X.summary = [addPanel(T1, "c_obs"); addPanel(T2, "J"); addPanel(T3, "EPR")];
+% sss in (a, b): the median is 0 (many flies have no qualifying transitions, value exactly 0), so the
+% per-fly MEAN with a fly-bootstrap 95% CI is drawn too, left of the median (2026-11-02 recipe note)
+X.summary.mean = NaN(height(X.summary), 1); X.summary.mean_lo = X.summary.mean; X.summary.mean_hi = X.summary.mean;
+mcol = [176 48 106] / 255; Tq = {T1, T2}; kq = ["c_obs" "J"];
+for q = 1:2
+    for b = reshape(find(S.order(S.blocks.g) == "sss"), 1, [])
+        vv = v.(kq(q)){b}; vv = vv(isfinite(vv));
+        bm = zeros(S.NBoot, 1);
+        for i = 1:S.NBoot, bm(i) = mean(vv(randi(rs, numel(vv), numel(vv), 1))); end
+        ci = quantile7(bm, [0.025 0.975]); xq = Tq{q}.x(b) - 0.38;
+        r = X.summary.quantity == kq(q) & X.summary.label == S.blocks.label(b);
+        X.summary.mean(r) = mean(vv); X.summary.mean_lo(r) = ci(1); X.summary.mean_hi(r) = ci(2);
+        if options.Plot
+            plot(ax(q), [xq xq], ci, '-', 'Color', mcol, 'LineWidth', 0.8);
+            plot(ax(q), xq, mean(vv), 'd', 'MarkerSize', 3.6, 'MarkerFaceColor', mcol, 'MarkerEdgeColor', 'w', 'LineWidth', 0.4);
+        end
+    end
+end
 X.summary.label = tex2plain(X.summary.label);
 X.points = P;
 if options.Plot
@@ -75,14 +93,17 @@ if options.Plot
     l1 = plot(ax(1), NaN, NaN, 'o', 'MarkerSize', 3, 'MarkerFaceColor', 'w', 'MarkerEdgeColor', 'k');
     l2 = plot(ax(1), NaN, NaN, 'o', 'MarkerSize', 3, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k');
     l3 = plot(ax(1), NaN, NaN, 'k-', 'LineWidth', 1.2);
-    hl = [l1 l2 l3]; lt = {'light (one point per fly)', 'dark / DD', 'median, 95% CI'}; stem = "figA1_direction_flux_observable";
+    l5 = plot(ax(1), NaN, NaN, 'd', 'MarkerSize', 3.6, 'MarkerFaceColor', mcol, 'MarkerEdgeColor', 'w');
+    hl = [l1 l2 l3 l5]; stem = "figA1_direction_flux_observable";
+    lt = {'light (one point per fly)', 'dark / DD', 'median, 95% CI', ...
+        '\itsss\rm: mean, 95% CI (median is 0: many flies have no qualifying transitions)'};
     if options.HmmMarkers
-        hl(4) = plot(ax(1), NaN, NaN, '<', 'MarkerSize', 4, 'MarkerFaceColor', [0.35 0.35 0.35], 'MarkerEdgeColor', [0.35 0.35 0.35]);
-        lt{4} = 'HMM (model-based estimate), median'; stem = "figA1_direction_flux_SI_hmm";
+        hl(5) = plot(ax(1), NaN, NaN, '<', 'MarkerSize', 4, 'MarkerFaceColor', [0.35 0.35 0.35], 'MarkerEdgeColor', [0.35 0.35 0.35]);
+        lt{5} = 'HMM (model-based estimate), median'; stem = "figA1_direction_flux_SI_hmm";
     else
         delete(findobj(fh, 'Tag', 'hmm'));        % main text: observed level only
     end
-    lg = legend(ax(1), hl, lt, 'NumColumns', numel(hl), 'Box', 'off', 'FontSize', 6.5);
+    lg = legend(ax(1), hl, lt, 'NumColumns', 3, 'Box', 'off', 'FontSize', 6.3);
     lg.Layout.Tile = 'north';
     exportgraphics(fh, fullfile(outDir, stem + ".png"), 'Resolution', 300);
     exportgraphics(fh, fullfile(outDir, stem + ".pdf"), 'ContentType', 'vector');

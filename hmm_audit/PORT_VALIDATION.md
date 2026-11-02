@@ -308,3 +308,11 @@ the right one and the port's draw was high (9 tail permutations where ~4 were ex
 its stars and fading from the ledger's Holm by default (SigFrom="ledger", as Fig C12 copies its flags); figC7_blocks
 carries both. Suggestion for cClaude: 2000 permutations leave this verdict at the mercy of the draw; if 20k is ever
 re-run, more permutations would settle it.
+
+## 2026-11-02  Fig A1 sss mean marker, Fig A2 sss note and panel (c) A_eff (lClaude; FIGURE_RECIPES notes 2026-11-02)
+- exportFigA2 panel (c): A_eff = EPR/|J| medians reproduce fig_planA.py's printout exactly: CS 0.57, CS DD 0.51,
+  per0 LD 0.43, per0 DD 0.64, fumin 1.11, sss 0.70 nats/cycle (n 48, 25, 51, 24, 88, 76 fly-phases); L unchanged.
+  sss title notes '(open = light: reversed)'; top scale e^A (odds forward : backward). Output figA2_Aeff.csv.
+- exportFigA1: sss mean (diamond, fly-bootstrap 95% CI, left of the median) in (a) and (b), main and SI variants.
+  Values (no Python printout to compare): c_obs light -0.111 [-0.187, -0.042], dark -0.068 [-0.150, +0.001]; count J
+  light -0.037 [-0.061, -0.013], dark -0.005 [-0.030, +0.021] cycles/h. Summary CSV gains mean, mean_lo, mean_hi.
