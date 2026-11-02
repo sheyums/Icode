@@ -346,3 +346,18 @@ re-run, more permutations would settle it.
   within Monte Carlo error (largest: fumin dark p 0.22 vs 0.35). Stars from the ledger by default (SigFrom), port
   values in figS_C7_hidden_blocks.csv. Panel (c): landscape prediction 0.349 (mean over CS flies of (F_SW+1)/2).
   The per-fly cache (550 MB) stays in the session scratchpad, not the repo.
+
+## 2026-11-02  fig_sss_reversal: no-cycle rule adopted (cClaude's decision, FIGURE_RECIPES 2026-11-02)
+- exportFigSssReversal now sets |J_chain| < 1e-12 (20s-A) to exactly 0, plots it at 0 and leaves it out of the
+  observed "% J < 0" and of its Wilcoxon test; the panel text prints "(n no cycle)"; the bar is over all flies; HMM J
+  untouched. Summary columns now n, n_noCycle, mean_obs, mean_hmm, neg_obs_cycleOnly, neg_hmm, p_obs_cycleOnly, p_hmm
+  (the round-off-sign neg_obs / p_obs and p_obs_zeroed are gone).
+- Against the corrected Python (RESULTS_LEDGER correction 2026-11-02): sss light 37 of 50 with a cycle, J < 0 70.3%
+  (70%), p 0.00161 (0.0016), mean -0.0377 (-0.038) -- match. sss dark 48 of 53, 56.3% (56%) -- match; p 0.675
+  against 0.66. CASE for cClaude (not tweaked): sss dark has one exact tie in |J|, two flies at J = -1/24 and +1/24
+  (-0.041666666666664 / +0.041666666666664: 11_5_2018_4b_WC_pruned_11 and 3_23_2018_4boardmb_pruned_22), so the
+  p depends on tie handling: MATLAB signrank exact with mid-ranks 0.675; normal approximation with tie correction 0.670;
+  tie broken either way, exact 0.651 / 0.681. Python's 0.66 is in that range but I cannot tell which rule scipy used
+  (no Python or s_observable.json here); its full-precision p and scipy version would settle it. Far from 0.05 either
+  way, so the verdict is unaffected. (sss light has no exact tie; closest pair 1.8e-14 relative, p matches.)
+- CS for reference: light 24 of 25 with a cycle, 33% negative, p 0.15; dark 25 of 25, 4%, p 3e-7.
