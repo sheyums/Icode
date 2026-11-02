@@ -328,3 +328,7 @@ re-run, more permutations would settle it.
 - fig_dwell_direction_CS_night (exportFigDwellDirection): reproduces the ledger entry exactly (deterministic): 25 CS
   flies; Q into / out of sleep n 649 / 433, per-fly mean 2.68 vs 2.38 min (medians over flies), into longer in 64%;
   W into / out n 418 / 585, 3.47 vs 4.43 min, out longer in 80%.
+- C13 profiles fig_planB21_profiles_primary / _supp (exportFigC13Profiles; fig_planB_21.py): against the Python's
+  stored fig_planB21_profiles.json, all 12 genotype x setting rows agree: fly counts equal (L300: 25 25 25 27 51 45;
+  L120: 25 25 25 27 51 46) and m_start, m_end and median d agree to <= 6e-16 at every bin. Bands are bootstrap.
+  per0 DD traces cut to the 20r replication traceLen, as planB_21.traces. Check table fig_planB21_check.csv.
