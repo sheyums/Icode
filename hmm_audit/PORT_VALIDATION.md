@@ -332,3 +332,8 @@ re-run, more permutations would settle it.
   stored fig_planB21_profiles.json, all 12 genotype x setting rows agree: fly counts equal (L300: 25 25 25 27 51 45;
   L120: 25 25 25 27 51 46) and m_start, m_end and median d agree to <= 6e-16 at every bin. Bands are bootstrap.
   per0 DD traces cut to the 20r replication traceLen, as planB_21.traces. Check table fig_planB21_check.csv.
+- SI memory figure with HMM panel (fig_R1_main.py): NOT finished. routeDurationHidden ported (golden G11 exact;
+  test_sqw_figA 11/11) and planARouteHidden written (per-fly hidden R1 D over 200 FFBS paths, 400-simulation null with
+  20 paths each, path records, landscape line), smoke-tested on 2 CS flies with 10 sims (26 s). At 400 sims the full
+  run is estimated at many hours on 2 workers; not started. Still to do: the full run, exportFigC7SI (hidden panel,
+  hidden Holm), and validation against the 20k ledger's hidden R1 lines (D, null mean, p, Holm).
