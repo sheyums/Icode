@@ -2266,3 +2266,6 @@ Earlier I reported "32 vs 6". The one-fewer is sss 15 L, whose absorbing row is 
 By group, hidden only: fumin L 6, fumin D 8, sss L 8, sss D 7, per0 LD L 1, per0 LD D 1.
 Observed only: sss L 2, sss D 2, fumin L 1, fumin D 1.
 Hidden r3 total in this run is 58 (31 + 27), so the Methods range now reads 58–63.
+
+## 2026-11-02 — SI Table S2 correction
+The sleepless "chain affinity" entry read 0.79 (stale). The rule-of-three median |A| over fly–phases with a cycle is 0.51; the other rows were already correct (CS 0.47, CS DD 0.50, per0 LD 0.42, per0 DD 0.64, fumin 1.04). Column renamed "Chain |A|, median".
