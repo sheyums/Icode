@@ -510,23 +510,23 @@ noted on the panel.
   Fig A4 keeps its HMM panels: it is the evidence for not using hidden states. Port: drop the A1 markers; add C7 obs.
 - 2026-11-01 HMM CHECKS stay referenced in the main text (Sheyum): main Fig A4 keeps its HMM panels; SI figures
   figS_A1_with_hmm_check (Fig A1 + HMM medians, fig_planA.py SI variant) and figS_C7_memory_with_hmm_check (= the
-  former fig16_R1_memory_main: memory seen at the hidden level too). Port: exportFigA1 gets an 'IncludeHMM' option.
+  former fig16_R1_memory_main: memory seen at the hidden level too). Port: exportDirectionFluxFigure gets an 'IncludeHMM' option.
 - 2026-11-01 NAMES ALIGNED WITH THE PORT (lClaude's note): the SI variant of Fig A1 is figA1_direction_flux_SI_hmm
-  (MATLAB: exportFigA1(..., HmmMarkers=true)); legend 'HMM (model-based estimate), median' in both. The earlier Python
+  (MATLAB: exportDirectionFluxFigure(..., HmmMarkers=true)); legend 'HMM (model-based estimate), median' in both. The earlier Python
   name figS_A1_with_hmm_check is retired.
 - 2026-11-02 SLEEPLESS REVERSAL made visible (C2 highlight). Fig A1 (a, b): for sss only, a diamond = per-fly MEAN with
   fly-bootstrap 95% CI (2000), placed left of the median, because the sss median is 0 (many flies have no qualifying
   transitions, value exactly 0); legend says so. Fig A2: sss panel note 'light (open points): mostly J<0, cycle
   reversed; cost depends on J^2 only'. New main-figure candidate fig_sss_reversal (fig_sss_reversal.py): per-fly
   observed chain J (circle) joined to HMM J (triangle), CS and sss, light and dark; % with J < 0 and Wilcoxon p.
-  Port: add the sss mean marker to exportFigA1 and the note to exportFigA2; port fig_sss_reversal.
+  Port: add the sss mean marker to exportDirectionFluxFigure and the note to exportEprOnsagerFigure; port fig_sss_reversal.
 - 2026-11-02 Fig 1 panel fig1_hmm_emissions (fig_emission.py): per genotype (CS, per0 LD, per0 DD, fumin, sss), the
   median over non-degenerate flies of the labelled K = 3 emission matrix B3 from sqw20b_fit2_theta0.5.jsonl; greyscale
   0-1, values printed. Diagonals: Q 0.80-0.94, W 0.91-0.96, S 1.00. Port: one heat-map per genotype.
 - 2026-11-02 Fig A2 panel (c): A_eff = EPR/|J| per fly x phase (count EPR, rule of three; fly x phases with a cycle,
   finite EPR, J != 0), points clipped at 3, median with 95% bootstrap CI (2000); top axis e^A (odds forward:backward).
   Medians CS 0.57, CS DD 0.51, per0 LD 0.43, per0 DD 0.64, fumin 1.11, sss 0.70 nats/cycle (matches chain affinity A).
-  sss panel title notes 'open = light: reversed'. Port: add panel c to exportFigA2.
+  sss panel title notes 'open = light: reversed'. Port: add panel c to exportEprOnsagerFigure.
 - 2026-11-02 DECISION on lClaude's question (fig_sss_reversal): no-cycle fly-phases (|J_chain| < 1e-12, the 20s-A rule)
   are set to exactly 0, PLOTTED at 0, and EXCLUDED from the '% J < 0' and from the Wilcoxon test; the count of no-cycle
   flies is printed under the panel. sss light: 37 of 50 with a cycle, 70% negative, p 0.0016. MATLAB should switch its
