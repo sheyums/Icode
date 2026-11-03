@@ -2328,3 +2328,35 @@ Model sleep and observed sleep agree per fly (Spearman 0.99-1.00 in all four blo
 sleep: sss L -0.49 (p 0.003, n 38), fumin D +0.53 (p 0.0002), fumin L +0.40 (p 0.006), sss D +0.14 (p 0.37).
 These are unchanged from the model-sleep values. The sss-light statement (more sleep, more backward turns per hour)
 does not come from sharing a fit. Draft text: DRAFT_act3_C14.md.
+
+## PRESPEC 25 — direction of measurable cycles in 4-h / 6-h windows within flies (2026-11-03; PRESPEC f939ba6, Amendment A 8671668 committed before results; code sqw25.py, this commit; sqw25.log, s25_windows.json)
+Measurable = two-sided exact binomial test of N_SW against N_WS in the window, p < 0.05. Null: 500 simulated records
+per fly, from a clock-matched chain (primary) or the 12-h chain (secondary).
+```
+block       flies win/fly | measurable fwd  back | clock null: back mean, p_B, Holm | fwd null mean
+per0 LD 6h   27  16 |   0  0 | 0.1  p 1  Holm 1 | 1.1
+per0 LD 4h   27  24 |   0  0 | 0.1  p 1  Holm 1 | 0.6
+per0 DD 6h   25  16 |   2  0 | 0.2  p 1  Holm 1 | 2.6
+per0 DD 4h   25  24 |   0  0 | 0.1  p 1  Holm 1 | 1.5
+CS LD 6h/4h  25     | 1/1  0/0 | p 1 | 1.2/0.6
+CS DD 6h/4h  25     | 0/0  0/0 | p 1 | 1.2/0.6
+sss 6h/4h    57     | 0/0  0/0 | p 1 | 0.2/0.1   (Amendment A: windows with missing minutes excluded)
+12-h null: identical conclusions.
+```
+- Outcome NOT anticipated by the PRESPEC: almost no window, in any genotype, has a measurable cycle (4 forward and 0
+  backward among about 2,000 windows). The real data and the constant-process null agree on this. By the decision
+  rule there is NO excess of backward windows (no evidence of backward episodes). But "per0 flies turn forward when
+  they measurably cycle" cannot be stated either, because they almost never measurably cycle in 4-6 h.
+- Why (descriptive): a 6-h window holds a median of 5-10 sleep <-> active-wake transitions (sss 2), with a mean net
+  of +0.6 (CS, CS DD, per0 LD) and +0.9 (per0 DD) forward cycles; sss -0.13. Signs of the net count per window:
+  forward 49-59% and backward 26-28% (sss 17% / 25%; the rest are 0). Rough number of hours one fly needs for its
+  net count to reach 2 sigma (binomial, 4 * total rate / net rate^2): 290 h (per0 DD) to 590 h (per0 LD); sss about
+  5,000 h. A SINGLE fly's direction is therefore below its own noise for hours to days. The cycle is a weak bias on
+  a noisy walk, and it becomes visible only as steps accumulate over days and across flies.
+- Descriptive companion (fig25_cumulative_walk, not a test): over the whole record each fly's cumulative net forward
+  count ends positive in 80% (CS DD), 85% (per0 LD) and 84% (per0 DD) of flies (CS LD similar). The mean is about
+  +10 to +11 cycles over 3-4 days. sss: 29% positive, 59% negative, mean -1.0 over 2 days.
+- Rule 4 respected: no window size, measurability rule or merge was changed after seeing the result.
+- Not run, because it was not pre-specified: whether the 15-20% of CS/per0 flies that end NEGATIVE over the whole
+  record are as many as a constant forward process gives. The 12-h analyses already pool these flies; that question
+  would need its own PRESPEC.

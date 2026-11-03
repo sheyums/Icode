@@ -13,9 +13,9 @@ NAME = {'CS': 'CS, light–dark', 'CSDD': 'CS, constant dark', 'per0LD': '$per^0
 SH = {'CS': 'CS LD', 'CSDD': 'CS DD', 'per0LD': '$per^0$ LD', 'per0DD': '$per^0$ DD', 'sss': '$sss$ LD'}
 FWD, BWD, NONE = '#2a78d6', '#eb6834', '#ececec'; CM = ListedColormap([BWD, NONE, FWD, 'white'])
 def raster(size):
-    fig, axs = plt.subplots(1, len(G), figsize=(7.2, 3.6), gridspec_kw=dict(width_ratios=[len(D[f'{g}|{size}']['flies'][0]['cls']) for g in G]), constrained_layout=True)
+    fig, axs = plt.subplots(1, len(G), figsize=(7.2, 3.6), gridspec_kw=dict(width_ratios=[max(len(x['cls']) for x in D[f'{g}|{size}']['flies']) for g in G]), constrained_layout=True)
     for ax, g in zip(axs, G):
-        v = D[f'{g}|{size}']; fl = v['flies']; M = np.array([f['cls'] for f in fl]); order = np.lexsort((-(M == -1).sum(1), (M == 1).sum(1) - (M == -1).sum(1)))[::-1]
+        v = D[f'{g}|{size}']; fl = v['flies']; W = max(len(f['cls']) for f in fl); M = np.array([f['cls'] + [9] * (W - len(f['cls'])) for f in fl]); order = np.lexsort((-(M == -1).sum(1), (M == 1).sum(1) - (M == -1).sum(1)))[::-1]
         M = M[order]; M = np.where(M == 9, 2, M); nw = M.shape[1]; per_day = 24 // int(size[:-1])
         ax.imshow(M + 1, cmap=CM, vmin=0, vmax=3, aspect='auto', interpolation='nearest', extent=(0, nw, M.shape[0], 0))
         for d in range(1, nw // per_day): ax.axvline(d * per_day, color='white', lw=1.2)
@@ -44,6 +44,7 @@ def counts():
             else:
                 lo, hi = c[f'{what}_null_95']; mid = c[f'{what}_null_mean']; obs = r[what]
             ax.plot([lo, hi], [y, y], color='0.78', lw=6, solid_capstyle='butt'); ax.plot([mid, mid], [y - 0.3, y + 0.3], color='0.35', lw=1)
+            if obs is None: ax.text(0.5 if what == 'frac' else 0, y, '  none measurable', va='center', fontsize=6, color='0.4'); continue
             ax.plot(obs, y, 'o', ms=5, mfc='k' if s == '6h' else 'white', mec='k', mew=0.8)
         ax.set_xlabel(xl)
         for sp in ('top', 'right'): ax.spines[sp].set_visible(False)
