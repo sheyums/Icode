@@ -1,8 +1,8 @@
-function X = exportFigDwellDirection(files, outDir, options)
-%EXPORTFIGDWELLDIRECTION  Direction-dependent dwell times in CS at night (fig_dwell_direction.py; descriptive, as PRESPEC 20v).
+function X = exportDwellDirectionFigure(files, outDir, options)
+%EXPORTDWELLDIRECTIONFIGURE  Direction-dependent dwell times in CS at night (fig_dwell_direction.py; descriptive, as PRESPEC 20v).
 %
-%   X = exportFigDwellDirection(files, outDir)
-%   X = exportFigDwellDirection(files, outDir, NBoot=1000, RandomSeed=3)
+%   X = exportDwellDirectionFigure(files, outDir)
+%   X = exportDwellDirectionFigure(files, outDir, NBoot=1000, RandomSeed=3)
 %
 %   files   CS count files (a folder: SQWLISTFILES)
 %   1-min symbols (SQWFLYINPUT: theta 0.5, light/dark references, missing = 0). A run of Q (or W)
@@ -15,6 +15,9 @@ function X = exportFigDwellDirection(files, outDir, options)
 %   fig_dwell_direction_CS_night.png / .pdf.
 %   Check (ledger 2026-11-01): Q into / out n 649 / 433, per-fly mean 2.68 vs 2.38 min, into longer
 %   in 64%; W out / into n 585 / 418, 4.43 vs 3.47 min, out longer in 80% (25 flies).
+%
+%   Example (from the Icode\sqw folder):
+%       X = exportDwellDirectionFigure("D:\flies\CS", "figures"); disp(X.summary)
 %
 %   See also SQWFLYINPUT, MINUTEPHASES.
 
@@ -67,8 +70,8 @@ for s = 1:2
 end
 X.summary = st;
 
-S = planAStyle(); cols = [42 120 214; 235 104 52] / 255;
-fh = planAFigure("dwell direction", 7.0, 2.6); X.fig = fh;
+S = paperFigureStyle(); cols = [42 120 214; 235 104 52] / 255;
+fh = newPaperFigure("dwell direction", 7.0, 2.6); X.fig = fh;
 tl = tiledlayout(fh, 1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 for s = 1:2
     ax = nexttile(tl); hold(ax, 'on'); h = gobjects(2, 1);

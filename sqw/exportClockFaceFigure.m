@@ -1,7 +1,7 @@
-function X = exportFigC10(jsonFile, outDir)
-%EXPORTFIGC10  Fig C10, the clock drives the cycle (FIGURE_RECIPES section L; fig_clockface.py; PRESPEC 20w-B).
+function X = exportClockFaceFigure(jsonFile, outDir)
+%EXPORTCLOCKFACEFIGURE  Fig C10, the clock drives the cycle (FIGURE_RECIPES section L; fig_clockface.py; PRESPEC 20w-B).
 %
-%   X = exportFigC10(jsonFile, outDir)
+%   X = exportClockFaceFigure(jsonFile, outDir)
 %
 %   jsonFile  hmm_audit/planB_20wB.json (field 'real': per genotype J (12 two-hour clock bins, pooled
 %             over flies), AJ, phJ, pJ, nullJ95)
@@ -18,7 +18,10 @@ function X = exportFigC10(jsonFile, outDir)
 %   control), copied as fig_clockface.py does, not recomputed. X.check compares the port's cosine
 %   amplitude with the stored AJ.
 %
-%   See also PLANASTYLE, PLANAFIGURE.
+%   Example (from the Icode\sqw folder):
+%       X = exportClockFaceFigure(fullfile("..", "hmm_audit", "planB_20wB.json"), "figures");
+%
+%   See also PAPERFIGURESTYLE, NEWPAPERFIGURE.
 
 arguments
     jsonFile (1,1) string {mustBeFile}
@@ -26,7 +29,7 @@ arguments
 end
 if ~isfolder(outDir), mkdir(outDir); end
 R = jsondecode(fileread(jsonFile)); R = R.real;
-S = planAStyle();
+S = paperFigureStyle();
 G = ["CS" "CSDD" "per0LD" "per0DD"]; col = S.col(arrayfun(@(g) find(S.order == g), G), :);
 nameP = ["CS, light" + char(8211) + "dark", "CS, constant dark", "\itper^0\rm, light" + char(8211) + "dark", ...
     "\itper^0\rm, constant dark"];
@@ -44,7 +47,7 @@ for k = 1:4
 end
 X.bins = bins; X.amplitude = amp; X.check = max(abs(amp.A_port - amp.AJ));
 
-fh = planAFigure("Fig C10", 7.0, 4.6); X.fig = fh;
+fh = newPaperFigure("Fig C10", 7.0, 4.6); X.fig = fh;
 tl = tiledlayout(fh, 2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 tt = linspace(0, 24, 200)';
 for k = 1:4

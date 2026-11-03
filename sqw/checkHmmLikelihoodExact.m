@@ -1,15 +1,15 @@
-function R = check20bExact(dataRoot, jsonlFile, fitsFile, options)
-%CHECK20BEXACT  Exact check of the port's HMM likelihood against cClaude's stored 20b fits (PORT_VALIDATION stage 2, Q2).
+function R = checkHmmLikelihoodExact(dataRoot, jsonlFile, fitsFile, options)
+%CHECKHMMLIKELIHOODEXACT  Exact check of the port's HMM likelihood against cClaude's stored 20b fits (PORT_VALIDATION stage 2, Q2).
 %
-%   R = check20bExact(dataRoot, jsonlFile, fitsFile)
-%   R = check20bExact(..., Tol=1e-6, EMFromStored=true)
+%   R = checkHmmLikelihoodExact(dataRoot, jsonlFile, fitsFile)
+%   R = checkHmmLikelihoodExact(..., Tol=1e-6, EMFromStored=true)
 %
 %   dataRoot   folder with CS, per0LD, per0DD, fumin, sss (all 57 sss files: the
 %              stored fits index sss in that set, A2 of ANSWERS_for_lClaude)
 %   jsonlFile  hmm_audit/sqw20b_fit2_theta0.5.jsonl (one fly per line; fly is the
 %              0-based index in sorted-glob file order)
 %   fitsFile   sqw/validation/subset20b_fits.mat (the port's own 20-start fits,
-%              from CHECKSUBSET20B); only these flies are checked
+%              from CHECKHMMREFITSUBSET); only these flies are checked
 %
 %   For each fly, three things:
 %   1. Identity: T, nchg and the Q/W/S fractions of the port's symbols equal the

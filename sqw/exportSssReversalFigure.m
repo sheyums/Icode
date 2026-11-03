@@ -1,10 +1,10 @@
-function X = exportFigSssReversal(D, outDir, options)
-%EXPORTFIGSSSREVERSAL  Sleepless runs the cycle backwards by day (fig_sss_reversal.py; FIGURE_RECIPES note 2026-11-02).
+function X = exportSssReversalFigure(D, outDir, options)
+%EXPORTSSSREVERSALFIGURE  Sleepless runs the cycle backwards by day (fig_sss_reversal.py; FIGURE_RECIPES note 2026-11-02).
 %
-%   X = exportFigSssReversal(D, outDir)
-%   X = exportFigSssReversal(D, outDir, RandomSeed=2)
+%   X = exportSssReversalFigure(D, outDir)
+%   X = exportSssReversalFigure(D, outDir, RandomSeed=2)
 %
-%   D   PLANADATA output. Per fly x phase (CS and sss, light and dark) with a Q/W reference and a
+%   D   BUILDPERFLYDATA output. Per fly x phase (CS and sss, light and dark) with a Q/W reference and a
 %       non-degenerate 20b fit: the observed chain's exact cycle flux J_chain (circle) joined to the
 %       HMM's flux J_hmm (triangle, mean over FFBS paths; the check). Bar = mean over flies; text =
 %       share of flies with J < 0 (observed | HMM), the two-sided Wilcoxon signed-rank p of J against 0
@@ -20,7 +20,13 @@ function X = exportFigSssReversal(D, outDir, options)
 %   Check (RESULTS_LEDGER correction 2026-11-02): sss light 37 of 50 with a cycle, J < 0 in 70%,
 %   p 0.0016, mean -0.038; HMM p 7e-5; sss dark 48 of 53, 56%, p 0.66.
 %
-%   See also PLANADATA, WILCOXONP, EXPORTFIGA1.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       D = buildPerFlyData(dataRoot, jsonl, Cache="perfly_cache.mat");
+%       X = exportSssReversalFigure(D, "figures"); disp(X.summary)
+%
+%   See also BUILDPERFLYDATA, WILCOXONP, EXPORTDIRECTIONFLUXFIGURE.
 
 arguments
     D (1,1) struct
@@ -28,7 +34,7 @@ arguments
     options.RandomSeed (1,1) double {mustBeNonnegative, mustBeInteger} = 2
 end
 if ~isfolder(outDir), mkdir(outDir); end
-S = planAStyle(); rs = RandStream('twister', 'Seed', options.RandomSeed);
+S = paperFigureStyle(); rs = RandStream('twister', 'Seed', options.RandomSeed);
 B = table(["CS"; "CS"; "sss"; "sss"], [1; 2; 1; 2], ["CS\newlinelight"; "CS\newlinedark"; ...
     "\itsss\rm\newlinelight"; "\itsss\rm\newlinedark"], 'VariableNames', {'genotype', 'phase', 'label'});
 pts = table(); summ = table();
@@ -45,7 +51,7 @@ for k = 1:4
 end
 X.points = pts; X.summary = summ;
 
-fh = planAFigure("sss reversal", 5.2, 3.0); X.fig = fh; ax = axes(fh); hold(ax, 'on');
+fh = newPaperFigure("sss reversal", 5.2, 3.0); X.fig = fh; ax = axes(fh); hold(ax, 'on');
 for k = 1:4
     q = pts(pts.genotype == B.genotype(k) & pts.phase == B.phase(k), :); c = S.col(S.order == B.genotype(k), :);
     if B.phase(k) == 2, mf = c; else, mf = 'w'; end

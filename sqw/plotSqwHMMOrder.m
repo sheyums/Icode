@@ -4,22 +4,31 @@ function fh = plotSqwHMMOrder(R, names)
 %   fh = plotSqwHMMOrder(R)                       % one batch
 %   fh = plotSqwHMMOrder({R1, R2, ...}, ["CS" "\itsss\rm" ...])
 %
+%   R      one SQWBATCHHMM result (struct) or a cell array of them, one per group
+%   names  (optional) one label per batch, TeX allowed; default each batch's R.label (its folder name)
+%   fh     the figure handle (save it with EXPORTGRAPHICS)
+%
 %   Top: per batch, the median over flies with an identified H1 (deg3 false) of the labelled
 %   K = 3 emission matrix P(symbol | state). Bottom: fraction of flies whose BIC is lowest at
 %   each K, with n = minutes (primary) and n = symbol changes (sensitivity), as fig_hmm_order.py;
 %   and, for K = 4, the fraction of flies with 1, 2 or 3 hidden states emitting mostly S
 %   (two would be the "deep sleep" reading of the extra state). Theme pinned light.
 %
+%   Example (from the Icode\sqw folder):
+%       R1 = sqwBatchHMM("D:\flies\CS_symbols"); R2 = sqwBatchHMM("D:\flies\per0DD_symbols");
+%       fh = plotSqwHMMOrder({R1, R2}, ["CS" "\itper^0\rm DD"]);
+%       exportgraphics(fh, "hmm_order.png", Resolution=300);
+%
 %   See also SQWBATCHHMM.
 
 if isstruct(R), R = {R}; end
 if nargin < 2, names = string(cellfun(@(r) r.label, R, 'UniformOutput', false)); end
-names = string(names); G = numel(R); S = planAStyle();
+names = string(names); G = numel(R); S = paperFigureStyle();
 KC = [201 214 232; 31 78 121; 143 182 224] / 255; KS = [2 3 4];
 SC = [0.93 0.80 0.86; 0.80 0.37 0.55; 0.45 0.10 0.27];
 one = G == 1;
-if one, nc = 4; fh = planAFigure("HMM order", 7.0, 1.9); tl = tiledlayout(fh, 1, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
-else, nc = 3 * (G > 3) + 3; fh = planAFigure("HMM order", 7.0, 4.2); tl = tiledlayout(fh, 2, nc, 'TileSpacing', 'compact', 'Padding', 'compact'); end
+if one, nc = 4; fh = newPaperFigure("HMM order", 7.0, 1.9); tl = tiledlayout(fh, 1, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
+else, nc = 3 * (G > 3) + 3; fh = newPaperFigure("HMM order", 7.0, 4.2); tl = tiledlayout(fh, 2, nc, 'TileSpacing', 'compact', 'Padding', 'compact'); end
 for g = 1:G
     T = R{g}.perFly; ax = nexttile(tl, g);
     if ~ismember('deg3', T.Properties.VariableNames), axis(ax, 'off'); continue, end

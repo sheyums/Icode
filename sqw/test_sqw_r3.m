@@ -19,7 +19,7 @@ function test_sqw_r3()
 %    9. observableQuantities wiring: on a record with a one-way chain edge, A_chain / EPR_chain / E21 / E31
 %       = modelEnergeticsR3 and energyLandscape of the filled matrix, r3_chain true, J_chain from the
 %       FITTED matrix; RuleOfThree=false restores modelEnergetics (Inf) exactly
-%   10. planAFlyHMM wiring with B = I (paths = the record): EPR_hmm_model = modelEnergeticsR3(P, counts),
+%   10. hmmPosteriorFluxEPR wiring with B = I (paths = the record): EPR_hmm_model = modelEnergeticsR3(P, counts),
 %       r3_hmm true; RuleOfThree=false gives the old Inf
 %   11. no-cycle convention: an absorbing chain (|J| < 1e-12, EPR Inf) -> EPR = 0, A = NaN, noCycle;
 %       a reversible chain with finite round-off J and EPR is left exactly as MODELENERGETICS gives it
@@ -105,13 +105,13 @@ try
     end
     [nP, nF] = rep(ok, nP, nF, 9, 'observableQuantities: r3 for A, EPR, landscape; J_chain fitted; RuleOfThree=false = old', '');
     f = struct('pi', [1 1 1]' / 3, 'P', P, 'B', eye(3), 'deg', false);
-    H = planAFlyHMM(y, ph, 2, f, NPaths=5, RandomSeed=1); H0 = planAFlyHMM(y, ph, 2, f, NPaths=5, RandomSeed=1, RuleOfThree=false);
+    H = hmmPosteriorFluxEPR(y, ph, 2, f, NPaths=5, RandomSeed=1); H0 = hmmPosteriorFluxEPR(y, ph, 2, f, NPaths=5, RandomSeed=1, RuleOfThree=false);
     ok = true;
     for p = 1:2
         e = modelEnergeticsR3(P(:, :, p), N(:, :, p));
         ok = ok && abs(H(p).EPR_hmm_model - e.EPR) < 1e-12 && H(p).r3_hmm && isinf(H0(p).EPR_hmm_model) && H(p).J_hmm_model == H0(p).J_hmm_model;
     end
-    [nP, nF] = rep(ok, nP, nF, 10, 'planAFlyHMM: EPR_hmm_model = r3 on mean path counts; RuleOfThree=false = old Inf', '');
+    [nP, nF] = rep(ok, nP, nF, 10, 'hmmPosteriorFluxEPR: EPR_hmm_model = r3 on mean path counts; RuleOfThree=false = old Inf', '');
 catch err, [nP, nF] = rep(false, nP, nF, 9, 'wiring', err.message); end
 
 %% 11. no-cycle convention

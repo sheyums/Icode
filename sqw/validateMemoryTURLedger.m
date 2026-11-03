@@ -1,8 +1,8 @@
-function V = validate_20pq(dataRoot, jsonlFile, outDir, options)
-%VALIDATE_20PQ  Stage-3 check of the port: reproduce the PRESPEC 20p and 20q ledger lines from raw data.
+function V = validateMemoryTURLedger(dataRoot, jsonlFile, outDir, options)
+%VALIDATEMEMORYTURLEDGER  Stage-3 check of the port: reproduce the PRESPEC 20p and 20q ledger lines from raw data.
 %
-%   V = validate_20pq(dataRoot, jsonlFile, outDir)
-%   V = validate_20pq(..., NBootMC=200, Workers=[])
+%   V = validateMemoryTURLedger(dataRoot, jsonlFile, outDir)
+%   V = validateMemoryTURLedger(..., NBootMC=200, Workers=[])
 %
 %   dataRoot   folders CS, per0LD, per0DD, fumin, sss (all 57), CSDD
 %   jsonlFile  hmm_audit/sqw20b_fit2_theta0.5.jsonl (cClaude's labelled 20b fits; CS DD is
@@ -21,7 +21,7 @@ function V = validate_20pq(dataRoot, jsonlFile, outDir, options)
 %             MATLAB's exact method differs from scipy's); the pre-specified VERDICTS
 %             (20p QUALIFIES, 20q S1/S2 support) must agree.
 %
-%   See also SQWMEMORYGROUP, SQWTURGROUP, CHECK20BEXACT.
+%   See also SQWMEMORYGROUP, SQWTURGROUP, CHECKHMMLIKELIHOODEXACT.
 
 arguments
     dataRoot (1,1) string {mustBeFolder}
@@ -31,7 +31,7 @@ arguments
 end
 if ~isfolder(outDir), mkdir(outDir); end
 geno = ["CS" "per0LD" "per0DD" "fumin" "sss" "CSDD"]; ld = [true true false true true false];
-S = readStored20bFits(jsonlFile);
+S = readStoredHmmFits(jsonlFile);
 
 M = struct(); Q = struct();
 for k = 1:numel(geno)

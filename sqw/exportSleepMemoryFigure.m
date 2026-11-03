@@ -1,8 +1,8 @@
-function X = exportFigC7(dataRoot, jsonlFile, outDir, options)
-%EXPORTFIGC7  Fig C7, sleep-length memory at the observed level (FIGURE_RECIPES L note 2026-11-01; fig_R1_obs.py; PRESPEC 20k).
+function X = exportSleepMemoryFigure(dataRoot, jsonlFile, outDir, options)
+%EXPORTSLEEPMEMORYFIGURE  Fig C7, sleep-length memory at the observed level (FIGURE_RECIPES L note 2026-11-01; fig_R1_obs.py; PRESPEC 20k).
 %
-%   X = exportFigC7(dataRoot, jsonlFile, outDir)
-%   X = exportFigC7(dataRoot, jsonlFile, outDir, NPerm=2000, NBoot=2000, RandomSeed=20, Cache="")
+%   X = exportSleepMemoryFigure(dataRoot, jsonlFile, outDir)
+%   X = exportSleepMemoryFigure(dataRoot, jsonlFile, outDir, NPerm=2000, NBoot=2000, RandomSeed=20, Cache="")
 %
 %   dataRoot   count files per genotype: CS, fumin, per0LD, per0DD, sss (all 57; the 20b fits
 %              are indexed in each sorted list)
@@ -30,6 +30,11 @@ function X = exportFigC7(dataRoot, jsonlFile, outDir, options)
 %   Writes figC7_perfly_D.csv, figC7_blocks.csv, figC7_bins.csv, figC7.mat and
 %   figC7_sleep_memory_observed.png / .pdf.
 %
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       X = exportSleepMemoryFigure(dataRoot, jsonl, "figures");   % writes figures\figC7.mat
+%
 %   See also ROUTEDURATIONOBSERVED, ROUTEDURATIOND, HOLMADJUST.
 
 arguments
@@ -47,10 +52,10 @@ G = ["CS" "fumin" "per0LD" "per0DD" "sss"];
 if strlength(options.Cache) > 0 && isfile(options.Cache)
     C = load(options.Cache, 'flies'); flies = C.flies;
 else
-    fits = readStored20bFits(jsonlFile); flies = table();
+    fits = readStoredHmmFits(jsonlFile); flies = table();
     for g = G
         files = sqwListFiles(fullfile(dataRoot, g)); Fg = fits([fits.g] == g);
-        assert(numel(Fg) == numel(files), 'exportFigC7:fits', '%s: %d fits, %d files.', g, numel(Fg), numel(files));
+        assert(numel(Fg) == numel(files), 'exportSleepMemoryFigure:fits', '%s: %d fits, %d files.', g, numel(Fg), numel(files));
         deg = arrayfun(@(i) Fg([Fg.fly0] == i - 1).deg, (1:numel(files))');
         use = find(~deg); rec = cell(numel(use), 1); ld = g ~= "per0DD";
         parfor j = 1:numel(use)
@@ -58,7 +63,7 @@ else
         end
         [~, nm, ex] = fileparts(files(use));
         flies = [flies; table(repmat(g, numel(use), 1), use - 1, nm + ex, rec, 'VariableNames', {'genotype', 'fly0', 'file', 'records'})]; %#ok<AGROW>
-        fprintf('exportFigC7: %-6s %d of %d flies (non-degenerate 20b fit)\n', g, numel(use), numel(files));
+        fprintf('exportSleepMemoryFigure: %-6s %d of %d flies (non-degenerate 20b fit)\n', g, numel(use), numel(files));
     end
     if strlength(options.Cache) > 0, save(options.Cache, 'flies'); end
 end
@@ -123,7 +128,7 @@ end
 X.flies = flies; X.points = pts; X.blocks = blk; X.bins = bins; X.flat = flat;
 
 % ---- figure
-S = planAStyle(); fh = planAFigure("Fig C7", 6.2, 2.9); X.fig = fh;
+S = paperFigureStyle(); fh = newPaperFigure("Fig C7", 6.2, 2.9); X.fig = fh;
 tl = tiledlayout(fh, 1, 9, 'TileSpacing', 'loose', 'Padding', 'compact');
 ax = nexttile(tl, [1 5]); hold(ax, 'on');
 order = [1 2 5 6 7 3 4 8 9];       % figure order: CS, per0 LD, per0 DD, fumin, sss (light before dark)

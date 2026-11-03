@@ -1,10 +1,10 @@
-function X = exportFigA4(L, perFlyDir, outDir, options)
-%EXPORTFIGA4  Fig A4, beneath the observed cycle (FIGURE_RECIPES K4; fig_beneath.py): data and figure.
+function X = exportHiddenVsObservedFigure(L, perFlyDir, outDir, options)
+%EXPORTHIDDENVSOBSERVEDFIGURE  Fig A4, beneath the observed cycle (FIGURE_RECIPES K4; fig_beneath.py): data and figure.
 %
-%   X = exportFigA4(L, perFlyDir, outDir)
-%   X = exportFigA4(L, perFlyDir, outDir, RandomSeed=1, Plot=true)
+%   X = exportHiddenVsObservedFigure(L, perFlyDir, outDir)
+%   X = exportHiddenVsObservedFigure(L, perFlyDir, outDir, RandomSeed=1, Plot=true)
 %
-%   L          PLANALIKELIHOODS table (CS and fumin)
+%   L          CHAINVSHMMLIKELIHOODS table (CS and fumin)
 %   perFlyDir  folder holding the per-fly CSVs that SQWMEMORYGROUP and SQWTURGROUP
 %              write: <g>_memory_perfly.csv, CSDD_memory_halves_perfly.csv,
 %              <g>_tur_perfly.csv, for CS, CSDD, per0LD, per0DD, fumin, sss
@@ -19,7 +19,7 @@ function X = exportFigA4(L, perFlyDir, outDir, options)
 %   (c) 20p: excess irreversibility E = D3 - median D3 under null A per fly, per block,
 %       median and CI; CS DD as its two 12-h halves (amendment A, null A2). Filled =
 %       the block passes the pre-registered test (each fly against its own simulated
-%       null, Wilcoxon + binomial, Holm; 20p ledger verdict, reproduced by VALIDATE_20PQ:
+%       null, Wilcoxon + binomial, Holm; 20p ledger verdict, reproduced by VALIDATEMEMORYTURLEDGER:
 %       per0 DD, fumin dark; CS DD's halves do not). The bar is the fly-bootstrap CI of
 %       the median, descriptive, and can cross 0 for a filled block (legend says so).
 %   (d) 20q: B_c / sigma_chain per block, tau 3 h, amendment-D set (use_180); filled =
@@ -27,7 +27,16 @@ function X = exportFigA4(L, perFlyDir, outDir, options)
 %   Medians with a fly-bootstrap 95% CI (MEDIANCI, 2000 resamples). Genotype order rule.
 %   Sign check (recipe): dBIC medians -16.6 (CS), -30.4 (fumin); 28% and 23% above 0.
 %
-%   See also PLANALIKELIHOODS, SQWMEMORYGROUP, SQWTURGROUP, EXPORTFIGA1.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       L = chainVsHmmLikelihoods(dataRoot, jsonl, Cache="likelihoods.mat");
+%       for g = ["CS" "CSDD" "per0LD" "per0DD" "fumin" "sss"]   % per-fly CSVs for panels (c, d)
+%           sqwMemoryGroup(fullfile(dataRoot, g), g, OutDir="perfly"); sqwTURGroup(fullfile(dataRoot, g), g, OutDir="perfly");
+%       end
+%       X = exportHiddenVsObservedFigure(L, "perfly", "figures");
+%
+%   See also CHAINVSHMMLIKELIHOODS, SQWMEMORYGROUP, SQWTURGROUP, EXPORTDIRECTIONFLUXFIGURE.
 
 arguments
     L table
@@ -37,7 +46,7 @@ arguments
     options.Plot (1,1) logical = true
 end
 if ~isfolder(outDir), mkdir(outDir); end
-S = planAStyle(); rs = RandStream('twister', 'Seed', options.RandomSeed);
+S = paperFigureStyle(); rs = RandStream('twister', 'Seed', options.RandomSeed);
 ci = @(v) medianCIrow(v, S, rs);
 gi = @(g) find(S.order == g);
 
@@ -95,7 +104,7 @@ rows = renamevars(rows, 'fracAbove0', 'fracAbove0or1');
 X.a = A; X.b = Bt; X.c = Cp; X.d = Dp; X.rows = rows; X.fig = [];
 
 if options.Plot
-    fh = planAFigure("Fig A4", 7.0, 5.6); X.fig = fh;
+    fh = newPaperFigure("Fig A4", 7.0, 5.6); X.fig = fh;
     tl = tiledlayout(fh, 2, 2, 'TileSpacing', 'loose', 'Padding', 'compact');
     % (a)
     ax = nexttile(tl); hold(ax, 'on');

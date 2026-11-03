@@ -1,10 +1,10 @@
-function X = exportFigA3(D, outDir, options)
-%EXPORTFIGA3  Fig A3, energy landscape of the observed chain (FIGURE_RECIPES K3; fig_planA.py): data and figure.
+function X = exportLandscapeFigure(D, outDir, options)
+%EXPORTLANDSCAPEFIGURE  Fig A3, energy landscape of the observed chain (FIGURE_RECIPES K3; fig_planA.py): data and figure.
 %
-%   X = exportFigA3(D, outDir)
-%   X = exportFigA3(D, outDir, RandomSeed=20, Plot=true)
+%   X = exportLandscapeFigure(D, outDir)
+%   X = exportLandscapeFigure(D, outDir, RandomSeed=20, Plot=true)
 %
-%   D       PLANADATA output
+%   D       BUILDPERFLYDATA output
 %   outDir  folder for figA3_points.csv, figA3_summary.csv, figA3.mat and the figure
 %           (figA3_landscape_observable.png / .pdf)
 %
@@ -18,7 +18,13 @@ function X = exportFigA3(D, outDir, options)
 %   X  struct: points, summary, fig
 %   Check (recipe): E_S - E_Q medians -1.78 (CS dark), +1.00 (fumin dark).
 %
-%   See also ENERGYLANDSCAPE, ROUTECOUNTSOBSERVED, EXPORTFIGA1.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       D = buildPerFlyData(dataRoot, jsonl, Cache="perfly_cache.mat");
+%       X = exportLandscapeFigure(D, "figures"); disp(X.summary)
+%
+%   See also ENERGYLANDSCAPE, ROUTECOUNTSOBSERVED, EXPORTDIRECTIONFLUXFIGURE.
 
 arguments
     D (1,1) struct
@@ -27,8 +33,8 @@ arguments
     options.Plot (1,1) logical = true
 end
 if ~isfolder(outDir), mkdir(outDir); end
-S = planAStyle(); B = S.blocks; nB = height(B);
-assert(isequal(D.order, S.order), 'exportFigA3:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
+S = paperFigureStyle(); B = S.blocks; nB = height(B);
+assert(isequal(D.order, S.order), 'exportLandscapeFigure:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
 P = table(); e21 = cell(nB, 1); e31 = cell(nB, 1);
 for b = 1:nB
     T = D.G(B.g(b)).perFly; T = T(T.phase == B.phase(b) & T.refOK & T.hasCycle, :);
@@ -42,14 +48,14 @@ P.block = erase(erase(erase(P.block, "\it"), "\rm"), "^");
 rs = RandStream('twister', 'Seed', options.RandomSeed);
 X.fig = [];
 if options.Plot
-    fh = planAFigure("Fig A3", 7.0, 2.8); X.fig = fh;
+    fh = newPaperFigure("Fig A3", 7.0, 2.8); X.fig = fh;
     tl = tiledlayout(fh, 1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
     a1 = nexttile(tl); a2 = nexttile(tl); a3 = nexttile(tl);
 else
     fh = figure('Visible', 'off'); a1 = axes(fh); a2 = axes(fh); a3 = [];
 end
-T1 = planAStrip(a1, S, e21, Stream=rs, Gap=0.4, LabelStyle="short");
-T2 = planAStrip(a2, S, e31, Stream=rs, Gap=0.4, LabelStyle="short");
+T1 = plotStripPanel(a1, S, e21, Stream=rs, Gap=0.4, LabelStyle="short");
+T2 = plotStripPanel(a2, S, e31, Stream=rs, Gap=0.4, LabelStyle="short");
 X.summary = [[table(repmat("E21", height(T1), 1), 'VariableNames', {'quantity'}), T1]; ...
              [table(repmat("E31", height(T2), 1), 'VariableNames', {'quantity'}), T2]];
 X.summary.label = erase(erase(erase(X.summary.label, "\it"), "\rm"), "^");

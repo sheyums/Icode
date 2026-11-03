@@ -53,9 +53,9 @@ Validation record: `hmm_audit/PORT_VALIDATION.md`.
 | `hmmViterbiPhased`, `hmmFFBS`, `pairCounts`, `posteriorSummaries` | `viterbi`, `ffbs`, `pair_counts`, `posterior_summaries` | |
 | `hmmSimulatePhased` | `simulate` | refuses rows that do not sum to 1 (`fillEmptyRows` first) |
 | `roundTripsHidden`, `roundTripStats` | `round_trips_hidden`, `round_trip_stats` | |
-| `readStored20bFits`, `check20bExact`, `checkSubset20b` | — | cClaude's stored 20b fits; exact and statistical checks |
+| `readStoredHmmFits`, `checkHmmLikelihoodExact`, `checkHmmRefitSubset` | — | cClaude's stored 20b fits; exact and statistical checks |
 
-Tests: `test_sqw_stage2`.
+Tests: `test_sqw_hmm`.
 
 ## Stage 3 — model-free probes (20p, 20q)
 | MATLAB | sqw_ref | notes |
@@ -68,7 +68,7 @@ Tests: `test_sqw_stage2`.
 | `sqwTURFly`, `sqwTURGroup` | `sqw16.py`, `sqw16b.py`, `sqw16_report.py` | 20q per fly / group, rule of three (amendment E); CSV, figure |
 | `sqwListFiles`, `sqwFlyInput`, `wilcoxonP`, `binomGreater`, `holmAdjust` | — | helpers |
 
-Tests: `test_sqw_stage3`. Raw-data check: `validate_20pq(dataRoot, jsonlFile, outDir)`.
+Tests: `test_sqw_modelFree`. Raw-data check: `validateMemoryTURLedger(dataRoot, jsonlFile, outDir)`.
 
 ## Figure exports — Plan A Figs A1–A4 (FIGURE_RECIPES section K)
 Each export writes the plotted per-fly points and the per-block medians / CIs as CSV (for Origin) and .mat, and
@@ -77,33 +77,33 @@ as PNG and vector PDF.
 
 | MATLAB | Python | notes |
 |---|---|---|
-| `planAData` | `sqw17.py` | six `sqwObservableGroup` outputs in paper order (sss = the 54-file 20s-A set) plus the HMM triangles; stored 20b fits matched to files BY NAME |
-| `planAFlyHMM` | `sqw17.py` "hid", `sqw2.decode` | HMM count J and EPR, mean over 200 FFBS paths, per fly x phase |
-| `planALikelihoods` | `sqw13.py`, `sqw14.py` | per-fly 20n / 20o log-likelihoods (MC1, HMM, MC2 at 12 h; MC1, HMM at 6 h), dBIC, R_mem, R_drift |
-| `exportFigA1` .. `exportFigA3` | `fig_planA.py` | direction and flux (main text observed-level only; `HmmMarkers=true` for the SI version); EPR vs J and Onsager L; energy landscape |
+| `buildPerFlyData` | `sqw17.py` | six `sqwObservableGroup` outputs in paper order (sss = the 54-file 20s-A set) plus the HMM triangles; stored 20b fits matched to files BY NAME |
+| `hmmPosteriorFluxEPR` | `sqw17.py` "hid", `sqw2.decode` | HMM count J and EPR, mean over 200 FFBS paths, per fly x phase |
+| `chainVsHmmLikelihoods` | `sqw13.py`, `sqw14.py` | per-fly 20n / 20o log-likelihoods (MC1, HMM, MC2 at 12 h; MC1, HMM at 6 h), dBIC, R_mem, R_drift |
+| `exportDirectionFluxFigure` .. `exportLandscapeFigure` | `fig_planA.py` | direction and flux (main text observed-level only; `HmmMarkers=true` for the SI version); EPR vs J and Onsager L; energy landscape |
 | `routeDurationObserved`, `routeDurationD` | `route_duration_observed`, `route_duration_D` | 20k route-vs-duration records and D (golden G11) |
-| `exportFigC7` | `fig_R1_obs.py`, `sqw10_report.py`, `route_bins.py` | Fig C7, sleep-length memory, observed only: recomputes 20k observed R1 from raw data (stars from the ledger by default) |
-| `exportFigA4` | `fig_beneath.py` | reads the per-fly CSVs `sqwMemoryGroup` / `sqwTURGroup` write, plus `planALikelihoods` |
-| `exportFigC10` | `fig_clockface.py` | Fig C10 clock face, from `planB_20wB.json` (20w-B); the cosine is refitted, its amplitude checked against the stored AJ |
-| `exportFigC12` | `fig_kir.py` | Fig C12 Kir2.1 silencing, from `y_kir.json` (20y); ledger Holm stars copied, not recomputed |
-| `planAStyle`, `planAFigure`, `planAStrip` | — | colours, fonts, blocks; figure with theme pinned; strip panel |
+| `exportSleepMemoryFigure` | `fig_R1_obs.py`, `sqw10_report.py`, `route_bins.py` | Fig C7, sleep-length memory, observed only: recomputes 20k observed R1 from raw data (stars from the ledger by default) |
+| `exportHiddenVsObservedFigure` | `fig_beneath.py` | reads the per-fly CSVs `sqwMemoryGroup` / `sqwTURGroup` write, plus `chainVsHmmLikelihoods` |
+| `exportClockFaceFigure` | `fig_clockface.py` | Fig C10 clock face, from `planB_20wB.json` (20w-B); the cosine is refitted, its amplitude checked against the stored AJ |
+| `exportKirSilencingFigure` | `fig_kir.py` | Fig C12 Kir2.1 silencing, from `y_kir.json` (20y); ledger Holm stars copied, not recomputed |
+| `paperFigureStyle`, `newPaperFigure`, `plotStripPanel` | — | colours, fonts, blocks; figure with theme pinned; strip panel |
 
-Tests: `test_sqw_figA`.
+Tests: `test_sqw_figures`.
 
 Fig C8 (per0 DD and CS DD wake hazards at 12/16/20/24 bins) is a bout-suite figure, not an sqw one:
-`analysis_20r/figC8_wake_hazard.m`, run by name from the Icode folder; it recomputes the ledgered rise tests from the
+`analysis_20r/wakeHazardFigure.m`, run by name from the Icode folder; it recomputes the ledgered rise tests from the
 saved 20r bouts and checks every RiseNullP against the ledger. Outputs in `analysis_20r/figC8`.
 
 Added 2026-11-02 (FIGURE_RECIPES notes dated 2026-11-02):
 
 | MATLAB | Python | notes |
 |---|---|---|
-| `exportFigA1` / `exportFigA2` | `fig_planA.py` | sss mean marker in A1 (a, b); A2 sss title note and panel (c) A_eff = EPR/\|J\| |
-| `exportFigSssReversal` | `fig_sss_reversal.py` | per-fly chain J beside HMM J, CS and sss; no-cycle flies (\|J\| < 1e-12) plotted at 0, left out of the % and the test |
-| `exportFig1Emissions` | `fig_emission.py` | median labelled B3 per genotype |
-| `exportFigDwellDirection` | `fig_dwell_direction.py` | CS night, direction-dependent Q and W dwells |
-| `exportFigC13Profiles` | `fig_planB_21.py` | C13 / PRESPEC 21 profiles; checks itself against fig_planB21_profiles.json |
-| `routeDurationHidden`, `planARouteHidden`, `exportFigC7SI` | `route_duration_hidden`, `sqw10.py`, `fig_R1_main.py` | SI memory figure with the hidden panel; the hidden 20k null takes ~1 h on 2 workers (cache it) |
+| `exportDirectionFluxFigure` / `exportEprOnsagerFigure` | `fig_planA.py` | sss mean marker in A1 (a, b); A2 sss title note and panel (c) A_eff = EPR/\|J\| |
+| `exportSssReversalFigure` | `fig_sss_reversal.py` | per-fly chain J beside HMM J, CS and sss; no-cycle flies (\|J\| < 1e-12) plotted at 0, left out of the % and the test |
+| `exportHmmEmissionsFigure` | `fig_emission.py` | median labelled B3 per genotype |
+| `exportDwellDirectionFigure` | `fig_dwell_direction.py` | CS night, direction-dependent Q and W dwells |
+| `exportWakeEndProfilesFigure` | `fig_planB_21.py` | C13 / PRESPEC 21 profiles; checks itself against fig_planB21_profiles.json |
+| `routeDurationHidden`, `routeDurationHiddenNull`, `exportSleepMemoryHiddenFigure` | `route_duration_hidden`, `sqw10.py`, `fig_R1_main.py` | SI memory figure with the hidden panel; the hidden 20k null takes ~1 h on 2 workers (cache it) |
 
 ## Batch tools for new data — lab coding (added 2026-11-02)
 Every file these write uses the lab's coding **S = 0, Q = 1, W = 2, missing = NaN** (sleep stays 0, as in
@@ -125,3 +125,36 @@ R = sqwBatchHMM(X.outDir);                          % writes hmm_perfly.csv, hmm
 Xdd = sqwBatchSymbols("D:\data\per0DD", LightDark=false); Rdd = sqwBatchHMM(Xdd.outDir);
 plotSqwHMMOrder({R, Rdd}, ["CS" "\itper^0\rm DD"]);
 ```
+
+## Renamed 2026-11-02 (meaningful names; old names appear in PORT_VALIDATION.md and FIGURE_RECIPES.md)
+Output file names (figA1_*.png, figC7.mat, ...) are unchanged.
+
+| old | new | what it is |
+|---|---|---|
+| `exportFigC13Profiles` | `exportWakeEndProfilesFigure` | C13 / PRESPEC 21 profiles |
+| `exportFigC7SI` | `exportSleepMemoryHiddenFigure` | Fig C7 SI (hidden level) |
+| `exportFigC7` | `exportSleepMemoryFigure` | Fig C7 |
+| `exportFigC10` | `exportClockFaceFigure` | Fig C10 |
+| `exportFigC12` | `exportKirSilencingFigure` | Fig C12 |
+| `exportFig1Emissions` | `exportHmmEmissionsFigure` | Fig 1 HMM emission panel |
+| `exportFigDwellDirection` | `exportDwellDirectionFigure` | dwell-direction figure |
+| `exportFigSssReversal` | `exportSssReversalFigure` | sss reversal figure |
+| `exportFigA1` | `exportDirectionFluxFigure` | Fig A1 |
+| `exportFigA2` | `exportEprOnsagerFigure` | Fig A2 |
+| `exportFigA3` | `exportLandscapeFigure` | Fig A3 |
+| `exportFigA4` | `exportHiddenVsObservedFigure` | Fig A4 |
+| `planAData` | `buildPerFlyData` | per fly x phase data behind Figs A1-A3 (was Plan A data) |
+| `planAFigure` | `newPaperFigure` | figure with the paper style, theme pinned light |
+| `planAStyle` | `paperFigureStyle` | colours, order, font |
+| `planAStrip` | `plotStripPanel` | one strip panel |
+| `planAFlyHMM` | `hmmPosteriorFluxEPR` | HMM flux and EPR over posterior paths |
+| `planALikelihoods` | `chainVsHmmLikelihoods` | 20n/20o per-fly likelihoods |
+| `planARouteHidden` | `routeDurationHiddenNull` | hidden-level 20k null |
+| `check20bExact` | `checkHmmLikelihoodExact` | 20b exact likelihood check |
+| `checkSubset20b` | `checkHmmRefitSubset` | 20b refit of a subset |
+| `readStored20bFits` | `readStoredHmmFits` | cClaude stored 20b fits |
+| `validate_20pq` | `validateMemoryTURLedger` | 20p/20q ledger check |
+| `test_sqw_figA` | `test_sqw_figures` | figure-export tests |
+| `test_sqw_stage2` | `test_sqw_hmm` | HMM tests (was stage 2) |
+| `test_sqw_stage3` | `test_sqw_modelFree` | model-free probe tests (was stage 3) |
+| `figC8_wake_hazard` | `wakeHazardFigure` | Fig C8 (analysis_20r) |

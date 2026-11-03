@@ -1,11 +1,11 @@
-function H = planAFlyHMM(y, ph, nP, fit, options)
-%PLANAFLYHMM  The HMM's counted cycle flux and EPR for one fly, averaged over posterior paths (sqw17.py's "hid"; Fig A1 triangles).
+function H = hmmPosteriorFluxEPR(y, ph, nP, fit, options)
+%HMMPOSTERIORFLUXEPR  The HMM's counted cycle flux and EPR for one fly, averaged over posterior paths (sqw17.py's "hid"; Fig A1 triangles).
 %
-%   H = planAFlyHMM(y, ph, nP, fit)
-%   H = planAFlyHMM(y, ph, nP, fit, NPaths=200, RandomSeed=0)
+%   H = hmmPosteriorFluxEPR(y, ph, nP, fit)
+%   H = hmmPosteriorFluxEPR(y, ph, nP, fit, NPaths=200, RandomSeed=0)
 %
 %   y, ph, nP  the fly's symbols and phases (SQWFLYINPUT)
-%   fit        its LABELLED K = 3 20b fit (READSTORED20BFITS): pi, P, B, deg
+%   fit        its LABELLED K = 3 20b fit (READSTOREDHMMFITS): pi, P, B, deg
 %
 %   H  (nP x 1) struct: hmm_deg (H1 degenerate, 20b), J_hmm = mean over NPaths
 %      FFBS paths of JCYCLECOUNT (cycles/h), EPR_hmm = mean over paths of the
@@ -17,7 +17,7 @@ function H = planAFlyHMM(y, ph, nP, fit, options)
 %   EPR is averaged per path, E[f(N)], not computed on mean counts, as sqw2.decode.
 %   Paths come from a private stream (HMMFFBS): compare with Python statistically.
 %
-%   See also HMMFFBS, PAIRCOUNTS, PLANADATA.
+%   See also HMMFFBS, PAIRCOUNTS, BUILDPERFLYDATA.
 
 arguments
     y (:,1) double

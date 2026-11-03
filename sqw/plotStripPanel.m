@@ -1,10 +1,10 @@
-function T = planAStrip(ax, S, v, options)
-%PLANASTRIP  One strip panel of a Plan A figure: per-fly points, median and fly-bootstrap 95% CI per block.
+function T = plotStripPanel(ax, S, v, options)
+%PLOTSTRIPPANEL  One strip panel of a Plan A figure: per-fly points, median and fly-bootstrap 95% CI per block.
 %
-%   T = planAStrip(ax, S, v)
-%   T = planAStrip(ax, S, v, Hmm=h, Zero=true, Stream=rs, Gap=0.5, LabelStyle="two-line")
+%   T = plotStripPanel(ax, S, v)
+%   T = plotStripPanel(ax, S, v, Hmm=h, Zero=true, Stream=rs, Gap=0.5, LabelStyle="two-line")
 %
-%   S     PLANASTYLE; one strip per row of S.blocks, light before dark
+%   S     PAPERFIGURESTYLE; one strip per row of S.blocks, light before dark
 %   v     (nBlock x 1) cell, the per-fly values of each block
 %   Hmm   (nBlock x 1) cell of HMM values per block (non-degenerate flies);
 %         their median is drawn as a grey triangle beside the block, labelled
@@ -17,7 +17,7 @@ function T = planAStrip(ax, S, v, options)
 %   bar; CI: black line (MEDIANCI: non-finite values dropped, >= 3 needed).
 %   T  table per block: label, x, n (finite), median, lo, hi, nHmm, hmmMedian.
 %
-%   See also EXPORTFIGA1, EXPORTFIGA3.
+%   See also EXPORTDIRECTIONFLUXFIGURE, EXPORTLANDSCAPEFIGURE.
 
 arguments
     ax

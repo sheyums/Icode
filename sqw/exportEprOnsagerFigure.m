@@ -1,10 +1,10 @@
-function X = exportFigA2(D, outDir, options)
-%EXPORTFIGA2  Fig A2, EPR vs J and the Onsager conductance L (FIGURE_RECIPES K2; fig_planA.py): data and figure.
+function X = exportEprOnsagerFigure(D, outDir, options)
+%EXPORTEPRONSAGERFIGURE  Fig A2, EPR vs J and the Onsager conductance L (FIGURE_RECIPES K2; fig_planA.py): data and figure.
 %
-%   X = exportFigA2(D, outDir)
-%   X = exportFigA2(D, outDir, NBoot=2000, RandomSeed=20, Plot=true)
+%   X = exportEprOnsagerFigure(D, outDir)
+%   X = exportEprOnsagerFigure(D, outDir, NBoot=2000, RandomSeed=20, Plot=true)
 %
-%   D       PLANADATA output
+%   D       BUILDPERFLYDATA output
 %   outDir  folder for figA2_points.csv, figA2_curves.csv, figA2_L.csv, figA2.mat
 %           and the figure (figA2_epr_j_onsager_observable.png / .pdf)
 %
@@ -23,7 +23,13 @@ function X = exportFigA2(D, outDir, options)
 %   Check (recipe): L = 0.272 (CS), 0.262 (CS DD), 0.286 (per0 LD), 0.352 (per0 DD),
 %   0.243 (fumin), 0.145 (sss); A_eff medians 0.57, 0.51, 0.43, 0.64, 1.11, 0.70.
 %
-%   See also SQWONSAGERGROUP, ONSAGERFIT, EXPORTFIGA1.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       D = buildPerFlyData(dataRoot, jsonl, Cache="perfly_cache.mat");
+%       X = exportEprOnsagerFigure(D, "figures"); disp(X.L)
+%
+%   See also SQWONSAGERGROUP, ONSAGERFIT, EXPORTDIRECTIONFLUXFIGURE.
 
 arguments
     D (1,1) struct
@@ -33,8 +39,8 @@ arguments
     options.Plot (1,1) logical = true
 end
 if ~isfolder(outDir), mkdir(outDir); end
-S = planAStyle();
-assert(isequal(D.order, S.order), 'exportFigA2:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
+S = paperFigureStyle();
+assert(isequal(D.order, S.order), 'exportEprOnsagerFigure:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
 O = sqwOnsagerGroup(D.G, Points="count", Reference="CS", WaldSet=["per0LD" "per0DD" "fumin" "sss"], ...
     NBoot=options.NBoot, RandomSeed=options.RandomSeed);
 P = O.Properties.UserData.points;
@@ -57,7 +63,7 @@ X.points = P; X.curves = C; X.L = O; X.Aeff = AE; X.fig = [];
 X.boot = O.Properties.UserData.boot;
 
 if options.Plot
-    fh = planAFigure("Fig A2", 7.2, 5.0); X.fig = fh;
+    fh = newPaperFigure("Fig A2", 7.2, 5.0); X.fig = fh;
     tl = tiledlayout(fh, 2, 5, 'TileSpacing', 'compact', 'Padding', 'compact');
     for k = 1:6
         ax = nexttile(tl, (floor((k - 1) / 3)) * 5 + mod(k - 1, 3) + 1); hold(ax, 'on');

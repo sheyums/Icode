@@ -1,7 +1,7 @@
-function S = planAStyle()
-%PLANASTYLE  Common style of the Plan A figures (FIGURE_RECIPES section K).
+function S = paperFigureStyle()
+%PAPERFIGURESTYLE  Common style of the Plan A figures (FIGURE_RECIPES section K).
 %
-%   S = planAStyle()
+%   S = paperFigureStyle()
 %
 %   S.order   genotype order rule: CS -> CS DD -> per0 LD -> per0 DD -> fumin -> sss
 %   S.dd      true for the DD genotypes (one phase, "whole")
@@ -13,7 +13,7 @@ function S = planAStyle()
 %   S.font, S.size   font (STIX if installed, else Times New Roman), 8 pt
 %   S.NBoot, S.Level  fly-bootstrap CI of the median: 2000 resamples, 95%
 %
-%   See also PLANAFIGURE, EXPORTFIGA1.
+%   See also NEWPAPERFIGURE, EXPORTDIRECTIONFLUXFIGURE.
 
 S.order = ["CS" "CSDD" "per0LD" "per0DD" "fumin" "sss"];
 S.dd = [false true false true false false];
