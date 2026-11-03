@@ -63,3 +63,11 @@ forward, or do flies run it backward for hours at a time more often than a const
 
 ## Output
 `sqw25.py` -> `sqw_out/s25_windows.json`, `figures/fig25_*.png`. Ledger entry with commit hashes.
+
+## Amendment A (2026-11-03, mechanical; written when the first run stopped on sss, before any result was printed)
+8 of 57 sss flies have phases with no scoring reference, coded -1: 5 flies about half their record, 3 almost all of
+it. Every other analysis excludes these phases with the `ok` flag. The PRESPEC's statement that there are no
+missing minutes holds for CS, CS DD, per0 LD and per0 DD only. Rule: a window containing any missing minute is
+EXCLUDED, in the data and identically in every simulated record. Chains are fitted on pairs of non-missing minutes.
+The simulation starts at the first non-missing state. The four primary and reference genotypes have no missing
+minutes, so their code path and random draws are unchanged.
