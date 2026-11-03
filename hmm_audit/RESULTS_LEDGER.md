@@ -2390,3 +2390,29 @@ The y-axis is the cumulative (sleep->active wake) minus (active wake->sleep) cou
 completed cycles to within the loop in progress: |difference| <= 1 at every minute of every fly in all six genotypes
 (checked). CS LD: 92% of 25 flies end net forward, mean +9.7 in 96 h (daily-mean J 0.10/h x 96 h = 9.7). CS DD: 80%,
 mean +10.0. Placement across the acts in PLANS (2026-11-03).
+
+## PRESPEC 26 — persistence of loop direction (2026-11-03; PRESPEC 9a8ff19, committed before running; code sqw26.py, this commit; sqw26.log, s26_loopseq.json, fig26_loop_sequence)
+S = the fraction of consecutive completed loops with the same direction. E = S_obs - mean S_null. Primary null:
+clock-matched chain (4-h windows); 500 simulated records per fly.
+```
+genotype flies(excl) loops | frac fwd | S obs | S shuffle | CLOCK null S, E median, E>0, p, Holm | 12-h null S, E median, p, Holm
+per0 DD  25(0)  1472 | 0.63 | 0.526 | 0.528 | 0.561, -0.016, 0.32, p 0.034, Holm 0.068 | 0.546, -0.000, p 0.62, Holm 1
+per0 LD  27(0)  1450 | 0.60 | 0.544 | 0.511 | 0.547, -0.029, 0.44, p 0.51,  Holm 0.51  | 0.526, -0.015, p 0.75, Holm 1
+CS LD    25(0)  1282 | 0.62 | 0.510 | 0.519 | 0.549, -0.026, 0.44, p 0.33,  Holm 0.65  | 0.534, -0.011, p 0.81, Holm 0.81
+CS DD    25(0)  1230 | 0.63 | 0.558 | 0.521 | 0.556, +0.015, 0.52, p 0.60,  Holm 0.65  | 0.531, +0.036, p 0.15, Holm 0.30
+fumin    30(23)  510 | 0.73 | 0.617 | 0.583 | 0.628, -0.048, p 0.052 (descriptive)
+sss       8(49)  123 | 0.42 | 0.530 | 0.553 | 0.633, -0.120, p 0.20 (descriptive; 49 flies < 10 pairs)
+secondary: per0 DD vs CS DD, E difference -0.031, Mann-Whitney p 0.30; per0 LD vs CS LD -0.003, p 0.65
+```
+- Decision: NEITHER episodes nor a restoring tendency in any genotype (all Holm >= 0.07). Successive loop directions
+  are what the observed chain predicts: a constant bias at the loop scale, as stable in clockless per0 as in CS (no
+  per0-CS difference). Run-length distributions follow the chain (fig26 d). Long runs are slightly rarer than the
+  chain predicts in CS LD and per0 DD; descriptive, not tested.
+- Note, NOT a result: per0 DD's E is slightly negative under the clock-matched null (p 0.034, Holm 0.068) and exactly
+  0 under the 12-h null. The clock-matched null's S is higher than the 12-h null's in EVERY genotype, including
+  clockless per0 DD. A plausible reason, untested: six 4-h matrices estimated from 4 days carry sampling scatter in
+  the bias, which itself makes runs. For per0 DD the 12-h (whole-record) chain is physically the better null, and
+  there E = 0.
+- Physical reading: a fly's loops behave like independent tosses of a biased coin (about 60:40 forward in CS and
+  per0), given its chain, with no switching between forward-running and backward-running modes at any timescale the
+  loop sequence resolves.
