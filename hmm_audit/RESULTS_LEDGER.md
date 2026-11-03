@@ -2322,3 +2322,9 @@ fumin/sss overlap: dark sleep 3.0 vs 2.9 min/h, d +0.28 vs -0.03, J +0.109 vs -0
   forward turns (rho +0.54). sss light is reversed, so more sleep means more BACKWARD turns per hour (rho -0.51,
   Holm 0.023; observed level -0.26, same sign, n.s.). This is the C14 statement, now at both levels: sleep sets how
   OFTEN the cycle turns, genotype sets WHICH WAY.
+
+## 2026-11-03 Sensitivity (post hoc 22h): hidden J against OBSERVED sleep, removing the shared HMM fit from x
+Model sleep and observed sleep agree per fly (Spearman 0.99-1.00 in all four blocks checked). J_hmm against observed
+sleep: sss L -0.49 (p 0.003, n 38), fumin D +0.53 (p 0.0002), fumin L +0.40 (p 0.006), sss D +0.14 (p 0.37).
+These are unchanged from the model-sleep values. The sss-light statement (more sleep, more backward turns per hour)
+does not come from sharing a fit. Draft text: DRAFT_act3_C14.md.
