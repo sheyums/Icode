@@ -2360,3 +2360,27 @@ sss 6h/4h    57     | 0/0  0/0 | p 1 | 0.2/0.1   (Amendment A: windows with miss
 - Not run, because it was not pre-specified: whether the 15-20% of CS/per0 flies that end NEGATIVE over the whole
   record are as many as a constant forward process gives. The 12-h analyses already pool these flies; that question
   would need its own PRESPEC.
+
+## 2026-11-03 Descriptive: completed loops and their durations (Sheyum's question; no test; code cycle_times.py, this commit; cycle_times.json)
+Completed loops are found by loop erasure on each fly's minute symbols. A 3-state loop erased from the path counts as
+one completed cycle; it is forward if it is a rotation of W->Q->S->W. Its duration is the time from entering the
+loop's first state to returning there.
+CHECK: net completed loops per hour equal the chain J in every block (e.g. CS D +0.165 vs +0.165, sss L -0.038 vs -0.038).
+```
+block    | loops/h fwd  back  net | h per NET cycle | loop duration fwd median/mean | back median/mean (min)
+CS L     | 0.311 0.274 +0.037 | 27  | 25/32 | 24/33
+CS D     | 0.324 0.159 +0.165 |  6  | 45/54 | 32/45
+CS DD    | 0.309 0.204 +0.105 | 9.5 | 33/43 | 30/38
+per0 LD L| 0.288 0.195 +0.093 | 11  | 31/44 | 30/43
+per0 LD D| 0.378 0.258 +0.120 |  8  | 28/37 | 28/36
+per0 DD  | 0.419 0.258 +0.161 |  6  | 32/38 | 30/36
+fumin L  | 0.221 0.094 +0.128 |  8  | 18/33 | 16/24
+fumin D  | 0.153 0.051 +0.102 | 10  | 18/35 | 14/20
+sss L    | 0.043 0.081 -0.038 | backward, ~26 h per net backward cycle | 19/21 | 16/21
+sss D    | 0.075 0.074 +0.002 | ~none | 16/22 | 15/18
+```
+Reading: a completed loop of either direction takes about half an hour (median 25-45 min in CS/per0, 15-20 min in
+fumin/sss). Flies complete one every 2.5-3.5 h (CS/per0), but most are cancelled by loops in the opposite direction.
+The NET forward cycle takes 6-11 h (27 h in CS by day). Forward loops are longer than backward ones in CS at night
+(median 45 vs 32 min) and about equal elsewhere. That is descriptive only, related in kind to C9* (dwell times
+depend on direction); not tested.
