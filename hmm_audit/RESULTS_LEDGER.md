@@ -2354,7 +2354,7 @@ sss 6h/4h    57     | 0/0  0/0 | p 1 | 0.2/0.1   (Amendment A: windows with miss
   5,000 h. A SINGLE fly's direction is therefore below its own noise for hours to days. The cycle is a weak bias on
   a noisy walk, and it becomes visible only as steps accumulate over days and across flies.
 - Descriptive companion (fig25_cumulative_walk, not a test): over the whole record each fly's cumulative net forward
-  count ends positive in 80% (CS DD), 85% (per0 LD) and 84% (per0 DD) of flies (CS LD similar). The mean is about
+  count ends positive in 92% (CS LD), 80% (CS DD), 85% (per0 LD) and 84% (per0 DD) of flies (CS LD corrected from 'similar' 2026-11-03). The mean is about
   +10 to +11 cycles over 3-4 days. sss: 29% positive, 59% negative, mean -1.0 over 2 days.
 - Rule 4 respected: no window size, measurability rule or merge was changed after seeing the result.
 - Not run, because it was not pre-specified: whether the 15-20% of CS/per0 flies that end NEGATIVE over the whole
@@ -2384,3 +2384,9 @@ fumin/sss). Flies complete one every 2.5-3.5 h (CS/per0), but most are cancelled
 The NET forward cycle takes 6-11 h (27 h in CS by day). Forward loops are longer than backward ones in CS at night
 (median 45 vs 32 min) and about equal elsewhere. That is descriptive only, related in kind to C9* (dwell times
 depend on direction); not tested.
+
+## 2026-11-03 Act 1 opening figure (descriptive): figAct1_cumulative_walk (CS LD, CS DD; fig_act1_walk.py)
+The y-axis is the cumulative (sleep->active wake) minus (active wake->sleep) count. It equals the net number of
+completed cycles to within the loop in progress: |difference| <= 1 at every minute of every fly in all six genotypes
+(checked). CS LD: 92% of 25 flies end net forward, mean +9.7 in 96 h (daily-mean J 0.10/h x 96 h = 9.7). CS DD: 80%,
+mean +10.0. Placement across the acts in PLANS (2026-11-03).
