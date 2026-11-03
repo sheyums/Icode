@@ -1,11 +1,11 @@
-function X = exportFigC7SI(c7Mat, H, outDir, options)
-%EXPORTFIGC7SI  SI figure: sleep-length memory seen at the observed AND hidden level (fig_R1_main.py; figS_C7_memory_with_hmm_check).
+function X = exportSleepMemoryHiddenFigure(c7Mat, H, outDir, options)
+%EXPORTSLEEPMEMORYHIDDENFIGURE  SI figure: sleep-length memory seen at the observed AND hidden level (fig_R1_main.py; figS_C7_memory_with_hmm_check).
 %
-%   X = exportFigC7SI(c7Mat, H, outDir)
-%   X = exportFigC7SI(c7Mat, H, outDir, NBoot=2000, SigFrom="ledger")
+%   X = exportSleepMemoryHiddenFigure(c7Mat, H, outDir)
+%   X = exportSleepMemoryHiddenFigure(c7Mat, H, outDir, NBoot=2000, SigFrom="ledger")
 %
-%   c7Mat   figC7.mat written by EXPORTFIGC7 (observed per-fly D, blocks with the null band, bins)
-%   H       PLANAROUTEHIDDEN table
+%   c7Mat   figC7.mat written by EXPORTSLEEPMEMORYFIGURE (observed per-fly D, blocks with the null band, bins)
+%   H       ROUTEDURATIONHIDDENNULL table
 %   (a) observed per-fly D (as Fig C7a). (b) hidden per-fly D: per fly the mean over 200 FFBS paths;
 %       grey = 2.5-97.5% of the mean over flies under the null (each fly's records simulated from its
 %       own fit, NSim times, decoded with 20 paths; sqw10_report.py); p = 2 min((1 + #>=)/(1 + N),
@@ -19,7 +19,14 @@ function X = exportFigC7SI(c7Mat, H, outDir, options)
 %   Writes figS_C7_hidden_blocks.csv, figS_C7_hidden_perfly.csv, figS_C7_bins.csv, figS_C7.mat and
 %   figS_C7_memory_with_hmm_check.png / .pdf.
 %
-%   See also EXPORTFIGC7, PLANAROUTEHIDDEN, ROUTEDURATIONHIDDEN.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       exportSleepMemoryFigure(dataRoot, jsonl, "figures");                     % observed level first
+%       H = routeDurationHiddenNull(dataRoot, jsonl, Cache="hidden_null.mat");   % ~1 h; cache it
+%       X = exportSleepMemoryHiddenFigure(fullfile("figures", "figC7.mat"), H, "figures");
+%
+%   See also EXPORTSLEEPMEMORYFIGURE, ROUTEDURATIONHIDDENNULL, ROUTEDURATIONHIDDEN.
 
 arguments
     c7Mat (1,1) string {mustBeFile}
@@ -29,7 +36,7 @@ arguments
     options.SigFrom (1,1) string {mustBeMember(options.SigFrom, ["ledger" "port"])} = "ledger"
 end
 if ~isfolder(outDir), mkdir(outDir); end
-C7 = load(c7Mat); ob = C7.blocks; S = planAStyle(); rs = RandStream('twister', 'Seed', 5);
+C7 = load(c7Mat); ob = C7.blocks; S = paperFigureStyle(); rs = RandStream('twister', 'Seed', 5);
 % ---- hidden blocks, 20k order (Holm family)
 hb = ob(:, {'genotype', 'phase', 'phaseName'});
 led = [24 0.041 -0.031 0.195 1; 25 -0.275 0.017 0.00499 0.0449; 29 -0.053 -0.010 0.559 1; 18 -0.144 -0.013 0.354 1; ...
@@ -70,7 +77,7 @@ pred = mean(F.Fdark, 'omitnan');
 X.hiddenBlocks = hb; X.hiddenPoints = hp; X.hiddenBins = bins; X.observedBins = C7.bins; X.landscapePred = pred;
 
 % ---- figure
-fh = planAFigure("Fig S C7", 7.0, 2.9); X.fig = fh;
+fh = newPaperFigure("Fig S C7", 7.0, 2.9); X.fig = fh;
 tl = tiledlayout(fh, 1, 14, 'TileSpacing', 'loose', 'Padding', 'compact');
 order = [1 2 5 6 7 3 4 8 9];
 nameS = containers.Map(["CS" "per0LD" "per0DD" "fumin" "sss"], ["CS" "\itper^0\rm LD" "\itper^0\rm DD" "\itfmn\rm" "\itsss\rm"]);

@@ -32,6 +32,11 @@ function R = sqwBatchHMM(input, options)
 %   The fits use MATLAB's random streams, so a fly can land on a different (higher or lower)
 %   optimum than the Python's 20b; compare likelihoods, not parameters.
 %
+%   Example (from the Icode\sqw folder):
+%       X = sqwBatchSymbols("D:\flies\CS");     % symbol files first (or pass the count folder directly)
+%       R = sqwBatchHMM(X.outDir);              % writes hmm_perfly.csv, hmm.mat, hmm_order.png there
+%       mean(R.perFly.bestK_T == 3)             % share of flies where BIC picks K = 3
+%
 %   See also SQWBATCHSYMBOLS, HMMFITPHASED, HMMBIC, LABELSTATES, PLOTSQWHMMORDER.
 
 arguments

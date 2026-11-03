@@ -1,8 +1,8 @@
-function R = checkSubset20b(dataRoot, csvFile, outFile, options)
-%CHECKSUBSET20B  Refit a subset of flies (20b, K = 3) and compare hidden round trips with cClaude's per-fly table.
+function R = checkHmmRefitSubset(dataRoot, csvFile, outFile, options)
+%CHECKHMMREFITSUBSET  Refit a subset of flies (20b, K = 3) and compare hidden round trips with cClaude's per-fly table.
 %
-%   R = checkSubset20b(dataRoot, csvFile, outFile)
-%   R = checkSubset20b(..., FliesPerGenotype=2, NPaths=200, Starts=20)
+%   R = checkHmmRefitSubset(dataRoot, csvFile, outFile)
+%   R = checkHmmRefitSubset(..., FliesPerGenotype=2, NPaths=200, Starts=20)
 %
 %   dataRoot  folder with CS, per0LD, per0DD, fumin, sss54 (the files cClaude used)
 %   csvFile   hmm_audit/roundtrip_per_fly_theta0.5.csv (20g, from cClaude's 20b fits)

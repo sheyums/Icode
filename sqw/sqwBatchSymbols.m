@@ -25,6 +25,11 @@ function X = sqwBatchSymbols(input, options)
 %   overall and per phase, r_f per phase, number of sleep bouts, Theta.
 %   X  struct: summary (table), symbols (cell, lab coding), phase (cell), files, outDir.
 %
+%   Example (from the Icode\sqw folder):
+%       X = sqwBatchSymbols("D:\flies\CS");                      % LD record; writes D:\flies\CS_symbols
+%       Xdd = sqwBatchSymbols("D:\flies\per0DD", LightDark=false);
+%       R = sqwBatchHMM(X.outDir);                                % HMMs on the symbol files
+%
 %   See also SQWBATCHHMM, SQWSYMBOLS, SQWTOLABCODE, LABCODETOSQW.
 
 arguments

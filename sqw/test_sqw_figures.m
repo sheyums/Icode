@@ -1,43 +1,43 @@
-function test_sqw_figA()
-%TEST_SQW_FIGA  Plan A figure exports (FIGURE_RECIPES K, Figs A1-A4): stress tests on synthetic inputs.
+function test_sqw_figures()
+%TEST_SQW_FIGURES  Plan A figure exports (FIGURE_RECIPES K, Figs A1-A4): stress tests on synthetic inputs.
 %
-%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_figA
+%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_figures
 %
-%    1. planAStyle: genotype order rule, colours exactly the recipe's hex, light before dark,
+%    1. paperFigureStyle: genotype order rule, colours exactly the recipe's hex, light before dark,
 %       one block per DD genotype
-%    2. planAFlyHMM with B = I and no missing minute: every posterior path IS the record, so
+%    2. hmmPosteriorFluxEPR with B = I and no missing minute: every posterior path IS the record, so
 %       J_hmm and EPR_hmm equal the counted J and EPR exactly
-%    3. planAFlyHMM with a noisy B: J_hmm (mean over paths) = the HMM's expected count current
+%    3. hmmPosteriorFluxEPR with a noisy B: J_hmm (mean over paths) = the HMM's expected count current
 %       given the data (forward-backward two-minute marginals), within 4 Monte Carlo SE
-%    4. exportFigA1: summary median = median of the exported points per block; fly-phases
+%    4. exportDirectionFluxFigure: summary median = median of the exported points per block; fly-phases
 %       without a reference absent; HMM median over non-degenerate flies only; wrong genotype
 %       order refused; figure and every axes white (theme pinned)
-%    5. exportFigA2: noiseless EPR = J^2 / L0 recovers L0 per genotype to 1e-12; only
+%    5. exportEprOnsagerFigure: noiseless EPR = J^2 / L0 recovers L0 per genotype to 1e-12; only
 %       reference + cycle + finite points enter; curves = s J^2
-%    6. exportFigA3: only cycle fly-phases; summary medians = point medians
-%    7. exportFigA4: medians from unclipped values (a value of 40 moves the median, is drawn
+%    6. exportLandscapeFigure: only cycle fly-phases; summary medians = point medians
+%    7. exportHiddenVsObservedFigure: medians from unclipped values (a value of 40 moves the median, is drawn
 %       at 5); use_180 and hasRef filters; CS DD read from the halves file; filled flags as
 %       the recipe; dBIC share above 0 computed, not hard-coded
-%    8. exportFigC10 (synthetic 20w-B file): the 24-h cosine amplitude and mean recovered exactly
-%    9. exportFigC12 (synthetic 20y file): dead flies dropped, no-cycle fly-phases out of the depth and J
+%    8. exportClockFaceFigure (synthetic 20w-B file): the 24-h cosine amplitude and mean recovered exactly
+%    9. exportKirSilencingFigure (synthetic 20y file): dead flies dropped, no-cycle fly-phases out of the depth and J
 %       panels (JSON nulls), ledger stars as given, medians = point medians
 %   10. G11 golden: routeDurationObserved records from the G2 trace and routeDurationD cases (exact)
 %   (test 4 also checks: no HMM markers by default, markers and the SI file name with HmmMarkers=true)
 
 here = fileparts(mfilename('fullpath'));
-assert(isequal(fileparts(which('exportFigA1')), here), 'Run from the sqw folder.');
+assert(isequal(fileparts(which('exportDirectionFluxFigure')), here), 'Run from the sqw folder.');
 nP = 0; nF = 0; tmp = tempname; mkdir(tmp); c0 = onCleanup(@() rmdir(tmp, 's'));
 fprintf('\nRunning Plan A figure-export tests...\n\n');
 
 %% 1. style
 try
-    S = planAStyle();
+    S = paperFigureStyle();
     hex = ["2a78d6" "6250d6" "1baf7a" "eda100" "eb6834" "e87ba4"];
     okC = all(arrayfun(@(k) isequal(round(S.col(k, :) * 255), sscanf(hex(k), '%2x%2x%2x')'), 1:6));
     okO = isequal(S.order, ["CS" "CSDD" "per0LD" "per0DD" "fumin" "sss"]);
     B = S.blocks; okB = height(B) == 10 && isequal(B.g', [1 1 2 3 3 4 5 5 6 6]) && ...
         isequal(B.phase', [1 2 1 1 2 1 1 2 1 2]) && isequal(B.filled', logical([0 1 1 0 1 1 0 1 0 1]));
-    [nP, nF] = rep(okC && okO && okB, nP, nF, 1, 'planAStyle: order rule, recipe colours, light before dark, DD one block', ...
+    [nP, nF] = rep(okC && okO && okB, nP, nF, 1, 'paperFigureStyle: order rule, recipe colours, light before dark, DD one block', ...
         sprintf('colours %d order %d blocks %d', okC, okO, okB));
 catch err, [nP, nF] = rep(false, nP, nF, 1, '', err.message); end
 
@@ -48,10 +48,10 @@ try
     P(:, :, 2) = [0.85 0.05 0.10; 0.10 0.85 0.05; 0.04 0.06 0.90];
     [~, y] = hmmSimulatePhased([1 1 1]' / 3, P, eye(3), ph, rs);
     f = struct('pi', [1 1 1]' / 3, 'P', P, 'B', eye(3), 'deg', false);
-    H = planAFlyHMM(y, ph, 2, f, NPaths=20, RandomSeed=3);
+    H = hmmPosteriorFluxEPR(y, ph, 2, f, NPaths=20, RandomSeed=3);
     Q = observableQuantities(y, ph, 2, P);
     d = max(abs([[H.J_hmm] - [Q.J], [H.EPR_hmm] - [Q.EPR]]));
-    [nP, nF] = rep(d < 1e-12, nP, nF, 2, sprintf('planAFlyHMM, B = I: J_hmm, EPR_hmm = counted values (max diff %.2g)', d), 'differ');
+    [nP, nF] = rep(d < 1e-12, nP, nF, 2, sprintf('hmmPosteriorFluxEPR, B = I: J_hmm, EPR_hmm = counted values (max diff %.2g)', d), 'differ');
 catch err, [nP, nF] = rep(false, nP, nF, 2, '', err.message); end
 
 %% 3. noisy B: path-mean J = exact posterior expected current
@@ -59,13 +59,13 @@ try
     Bn = [0.9 0.1 0; 0.15 0.85 0; 0 0 1];
     [~, y] = hmmSimulatePhased([1 1 1]' / 3, P, Bn, ph, rs);
     f = struct('pi', [1 1 1]' / 3, 'P', P, 'B', Bn, 'deg', false);
-    nPath = 400; H = planAFlyHMM(y, ph, 2, f, NPaths=nPath, RandomSeed=4);
+    nPath = 400; H = hmmPosteriorFluxEPR(y, ph, 2, f, NPaths=nPath, RandomSeed=4);
     Z = hmmFFBS(f.pi, P, Bn, y, ph, NPaths=nPath, RandomSeed=4);
     hrs = accumarray(ph, 1, [2 1]) / 60; Jp = zeros(nPath, 2);
     for k = 1:nPath, Jp(k, :) = jCycleCount(pairCounts(Z(k, :)', ph, 2), hrs)'; end
     Jex = exactCurrent(f.pi, P, Bn, y, ph, hrs);
     z = ([H.J_hmm] - Jex') ./ (std(Jp) / sqrt(nPath));
-    [nP, nF] = rep(all(abs(z) < 4), nP, nF, 3, sprintf('planAFlyHMM, noisy B: J_hmm vs exact posterior current, z = %s', mat2str(z, 3)), 'outside 4 SE');
+    [nP, nF] = rep(all(abs(z) < 4), nP, nF, 3, sprintf('hmmPosteriorFluxEPR, noisy B: J_hmm vs exact posterior current, z = %s', mat2str(z, 3)), 'outside 4 SE');
 catch err, [nP, nF] = rep(false, nP, nF, 3, '', err.message); end
 
 %% fake six-genotype data for 4-6
@@ -73,7 +73,7 @@ D = fakeD(RandStream('twister', 'Seed', 5));
 
 %% 4. Fig A1
 try
-    X = exportFigA1(D, fullfile(tmp, 'a1'));
+    X = exportDirectionFluxFigure(D, fullfile(tmp, 'a1'));
     ok = true; why = "";
     for b = 1:height(S.blocks)
         lab = erase(erase(erase(S.blocks.label(b), "\it"), "\rm"), "^");
@@ -90,16 +90,16 @@ try
     th = X.fig.Color; ax = findobj(X.fig, 'Type', 'axes');
     okTheme = isequal(th, [1 1 1]) && all(arrayfun(@(a) isequal(a.Color, [1 1 1]), ax));
     okTheme = okTheme && isempty(findobj(X.fig, 'Tag', 'hmm')); close(X.fig);
-    Xs = exportFigA1(D, fullfile(tmp, 'a1s'), HmmMarkers=true); okTheme = okTheme && numel(findobj(Xs.fig, 'Tag', 'hmm')) > 0 && isfile(fullfile(tmp, 'a1s', 'figA1_direction_flux_SI_hmm.png')); close(Xs.fig);
+    Xs = exportDirectionFluxFigure(D, fullfile(tmp, 'a1s'), HmmMarkers=true); okTheme = okTheme && numel(findobj(Xs.fig, 'Tag', 'hmm')) > 0 && isfile(fullfile(tmp, 'a1s', 'figA1_direction_flux_SI_hmm.png')); close(Xs.fig);
     D2 = D; D2.order = D.order([2 1 3:6]); refused = false;
-    try exportFigA1(D2, fullfile(tmp, 'a1b'), Plot=false); catch, refused = true; end
-    [nP, nF] = rep(ok && okTheme && refused, nP, nF, 4, 'exportFigA1: medians = point medians, refOK, HMM over non-degenerate, order, light theme', ...
+    try exportDirectionFluxFigure(D2, fullfile(tmp, 'a1b'), Plot=false); catch, refused = true; end
+    [nP, nF] = rep(ok && okTheme && refused, nP, nF, 4, 'exportDirectionFluxFigure: medians = point medians, refOK, HMM over non-degenerate, order, light theme', ...
         sprintf('%s theme %d order refused %d', why, okTheme, refused));
 catch err, [nP, nF] = rep(false, nP, nF, 4, '', err.message); end
 
 %% 5. Fig A2
 try
-    X = exportFigA2(D, fullfile(tmp, 'a2'), NBoot=50); close(X.fig);
+    X = exportEprOnsagerFigure(D, fullfile(tmp, 'a2'), NBoot=50); close(X.fig);
     L0 = [0.27 0.26 0.29 0.35 0.24 0.15];
     dL = max(abs(X.L.L' - L0));
     okPts = true;
@@ -109,12 +109,12 @@ try
         c = X.curves(X.curves.genotype == S.order(k), :);
         okPts = okPts && max(abs(c.EPR_fit - c.J .^ 2 / L0(k))) < 1e-9;
     end
-    [nP, nF] = rep(dL < 1e-12 && okPts, nP, nF, 5, sprintf('exportFigA2: L recovered (max err %.2g), point filter, curves', dL), 'mismatch');
+    [nP, nF] = rep(dL < 1e-12 && okPts, nP, nF, 5, sprintf('exportEprOnsagerFigure: L recovered (max err %.2g), point filter, curves', dL), 'mismatch');
 catch err, [nP, nF] = rep(false, nP, nF, 5, '', err.message); end
 
 %% 6. Fig A3
 try
-    X = exportFigA3(D, fullfile(tmp, 'a3')); close(X.fig);
+    X = exportLandscapeFigure(D, fullfile(tmp, 'a3')); close(X.fig);
     ok = true;
     for b = 1:height(S.blocks)
         lab = erase(erase(erase(S.blocks.label(b), "\it"), "\rm"), "^");
@@ -123,14 +123,14 @@ try
         r = X.summary(X.summary.quantity == "E31" & X.summary.label == lab, :);
         ok = ok && height(pts) == height(T) && abs(r.median - median(T.E31)) < 1e-12;
     end
-    [nP, nF] = rep(ok, nP, nF, 6, 'exportFigA3: cycle fly-phases only, medians = point medians', 'mismatch');
+    [nP, nF] = rep(ok, nP, nF, 6, 'exportLandscapeFigure: cycle fly-phases only, medians = point medians', 'mismatch');
 catch err, [nP, nF] = rep(false, nP, nF, 6, '', err.message); end
 
 %% 7. Fig A4
 try
     rs = RandStream('twister', 'Seed', 7); pf = fullfile(tmp, 'pf'); mkdir(pf);
     [L, truth] = fakeA4(rs, pf);
-    X = exportFigA4(L, pf, fullfile(tmp, 'a4')); close(X.fig);
+    X = exportHiddenVsObservedFigure(L, pf, fullfile(tmp, 'a4')); close(X.fig);
     r = X.rows;
     okB = abs(r.median(r.panel == "b" & r.group == "CS" & r.what == "R_mem") - truth.RmemMedCS) < 1e-12;
     okA = abs(r.fracAbove0or1(r.panel == "a" & r.group == "fumin") - truth.fracFumin) < 1e-12;
@@ -141,7 +141,7 @@ try
     fc = r.group(r.panel == "c" & r.filled)'; fd = r.group(r.panel == "d" & r.filled)';
     okF = isequal(sort(fc), sort(["per0 DD" "fmn dark"])) && isequal(sort(fd), sort(["CS DD" "per0 DD"]));
     [nP, nF] = rep(okA && okB && okC && okD && okF, nP, nF, 7, ...
-        'exportFigA4: unclipped medians, dBIC share, halves file, use_180 / hasRef, filled flags', ...
+        'exportHiddenVsObservedFigure: unclipped medians, dBIC share, halves file, use_180 / hasRef, filled flags', ...
         sprintf('a %d b %d c %d d %d filled %d', okA, okB, okC, okD, okF));
 catch err, [nP, nF] = rep(false, nP, nF, 7, '', err.message); end
 
@@ -154,9 +154,9 @@ try
         R.(G(k)) = struct('AJ', amp0(k), 'phJ', 2 * 3 * k + 1, 'pJ', 0.01 * k, 'nullJ95', 0.05, 'J', J, 'n', 25);
     end
     jf = fullfile(tmp, 'w.json'); fid = fopen(jf, 'w'); fprintf(fid, '%s', jsonencode(struct('real', R))); fclose(fid);
-    X = exportFigC10(jf, fullfile(tmp, 'c10')); close(X.fig);
+    X = exportClockFaceFigure(jf, fullfile(tmp, 'c10')); close(X.fig);
     [nP, nF] = rep(X.check < 1e-12 && all(abs(X.amplitude.mean - 0.1) < 1e-12), nP, nF, 8, ...
-        sprintf('exportFigC10: cosine amplitude and mean recovered (max err %.2g)', X.check), 'mismatch');
+        sprintf('exportClockFaceFigure: cosine amplitude and mean recovered (max err %.2g)', X.check), 'mismatch');
 catch err, [nP, nF] = rep(false, nP, nF, 8, '', err.message); end
 
 %% 9. Fig C12 on a synthetic 20y file: dead dropped, no-cycle excluded from depth and J, nulls, stars
@@ -174,7 +174,7 @@ try
         end
     end
     jf = fullfile(tmp, 'y.json'); fid = fopen(jf, 'w'); fprintf(fid, '%s', jsonencode(Y)); fclose(fid);
-    X = exportFigC12(jf, fullfile(tmp, 'c12')); close(X.fig); s = X.summary;
+    X = exportKirSilencingFigure(jf, fullfile(tmp, 'c12')); close(X.fig); s = X.summary;
     okN = s.n(s.quantity == "sleep" & s.group == "dfb" & s.phase == "dark") == 5 && ...
         s.n(s.quantity == "depth" & s.group == "vnc" & s.phase == "dark") == 5 && ...
         s.n(s.quantity == "J" & s.group == "vnc" & s.phase == "light") == 6;
@@ -182,7 +182,7 @@ try
         sort(["dfblight" "vnclight" "dfbdark" "vncdark"])) && ~any(s.ledgerHolmStar(s.quantity == "J"));
     v = X.points.depth(X.points.group == "vnc" & X.points.phase == "light" & X.points.cycle);
     okM = abs(s.median(s.quantity == "depth" & s.group == "vnc" & s.phase == "light") - median(v)) < 1e-12;
-    [nP, nF] = rep(okN && okS && okM, nP, nF, 9, 'exportFigC12: dead dropped, no-cycle excluded, nulls, stars, medians', ...
+    [nP, nF] = rep(okN && okS && okM, nP, nF, 9, 'exportKirSilencingFigure: dead dropped, no-cycle excluded, nulls, stars, medians', ...
         sprintf('n %d stars %d median %d', okN, okS, okM));
 catch err, [nP, nF] = rep(false, nP, nF, 9, '', err.message); end
 
@@ -251,7 +251,7 @@ J = jCycleCount(N, hrs);
 end
 
 function D = fakeD(rs)
-S = planAStyle(); D.order = S.order; L0 = [0.27 0.26 0.29 0.35 0.24 0.15];
+S = paperFigureStyle(); D.order = S.order; L0 = [0.27 0.26 0.29 0.35 0.24 0.15];
 for k = 1:6
     nFly = 8 + k; nPh = 1 + ~S.dd(k); rows = cell(nFly, 1);
     for i = 1:nFly

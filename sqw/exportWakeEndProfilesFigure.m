@@ -1,8 +1,8 @@
-function X = exportFigC13Profiles(dataRoot, refMat, outDir, options)
-%EXPORTFIGC13PROFILES  C13 / PRESPEC 21 descriptive figure: 1-s activity at the two ends of wake bouts (fig_planB_21.py).
+function X = exportWakeEndProfilesFigure(dataRoot, refMat, outDir, options)
+%EXPORTWAKEENDPROFILESFIGURE  C13 / PRESPEC 21 descriptive figure: 1-s activity at the two ends of wake bouts (fig_planB_21.py).
 %
-%   X = exportFigC13Profiles(dataRoot, refMat, outDir)
-%   X = exportFigC13Profiles(dataRoot, refMat, outDir, NBoot=2000, RandomSeed=2026, Reference="")
+%   X = exportWakeEndProfilesFigure(dataRoot, refMat, outDir)
+%   X = exportWakeEndProfilesFigure(dataRoot, refMat, outDir, NBoot=2000, RandomSeed=2026, Reference="")
 %
 %   dataRoot  count files per genotype: per0DD, CSDD, CS, per0LD, fumin, sss (all 57)
 %   refMat    analysis_20r/per0DD_bouts_20r_replication.mat: per0 DD traces are cut to its
@@ -16,6 +16,9 @@ function X = exportFigC13Profiles(dataRoot, refMat, outDir, options)
 %   Figures: fig_planB21_profiles_primary (per0 DD, CS DD) and _supp (CS, per0 LD, fumin, sss).
 %   Reference: hmm_audit/fig_planB21_profiles.json; if given, X.check compares n, m_start, m_end
 %   and d (deterministic) with the Python's.
+%
+%   Example (from the Icode\sqw folder):
+%       X = exportWakeEndProfilesFigure("D:\flies", fullfile("..", "analysis_20r", "per0DD_bouts_20r_replication.mat"), "figures");
 %
 %   See also SLEEPBOUTS, READCOUNTS.
 

@@ -31,6 +31,10 @@ function G = sqwMemoryGroup(files, genotype, options)
 %   Only the excess E over the fly's own null is interpretable; raw d3/d2 is
 %   estimator bias (FINDINGS / ledger 20p).
 %
+%   Example (from the Icode\sqw folder):
+%       G = sqwMemoryGroup("D:\flies\CS", "CS", OutDir="perfly");   % writes perfly\CS_memory_perfly.csv
+%       disp(G.summary)
+%
 %   See also SQWMEMORYFLY, SQWTURGROUP, HOLMADJUST.
 
 arguments

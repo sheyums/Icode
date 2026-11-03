@@ -1,11 +1,11 @@
-function L = planALikelihoods(dataRoot, jsonlFile, options)
-%PLANALIKELIHOODS  Per-fly log-likelihoods of PRESPEC 20n and 20o (sqw13.py, sqw14.py) for Fig A4 (a, b).
+function L = chainVsHmmLikelihoods(dataRoot, jsonlFile, options)
+%CHAINVSHMMLIKELIHOODS  Per-fly log-likelihoods of PRESPEC 20n and 20o (sqw13.py, sqw14.py) for Fig A4 (a, b).
 %
-%   L = planALikelihoods(dataRoot, jsonlFile)
-%   L = planALikelihoods(dataRoot, jsonlFile, Genotypes=["CS" "fumin"], Starts=20, Cache="")
+%   L = chainVsHmmLikelihoods(dataRoot, jsonlFile)
+%   L = chainVsHmmLikelihoods(dataRoot, jsonlFile, Genotypes=["CS" "fumin"], Starts=20, Cache="")
 %
 %   dataRoot   one subfolder of count files per genotype (the 20b fits are indexed
-%              in each folder's sorted file list, READSTORED20BFITS)
+%              in each folder's sorted file list, READSTOREDHMMFITS)
 %   jsonlFile  hmm_audit/sqw20b_fit2_theta0.5.jsonl
 %   Cache      .mat file: loaded if it exists, written otherwise
 %
@@ -22,7 +22,13 @@ function L = planALikelihoods(dataRoot, jsonlFile, options)
 %   HMM_6 comes from random starts drawn by MATLAB's stream, not numpy's: it can
 %   land on a different (legitimately higher or lower) optimum than sqw14.py.
 %
-%   See also EXPORTFIGA4, CHAINFITPHASED, CHAIN2FITPHASED, HMMFITPHASED.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       L = chainVsHmmLikelihoods(dataRoot, jsonl, Genotypes=["CS" "fumin"], Cache="likelihoods.mat");
+%       mean(L.dBIC_T > 0)   % share of flies where BIC prefers the HMM
+%
+%   See also EXPORTHIDDENVSOBSERVEDFIGURE, CHAINFITPHASED, CHAIN2FITPHASED, HMMFITPHASED.
 
 arguments
     dataRoot (1,1) string {mustBeFolder}
@@ -32,18 +38,18 @@ arguments
     options.Cache (1,1) string = ""
 end
 if strlength(options.Cache) > 0 && isfile(options.Cache)
-    S = load(options.Cache, 'L'); L = S.L; fprintf('planALikelihoods: loaded %s\n', options.Cache); return
+    S = load(options.Cache, 'L'); L = S.L; fprintf('chainVsHmmLikelihoods: loaded %s\n', options.Cache); return
 end
-fits = readStored20bFits(jsonlFile); L = table(); nSt = options.Starts;
+fits = readStoredHmmFits(jsonlFile); L = table(); nSt = options.Starts;
 for k = 1:numel(options.Genotypes)
     g = options.Genotypes(k); files = sqwListFiles(fullfile(dataRoot, g));
     Fg = fits([fits.g] == g);
-    assert(numel(Fg) == numel(files), 'planALikelihoods:fits', '%s: %d fits, %d files.', g, numel(Fg), numel(files));
+    assert(numel(Fg) == numel(files), 'chainVsHmmLikelihoods:fits', '%s: %d fits, %d files.', g, numel(Fg), numel(files));
     rows = cell(numel(files), 1); t0 = tic;
     parfor i = 1:numel(files)
         f = Fg([Fg.fly0] == i - 1);
         [y, ph] = sqwFlyInput(files(i), true);
-        assert(numel(y) == f.T, 'planALikelihoods:T', '%s fly %d: %d minutes, fit %d.', g, i - 1, numel(y), f.T);
+        assert(numel(y) == f.T, 'chainVsHmmLikelihoods:T', '%s fly %d: %d minutes, fit %d.', g, i - 1, numel(y), f.T);
         ph6 = minutePhases(numel(y), Scheme="6h");
         r = struct();
         r.MC1_12 = chainFitPhased(y, ph, 2);
@@ -57,7 +63,7 @@ for k = 1:numel(options.Genotypes)
             'VariableNames', {'genotype', 'fly0', 'file', 'T', 'deg'}), struct2table(r)];
     end
     L = [L; vertcat(rows{:})]; %#ok<AGROW>
-    fprintf('planALikelihoods: %-6s %2d flies, %.0f s\n', g, numel(files), toc(t0));
+    fprintf('chainVsHmmLikelihoods: %-6s %2d flies, %.0f s\n', g, numel(files), toc(t0));
 end
 lnT = log(L.T);
 L.dBIC_T = (-2 * L.MC1_12 + 14 * lnT) - (-2 * L.HMM_12 + 20 * lnT);

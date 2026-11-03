@@ -31,6 +31,10 @@ function G = sqwTURGroup(files, genotype, options)
 %     flies    the SQWTURFLY structs
 %   Writes <genotype>_tur_perfly.csv and _tur_summary.csv to OutDir.
 %
+%   Example (from the Icode\sqw folder):
+%       G = sqwTURGroup("D:\flies\CS", "CS", OutDir="perfly");      % writes perfly\CS_tur_perfly.csv
+%       disp(G.summary)
+%
 %   See also SQWTURFLY, SQWMEMORYGROUP, HOLMADJUST.
 
 arguments

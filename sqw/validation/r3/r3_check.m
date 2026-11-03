@@ -1,7 +1,16 @@
-% MATLAB counterpart of sqw_r3.py: rule-of-three medians (ledger amendment 2026-11-02)
+% R3_CHECK  MATLAB counterpart of sqw_r3.py: the rule-of-three medians of the ledger amendment (2026-11-02).
+%
+%   A script, not a function. It expects, in the folder it lives in (copy it to a scratch folder first):
+%     out_figA\planAData_cache.mat   a BUILDPERFLYDATA cache (old convention or new: chain P and counts N
+%                                    are read from it, the values are recomputed here)
+%     data_cc\<genotype>\            the count files (to match the stored HMM fits by file name)
+%   Run from the Icode\sqw folder:   addpath(<scratch folder>); r3_check
+%   Writes r3_port.csv (one row per fly x phase with a Q/W reference: old and rule-of-three A, EPR,
+%   landscape, hidden model EPR and A) and prints the median table of the amendment, the hidden
+%   no-cycle fly-phases and the F_SW / F_WS medians for fumin and sss.
 assert(isequal(fileparts(which('modelEnergeticsR3')), pwd), 'run from Icode/sqw');
 sp = fileparts(mfilename('fullpath')); C = load(fullfile(sp, 'out_figA', 'planAData_cache.mat')); f = fieldnames(C); D = C.(f{1});
-fits = readStored20bFits(fullfile(pwd, '..', 'hmm_audit', 'sqw20b_fit2_theta0.5.jsonl'));
+fits = readStoredHmmFits(fullfile(pwd, '..', 'hmm_audit', 'sqw20b_fit2_theta0.5.jsonl'));
 fitFolder = ["CS" "" "per0LD" "per0DD" "fumin" "sss"]; rows = {};
 c = parcluster('Processes'); c.NumWorkers = 8; delete(gcp('nocreate')); parpool(c, 8);
 for k = 1:6

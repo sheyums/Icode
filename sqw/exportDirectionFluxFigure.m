@@ -1,10 +1,10 @@
-function X = exportFigA1(D, outDir, options)
-%EXPORTFIGA1  Fig A1, direction and flux at the observable level (FIGURE_RECIPES K1; fig_planA.py): data and figure.
+function X = exportDirectionFluxFigure(D, outDir, options)
+%EXPORTDIRECTIONFLUXFIGURE  Fig A1, direction and flux at the observable level (FIGURE_RECIPES K1; fig_planA.py): data and figure.
 %
-%   X = exportFigA1(D, outDir)
-%   X = exportFigA1(D, outDir, RandomSeed=20, Plot=true, HmmMarkers=false)
+%   X = exportDirectionFluxFigure(D, outDir)
+%   X = exportDirectionFluxFigure(D, outDir, RandomSeed=20, Plot=true, HmmMarkers=false)
 %
-%   D       PLANADATA output (six genotypes in the paper's order)
+%   D       BUILDPERFLYDATA output (six genotypes in the paper's order)
 %   outDir  folder for figA1_points.csv, figA1_summary.csv, figA1.mat and the
 %           figure (figA1_direction_flux_observable.png / .pdf; with HmmMarkers,
 %           figA1_direction_flux_SI_hmm.png / .pdf)
@@ -14,7 +14,7 @@ function X = exportFigA1(D, outDir, options)
 %   The main text is observed-level only (Sheyum, 2026-11-01; FIGURE_RECIPES L note), so
 %   the figure has no HMM markers by default. HmmMarkers=true draws the SI version: in
 %   (b) and (c) a grey triangle beside each block is the median over NON-DEGENERATE flies
-%   of the HMM's value, averaged over 200 FFBS paths per fly (PLANAFLYHMM): "HMM
+%   of the HMM's value, averaged over 200 FFBS paths per fly (HMMPOSTERIORFLUXEPR): "HMM
 %   (model-based estimate), median" -- not a bound. The summary carries those medians
 %   (nHmm, hmmMedian) either way.
 %   Each block: points (light open, dark / DD filled), median, fly-bootstrap 95% CI.
@@ -23,7 +23,14 @@ function X = exportFigA1(D, outDir, options)
 %      panel x block: n, median, CI, nHmm, hmmMedian), fig (handle or empty)
 %   Check (recipe): CS dark c_obs +0.147, J +0.167, EPR 0.116 (20s-A ledger).
 %
-%   See also PLANADATA, PLANASTRIP, EXPORTFIGA2.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       D = buildPerFlyData(dataRoot, jsonl, Cache="perfly_cache.mat");
+%       X = exportDirectionFluxFigure(D, "figures");
+%       Xsi = exportDirectionFluxFigure(D, "figures", HmmMarkers=true);   % SI version
+%
+%   See also BUILDPERFLYDATA, PLOTSTRIPPANEL, EXPORTEPRONSAGERFIGURE.
 
 arguments
     D (1,1) struct
@@ -33,8 +40,8 @@ arguments
     options.HmmMarkers (1,1) logical = false
 end
 if ~isfolder(outDir), mkdir(outDir); end
-S = planAStyle(); B = S.blocks; nB = height(B);
-assert(isequal(D.order, S.order), 'exportFigA1:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
+S = paperFigureStyle(); B = S.blocks; nB = height(B);
+assert(isequal(D.order, S.order), 'exportDirectionFluxFigure:order', 'D must hold the genotypes in the order %s.', strjoin(S.order));
 
 P = table(); v = struct('c_obs', {cell(nB, 1)}, 'J', {cell(nB, 1)}, 'EPR', {cell(nB, 1)});
 h = struct('J', {cell(nB, 1)}, 'EPR', {cell(nB, 1)});
@@ -53,16 +60,16 @@ P.block = tex2plain(P.block);
 rs = RandStream('twister', 'Seed', options.RandomSeed);
 X.fig = [];
 if options.Plot
-    fh = planAFigure("Fig A1", 7.0, 6.6); X.fig = fh;
+    fh = newPaperFigure("Fig A1", 7.0, 6.6); X.fig = fh;
     tl = tiledlayout(fh, 3, 1, 'TileSpacing', 'compact', 'Padding', 'compact'); ax = gobjects(3, 1);
     for k = 1:3, ax(k) = nexttile(tl); end
 else
     ax = gobjects(3, 1);
     fh = figure('Visible', 'off'); for k = 1:3, ax(k) = axes(fh); end   % summaries only
 end
-T1 = planAStrip(ax(1), S, v.c_obs, Stream=rs);
-T2 = planAStrip(ax(2), S, v.J, Hmm=h.J, Stream=rs);
-T3 = planAStrip(ax(3), S, v.EPR, Hmm=h.EPR, Stream=rs, Zero=false);
+T1 = plotStripPanel(ax(1), S, v.c_obs, Stream=rs);
+T2 = plotStripPanel(ax(2), S, v.J, Hmm=h.J, Stream=rs);
+T3 = plotStripPanel(ax(3), S, v.EPR, Hmm=h.EPR, Stream=rs, Zero=false);
 X.summary = [addPanel(T1, "c_obs"); addPanel(T2, "J"); addPanel(T3, "EPR")];
 % sss in (a, b): the median is 0 (many flies have no qualifying transitions, value exactly 0), so the
 % per-fly MEAN with a fly-bootstrap 95% CI is drawn too, left of the median (2026-11-02 recipe note)

@@ -1,8 +1,8 @@
-function H = planARouteHidden(dataRoot, jsonlFile, options)
-%PLANAROUTEHIDDEN  Hidden-level 20k inputs for R1 (sqw10.py): per-fly hidden D, its simulation null, and path records.
+function H = routeDurationHiddenNull(dataRoot, jsonlFile, options)
+%ROUTEDURATIONHIDDENNULL  Hidden-level 20k inputs for R1 (sqw10.py): per-fly hidden D, its simulation null, and path records.
 %
-%   H = planARouteHidden(dataRoot, jsonlFile)
-%   H = planARouteHidden(dataRoot, jsonlFile, NPaths=200, NSim=400, NPathSim=20, NRec=20, Cache="", Genotypes=...)
+%   H = routeDurationHiddenNull(dataRoot, jsonlFile)
+%   H = routeDurationHiddenNull(dataRoot, jsonlFile, NPaths=200, NSim=400, NPathSim=20, NRec=20, Cache="", Genotypes=...)
 %
 %   dataRoot   count files per genotype (CS, fumin, per0LD, per0DD, sss = all 57); jsonlFile the stored
 %              20b fits. Flies with a NON-degenerate fit, as sqw10.py.
@@ -15,7 +15,13 @@ function H = planARouteHidden(dataRoot, jsonlFile, options)
 %     Fdark     (F_SW + 1)/2 of the fit's last-phase matrix if it has a cycle (sqw11.py), else NaN
 %   H  table, one row per fly. FFBS draws come from MATLAB streams: compare statistically.
 %
-%   See also ROUTEDURATIONHIDDEN, HMMFFBS, EXPORTFIGC7SI.
+%   Example (from the Icode\sqw folder):
+%       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       H = routeDurationHiddenNull(dataRoot, jsonl, Cache="hidden_null.mat");   % ~1 h on 8 workers
+%       H(H.genotype == "CS", :)
+%
+%   See also ROUTEDURATIONHIDDEN, HMMFFBS, EXPORTSLEEPMEMORYHIDDENFIGURE.
 
 arguments
     dataRoot (1,1) string {mustBeFolder}
@@ -29,9 +35,9 @@ arguments
     options.MaxFlies (1,1) double = Inf
 end
 if strlength(options.Cache) > 0 && isfile(options.Cache)
-    C = load(options.Cache, 'H'); H = C.H; fprintf('planARouteHidden: loaded %s\n', options.Cache); return
+    C = load(options.Cache, 'H'); H = C.H; fprintf('routeDurationHiddenNull: loaded %s\n', options.Cache); return
 end
-fits = readStored20bFits(jsonlFile); H = table(); o = options;
+fits = readStoredHmmFits(jsonlFile); H = table(); o = options;
 for gk = 1:numel(o.Genotypes)
     g = o.Genotypes(gk); files = sqwListFiles(fullfile(dataRoot, g)); Fg = fits([fits.g] == g);
     use = find(~arrayfun(@(i) Fg([Fg.fly0] == i - 1).deg, (1:numel(files))'));
@@ -56,7 +62,7 @@ for gk = 1:numel(o.Genotypes)
             'VariableNames', {'genotype', 'fly0', 'file', 'nP', 'hidD', 'sims', 'records', 'Fdark'});
     end
     H = [H; vertcat(rows{:})]; %#ok<AGROW>
-    fprintf('planARouteHidden: %-6s %d flies, %.0f s\n', g, numel(use), toc(t0));
+    fprintf('routeDurationHiddenNull: %-6s %d flies, %.0f s\n', g, numel(use), toc(t0));
 end
 if strlength(options.Cache) > 0, save(options.Cache, 'H', '-v7.3'); end
 end

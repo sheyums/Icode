@@ -1,9 +1,9 @@
-function X = exportFig1Emissions(jsonlFile, outDir)
-%EXPORTFIG1EMISSIONS  Fig 1 panel: the HMM's hidden states coincide with the observed symbols (fig_emission.py; note 2026-11-02).
+function X = exportHmmEmissionsFigure(jsonlFile, outDir)
+%EXPORTHMMEMISSIONSFIGURE  Fig 1 panel: the HMM's hidden states coincide with the observed symbols (fig_emission.py; note 2026-11-02).
 %
-%   X = exportFig1Emissions(jsonlFile, outDir)
+%   X = exportHmmEmissionsFigure(jsonlFile, outDir)
 %
-%   jsonlFile  hmm_audit/sqw20b_fit2_theta0.5.jsonl (READSTORED20BFITS)
+%   jsonlFile  hmm_audit/sqw20b_fit2_theta0.5.jsonl (READSTOREDHMMFITS)
 %   Per genotype (CS, per0 LD, per0 DD, fumin, sss): the element-wise median over flies with a
 %   NON-DEGENERATE fit of the labelled K = 3 emission matrix B3 (rows H1, H2, H3 = quiet / active /
 %   sleep-like hidden state; columns observed Q, W, S), greyscale 0-1 with values printed.
@@ -11,14 +11,18 @@ function X = exportFig1Emissions(jsonlFile, outDir)
 %   fig1_hmm_emissions.png / .pdf.
 %   Check (recipe): diagonals Q 0.80-0.94, W 0.91-0.96, S 1.00.
 %
-%   See also READSTORED20BFITS.
+%   Example (from the Icode\sqw folder):
+%       jsonl = fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl");
+%       X = exportHmmEmissionsFigure(jsonl, "figures"); disp(X.table)
+%
+%   See also READSTOREDHMMFITS.
 
 arguments
     jsonlFile (1,1) string {mustBeFile}
     outDir (1,1) string
 end
 if ~isfolder(outDir), mkdir(outDir); end
-F = readStored20bFits(jsonlFile); S = planAStyle();
+F = readStoredHmmFits(jsonlFile); S = paperFigureStyle();
 G = ["CS" "per0LD" "per0DD" "fumin" "sss"]; nm = ["CS" "\itper^0\rm LD" "\itper^0\rm DD" "\itfmn\rm" "\itsss\rm"];
 X.M = zeros(3, 3, 5); X.n = zeros(1, 5); T = table();
 for k = 1:5
@@ -28,7 +32,7 @@ for k = 1:5
         'VariableNames', {'genotype', 'n', 'state', 'Q', 'W', 'S'})]; %#ok<AGROW>
 end
 X.table = T; X.diag = [squeeze(X.M(1, 1, :)) squeeze(X.M(2, 2, :)) squeeze(X.M(3, 3, :))];
-fh = planAFigure("Fig 1 emissions", 7.0, 1.9); X.fig = fh;
+fh = newPaperFigure("Fig 1 emissions", 7.0, 1.9); X.fig = fh;
 tl = tiledlayout(fh, 1, 5, 'TileSpacing', 'compact', 'Padding', 'compact');
 for k = 1:5
     ax = nexttile(tl); M = X.M(:, :, k);

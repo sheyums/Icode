@@ -1,8 +1,8 @@
-function X = exportFigC12(jsonFile, outDir, options)
-%EXPORTFIGC12  Fig C12, circuit silencing with Kir2.1 (FIGURE_RECIPES section L; fig_kir.py; PRESPEC 20y).
+function X = exportKirSilencingFigure(jsonFile, outDir, options)
+%EXPORTKIRSILENCINGFIGURE  Fig C12, circuit silencing with Kir2.1 (FIGURE_RECIPES section L; fig_kir.py; PRESPEC 20y).
 %
-%   X = exportFigC12(jsonFile, outDir)
-%   X = exportFigC12(jsonFile, outDir, RandomSeed=1)
+%   X = exportKirSilencingFigure(jsonFile, outDir)
+%   X = exportKirSilencingFigure(jsonFile, outDir, RandomSeed=1)
 %
 %   jsonFile  hmm_audit/y_kir.json (one record per fly: g = empty / dfb / vnc, dead, and per phase
 %             (light, dark) in 'main': sleep, P (QS, SW, ...), E31, J, ok (Q/W reference), cycle)
@@ -18,7 +18,10 @@ function X = exportFigC12(jsonFile, outDir, options)
 %   (as fig_kir.py), not recomputed. Depth panel ylim -0.6..3.3; values above are counted and named
 %   on the panel rather than hard-coded.
 %
-%   See also PLANASTYLE, PLANAFIGURE, MEDIANCI.
+%   Example (from the Icode\sqw folder):
+%       X = exportKirSilencingFigure(fullfile("..", "hmm_audit", "y_kir.json"), "figures");
+%
+%   See also PAPERFIGURESTYLE, NEWPAPERFIGURE, MEDIANCI.
 
 arguments
     jsonFile (1,1) string {mustBeFile}
@@ -47,9 +50,9 @@ for i = 1:numel(Y)
     end
 end
 rs = RandStream('twister', 'Seed', options.RandomSeed);
-fh = planAFigure("Fig C12", 7.2, 2.9); X.fig = fh;
+fh = newPaperFigure("Fig C12", 7.2, 2.9); X.fig = fh;
 tl = tiledlayout(fh, 1, 5, 'TileSpacing', 'compact', 'Padding', 'compact');
-summ = table(); S = planAStyle(); hl = gobjects(3, 1);
+summ = table(); S = paperFigureStyle(); hl = gobjects(3, 1);
 for a = 1:5
     key = P{a, 1}; ax = nexttile(tl); hold(ax, 'on'); x0 = 0; ticks = zeros(1, 2);
     for p = 1:2

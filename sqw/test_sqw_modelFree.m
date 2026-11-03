@@ -1,7 +1,7 @@
-function test_sqw_stage3()
-%TEST_SQW_STAGE3  Stage 3 of the sqw_ref port: the model-free probes, against golden G12 and by stress tests.
+function test_sqw_modelFree()
+%TEST_SQW_MODELFREE  Stage 3 of the sqw_ref port: the model-free probes, against golden G12 and by stress tests.
 %
-%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_stage3
+%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_modelFree
 %
 %   Golden (hmm_audit/golden/G12_planA.json):
 %    1. chain2FitPhased log-likelihood (1e-6)

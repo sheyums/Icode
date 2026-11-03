@@ -1,7 +1,7 @@
-function test_sqw_stage2()
-%TEST_SQW_STAGE2  Stage 2 of the sqw_ref port: the HMM bracket, against the golden files and by stress tests.
+function test_sqw_hmm()
+%TEST_SQW_HMM  Stage 2 of the sqw_ref port: the HMM bracket, against the golden files and by stress tests.
 %
-%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_stage2
+%   Run by name from the sqw folder:   cd <Icode>/sqw; test_sqw_hmm
 %
 %   Golden (hmm_audit/golden):
 %    1. G3  hmmBic parameter counts (9 cases) and BIC value
@@ -213,7 +213,7 @@ try
 catch err, [nP, nF] = rep(false, nP, nF, 12, '', err.message); end
 
 fprintf('\n%d passed, %d failed\n', nP, nF);
-if nF > 0, error('test_sqw_stage2:failed', '%d test(s) failed', nF); end
+if nF > 0, error('test_sqw_hmm:failed', '%d test(s) failed', nF); end
 end
 
 % ----------------------------------------------------------------------- helpers

@@ -1,10 +1,10 @@
-function X = figC8_wake_hazard(outDir, nullReps)
-% FIGC8_WAKE_HAZARD  Fig C8: wake-bout hazard of per0 DD and CS DD at the four fixed bin counts
+function X = wakeHazardFigure(outDir, nullReps)
+% WAKEHAZARDFIGURE  Fig C8: wake-bout hazard of per0 DD and CS DD at the four fixed bin counts
 % (PLANS C8; ledger entries "20r replication: per0 DD wake hazard rise at the four fixed bin counts"
 % and "20r-A: CS DD wake hazard rise (blind)"). Run BY NAME from the Icode folder.
 %
-%   X = figC8_wake_hazard(outDir)
-%   X = figC8_wake_hazard(outDir, nullReps)     % default 999, as the ledgered runs
+%   X = wakeHazardFigure(outDir)
+%   X = wakeHazardFigure(outDir, nullReps)     % default 999, as the ledgered runs
 %
 % Recomputes, with the settings of RISE_TEST_20R unchanged (null = FitHyperexponentialMLE
 % MaxComponents 2, discrete, SamplingInterval 1, RandomSeed 1, its K = 2 SurvivalHandle;

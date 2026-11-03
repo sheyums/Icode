@@ -1,14 +1,14 @@
-function S = readStored20bFits(jsonlFile)
-%READSTORED20BFITS  cClaude's stored 20b HMM fits (hmm_audit/sqw20b_fit2_theta0.5.jsonl) as MATLAB structs.
+function S = readStoredHmmFits(jsonlFile)
+%READSTOREDHMMFITS  cClaude's stored 20b HMM fits (hmm_audit/sqw20b_fit2_theta0.5.jsonl) as MATLAB structs.
 %
-%   S = readStored20bFits(jsonlFile)
+%   S = readStoredHmmFits(jsonlFile)
 %
 %   S  struct array, one per fly: g (genotype), fly0 (0-based index in sorted file
 %      order, so the file is SQWLISTFILES(folder)(fly0 + 1)), T, deg, and the
 %      LABELLED K = 3 fit as pi (3 x 1), P (3 x 3 x nP), B (3 x 3), state order
 %      H1, H2, H3, symbols Q, W, S. Raw fits per K are in F (as jsondecode gives them).
 %
-%   See also CHECK20BEXACT, SQWMEMORYGROUP, SQWTURGROUP.
+%   See also CHECKHMMLIKELIHOODEXACT, SQWMEMORYGROUP, SQWTURGROUP.
 
 L = readlines(jsonlFile); L = L(strlength(L) > 0);
 S = struct('g', {}, 'fly0', {}, 'T', {}, 'deg', {}, 'pi', {}, 'P', {}, 'B', {}, 'F', {});
