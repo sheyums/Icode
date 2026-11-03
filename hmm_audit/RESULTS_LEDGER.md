@@ -2269,3 +2269,30 @@ Hidden r3 total in this run is 58 (31 + 27), so the Methods range now reads 58�
 
 ## 2026-11-02 — SI Table S2 correction
 The sleepless "chain affinity" entry read 0.79 (stale). The rule-of-three median |A| over fly–phases with a cycle is 0.51; the other rows were already correct (CS 0.47, CS DD 0.50, per0 LD 0.42, per0 DD 0.64, fumin 1.04). Column renamed "Chain |A|, median".
+
+## PRESPEC 22 — cycle flux and direction vs sleep amount, within genotype (2026-11-03; PRESPEC 482898d, committed before running; code sqw22.py, this commit; s22_sleep_vs_J.json, fig22_J_vs_sleep)
+Sleep = min S per hour of the block. Within-block Spearman rho; 10000 permutations (seed 22) as the null, at each
+block's own n; Holm over 14 tests.
+```
+block      n  | sleep med | rho(sleep,c_obs) p Holm | rho(sleep,J | cycle) p Holm (n) | no-cycle n, sleep med vs cycle
+CS L      25 | 30.7 | +0.03 p 0.90 Holm 1     | +0.06 p 0.76 Holm 1     (24) | 1
+CS D      25 | 41.3 | -0.26 p 0.20 Holm 1     | -0.16 p 0.43 Holm 1     (25) | 0
+per0 DD   25 | 42.2 | -0.06 p 0.77 Holm 1     | -0.25 p 0.23 Holm 1     (24) | 1
+fumin L   49 |  6.8 | -0.05 p 0.72 Holm 1     | +0.37 p 0.012 Holm 0.16 (47) | 2, 2.7 vs 7.1
+fumin D   53 |  3.2 | -0.00 p 0.98 Holm 1     | +0.59 p 0.0002 Holm 0.003 (49) | 4, 1.0 vs 3.3
+sss L     50 |  3.0 | -0.05 p 0.75 Holm 1     | -0.26 p 0.11 Holm 1     (37) | 13, 0.7 vs 3.5
+sss D     53 |  2.9 | +0.23 p 0.097 Holm 1    | +0.18 p 0.22 Holm 1     (48) | 5, 0.8 vs 3.2
+secondary (not in the Holm family): CS DD c_obs +0.48 p 0.016, J +0.38 p 0.061; per0 LD L/D all |rho| < 0.1
+```
+- PRIMARY (c_obs, the direction per transition): no block shows any dependence on sleep (all Holm 1). The stratified
+  Fisher z over the 7 blocks is +0.002 (rho ~ 0.00), within-block permutation p 0.98.
+- CO-PRIMARY (J): fumin dark rho +0.59, Holm 0.003. c_obs is null in the same block, so by the pre-stated rule this
+  is the MECHANICAL RATE LINK (a fly that sleeps more makes more transitions, so more cycles per hour), NOT direction.
+- No-cycle fly-phases are the shortest sleepers in every block that has them (sss L: 13 flies, median 0.7 against
+  3.5 min/h).
+- fumin/sss overlap (secondary). DARK: matched sleep (median 3.1 vs 2.9 min/h; 52 vs 53 flies), c_obs +0.25 vs 0.00,
+  J +0.087 vs -0.018 cycles/h. LIGHT: fumin sleeps more within the overlap (6.4 vs 3.4), c_obs +0.15 vs -0.03.
+  Genotype, not sleep, orders the direction.
+- Decision rule: (a) not met (stratified p 0.98), (b) not met. The act 3 claim STANDS, and gains a direct test:
+  sleep amount sets how OFTEN the cycle turns (in fumin), never WHICH WAY.
+- CS DD c_obs +0.48 (p 0.016, secondary): not a result. Noted for the reader only.
