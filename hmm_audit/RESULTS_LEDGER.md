@@ -2296,3 +2296,29 @@ secondary (not in the Holm family): CS DD c_obs +0.48 p 0.016, J +0.38 p 0.061; 
 - Decision rule: (a) not met (stratified p 0.98), (b) not met. The act 3 claim STANDS, and gains a direct test:
   sleep amount sets how OFTEN the cycle turns (in fumin), never WHICH WAY.
 - CS DD c_obs +0.48 (p 0.016, secondary): not a result. Noted for the reader only.
+
+## POST HOC to PRESPEC 22 — the same question at the hidden level (2026-11-03; Sheyum's request AFTER seeing the observed result; code sqw22h.py, this commit; s22h_hidden.json, fig22_J_vs_sleep_obs_hidden)
+Labelled post hoc: PRESPEC 22 named this kind of addition post hoc. x = model sleep, 60 * pi_S of the fly's phase
+matrix P3 (min/h). Outcomes:
+- J_hmm: count J averaged over the 200 posterior paths, as in fig_sss_reversal;
+- d: net forward turns per sleep onset, (N_SW - N_WS)/(N_QS + N_WS), computed on each path and then averaged
+  (reported if defined on >= half of the paths). d is the hidden analogue of c_obs, rate-free.
+Same 7 blocks, 10000 permutations (seed 221), Holm over 14.
+```
+block    n  | model sleep med | rho(sleep,d) p Holm   | rho(sleep,J_hmm | cycle) p Holm (n)
+CS L    25 | 30.0 | +0.08 p 0.72 Holm 1  | +0.12 p 0.57 Holm 1 (25)
+CS D    25 | 41.3 | -0.32 p 0.12 Holm 1  | -0.26 p 0.20 Holm 1 (25)
+per0 DD 23 | 41.2 | +0.27 p 0.20 Holm 1  | -0.11 p 0.62 Holm 1 (23)
+fumin L 49 |  7.1 | +0.17 p 0.24 Holm 1  | +0.39 p 0.009 Holm 0.10 (46)
+fumin D 53 |  3.0 | -0.02 p 0.90 Holm 1  | +0.54 p 0.0004 Holm 0.006 (50)
+sss L   50 |  2.9 | -0.21 p 0.16 Holm 1  | -0.51 p 0.002 Holm 0.023 (38)
+sss D   53 |  2.9 | +0.14 p 0.31 Holm 1  | +0.12 p 0.43 Holm 1 (46)
+stratified d: rho ~ +0.02, p 0.75
+fumin/sss overlap: dark sleep 3.0 vs 2.9 min/h, d +0.28 vs -0.03, J +0.109 vs -0.013;
+                   light sleep 6.5 vs 3.4, d +0.17 vs -0.12, J +0.105 vs -0.042
+```
+- Direction per sleep onset: independent of sleep in every block, as at the observed level.
+- J: the rate link appears with the sign of each block's direction. fumin dark is forward, so more sleep means more
+  forward turns (rho +0.54). sss light is reversed, so more sleep means more BACKWARD turns per hour (rho -0.51,
+  Holm 0.023; observed level -0.26, same sign, n.s.). This is the C14 statement, now at both levels: sleep sets how
+  OFTEN the cycle turns, genotype sets WHICH WAY.
