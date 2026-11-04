@@ -463,3 +463,26 @@ re-run, more permutations would settle it.
   decimals in EVERY block". It holds in CS dark (0.165/0.165), CS DD, per0 DD, fumin L; elsewhere they differ by up to
   0.002: CS light 0.0367 vs 0.0379, per0 LD dark 0.1204 vs 0.1222, fumin D 0.1022 vs 0.1028, sss L -0.0383 vs -0.0377,
   sss D +0.0016 vs -0.0004. Agreement to ~0.002 cycles/h (2 decimals) is the accurate statement.
+
+## 2026-11-03  C14 / Act 3: PRESPEC 22 (sqw22.py) and its hidden-level post hoc (sqw22h.py) — REPRODUCED, one CASE
+- New: sqw/sleepVsCycleRows.m (observed: sleep = 60 x S share of scored phase minutes, c_obs, J = fitted J_chain,
+  cycle |J| >= 1e-12; hidden: 60 pi_S of the labelled P3, J_hmm, d per FFBS path averaged over paths with an onset,
+  defined if >= half), sqw/sleepVsCycleTests.m (14 primary tests, permutation p (10000), Holm over 14, stratified
+  Fisher z (2000)), sqw/spearmanPermTest.m, sqw/stratifiedSpearmanTest.m, sqw/exportSleepVsCycleFigure.m
+  (fig22_J_vs_sleep_obs_hidden; validation/fig22 with the block tables).
+- Rank code: from the PYTHON rows (port_ref) every rho of both levels equals cClaude's to 4 decimals (14 + 6 secondary
+  observed, 14 hidden); stratified z +0.0016 (obs) and +0.0188 (hidden) exactly; p and Holm within permutation error
+  (e.g. obs fumin D J Holm 0.001 vs 0.003; hidden sss L J 0.017 vs 0.023).
+- Observed rows from raw data: all 359 fly-phases identical (sleep exact, J within 4e-14, same cycle flags) once sss
+  is matched BY NAME (the Python's sss fly index is into the 57-file list, the port's into sss54).
+- CASE for cClaude (not changed): observed J and c_obs are QUANTISED (many flies have J = 1/24, 1/12, 1/8 cycles/h
+  exactly, i.e. the same small net count), so mathematically tied values differ only by round-off (~1e-14) and the
+  two implementations break the ties differently. Python's rho_J: fumin L +0.3678, D +0.5893, sss L -0.2595, D +0.1804;
+  the port's on identical data: +0.3664, +0.5881, -0.2716, +0.1695. With values rounded to 1e-10 (true ties as ties)
+  BOTH give: rho_J fumin L +0.3689, D +0.5875, sss L -0.2666, D +0.1747; rho_c fumin L -0.0505 (was -0.0517), D
+  -0.0075 (-0.0031), sss L -0.0458 (-0.0474), D +0.2342 (+0.2322). No verdict changes (fumin D J the only Holm
+  < 0.05: 0.001-0.003). Suggest ranking round(x, 10) in sqw22.py (and anywhere J or c_obs are ranked).
+- Hidden rows: sleep exact (from the stored P3); J_hmm and d from the port's own posterior paths, so rho differs within
+  path error: fumin D J +0.538 (Py +0.535, Holm 0.003 vs 0.006), sss L J -0.491 (Py -0.511, Holm 0.022 vs 0.023),
+  stratified d rho +0.014 (Py +0.019). The fumin-D and sss-L findings reproduce.
+- Not ported: the fumin/sss sleep-overlap summary (secondary, descriptive).
