@@ -2437,3 +2437,8 @@ secondary: per0 DD vs CS DD, E difference -0.031, Mann-Whitney p 0.30; per0 LD v
    (port 0.5, Python 0.0). It is not meaningful; do not quote it.
 5. Rule of three. The sss light HMM model EPR median is 0.0096 in one implementation and 0.0094 in the other; quote
    0.009-0.010. r3_model.json is now in port_ref/.
+6. sss reversal (C2 headline). The observed-chain Wilcoxon on 37 sss light flies with a cycle had p 0.0016 from
+   scipy's EXACT signed-rank distribution, which assumes no ties. With round-off ties made real, only 28 of the 37
+   |J| values are distinct. The tie-corrected p is 0.0022 (normal approximation 0.0021-0.0022). The reversal stands
+   (70% backward); quote "p = 0.002". sss dark: 0.6555 -> 0.637 (MATLAB exact earlier 0.675); quote "p ~ 0.6-0.7,
+   no net direction". fig_sss_reversal.py now ranks round(J, 10). Report and PLANS already said "p 0.002".

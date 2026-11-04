@@ -16,7 +16,7 @@ for k, (g, p, lab) in enumerate(BL):
     ax.scatter(x0 + rng.uniform(-0.12, 0.12, len(jo)), jo, s=9, facecolor=COL[g] if p else 'white', edgecolor=COL[g], lw=0.7, zorder=2)
     ax.scatter(x0 + 1 + rng.uniform(-0.12, 0.12, len(jh)), jh, s=9, marker='^', facecolor=COL[g] if p else 'white', edgecolor=COL[g], lw=0.7, zorder=2)
     for xx, v in ((x0, jo), (x0+1, jh)): ax.plot([xx-0.3, xx+0.3], [np.mean(v)]*2, color='k', lw=1.4, zorder=3)
-    po = wilcoxon(jo[cyc]).pvalue; ph = wilcoxon(jh).pvalue
+    po = wilcoxon(np.round(jo[cyc], 10)).pvalue; ph = wilcoxon(np.round(jh, 10)).pvalue   # round-off ties tie (2026-11-04)
     ax.text(x0 + 0.5, 0.60, f'J < 0 in {np.mean(jo[cyc] < 0):.0%} | {np.mean(jh < 0):.0%}\np {po:.1g} | {ph:.1g}' + (f'\n({(~cyc).sum()} no cycle)' if (~cyc).any() else ''), ha='center', fontsize=6.0)
     out[f'{g}{p}'] = dict(n=len(jo), n_noCycle=int((~cyc).sum()), mean_obs=float(jo.mean()), mean_hmm=float(jh.mean()), neg_obs_cycleOnly=float(np.mean(jo[cyc]<0)), neg_hmm=float(np.mean(jh<0)), p_obs_cycleOnly=float(po), p_hmm=float(ph))
 ax.axhline(0, color='0.5', lw=0.6); ax.set_ylim(-0.5, 0.75)
