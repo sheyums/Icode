@@ -42,7 +42,7 @@ the earlier library failed on those data.
 
 Two unrelated kinds of fitter live here, and they fit different physical
 quantities. The engine and its `Fit*MLE` wrappers fit **bout durations** --
-left-truncated positive times. `shiftlognormal_MLE` and
+left-truncated positive times. `shiftlognormal_MLE`, `GenNorm_MLE` and
 `GeneralizedHyperbolic_MLE` fit **noise distributions** -- the recorded signal
 itself, real-valued and untruncated. A log-likelihood from one side is
 meaningless against one from the other, and not for the usual reason: it is
@@ -78,8 +78,11 @@ The analysis folder holds about 37 further `*_MLE` files from roughly ten years
 of separate work, and **most of them DO fit durations** -- `ExpoMLE`,
 `GammaMLE`, `LogNormMLE`, the `*ExpoMLE` mixtures, `PlMLE` and others. (An
 earlier version of this file said they fit noise or other quantities. That was
-wrong; only `shiftlognormal_MLE` and `GeneralizedHyperbolic_MLE`, in the
-section below, are noise fitters.) They are not candidates for three reasons
+wrong; only `shiftlognormal_MLE`, `GenNorm_MLE` and
+`GeneralizedHyperbolic_MLE`, in the section below, are noise fitters here;
+`GenNorm_MLE` joined Icode in Nov 2026, and the analysis folder's other noise
+fitters -- `shiftweibull_MLE`, `AsymLaplace_MLE`, `multigaussian_MLE`, all
+called by `SelectBestModel` -- are not in Icode and have not been audited.) They are not candidates for three reasons
 that have nothing to do with what quantity they fit: the user decided the
 library is closed, they are **continuous** where `CompareBoutModels` is
 discrete by default, and most condition on **`[xmin, xmax]` with `xmax`
@@ -99,7 +102,8 @@ These fit the noise in the recorded signal, not durations. Nothing in
 
 | File | Role |
 | --- | --- |
-| `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. |
+| `shiftlognormal_MLE.m` | Shifted-lognormal noise fitter. Positive support with a free shift, **untruncated**. **Audited Nov 2026** against an independent dense profile likelihood (branch `claude/shifted-lognormal-mle-wc03ob`). Found and fixed: (i) NOT equivariant under offsets -- `x + 1e8` moved the shift by 2.3% and LogLike by 0.049 (`fminbnd`'s relative tolerance on the raw shift, ~1.5 at 1e8); the search now runs over `log(min(x) - shift)` and the shifted data are formed as `(x - min(x)) + gap`, equivariant to ~1e-8; (ii) the upper bound `min(x) - 0.001*range(x)` EXCLUDED the true shift for heavy right tails (n=2000, true shift 3: sigma 1.5 clipped 20/20, median error 0.45) -- it now scales by `median(x - min(x))` (0/20, error 0.006); (iii) fits on a bound stopped just inside it (fminbnd never evaluates its ends) -- the bounds are now candidates; (iv) new `SmallSample` warning below n=15, where the unbounded spike at `min(x)` wins (134/200 fits at n=5, 9/200 at n=10, 0/200 from n=15). Data with no right skew clip to the lower bound (warned). Still no SEs/CIs. Base MATLAB only (`fminbnd`). |
+| `GenNorm_MLE.m` | Generalized Normal (generalized Gaussian) MIXTURE noise fitter, K components of `[mu, sigma, alpha, weight]`, real-valued support. Added to Icode Nov 2026 from the analysis folder and **audited** there against an independent closed-form K=1 profile and an independent multistart. Found and fixed: the `AIC` field held AICc (now plain AIC, plus an `AICc` field -- a BREAKING change for code that read `AIC`); tiny samples returned garbage (K=2 at n=2..7 gave finite AICc of -25 to -97; now K needs n >= 4K+1); NOT equivariant (an absolute 1e-6 sigma floor and raw-unit fitting: `1e-6*x` moved the K=2 LogLike by 10.1, `x + 1e8` by 36; now fitted in z-units); mixture fits stuck in local optima (an independent 40-start search beat the old fitter by 11.8, 5.97 and 1.09 log-likelihood units in 3 of 4 K=2 samples; random starts and a polish added -- see its test 12 and LIMITATIONS); alpha <= ~1.5 stalled at the cusps `mu` = data point (up to 0.08 short at K=1); `kmeans` used and advanced the caller's global random stream (now private, restored); `alpha` sat on its bounds 0.5/10 silently (now `AlphaAtBound`); failures were silent (now `Converged`/`NotConverged`). The `Select` LRT for the number of components uses a chi-square reference that is NOT valid for mixtures -- a heuristic; prefer BIC. Needs **Optimization** (`fmincon`) and **Statistics** (`kmeans`, `iqr`, `quantile`, `chi2cdf`). |
 | `GeneralizedHyperbolic_MLE.m` | GH / NIG noise fitter, five physical parameters (`mu`, `lambda`, `alpha`, `beta`, `delta`); `AUTO` chooses GH vs NIG by LRT and BIC. **Real-valued support and untruncated** -- the whole real line, so it does not even share a support with a duration law. **Audited and fixed in `dd7f613`** against ground truth that shared no code with the estimator (Bessel-free density by quadrature, independent Nelder-Mead, exact equivariance identities): open profile bounds now report 0 or Inf instead of overflow edges, the fit is scale-equivariant, and the header's special cases are corrected (hyperbolic is `lambda = 1`; the variance-gamma limit is `delta -> 0` with `lambda > 0`). Needs **Optimization Toolbox** (`fmincon`) and **Statistics Toolbox** (`chi2cdf`, `chi2inv`) -- unlike the bout suite. Three things survive the fix and are in its KNOWN LIMITATIONS. (i) **Exact VG (`delta = 0`) is outside the family** -- `delta` has a floor -- but VG-DISTRIBUTED DATA fit perfectly well: a true VG sample (`lambda = 1`, n=600) fitted with an interior `delta = 0.354`, and the GH density matches VG to 3.6e-5, 4e-9 and 4e-13 at `delta` of 1e-2, 1e-4 and 1e-6. VG-like data CAN drive `delta` to the floor -- at n=1000 the floored fit sat 0.022 nats from the unconstrained optimum -- and `delta_at_bound` then flags it, with an open lower bound. That openness is a MEASURED flatness of the profile down to the floor, not a consequence of construction. (ii) Finite bounds near the Normal ridge can still be ridge artifacts when `NoGainOverNormal` warns. (iii) An `alpha`/`beta` upper bound orders of magnitude above the estimate **can** mark where the nuisance fits stopped converging rather than a true crossing: at two `beta` bounds (1.2e6, 1.3e7) an independent profile was still below threshold, so those are too narrow and should be read as effectively open, while at the `alpha` bounds (1.2e6, 1.3e7, 1.16e9) the independent checker itself failed, leaving them unverified in either direction. Costs about **2.3x** more than before -- median GH fit at n=1000 was 171 s against 75 s, both under concurrent load. **Second audit (Nov 2026, branch `claude/shifted-lognormal-mle-wc03ob`, 8 findings):** `AUTO` now prefers a VALID fit (if both are invalid it applies the usual LRT/BIC rule and warns `BothModelsInvalid`) and computes profile CIs for the selected model only; GH reuses the polished NIG fit as its warm start. If a profile nuisance fit finds a lower NLL than the point estimate (by more than max(1e-3, Bessel noise)), the fit is re-optimized and the CIs recomputed, up to 2 times (`profile_refits`), else `ProfileImprovedOptimum` warns. New `student_t_limit` flag (`lambda < 0` and pushing `psi` 20 lower costs < 1e-3 nats) -- MEASURED to fire rarely, even on t(3), t(1.5) and Cauchy samples at n=1000: 11 of 12 fits sat at an interior gamma ~ 1/max\|x\|, and the one flagged fit (t(3), GH) cleared the tolerance by 0.15 millinats, so it is a rule check, not a t-data detector. Requires **n >= 10** (`TooFewObservations`), warns `SmallSample` below 50. Validity is judged on the log-density (new `LogFit` output), shared by the NLL and `Fit`; the Bessel-argument cap is now n-dependent, `min(1e10, 1e-2/(n*eps))`. On NIG data n=600 (suite 12C), `AUTO` took 17.3 s against 81.1 s for stand-alone GH (64.4 s) plus NIG (16.8 s). |
 
 ### Signal-level tools — fit no distribution at all
@@ -110,6 +114,8 @@ These fit the noise in the recorded signal, not durations. Nothing in
 | `jsd_kde.m` | Jensen-Shannon distance between two samples by KDE, with bootstrap CIs and a noise-floor correction. Compares two empirical distributions; fits neither. Calls `ksdensity` (Statistics Toolbox). |
 | `stressTest_jsd_kde.m`, `stressTest_chi2p.m` | Stress suites for those two: reported 36 and 44 tests (measured by another session in MATLAB R2026a at 37cf612; not re-measured here). **Not independent validation** -- per the git history in the analysis repo, the suites AND the code they test were both Claude-authored (every commit touching `chi2p`, the suites, and the recent `jsd_kde` / `GeneralizedHyperbolic_MLE` edits carries a Claude co-author line). A passing suite here means self-consistency, not a second opinion. Named `stressTest_*`, so anything globbing `test_*` misses them. |
 | `stress_test_GH_MLE.m` | The GH suite: **120 tests, measured** in MATLAB R2026a on 2026-11-04: 120/120 passed in 1506 s (86 original plus Section 11, 11A-11F, one guard per first-audit defect -- open bounds, `delta_at_bound` at the floor, unit equivariance, `single` input, the tiny-sample Normal limit; Section 1 now expects n < 10 to error; Section 12, one guard per second-audit fix plus a stress pass over seeds, sizes, heavy tails, near-Normal data, ties and outliers asserting invariants only). The pre-fix 94 was re-measured in MATLAB R2026a on 2026-11-04: 94/94 passed in 5046 s. The suite's own t sampler is toolbox-free (`trnd_rs`). Fixes 5 (`gamma = a/cosh(xi)`) and 6 (the n-dependent cap's formula) live in local functions and are covered by inspection plus indirect behaviour (12F checks the cap's noise bound at n=20000), not by a direct test. Claude-written, like the code it tests, so passing is self-consistency. Named `stress_test_*`, outside both the `test_*` and `stressTest_*` patterns. |
+| `test_shiftlognormal_MLE.m` | The shifted-lognormal suite: **20 tests** -- 13 original smoke tests plus 14-20 from the Nov 2026 audit (offset and scale equivariance, heavy-tail shift recovery, global optimum against an independent dense profile, `SmallSample`, a bound reached exactly, Fit/LogLike consistency). Measured in MATLAB R2026a on 2026-11-04: 20/20 on the fixed code in 8 s; on the old code tests 14-19 fail (6), as they should. Claude-written, like the code it tests, so passing is self-consistency; the ground truth inside it (a closed-form profile likelihood) shares no code with the fitter. |
+| `test_GenNorm_MLE.m` | The GenNorm suite: **12 tests**, ground truth from an independent closed-form K=1 profile, a direct mixture density and an independent Nelder-Mead multistart. Measured 2026-11-04: 12/12 on the fixed code in 194 s; 2/12 on the old code (the 10 audit guards fail). Claude-written; same self-consistency caveat. |
 
 ## Analysing a new dataset
 
@@ -420,7 +426,11 @@ to `RiseDisjoint`, which is pointwise. `RiseNullP` moves with the bin count --
       `TolX = 1e-8`, which is the mechanism -- but it only bites once the data
       span shrinks to ~1e-5, which no duration in seconds, minutes, hours or
       days reaches. Its boundary diagnostic is already relative
-      (`max(10*TolX, 1e-6*intervalWidth)`).
+      (`max(10*TolX, 1e-6*intervalWidth)`). **That sweep missed OFFSETS**
+      (Nov 2026 audit): `fminbnd` also has a RELATIVE tolerance,
+      `sqrt(eps)*|shift|`, so data carrying a large constant (`x + 1e8`)
+      moved the shift by 2.3% and LogLike by 0.049. Fixed by searching over
+      `log(min(x) - shift)`; scale AND offset are now equivariant to ~1e-8.
   So the trap is real, the exposure here is not, and the difference took one
   grep and one 12-decade sweep to establish rather than an argument.
 - **A profile-likelihood bound from a finite search errs in ONE direction,
@@ -525,15 +535,16 @@ chi-square tails via `gammainc(...,'upper')` rather than `chi2cdf`. Engine test
 runs in MATLAB. (Verified: `chi2cdf`, `chi2inv`, `fmincon` and `ksdensity` appear
 in the bout files only inside comments explaining what is avoided, never as
 calls.) **That claim does NOT extend to the rest of the repo**:
-three of the non-bout tools need toolboxes, each together with its own stress
+four of the non-bout tools need toolboxes, each together with its own stress
 suite (verified on `origin/main` by grepping for calls outside comments):
 
 | tool | needs |
 | --- | --- |
 | `GeneralizedHyperbolic_MLE` + `stress_test_GH_MLE` | **Optimization** (`fmincon`) and **Statistics** (`chi2cdf`, `chi2inv`) |
+| `GenNorm_MLE` + `test_GenNorm_MLE` | **Optimization** (`fmincon`) and **Statistics** (`kmeans`, `iqr`, `quantile`, `chi2cdf`; the test calls `iqr` itself). `shiftlognormal_MLE` and its test need no toolbox |
 | `jsd_kde` + `stressTest_jsd_kde` | **Statistics** (`ksdensity`, `skewness`, `iqr`, `quantile`; the suite calls `skewness` itself) |
 | `chi2p` + `stressTest_chi2p` | **Statistics** (`chi2cdf` line 271, `chi2inv` line 347). Also `parfor` at line 309, which runs SERIALLY without the Parallel Computing Toolbox -- correct results, just slower |
 
 The two stress suites for `chi2p` and GH make no toolbox calls of their own;
 they need them through the functions they test. So a machine that runs all 129
-bout tests can still fail on six of these files.
+bout tests can still fail on eight of these files.
