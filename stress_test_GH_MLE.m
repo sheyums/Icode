@@ -36,18 +36,22 @@ fprintf('\n=== SECTION 1: Input Validation ===\n');
 tests1 = {
     'empty data',          @() expect_error(@() GeneralizedHyperbolic_MLE([]))
     'scalar data',         @() expect_error(@() GeneralizedHyperbolic_MLE(3.14))
-    'single observation',  @() expect_error(@() GeneralizedHyperbolic_MLE([1]))
-    'constant data',       @() expect_error(@() GeneralizedHyperbolic_MLE([5 5 5 5 5]))
+    'single observation',  @() expect_error(@() GeneralizedHyperbolic_MLE(1))
+    'constant data',       @() expect_error_id(@() GeneralizedHyperbolic_MLE(5*ones(20,1)), 'GeneralizedHyperbolic_MLE:ConstantData')
     'NaN in data',         @() expect_error(@() GeneralizedHyperbolic_MLE([1 2 NaN 4]))
     'Inf in data',         @() expect_error(@() GeneralizedHyperbolic_MLE([1 2 Inf 4]))
     'bad modelFlag',       @() expect_error(@() GeneralizedHyperbolic_MLE(randn(100,1),'XYZ'))
     'numeric modelFlag',   @() expect_error(@() GeneralizedHyperbolic_MLE(randn(100,1), 99))
     'matrix data',         @() expect_error(@() GeneralizedHyperbolic_MLE(randn(10,10)))
-    '2 observations ok',   @() expect_no_error(@() GeneralizedHyperbolic_MLE([0;1],'NIG'))
+    % A 5-parameter model needs at least 10 observations (Nov 2026; 2 used
+    % to be accepted). 9 must error, 10 must run.
+    '2 observations rejected', @() expect_error_id(@() GeneralizedHyperbolic_MLE([0;1],'NIG'), 'GeneralizedHyperbolic_MLE:TooFewObservations')
+    '9 observations rejected', @() expect_error_id(@() GeneralizedHyperbolic_MLE((1:9)','NIG'), 'GeneralizedHyperbolic_MLE:TooFewObservations')
+    '10 observations allowed', @() expect_no_error(@() GeneralizedHyperbolic_MLE([-0.93 0.30 0.20 0.81 0.38 -0.45 -0.20 -0.06 -0.93 -0.29]','NIG'))
 };
 
 for i = 1:size(tests1,1)
-    [p,m] = run_test(tests1{i,1}, tests1{i,2});
+    [p,~] = run_test(tests1{i,1}, tests1{i,2});
     nFail = nFail + ~p;  nPass = nPass + p;
 end
 
@@ -67,7 +71,7 @@ for n = [50, 200, 1000, 5000, 50000]
     label = sprintf('NIG recovery n=%d', n);
     data  = sample_NIG(trueParams_NIG, n);
     testFn = @() check_fit(data, 'NIG', trueParams_NIG, n);
-    [p,m] = run_test(label, testFn);
+    [p,~] = run_test(label, testFn);
     nFail = nFail + ~p;  nPass = nPass + p;
 end
 
@@ -86,7 +90,7 @@ for n = [200, 1000, 5000]
     label = sprintf('GH fit of NIG data n=%d (LogLike >= NIG)', n);
     data_tmp = sample_NIG(trueParams_NIG, n);
     testFn = @() check_gh_improves_nig(data_tmp);
-    [p,m] = run_test(label, testFn);
+    [p,~] = run_test(label, testFn);
     nFail = nFail + ~p;  nPass = nPass + p;
 end
 
@@ -100,42 +104,42 @@ n = 500;
 % Near-symmetric: beta very close to zero
 p_sym = struct('mu',0,'lambda',-0.5,'alpha',2,'beta',1e-4,'delta',1);
 p_sym.gamma = sqrt(p_sym.alpha^2 - p_sym.beta^2);
-[pf,m] = run_test('NIG near-symmetric (beta~0)', ...
+[pf,~] = run_test('NIG near-symmetric (beta~0)', ...
     @() check_finite_and_ordered(sample_NIG(p_sym,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Near-boundary skewness: |beta|/alpha = 0.95
 p_skew = struct('mu',0,'lambda',-0.5,'alpha',4,'beta',3.8,'delta',1);
 p_skew.gamma = sqrt(p_skew.alpha^2 - p_skew.beta^2);
-[pf,m] = run_test('NIG high skew (|beta|/alpha=0.95)', ...
+[pf,~] = run_test('NIG high skew (|beta|/alpha=0.95)', ...
     @() check_finite_and_ordered(sample_NIG(p_skew,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Negative skew
 p_negskew = struct('mu',0,'lambda',-0.5,'alpha',4,'beta',-3.8,'delta',1);
 p_negskew.gamma = sqrt(p_negskew.alpha^2 - p_negskew.beta^2);
-[pf,m] = run_test('NIG negative high skew', ...
+[pf,~] = run_test('NIG negative high skew', ...
     @() check_finite_and_ordered(sample_NIG(p_negskew,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Very small delta
 p_sdelta = struct('mu',0,'lambda',-0.5,'alpha',5,'beta',1,'delta',0.01);
 p_sdelta.gamma = sqrt(p_sdelta.alpha^2 - p_sdelta.beta^2);
-[pf,m] = run_test('NIG tiny delta=0.01', ...
+[pf,~] = run_test('NIG tiny delta=0.01', ...
     @() check_finite_and_ordered(sample_NIG(p_sdelta,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Very large delta
 p_ldelta = struct('mu',0,'lambda',-0.5,'alpha',2,'beta',0.5,'delta',50);
 p_ldelta.gamma = sqrt(p_ldelta.alpha^2 - p_ldelta.beta^2);
-[pf,m] = run_test('NIG large delta=50', ...
+[pf,~] = run_test('NIG large delta=50', ...
     @() check_finite_and_ordered(sample_NIG(p_ldelta,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Large location offset (mu=1e6)
 p_largemu = struct('mu',1e6,'lambda',-0.5,'alpha',3,'beta',0.5,'delta',1);
 p_largemu.gamma = sqrt(p_largemu.alpha^2 - p_largemu.beta^2);
-[pf,m] = run_test('NIG large mu=1e6', ...
+[pf,~] = run_test('NIG large mu=1e6', ...
     @() check_finite_and_ordered(sample_NIG(p_largemu,n),'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -154,7 +158,7 @@ n = 500;
 for lam = [-3, -1, -0.5, 0, 0.5, 1, 3, 5]
     label  = sprintf('GH fit, NIG data, sweep lambda grid lam=%.1f (no crash)', lam);
     data   = sample_NIG(trueParams_NIG, n);   % exact NIG data each time
-    [pf,m] = run_test(label, @() check_runs_ok(data,'GH'));
+    [pf,~] = run_test(label, @() check_runs_ok(data,'GH'));
     nFail  = nFail+~pf; nPass = nPass+pf;
 end
 
@@ -167,25 +171,25 @@ base_data = sample_NIG(trueParams_NIG, 500);
 
 % A few extreme outliers (3 observations at 20 sigma)
 data_out = [base_data; mean(base_data) + 20*std(base_data)*[1;-1;1]];
-[pf,m] = run_test('NIG with 3 extreme outliers', ...
+[pf,~] = run_test('NIG with 3 extreme outliers', ...
     @() check_finite_and_ordered(data_out,'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Near-normal data (very large alpha → GH approaches Normal)
 data_norm = randn(500,1);  % pure Normal
-[pf,m] = run_test('Near-normal data (NIG fit)', ...
+[pf,~] = run_test('Near-normal data (NIG fit)', ...
     @() check_finite_and_ordered(data_norm,'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % GH fit of Normal data: lambda profile may be flat/unbounded — that is
 % correct behavior, not a bug.  Just check it runs and LogLike is finite.
-[pf,m] = run_test('Near-normal data (GH fit, no crash)', ...
+[pf,~] = run_test('Near-normal data (GH fit, no crash)', ...
     @() check_runs_ok(data_norm,'GH'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % Heavily skewed data (log-normal, which GH cannot perfectly fit)
 data_lnorm = exp(0.5*randn(500,1));
-[pf,m] = run_test('Log-normal data (NIG fit, misspecified)', ...
+[pf,~] = run_test('Log-normal data (NIG fit, misspecified)', ...
     @() check_finite_and_ordered(data_lnorm,'NIG'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -196,7 +200,7 @@ fprintf('\n=== SECTION 7: AUTO Model Selection ===\n');
 
 % True NIG data — AUTO should select NIG (or at least not crash)
 data_NIG = sample_NIG(trueParams_NIG, 1000);
-[pf,m] = run_test('AUTO on NIG data — expect NIG or GH, no crash', ...
+[pf,~] = run_test('AUTO on NIG data — expect NIG or GH, no crash', ...
     @() check_auto(data_NIG));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -206,7 +210,7 @@ nFail = nFail+~pf; nPass = nPass+pf;
 trueParams_GH = struct('mu',0,'lambda',1.5,'alpha',3,'beta',1,'delta',1);
 trueParams_GH.gamma = sqrt(trueParams_GH.alpha^2 - trueParams_GH.beta^2);
 data_GH = sample_GH_via_NIG(trueParams_GH, 2000);
-[pf,m] = run_test('AUTO on GH data (lambda=1.5, n=2000)', ...
+[pf,~] = run_test('AUTO on GH data (lambda=1.5, n=2000)', ...
     @() check_auto(data_GH));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -220,32 +224,32 @@ res = GeneralizedHyperbolic_MLE(data_ci, 'NIG');
 ci  = res.profile_ci;
 params = res.Params;  % [mu; lambda; alpha; beta; delta]
 
-[pf,m] = run_test('CI: mu bounds finite and ordered', ...
+[pf,~] = run_test('CI: mu bounds finite and ordered', ...
     @() check_ci_bounds(ci.mu, params(1)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: alpha bounds finite, ordered, and positive', ...
+[pf,~] = run_test('CI: alpha bounds finite, ordered, and positive', ...
     @() check_ci_bounds_positive(ci.alpha, params(3)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: beta bounds finite and ordered', ...
+[pf,~] = run_test('CI: beta bounds finite and ordered', ...
     @() check_ci_bounds(ci.beta, params(4)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: delta bounds finite, ordered, and positive', ...
+[pf,~] = run_test('CI: delta bounds finite, ordered, and positive', ...
     @() check_ci_bounds_positive(ci.delta, params(5)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: alpha lower > 0 strictly', ...
+[pf,~] = run_test('CI: alpha lower > 0 strictly', ...
     @() check_condition(ci.alpha(1) > 0, 'alpha lower CI not positive'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: alpha CI contains true alpha=3', ...
+[pf,~] = run_test('CI: alpha CI contains true alpha=3', ...
     @() check_condition(ci.alpha(1)<=3 && ci.alpha(2)>=3, ...
     sprintf('true alpha=3 not in [%.3f, %.3f]',ci.alpha(1),ci.alpha(2))));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('CI: |beta| < alpha at MLE (constraint)', ...
+[pf,~] = run_test('CI: |beta| < alpha at MLE (constraint)', ...
     @() check_condition(abs(params(4)) < params(3), ...
     sprintf('|beta|=%.4f >= alpha=%.4f',abs(params(4)),params(3))));
 nFail = nFail+~pf; nPass = nPass+pf;
@@ -265,42 +269,42 @@ required = {'Model','Params','LogLike','Fit','FitX','FitPDF','AIC','BIC', ...
 
 for i = 1:numel(required)
     f = required{i};
-    [pf,m] = run_test(['GH has field: ' f], ...
+    [pf,~] = run_test(['GH has field: ' f], ...
         @() check_condition(isfield(res_gh,f), ['missing field: ' f]));
     nFail = nFail+~pf; nPass = nPass+pf;
 end
 
-[pf,m] = run_test('AUTO has ModelSelection field', ...
+[pf,~] = run_test('AUTO has ModelSelection field', ...
     @() check_condition(isfield(res_auto,'ModelSelection'),'missing ModelSelection'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('AUTO has LRT field', ...
+[pf,~] = run_test('AUTO has LRT field', ...
     @() check_condition(isfield(res_auto,'LRT'),'missing LRT'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('Params has 5 elements', ...
+[pf,~] = run_test('Params has 5 elements', ...
     @() check_condition(numel(res_gh.Params)==5,'Params not length 5'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('Fit length matches data length', ...
+[pf,~] = run_test('Fit length matches data length', ...
     @() check_condition(numel(res_gh.Fit)==200,'Fit length mismatch'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('FitX is sorted ascending', ...
+[pf,~] = run_test('FitX is sorted ascending', ...
     @() check_condition(all(diff(res_gh.FitX)>=0),'FitX not sorted'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('FitPDF all non-negative', ...
+[pf,~] = run_test('FitPDF all non-negative', ...
     @() check_condition(all(res_gh.FitPDF(isfinite(res_gh.FitPDF))>=0), ...
     'negative density values'));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('LogLike is finite scalar', ...
+[pf,~] = run_test('LogLike is finite scalar', ...
     @() check_condition(isscalar(res_gh.LogLike) && isfinite(res_gh.LogLike), ...
     sprintf('LogLike = %g', res_gh.LogLike)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('NIG lambda fixed at -0.5', ...
+[pf,~] = run_test('NIG lambda fixed at -0.5', ...
     @() check_condition(res_nig.Params(2)==-0.5, ...
     sprintf('NIG lambda=%.4f',res_nig.Params(2))));
 nFail = nFail+~pf; nPass = nPass+pf;
@@ -332,7 +336,7 @@ degenCases = {
 };
 for i = 1:size(degenCases,1)
     for flag = {'NIG','GH'}
-        [pf,m] = run_test(sprintf('%s [%s]', degenCases{i,1}, flag{1}), ...
+        [pf,~] = run_test(sprintf('%s [%s]', degenCases{i,1}, flag{1}), ...
             @() check_no_degeneracy(degenCases{i,2}, flag{1}));
         nFail = nFail+~pf; nPass = nPass+pf;
     end
@@ -367,13 +371,13 @@ V11  = -log(rand(rs11, 600, 1));
 xVG  = 2 + 0.5*V11 + sqrt(V11).*randn(rs11, 600, 1);
 resVG = GeneralizedHyperbolic_MLE(xVG, 'GH');
 
-[pf,m] = run_test('11A: open delta bound on VG-limit data is exactly 0', ...
+[pf,~] = run_test('11A: open delta bound on VG-limit data is exactly 0', ...
     @() check_condition(resVG.profile_ci.delta(1) == 0, ...
     sprintf('delta lower bound = %.4g (an open bound must be 0, not a tiny number)', ...
     resVG.profile_ci.delta(1))));
 nFail = nFail+~pf; nPass = nPass+pf;
 
-[pf,m] = run_test('11B: no CI bound is a spurious tiny or huge finite number', ...
+[pf,~] = run_test('11B: no CI bound is a spurious tiny or huge finite number', ...
     @() check_no_spurious_bounds(resVG));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -383,7 +387,7 @@ V11c = -log(rand(rs11, 1000, 1));
 xVGc = 0.5*V11c + sqrt(V11c).*randn(rs11, 1000, 1);
 resVGc = GeneralizedHyperbolic_MLE(xVGc, 'GH');
 floor11 = 1e-3*std(xVGc);
-[pf,m] = run_test('11C: delta within 1% of its floor => delta_at_bound', ...
+[pf,~] = run_test('11C: delta within 1% of its floor => delta_at_bound', ...
     @() check_condition(resVGc.Params(5) > 1.01*floor11 || resVGc.delta_at_bound, ...
     sprintf('delta = %.6g, floor = %.6g, delta_at_bound = %d', ...
     resVGc.Params(5), floor11, resVGc.delta_at_bound)));
@@ -395,25 +399,25 @@ r11a = GeneralizedHyperbolic_MLE(x11, 'NIG');
 r11b = GeneralizedHyperbolic_MLE(1e4*x11 + 1e4, 'NIG');
 Pm   = [1e4*r11a.Params(1) + 1e4; r11a.Params(2); r11a.Params(3)/1e4; ...
         r11a.Params(4)/1e4; r11a.Params(5)*1e4];
-[pf,m] = run_test('11D: parameters are equivariant under 1e4*x + 1e4', ...
+[pf,~] = run_test('11D: parameters are equivariant under 1e4*x + 1e4', ...
     @() check_condition(max(abs(r11b.Params - Pm) ./ abs(Pm)) < 1e-5, ...
     sprintf('max relative error %.3g', max(abs(r11b.Params - Pm) ./ abs(Pm)))));
 nFail = nFail+~pf; nPass = nPass+pf;
 dLL = r11b.LogLike - (r11a.LogLike - 800*log(1e4));
-[pf,m] = run_test('11D: log-likelihood shifts by exactly -n*log(scale)', ...
+[pf,~] = run_test('11D: log-likelihood shifts by exactly -n*log(scale)', ...
     @() check_condition(abs(dLL) < 1e-6, sprintf('discrepancy %.3g', dLL)));
 nFail = nFail+~pf; nPass = nPass+pf;
 ciA = [1e4*r11a.profile_ci.mu + 1e4, r11a.profile_ci.alpha/1e4, ...
        r11a.profile_ci.beta/1e4, r11a.profile_ci.delta*1e4];
 ciB = [r11b.profile_ci.mu, r11b.profile_ci.alpha, r11b.profile_ci.beta, r11b.profile_ci.delta];
 ciErr = max(abs(ciB - ciA) ./ abs(ciA));
-[pf,m] = run_test('11D: CI bounds are equivariant (to root-finder tolerance)', ...
+[pf,~] = run_test('11D: CI bounds are equivariant (to root-finder tolerance)', ...
     @() check_condition(ciErr < 5e-3, sprintf('max relative error %.3g (was 0.17 before the fix)', ciErr)));
 nFail = nFail+~pf; nPass = nPass+pf;
 
 % 11E: single precision input
 r11s = GeneralizedHyperbolic_MLE(single(x11), 'NIG');
-[pf,m] = run_test('11E: single input is fitted in double precision', ...
+[pf,~] = run_test('11E: single input is fitted in double precision', ...
     @() check_condition(isa(r11s.LogLike, 'double') && ...
     abs(r11s.LogLike - GeneralizedHyperbolic_MLE(double(single(x11)), 'NIG').LogLike) < 1e-9, ...
     sprintf('LogLike class %s', class(r11s.LogLike))));
@@ -424,9 +428,211 @@ nFail = nFail+~pf; nPass = nPass+pf;
 % 1e-6 tolerance reported valid = false here (Bessel argument ~6e9).
 x11f = [-0.92891230072865449 0.29770359610432284 0.19808604340722599 0.80962243337342477 0.37782371522682678 -0.44532913476610414 -0.19631927565757104 -0.057295620412519732 -0.92631446155746755 -0.29055067417114161]';
 r11f = GeneralizedHyperbolic_MLE(x11f, 'AUTO');
-[pf,m] = run_test('11F: tiny sample near the Normal limit stays valid', ...
+[pf,~] = run_test('11F: tiny sample near the Normal limit stays valid', ...
     @() check_condition(r11f.valid, sprintf('valid = %d, LogLike = %.8g', r11f.valid, r11f.LogLike)));
 nFail = nFail+~pf; nPass = nPass+pf;
+
+% =========================================================================
+%  SECTION 12: REGRESSION GUARDS FROM THE NOV 2026 AUDIT (8 findings)
+% =========================================================================
+% One guard per finding, each asserting a RULE that a correct estimator
+% satisfies on any data, not where one optimizer run happens to land.
+%
+%   12A  AUTO preferred an invalid fit if its LogLike/BIC won.
+%   12B  The profile CIs never checked that the point estimate was optimal
+%        (new field profile_refits).
+%   12C  AUTO computed full CIs for both models and discarded one, and the GH
+%        fit re-ran the NIG multistart.
+%   12D  The skewed Student-t limit (lambda < 0, gamma -> 0) went unreported.
+%   12E  alpha_core's gamma lost all accuracy from xi = 19 (local function):
+%        covered ONLY BY INSPECTION -- no public output isolates it.
+%   12F  MAX_BESSEL_ARG ignored n (local function): tested through behaviour,
+%        the noise bound n*argMax*eps of a near-Normal large-n fit.
+%   12G  n = 2 was accepted (Section 1 holds the n = 9 / n = 10 boundary).
+%   12H  Validity was judged on exp(logpdf), which underflows (LogFit).
+fprintf('\n=== SECTION 12: Nov 2026 Audit Regression Guards ===\n');
+rs12 = RandStream('twister', 'Seed', 12);
+
+% ---- 12C first: it produces the fits several later guards reuse ----------
+% AUTO must return CIs (computed for the selected model only), must reach the
+% same GH and NIG point estimates as the stand-alone fits, and must cost less
+% than running both stand-alone fits.
+x12 = sample_NIG_rs(rs12, trueParams_NIG, 600);
+t0 = tic; r12gh  = GeneralizedHyperbolic_MLE(x12, 'GH');   tGH   = toc(t0);
+t0 = tic; r12nig = GeneralizedHyperbolic_MLE(x12, 'NIG');  tNIG  = toc(t0);
+t0 = tic; r12au  = GeneralizedHyperbolic_MLE(x12, 'AUTO'); tAUTO = toc(t0);
+fprintf('  [timing] n=600: GH %.1f s, NIG %.1f s, GH+NIG %.1f s, AUTO %.1f s\n', ...
+    tGH, tNIG, tGH + tNIG, tAUTO);
+
+[pf,~] = run_test('12C: AUTO result carries computed profile CIs', ...
+    @() check_condition(isfield(r12au, 'profile_ci') && ...
+    ~all(isnan(cell2mat(struct2cell(r12au.profile_ci))), 'all'), 'profile_ci missing or all NaN'));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% Point estimates are deterministic, so AUTO's LRT log-likelihoods equal the
+% stand-alone fits' unless a profile refit moved one of them.
+okGH  = abs(r12au.LRT.LogLike_GH  - r12gh.LogLike)  < 1e-9 || r12gh.profile_refits  > 0 || r12au.profile_refits > 0;
+okNIG = abs(r12au.LRT.LogLike_NIG - r12nig.LogLike) < 1e-9 || r12nig.profile_refits > 0 || r12au.profile_refits > 0;
+[pf,~] = run_test('12C: AUTO reaches the stand-alone GH and NIG optima', ...
+    @() check_condition(okGH && okNIG, sprintf('dGH = %.3g, dNIG = %.3g', ...
+    r12au.LRT.LogLike_GH - r12gh.LogLike, r12au.LRT.LogLike_NIG - r12nig.LogLike)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+[pf,~] = run_test('12C: AUTO costs less than GH + NIG run separately', ...
+    @() check_condition(tAUTO < tGH + tNIG, ...
+    sprintf('AUTO %.1f s versus GH+NIG %.1f s', tAUTO, tGH + tNIG)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12A: AUTO's selection rule -------------------------------------------
+% The returned model may be invalid only when both were. The branch where
+% exactly one fit is invalid is covered by inspection: no input is known
+% that makes one model's fit invalid and not the other's.
+autoRes = {r12au, r11f};
+okA = true;  msgA = '';
+for i = 1:numel(autoRes)
+    r = autoRes{i};
+    if ~(r.valid || contains(r.ModelSelection, 'both fits are invalid'))
+        okA = false;  msgA = r.ModelSelection;
+    end
+    % The reported LRT must agree with the returned model's LogLike.
+    if startsWith(r.ModelSelection, 'GH'), llSel = r.LRT.LogLike_GH; else, llSel = r.LRT.LogLike_NIG; end
+    if abs(llSel - r.LogLike) > 1e-9
+        okA = false;  msgA = sprintf('LRT LogLike %.10g versus result %.10g', llSel, r.LogLike);
+    end
+end
+[pf,~] = run_test('12A: AUTO returns an invalid fit only if both are invalid', ...
+    @() check_condition(okA, msgA));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12B: profile refits ----------------------------------------------------
+fitsB = {r12gh, r12nig, r12au};
+okB = all(cellfun(@(r) isfield(r, 'profile_refits') && ismember(r.profile_refits, 0:2), fitsB));
+[pf,~] = run_test('12B: profile_refits reported, an integer in 0..2', ...
+    @() check_condition(okB, 'profile_refits missing or out of range'));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12D: Student-t limit -------------------------------------------------
+% The flag must agree with its definition, checked with the suite's OWN
+% density: with gamma pushed down by exp(-20) at fixed (lambda, beta, delta,
+% mu), the log-likelihood drops by less than 1e-3 nats, and lambda < 0.
+%
+% NOT asserted: that Student-t data RAISE the flag. Measured before writing
+% this (Nov 2026), it does not hold: t(3) samples of n = 1000 fitted as GH
+% (4 seeds), t(1.5) as GH, and exact Cauchy samples fitted as NIG (whose
+% t-limit IS the Cauchy, 3 seeds) all landed at an interior gamma of order
+% 1/max|x| (0.11-0.19 for t(3), 7e-4 to 3e-3 for Cauchy) and none was
+% flagged. A finite sample has no data beyond max|x|, so a little exponential
+% damping there is free in-sample and buys normalizing mass: the optimum
+% usually sits at gamma ~ 1/max|x|. The likelihood IS flat at tiny gamma; the
+% MLE is usually just not there. In the first full run of this section ONE of
+% the three fits below (a t(3) GH fit, lambda = -1.55) was flagged, at a cost
+% of 0.00085 nats -- so whether it fires turns on a fraction of a millinat,
+% and the positive branch IS exercised here on this RandStream. The count is
+% printed, not asserted.
+tFits = cell(1, 3);
+for s = 1:2
+    rsT = RandStream('twister', 'Seed', 100 + s);
+    xt  = trnd_rs(rsT, 3, 1000);
+    tFits{s} = struct('x', xt, 'r', GeneralizedHyperbolic_MLE(xt, 'GH'));
+end
+rsT = RandStream('twister', 'Seed', 103);
+xt  = tan(pi*(rand(rsT, 1000, 1) - 0.5));     % standard Cauchy
+tFits{3} = struct('x', xt, 'r', GeneralizedHyperbolic_MLE(xt, 'NIG'));
+nFlag = 0;  okD = true;  msgD = '';
+for s = 1:3
+    r = tFits{s}.r;  xt = tFits{s}.x;
+    [ok, why] = student_t_flag_consistent(r, xt);
+    if ~ok, okD = false; msgD = why; end
+    nFlag = nFlag + r.student_t_limit;
+end
+for c = {r12gh, r12nig}
+    [ok, why] = student_t_flag_consistent(c{1}, x12);
+    if ~ok, okD = false; msgD = why; end
+end
+fprintf('  [info] student_t_limit raised on %d of 3 heavy-tailed fits (t(3) GH x2, Cauchy NIG)\n', nFlag);
+[pf,~] = run_test('12D: student_t_limit agrees with an independent re-evaluation', ...
+    @() check_condition(okD, msgD));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12F: the Bessel-argument cap scales with n ---------------------------
+% Near-Normal data push the Bessel arguments toward the cap. Whatever the fit
+% does, its NLL noise n*argMax*eps must stay at or under 1e-2 nats (with a
+% fixed cap of 1e10 it could reach 0.044 here). argMax from the parameters.
+xN = randn(rs12, 20000, 1);
+rN = GeneralizedHyperbolic_MLE(xN, 'NIG');
+P  = rN.Params;  gN = sqrt(max(P(3)^2 - P(4)^2, 0));
+argMax = max([P(5)*gN; P(3)*sqrt(P(5)^2 + (xN - P(1)).^2)]);
+noiseN = numel(xN) * argMax * eps;
+[pf,~] = run_test('12F: near-Normal n=20000 fit keeps n*argMax*eps <= 1e-2', ...
+    @() check_condition(noiseN <= 1e-2*(1 + 1e-6), ...
+    sprintf('n*argMax*eps = %.3g (argMax %.3g)', noiseN, argMax)));
+nFail = nFail+~pf; nPass = nPass+pf;
+[pf,~] = run_test('12F: that fit is a valid probability model', ...
+    @() check_model_validity(rN, xN));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12G: small samples warn ----------------------------------------------
+% The warning is promoted to an error so it is caught by identifier, before
+% any fitting, whatever other warnings the fit would raise afterwards.
+wstate = warning('error', 'GeneralizedHyperbolic_MLE:SmallSample');
+xG = randn(rs12, 30, 1);
+[pf,~] = run_test('12G: n=30 raises SmallSample', ...
+    @() expect_error_id(@() GeneralizedHyperbolic_MLE(xG, 'NIG'), ...
+    'GeneralizedHyperbolic_MLE:SmallSample'));
+warning(wstate);
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12H: validity is judged on the log-density ----------------------------
+% Rule on every fit above: LogFit exists, LogLike = sum(LogFit), Fit =
+% exp(LogFit), and valid is never false merely because Fit underflowed.
+allH = [{r12gh, r12nig, r12au, rN}, cellfun(@(c) c.r, tFits, 'UniformOutput', false)];
+okH = true;  msgH = '';
+for i = 1:numel(allH)
+    r = allH{i};
+    if ~isfield(r, 'LogFit')
+        okH = false;  msgH = 'no LogFit field';  break
+    end
+    if abs(sum(r.LogFit) - r.LogLike) > max(1e-6, 1e-8*abs(r.LogLike)) || ...
+            any(abs(exp(r.LogFit) - r.Fit) > 0)
+        okH = false;  msgH = sprintf('fit %d: LogFit inconsistent', i);  break
+    end
+end
+[pf,~] = run_test('12H: LogFit reported and consistent with LogLike and Fit', ...
+    @() check_condition(okH, msgH));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% ---- 12S: stress pass -------------------------------------------------------
+% Many seeds and sizes, heavy tails, near-Normal data, ties and outliers.
+% Asserts invariants only: a valid probability model, ordered CIs with no
+% UNKNOWN (NaN) bound, the flags consistent with their definitions, and, on
+% two cases, location-scale equivariance.
+fprintf('  -- stress pass --\n');
+stress = {};
+for n = [60 250 800]
+    for s = 1:2
+        rsS = RandStream('twister', 'Seed', 1000*n + s);
+        stress(end+1, :) = {sprintf('NIG data n=%d seed %d', n, s), sample_NIG_rs(rsS, trueParams_NIG, n), 'NIG'}; %#ok<SAGROW>
+    end
+end
+for nu = [1.5 4]
+    rsS = RandStream('twister', 'Seed', round(10*nu));
+    stress(end+1, :) = {sprintf('t(%.1f) data n=500', nu), trnd_rs(rsS, nu, 500), 'NIG'}; %#ok<SAGROW>
+end
+rsS = RandStream('twister', 'Seed', 77);
+stress(end+1, :) = {'near-Normal n=400 [GH]', randn(rsS, 400, 1), 'GH'};
+stress(end+1, :) = {'heavily tied n=600', round(2*sample_NIG_rs(rsS, trueParams_NIG, 600)), 'NIG'};
+stress(end+1, :) = {'outliers at 50 sd n=400', [sample_NIG_rs(rsS, trueParams_NIG, 397); 50*[1; -1; 1]], 'NIG'};
+stress(end+1, :) = {'t(2.5) data n=600 [GH]', trnd_rs(rsS, 2.5, 600), 'GH'};
+for i = 1:size(stress, 1)
+    [pf,~] = run_test(['12S: ' stress{i,1}], @() check_stress_case(stress{i,2}, stress{i,3}));
+    nFail = nFail+~pf; nPass = nPass+pf;
+end
+for i = [3 7]   % NIG n=250 seed 1, t(1.5)
+    xs = stress{i,2};
+    [pf,~] = run_test(['12S: equivariance under 1e3*x - 7, ' stress{i,1}], ...
+        @() check_equivariance(xs, 1e3, -7, stress{i,3}));
+    nFail = nFail+~pf; nPass = nPass+pf;
+end
 
 % =========================================================================
 %  SUMMARY
@@ -455,6 +661,21 @@ function [passed, msg] = expect_error(fn)
     catch
         passed = true;
         msg = '';
+    end
+end
+
+function [passed, msg] = expect_error_id(fn, id)
+% Pass if fn throws an error with identifier ID.
+    try
+        fn();
+        passed = false;
+        msg = sprintf('Expected error %s but none was thrown.', id);
+    catch ME
+        passed = strcmp(ME.identifier, id);
+        msg = '';
+        if ~passed
+            msg = sprintf('Expected error %s, got %s: %s', id, ME.identifier, ME.message);
+        end
     end
 end
 
@@ -564,7 +785,7 @@ function [passed, msg] = check_runs_ok(data, flag)
     end
     [passed, msg] = check_model_validity(res, data);
     if ~passed, return; end
-    mu_=res.Params(1); lam_=res.Params(2); alp_=res.Params(3);
+    alp_=res.Params(3);
     bet_=res.Params(4); del_=res.Params(5);
     if abs(bet_) >= alp_
         passed = false;
@@ -709,16 +930,23 @@ function [passed, msg] = check_model_validity(res, data)
         msg = 'results.valid is false (estimator flagged the fit as unusable).';  return
     end
 
-    % The density must be evaluable at every observation.
+    % The density must be evaluable at every observation. Judged on the
+    % LOG-density when the estimator reports it: a legitimate log-density
+    % below about -745 underflows to Fit = 0 without anything being wrong.
     F = res.Fit(:);
-    nBad = nnz(~isfinite(F) | F <= 0);
+    if isfield(res, 'LogFit')
+        LF = res.LogFit(:);
+    else
+        LF = log(F);
+    end
+    nBad = nnz(~isfinite(LF));
     if nBad > 0
-        msg = sprintf('%d of %d fitted density values are NaN/Inf/non-positive.', ...
+        msg = sprintf('%d of %d fitted log-density values are NaN/Inf.', ...
             nBad, numel(F));  return
     end
 
     % The reported likelihood must be the one the density implies.
-    llFromFit = sum(log(F));
+    llFromFit = sum(LF);
     if abs(llFromFit - res.LogLike) > max(1e-6, 1e-8*abs(res.LogLike))
         msg = sprintf('LogLike %.6g disagrees with sum(log(Fit)) = %.6g.', ...
             res.LogLike, llFromFit);  return
@@ -774,23 +1002,30 @@ function [passed, msg] = check_model_validity(res, data)
     % this check fail on perfectly good fits to data at mu = 1e6 or with a
     % scale of 1e-6.  After the substitution the integrand always has width of
     % order one, so the same routine resolves it.
+    %
+    % Centre on the data median, not on mu: a strongly skewed fit puts its
+    % mass far from mu (a near-Normal NIG fit at n = 20000 had mu = -212 with
+    % its mass near 0, about 50 scale units away, and the mu-centred integral
+    % returned 0 for a density that integrates to 1). Any fit that explains
+    % the data has mass at the data, so the median is always under the peak.
     sc = max([de, 1/max(al, realmin), std(data), realmin]);
+    c  = median(data);
     try
-        Z = integral(@(u) sc * gh_pdf_ref(mu + sc*u, mu, lam, al, be, de), ...
+        Z = integral(@(u) sc * gh_pdf_ref(c + sc*u, mu, lam, al, be, de), ...
             -Inf, Inf, 'AbsTol', 1e-12, 'RelTol', 1e-10);
     catch ME
         msg = ['Density integration failed: ' ME.message];  return
     end
     if ~isfinite(Z) || abs(Z - 1) > 1e-3
         msg = sprintf(['Fitted density integrates to %.6g, not 1 ' ...
-            '(mu=%.4g, alpha=%.4g, delta=%.4g, scale used %.4g).'], ...
-            Z, mu, al, de, sc);  return
+            '(mu=%.4g, alpha=%.4g, delta=%.4g, centre %.4g, scale %.4g).'], ...
+            Z, mu, al, de, c, sc);  return
     end
 
     passed = true;  msg = '';
 end
 
-function f = gh_pdf_ref(x, mu, lambda, alpha, beta, delta)
+function [f, logf] = gh_pdf_ref(x, mu, lambda, alpha, beta, delta, gamOverride)
 % Independent GH density, written directly from Barndorff-Nielsen (1977):
 %
 %   f(x) = a * (delta^2+(x-mu)^2)^((lambda-1/2)/2)
@@ -800,7 +1035,14 @@ function f = gh_pdf_ref(x, mu, lambda, alpha, beta, delta)
 % Written separately from the estimator's internal routine on purpose: a fit
 % cross-checked only against the code that produced it cannot reveal an error
 % in that code.
-    gam = sqrt(max(alpha^2 - beta^2, realmin));
+    % Optional gamOverride: give gamma directly (alpha is then hypot(beta,
+    % gamma)), because alpha^2 - beta^2 cancels to nothing once gamma is
+    % ~1e-8 of |beta|, which is exactly where the Student-t check probes.
+    if nargin >= 7
+        gam = gamOverride;  alpha = hypot(beta, gam);
+    else
+        gam = sqrt(max(alpha^2 - beta^2, realmin));
+    end
     xm  = x - mu;
     z   = sqrt(delta^2 + xm.^2);
 
@@ -867,4 +1109,132 @@ function [passed, msg] = check_no_spurious_bounds(res)
             return
         end
     end
+end
+
+% =========================================================================
+%  SECTION 12 HELPERS
+% =========================================================================
+function x = sample_NIG_rs(rs, p, n)
+% sample_NIG drawing from RandStream rs, so Section 12 does not depend on
+% how many global draws the sections before it consumed.
+    gam = p.gamma;
+    m   = p.delta / gam;   lam = p.delta^2;
+    y   = randn(rs, n, 1).^2;
+    v   = m + (m^2*y)/(2*lam) - (m/(2*lam))*sqrt(4*m*lam*y + m^2*y.^2);
+    u   = rand(rs, n, 1);
+    flip = u > m ./ (m + v);
+    v(flip) = m^2 ./ v(flip);
+    x = p.mu + p.beta*v + sqrt(v).*randn(rs, n, 1);
+end
+
+function t = trnd_rs(rs, nu, n)
+% Student-t variates by Bailey's (1994) polar method, exact for any nu > 0,
+% with no toolbox call: (U, V) uniform on the unit disc, W = U^2 + V^2,
+% T = U*sqrt(nu*(W^(-2/nu) - 1)/W).
+    t = zeros(n, 1);  k = 0;
+    while k < n
+        U = 2*rand(rs, 2*n, 1) - 1;  V = 2*rand(rs, 2*n, 1) - 1;
+        W = U.^2 + V.^2;
+        ok = W > 0 & W <= 1;
+        T = U(ok) .* sqrt(nu*(W(ok).^(-2/nu) - 1) ./ W(ok));
+        take = min(numel(T), n - k);
+        t(k+1:k+take) = T(1:take);  k = k + take;
+    end
+end
+
+function [ok, why] = student_t_flag_consistent(r, x)
+% student_t_limit must equal its definition, re-evaluated with this suite's
+% own density: lambda < 0 and the log-likelihood drops by less than 1e-3
+% when gamma is multiplied by exp(-20) at fixed (lambda, beta, delta, mu).
+% Within 1e-6 of the 1e-3 threshold either answer is accepted.
+    ok = true;  why = '';
+    P = r.Params;  lam = P(2);
+    if ~isfield(r, 'student_t_limit')
+        ok = false;  why = 'no student_t_limit field';  return
+    end
+    if lam >= 0
+        ok = ~r.student_t_limit;
+        if ~ok, why = sprintf('flagged with lambda = %.3g >= 0', lam); end
+        return
+    end
+    iPsi = numel(r.theta_hat) - 2;       % psi is 3rd from the end in both models
+    gam  = exp(r.theta_hat(iPsi));
+    [~, l0] = gh_pdf_ref(x(:), P(1), lam, [], P(4), P(5), gam);
+    [~, l1] = gh_pdf_ref(x(:), P(1), lam, [], P(4), P(5), gam*exp(-20));
+    cost = sum(l0) - sum(l1);
+    if ~isfinite(cost)
+        expected = false;
+    else
+        expected = cost < 1e-3;
+        if abs(cost - 1e-3) < 1e-6, return; end
+    end
+    ok = (expected == r.student_t_limit);
+    if ~ok
+        why = sprintf('student_t_limit = %d but the independent cost is %.4g nats (lambda %.3g)', ...
+            r.student_t_limit, cost, lam);
+    end
+end
+
+function [passed, msg] = check_stress_case(x, flag)
+% Invariants every fit must satisfy, whatever the data.
+    t0 = tic;
+    res = GeneralizedHyperbolic_MLE(x, flag);
+    fprintf('        [%s n=%d] lambda %.3g, refits %d, t-limit %d, delta_at_bound %d, %.0f s\n', ...
+        flag, numel(x), res.Params(2), res.profile_refits, res.student_t_limit, ...
+        res.delta_at_bound, toc(t0));
+    [passed, msg] = check_model_validity(res, x);
+    if ~passed, return; end
+    passed = false;
+    fns = fieldnames(res.profile_ci);
+    for i = 1:numel(fns)
+        b = res.profile_ci.(fns{i});
+        if any(isnan(b))
+            msg = sprintf('CI for %s has an UNKNOWN (NaN) bound: %s', fns{i}, mat2str(b, 4));  return
+        end
+        if b(1) > b(2)
+            msg = sprintf('CI for %s is reversed: %s', fns{i}, mat2str(b, 4));  return
+        end
+    end
+    if ~ismember(res.profile_refits, 0:2)
+        msg = sprintf('profile_refits = %g', res.profile_refits);  return
+    end
+    [ok, why] = student_t_flag_consistent(res, x);
+    if ~ok, msg = why; return; end
+    if ~(res.Params(5) > 1.01*1e-3*std(x) || res.delta_at_bound)
+        msg = 'delta within 1% of its floor but delta_at_bound is false';  return
+    end
+    passed = true;  msg = '';
+end
+
+function [passed, msg] = check_equivariance(x, c, sh, flag)
+% Location-scale equivariance under y = c*x + sh. On the Student-t limit,
+% alpha (hence gamma) is not identified and is excluded from the comparison.
+    ra = GeneralizedHyperbolic_MLE(x, flag);
+    rb = GeneralizedHyperbolic_MLE(c*x + sh, flag);
+    passed = false;
+    dLL = rb.LogLike - (ra.LogLike - numel(x)*log(c));
+    if abs(dLL) > 1e-6
+        msg = sprintf('LogLike discrepancy %.3g', dLL);  return
+    end
+    Pm = [c*ra.Params(1) + sh; ra.Params(2); ra.Params(3)/c; ra.Params(4)/c; ra.Params(5)*c];
+    use = true(5, 1);
+    if ra.student_t_limit || rb.student_t_limit, use(3) = false; end
+    rel = abs(rb.Params - Pm) ./ max(abs(Pm), realmin);
+    if max(rel(use)) > 1e-5
+        msg = sprintf('parameter relative error %.3g', max(rel(use)));  return
+    end
+    ciA = [c*ra.profile_ci.mu + sh, ra.profile_ci.beta/c, ra.profile_ci.delta*c];
+    ciB = [rb.profile_ci.mu, rb.profile_ci.beta, rb.profile_ci.delta];
+    if ~(ra.student_t_limit || rb.student_t_limit)
+        ciA = [ciA, ra.profile_ci.alpha/c];  ciB = [ciB, rb.profile_ci.alpha];
+    end
+    fin = isfinite(ciA) & ciA ~= 0;
+    if ~isequal(isfinite(ciA), isfinite(ciB))
+        msg = 'an open bound in one fit is finite in the other';  return
+    end
+    err = max(abs(ciB(fin) - ciA(fin)) ./ abs(ciA(fin)));
+    if ~isempty(err) && err > 5e-3
+        msg = sprintf('CI relative error %.3g', err);  return
+    end
+    passed = true;  msg = '';
 end

@@ -8,13 +8,18 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %
 % INPUTS
-%   data      : real finite numeric vector, at least two distinct values
-%               (converted to double).
+%   data      : real finite numeric vector of at least 10 observations
+%               (n >= 10; error TooFewObservations below that, and a
+%               SmallSample warning below 50), with at least two distinct
+%               values (converted to double).
 %   modelFlag : 'GH'   – fit the full 5-parameter Generalized Hyperbolic.
 %               'NIG'  – fit the 4-parameter Normal-Inverse Gaussian
 %                        (GH with lambda fixed at -0.5).
 %               'AUTO' – (default) fit both models, then select the better
-%                        one via a likelihood-ratio test AND BIC.
+%                        one via a likelihood-ratio test AND BIC, preferring
+%                        a VALID fit over an invalid one whatever the
+%                        criteria say. Profile CIs are computed only for the
+%                        selected model.
 %   mode      : pass 'PLOT' to display a histogram with the fitted density.
 %
 % PHYSICAL PARAMETERS
@@ -36,6 +41,14 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                                  and delta's lower confidence bound is then
 %                                  open (reported as 0).
 %     alpha -> infinity          : approaches the Normal distribution
+%     gamma -> 0 with lambda < 0 : skewed Student-t limit, nu = -2*lambda
+%                                  (alpha -> |beta|). The likelihood goes FLAT
+%                                  in psi there (logL identical from gamma =
+%                                  1e-8 to 1e-40), so alpha and gamma are not
+%                                  identified; flagged by student_t_limit.
+%                                  NOT every heavy-tailed sample lands there:
+%                                  t(3) samples of n = 1000 fitted an interior
+%                                  gamma (Nov 2026).
 %   (Earlier versions of this header listed lambda = 0.5 as the hyperbolic and
 %   lambda -> 0 as the variance-gamma limit; both were wrong.)
 %
@@ -77,7 +90,9 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %      via results.delta_at_bound and a DeltaAtBound warning; such a point is
 %      a constrained optimum, not an interior MLE.
 %   3. For GH: an additional warm start is always attempted using the
-%      NIG MLE as the initial point (with lambda freed to -0.5).
+%      polished NIG point estimate as the initial point (with lambda freed
+%      from -0.5). Both models standardize identically, so the NIG theta is
+%      reused in z-units; it used to be recomputed by a second NIG multistart.
 %      The warm-start solution replaces the grid solution if it converged
 %      when the grid did not, or if both converged and it is better.
 %   4. The best converged solution is selected; if none converged, the
@@ -89,6 +104,17 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %      measured there (Sep 2026), it ended 0.005 nats short of the optimum.
 %      The polish is accepted only if its gain exceeds the NLL's own
 %      floating-point noise (about n*max Bessel argument*eps).
+%   6. Steps 0-5 are the POINT stage: they give LogLike, BIC and valid, which
+%      is all AUTO needs to choose. Profile CIs (the CI stage, the dominant
+%      cost) then run only for the model that is returned.
+%   7. The CI stage tracks the lowest NLL found by ANY profile nuisance fit.
+%      If it beats the point estimate by more than 1e-3 nats (or the NLL's
+%      noise), the point estimate was not the optimum: the fit is
+%      re-optimized from that theta (fmincon, then the polish of step 5) and
+%      the CIs are recomputed, at most twice (results.profile_refits); after
+%      that a ProfileImprovedOptimum warning is raised. The one-sidedness of
+%      profile bounds (too narrow, never too wide) holds only when the point
+%      estimate is the true optimum.
 %
 % LOG-LIKELIHOOD
 %   The GH log-density is evaluated using the scaled Bessel function
@@ -100,10 +126,14 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   The log-density forms (log K - arg) for both Bessel terms, so it adds and
 %   subtracts quantities of order ARG.  In double precision that cancellation
 %   carries an absolute error of about n*arg*eps in the summed NLL.  Parameter
-%   vectors whose Bessel arguments exceed 1e10 are therefore declared
-%   infeasible (NLL = Inf): beyond that point the error swamps any genuine
-%   difference in likelihood and an optimizer will "improve" the fit by
-%   chasing floating-point noise.
+%   vectors whose Bessel arguments exceed min(1e10, 1e-2/(n*eps)) are
+%   therefore declared infeasible (NLL = Inf), which caps that error at
+%   1e-2 nats: beyond it the error swamps genuine differences in likelihood
+%   and an optimizer will "improve" the fit by chasing floating-point noise.
+%   The cap is 1e10 for n <= ~4500. (It used to be a fixed 1e10, justified as
+%   "below ~1e-2 even for n = 1e6"; in fact n*1e10*eps is 0.22 nats at
+%   n = 1e5 and 2.2 at n = 1e6, above the 1.92 CI threshold.) Bessel
+%   arguments are scale-invariant, so the cap means the same in any units.
 %
 %   This is not hypothetical.  Without the guard, NIG fits to n >= 1000 ran
 %   away to alpha ~ 4e52 and delta ~ 1e36, reporting a log-likelihood of
@@ -206,10 +236,14 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     converged   – logical; true when exitflag > 0.  NOTE this reports only
 %                   what the optimizer said; see 'valid' for whether the
 %                   answer is usable.
-%     valid       – logical; true when the fitted parameters yield a finite,
-%                   positive density at every data point AND that density
-%                   reproduces the reported LogLike (to within the
-%                   log-density's floating-point noise).  A run can be
+%     LogFit      – fitted LOG-density at each data point. Fit = exp(LogFit)
+%                   can underflow to 0 for a gross outlier (log-density
+%                   below about -745) without anything being wrong.
+%     valid       – logical; true when the fitted parameters yield a finite
+%                   LOG-density at every data point AND that log-density
+%                   sums to the reported LogLike (to within its
+%                   floating-point noise). Judged on LogFit, not Fit, so an
+%                   underflowed density does not count against it.  A run can be
 %                   converged = true and valid = false: the optimizer stopped
 %                   cleanly at parameters where the density cannot be
 %                   evaluated.  Check this before using any result.
@@ -233,18 +267,42 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %                   optimum.  Profile CIs and
 %                   Hessian-based standard errors assume an interior solution
 %                   and are unreliable in that case.
-%     ModelSelection – (AUTO only) string describing which model was chosen and why.
-%     LRT         – (AUTO only) struct with LRstat, df, pValue, LogLike_GH, LogLike_NIG.
+%     student_t_limit – logical; true when lambda < 0 and pushing gamma down
+%                   by a factor exp(-20) at fixed (lambda, beta, delta, mu)
+%                   costs less than 1e-3 nats: the fit sits on the flat
+%                   skewed Student-t limit (nu = -2*lambda), where alpha and
+%                   gamma are not identified. Report the t limit, not alpha.
+%     profile_refits – number of times (0-2) the CI stage found a better
+%                   optimum than the point estimate and re-fitted from it.
+%                   Nonzero means the first point estimate was short of the
+%                   optimum; LogLike, Params and CIs are the refitted ones.
+%     ModelSelection – (AUTO only) string describing which model was chosen
+%                   and why, including when validity overrode the criteria
+%                   or the selected model was re-optimized during profiling.
+%     LRT         – (AUTO only) struct with LRstat, df, pValue, LogLike_GH,
+%                   LogLike_NIG, on the final (post-refit) log-likelihoods.
+%                   The model NOT selected has no profile CIs computed.
 %
 % WARNINGS RAISED
+%   Each is raised for the RETURNED result only: in AUTO, the model that is
+%   discarded is fitted silently.
+%   GeneralizedHyperbolic_MLE:SmallSample
+%       Fewer than 50 observations; shape parameters weakly identified.
 %   GeneralizedHyperbolic_MLE:DensityNotEvaluable
-%       Fitted parameters give NaN or non-positive density values.
+%       Fitted parameters give a non-finite log-density at some data point.
 %   GeneralizedHyperbolic_MLE:LikelihoodInconsistent
 %       Reported LogLike disagrees with the density it implies.
 %   GeneralizedHyperbolic_MLE:DeltaAtBound
 %       delta reached its lower bound; constrained optimum.
 %   GeneralizedHyperbolic_MLE:NoGainOverNormal
 %       Fit does not beat a Normal by AIC; shape parameters unidentifiable.
+%   GeneralizedHyperbolic_MLE:StudentTLimit
+%       The fit sits on the flat Student-t limit; alpha and gamma not identified.
+%   GeneralizedHyperbolic_MLE:ProfileImprovedOptimum
+%       After 2 refits the profile search still beat the point estimate; the
+%       fit is unconverged and its CIs may be too WIDE.
+%   GeneralizedHyperbolic_MLE:BothModelsInvalid
+%       (AUTO) neither fit is valid; the usual rule chose, untrustworthily.
 %
 % KNOWN LIMITATIONS (measured, Sep 2026)
 %   - Near the Normal limit (a NoGainOverNormal warning), finite profile
@@ -259,6 +317,20 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     of n = 1000 the median fit took about 2.3 times as long (171 s versus
 %     75 s, both measured under concurrent load), mostly from searching delta
 %     down to its floor and re-checking values near the threshold.
+%   - AUTO is cheaper than before (CIs for the selected model only, and the
+%     GH fit warm-starts from the polished NIG fit): on NIG data of n = 600
+%     it took 17 s, against 81 s for stand-alone GH (64 s) plus NIG (17 s)
+%     (measured Nov 2026 in two suite runs: 17.3 and 17.1 s against 81.1 and 75.6 s; not under controlled load).
+%   - student_t_limit rarely fires, even on Student-t data (measured Nov
+%     2026). On t(3), t(1.5) and Cauchy samples of n = 1000, 11 of 12 GH and
+%     NIG fits sat at an interior gamma of roughly 1/max|x| (1e-4 to 0.19)
+%     and were not flagged; one t(3) GH fit (lambda = -1.55) was, at a cost
+%     of 0.00085 nats against the 1e-3 tolerance. Damping the tail beyond the
+%     largest observation costs almost nothing in-sample, so the optimum
+%     usually keeps a small positive gamma, and whether the flag fires turns
+%     on a fraction of a millinat. Read it as a rule check, not a detector of
+%     t-distributed data; a strongly negative lambda with a small gamma is
+%     the practical sign of a t-like sample.
 %
 % REQUIREMENTS
 %   Optimization Toolbox  : fmincon
@@ -283,6 +355,14 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 % delta_at_bound flag; double conversion of the input; a noise-aware validity
 % check; and corrected special cases (hyperbolic, variance-gamma) in this
 % header.
+% Second audit, 8 findings fixed (Claude Code, 2026-11-03): AUTO prefers a
+% valid fit; profile CIs check that the point estimate was the optimum and
+% re-fit if not (profile_refits); AUTO computes CIs for the selected model
+% only and GH reuses the polished NIG fit as its warm start; the Student-t
+% limit is reported (student_t_limit); exact gamma = a/cosh(xi) in the alpha
+% profile; an n-dependent Bessel-argument cap; n >= 10 with a SmallSample
+% warning below 50; validity judged on the log-density (LogFit), with one
+% shared log-density function.
 
 % ---- Validate and normalize inputs -----------------------------------------
 if nargin < 2 || isempty(modelFlag), modelFlag = 'AUTO'; end
@@ -309,13 +389,24 @@ validateattributes(data, {'numeric'}, ...
 % likelihood, the tolerances and besselk in single precision, and integer
 % classes saturate on subtraction.
 data = double(data(:));
-if numel(data) < 2
+% A 5-parameter model cannot be estimated from a handful of points: n = 2 used
+% to be accepted. 10 is a hard floor (test 11F fits n = 10 near the Normal
+% limit and must stay legal); below 50 the fit runs but warns.
+if numel(data) < MIN_N_ERROR()
     error('GeneralizedHyperbolic_MLE:TooFewObservations', ...
-        'DATA must contain at least two observations.');
+        'DATA must contain at least %d observations (got %d).', ...
+        MIN_N_ERROR(), numel(data));
 end
 if ~(std(data) > 0)
     error('GeneralizedHyperbolic_MLE:ConstantData', ...
         'DATA must contain at least two distinct values.');
+end
+if numel(data) < MIN_N_WARN()
+    warning('GeneralizedHyperbolic_MLE:SmallSample', ...
+        ['Only %d observations for a model with up to 5 parameters. The fit ' ...
+        'runs, but shape parameters (lambda, alpha, beta) are weakly ' ...
+        'identified below about %d observations; expect wide or open ' ...
+        'intervals.'], numel(data), MIN_N_WARN());
 end
 
 % Check required toolbox functions are available.
@@ -328,19 +419,30 @@ for k = 1:numel(requiredFunctions)
 end
 
 % ---- Fit the requested model(s) --------------------------------------------
+% Every fit has two stages: a POINT stage (multistart, polish, validity and
+% boundary diagnostics) and a CI stage (profile likelihood). The CI stage is
+% the dominant cost, so AUTO runs it only for the model it selects. The GH
+% point stage warm-starts from the polished NIG point estimate; both fits
+% standardize identically, so that z-unit theta is reused as is. GH alone
+% runs the NIG point stage too, so a GH fit is the same whether it was asked
+% for directly or reached through AUTO.
 switch modelFlag
     case 'GH'
         fprintf('Fitting Generalized Hyperbolic (GH) model...\n');
-        results = fit_GH(data);
+        stNIG   = fit_point(data, true);
+        stGH    = fit_point(data, false, stNIG.thetaZ);
+        results = fit_ci(stGH);
 
     case 'NIG'
         fprintf('Fitting Normal-Inverse Gaussian (NIG) model...\n');
-        results = fit_NIG(data);
+        results = fit_ci(fit_point(data, true));
 
     case 'AUTO'
         fprintf('Running automatic model selection (GH versus NIG)...\n');
-        resGH  = fit_GH(data);
-        resNIG = fit_NIG(data);
+        stNIG  = fit_point(data, true);
+        stGH   = fit_point(data, false, stNIG.thetaZ);
+        resGH  = stGH.results;
+        resNIG = stNIG.results;
 
         % Likelihood-ratio test: H0 = NIG (lambda = -0.5).
         % GH has one extra free parameter (lambda), so df = 1.
@@ -349,21 +451,57 @@ switch modelFlag
 
         % Prefer GH only when the improvement is both statistically
         % significant (LRT) AND reflected in a lower BIC (penalizes
-        % the extra parameter).
-
-        if pval < 0.05 && resGH.BIC < resNIG.BIC
-            results = resGH;
-            results.ModelSelection = sprintf( ...
-                'GH selected (LRT p=%.4g; BIC %.3f versus %.3f).', ...
-                pval, resGH.BIC, resNIG.BIC);
+        % the extra parameter). A VALID fit is preferred over an invalid one
+        % whatever the criteria say: an invalid fit's LogLike and BIC are not
+        % trustworthy (see 'valid'), so comparing them decides nothing.
+        ruleGH = pval < 0.05 && resGH.BIC < resNIG.BIC;
+        if resGH.valid && ~resNIG.valid
+            useGH = true;
+            why = 'the NIG fit is invalid (valid = false), so the criteria were not used';
+        elseif ~resGH.valid && resNIG.valid
+            useGH = false;
+            why = 'the GH fit is invalid (valid = false), so the criteria were not used';
         else
-            results = resNIG;
+            useGH = ruleGH;
+            why = '';
+            if ~resGH.valid   % both invalid
+                warning('GeneralizedHyperbolic_MLE:BothModelsInvalid', ...
+                    ['Neither the GH nor the NIG fit is valid; the usual ' ...
+                    'LRT/BIC rule was applied, but the selected result is ' ...
+                    'not trustworthy.']);
+                why = 'both fits are invalid; usual rule applied';
+            end
+        end
+
+        if useGH
+            results = fit_ci(stGH);
+            sel = 'GH';  bicSel = resGH.BIC;  bicOth = resNIG.BIC;
+        else
+            results = fit_ci(stNIG);
+            sel = 'NIG'; bicSel = resNIG.BIC; bicOth = resGH.BIC;
+        end
+        results.ModelSelection = sprintf( ...
+            '%s selected (LRT p=%.4g; BIC %.3f versus %.3f).', ...
+            sel, pval, bicSel, bicOth);
+        if ~isempty(why)
+            results.ModelSelection = sprintf('%s selected: %s (LRT p=%.4g; BIC %.3f versus %.3f).', ...
+                sel, why, pval, bicSel, bicOth);
+        end
+        % The CI stage can re-optimize the selected model (profile_refits),
+        % which raises its LogLike. Report the LRT on the final values; the
+        % selection stands, since a higher LogLike for the selected model only
+        % strengthens the rule that chose it.
+        if useGH, llGH = results.LogLike; llNIG = resNIG.LogLike;
+        else,     llGH = resGH.LogLike;   llNIG = results.LogLike; end
+        if results.profile_refits > 0
+            LR   = max(2*(llGH - llNIG), 0);
+            pval = chi2cdf(LR, 1, 'upper');
             results.ModelSelection = sprintf( ...
-                'NIG selected (LRT p=%.4g; BIC %.3f versus %.3f).', ...
-                pval, resNIG.BIC, resGH.BIC);
+                '%s The selected model was re-optimized %d time(s) during profiling; LRT p is now %.4g.', ...
+                results.ModelSelection, results.profile_refits, pval);
         end
         results.LRT = struct('LRstat', LR, 'df', 1, 'pValue', pval, ...
-            'LogLike_GH', resGH.LogLike, 'LogLike_NIG', resNIG.LogLike);
+            'LogLike_GH', llGH, 'LogLike_NIG', llNIG);
 end
 
 if contains(upper(mode), 'PLOT'), plot_results(data, results); end
@@ -373,18 +511,11 @@ end
 %                          TOP-LEVEL MODEL FITTERS
 % =========================================================================
 
-function results = fit_GH(data)
-% Fit the full 5-parameter GH model.
-results = fit_standardized(data, false);
-end
-
-function results = fit_NIG(data)
-% Fit the 4-parameter NIG model (lambda fixed at -0.5).
-results = fit_standardized(data, true);
-end
-
-function results = fit_standardized(data, isNIG)
-% Fit on z = (data - loc)/scl and map every output back to the data's units.
+function st = fit_point(data, isNIG, thetaNIGz)
+% POINT stage: fit on z = (data - loc)/scl and assemble the data-unit results
+% WITHOUT profile CIs (profile_ci is all NaN until fit_ci runs). Returns the
+% z-unit state that fit_ci needs. thetaNIGz (GH only) is the polished z-unit
+% NIG point estimate, used as the GH warm start.
 %
 % WHY. The multistart grid, the optimizer and root-finder tolerances and the
 % profile step sizes are absolute numbers, so results used to depend on the
@@ -404,9 +535,32 @@ if isNIG
     [theta, nll, hess, exitflag, output] = gh_multistart(z, true);
     model = 'Normal-Inverse Gaussian (mu, lambda, alpha, beta, delta)';
 else
-    [theta, nll, hess, exitflag, output] = fit_GH_core(z);
+    if nargin < 3, thetaNIGz = []; end
+    [theta, nll, hess, exitflag, output] = fit_GH_core(z, thetaNIGz);
     model = 'Generalized Hyperbolic (mu, lambda, alpha, beta, delta)';
 end
+[theta, nll] = polish_point(theta, nll, z, isNIG);
+
+st = struct('data', data, 'z', z, 'loc', loc, 'scl', scl, 'n', n, ...
+    'isNIG', isNIG, 'model', model, 'thetaZ', theta(:), 'nllZ', nll, ...
+    'hessZ', hess, 'exitflag', exitflag, 'output', output);
+ciNaN = struct('lambda', [NaN NaN], 'beta', [NaN NaN], 'delta', [NaN NaN], ...
+    'mu', [NaN NaN], 'alpha', [NaN NaN]);
+% Silent here: fit_ci re-packages the model that is returned and raises its
+% diagnostics then, so each returned result warns once, and a model AUTO
+% discards does not warn about a result the caller never sees.
+prevWarn = warning;
+warning('off', 'all');
+try
+    st.results = package_results(st, ciNaN);
+catch ME
+    warning(prevWarn);
+    rethrow(ME);
+end
+warning(prevWarn);
+end
+
+function [theta, nll] = polish_point(theta, nll, z, isNIG)
 % Step 5 of ESTIMATION STRATEGY: derivative-free polish of the point estimate.
 % The profile deviance is measured from nll, so an nll left short of the
 % optimum also mislocates every confidence bound.
@@ -422,18 +576,149 @@ if nllP < nll - max(1e-9, nll_noise(thetaP, z, isNIG))
     theta = thetaP(:);
     nll   = nllP;
 end
-ci = gh_profile_ci(theta, z, nll, isNIG, hess);
+theta = theta(:);
+end
 
-[theta, hess] = unstandardize_theta(theta, hess, loc, scl, isNIG);
-nll      = nll + n*log(scl);
-ci.mu    = loc + scl*ci.mu;   % scl > 0 preserves order; no sort (NaN)
-ci.alpha = ci.alpha / scl;
-ci.beta  = ci.beta / scl;
-ci.delta = ci.delta * scl;
+function results = fit_ci(st)
+% CI stage: profile-likelihood CIs for a point-stage state ST, followed by a
+% check that the point estimate really was the optimum.
+%
+% WHY THE CHECK. Every profile evaluation is a nuisance re-fit, and the
+% profiles explore the likelihood far more thoroughly than the point
+% multistart does. If any of them finds an NLL below nllMin, the point
+% estimate was NOT the optimum, and CLAUDE.md's one-sidedness argument fails:
+% too high an nllMin understates every deviance, so bounds cross late and come
+% out too WIDE. So the lowest NLL seen anywhere in the profiles is tracked with
+% the full theta it came from; if it beats nllMin by more than
+% PROFILE_IMPROVE_TOL (or the NLL's own noise), the fit is re-optimized from
+% that theta (fmincon plus the Nelder-Mead polish) and the CIs are recomputed,
+% at most MAX_PROFILE_REFITS times.
+refits = 0;
+while true
+    [ciZ, best] = gh_profile_ci(st.thetaZ, st.z, st.nllZ, st.isNIG, st.hessZ);
+    tolImp = max(PROFILE_IMPROVE_TOL(), nll_noise(best.theta, st.z, st.isNIG));
+    if ~(best.nll < st.nllZ - tolImp)
+        break
+    end
+    if refits >= MAX_PROFILE_REFITS()
+        warning('GeneralizedHyperbolic_MLE:ProfileImprovedOptimum', ...
+            ['After %d re-optimization(s), the profile search still found an ' ...
+            'NLL %.4g nats below the point estimate. The reported optimum is ' ...
+            'not the true one, so the profile CIs may be too WIDE. Treat the ' ...
+            'fit as unconverged.'], refits, st.nllZ - best.nll);
+        break
+    end
+    refits = refits + 1;
+    st = reoptimize_point(st, best.theta, best.nll);
+end
+results = package_results(st, ciZ);
+results.profile_refits = refits;
+end
 
-p = theta_to_params(theta, isNIG);
-results = assemble_results(model, p, theta, nll, hess, ci, exitflag, output, data, isNIG);
-results = flag_delta_at_bound(results, data, isNIG);
+function st = reoptimize_point(st, theta0, nll0)
+% Re-fit the point estimate from theta0 (a profile evaluation that beat the
+% current optimum, with value nll0), by fmincon then the Nelder-Mead polish.
+% The better of the fmincon result and theta0 itself is kept, so the NLL can
+% only go down.
+[lb, ub] = theta_bounds(st.z, st.isNIG);
+opts = fit_options(2500, 1e-7);
+theta = theta0(:);  nll = nll0;
+try
+    [tr, nr, er, orr, ~, ~, hr] = fmincon( ...
+        @(t) gh_nll_wrapper(t, st.z, st.isNIG), theta0(:), ...
+        [], [], [], [], lb, ub, [], opts);
+    st.hessZ = hr;  st.exitflag = er;  st.output = orr;
+    if isfinite(nr) && nr < nll
+        theta = tr(:);  nll = nr;
+    end
+catch
+    % Keep theta0, which is already better than the old optimum.
+end
+[theta, nll] = polish_point(theta, nll, st.z, st.isNIG);
+st.thetaZ = theta;
+st.nllZ   = nll;
+end
+
+function results = package_results(st, ciZ)
+% Map a z-unit state and z-unit CIs back to the data's units and assemble the
+% results structure with every point-estimate diagnostic.
+[theta, hess] = unstandardize_theta(st.thetaZ, st.hessZ, st.loc, st.scl, st.isNIG);
+nll = st.nllZ + st.n*log(st.scl);
+ci  = ciZ;
+ci.mu    = st.loc + st.scl*ci.mu;   % scl > 0 preserves order; no sort (NaN)
+ci.alpha = ci.alpha / st.scl;
+ci.beta  = ci.beta / st.scl;
+ci.delta = ci.delta * st.scl;
+
+p = theta_to_params(theta, st.isNIG);
+results = assemble_results(st.model, p, theta, nll, hess, ci, st.exitflag, ...
+    st.output, st.data, st.isNIG);
+results = flag_delta_at_bound(results, st.data, st.isNIG);
+results = flag_student_t_limit(results, st);
+results.profile_refits = 0;
+end
+
+function results = flag_student_t_limit(results, st)
+% Report the skewed Student-t boundary. With lambda < 0, letting gamma -> 0
+% (alpha -> |beta|) gives the skewed Student-t limit with nu = -2*lambda, and
+% the likelihood goes FLAT there: measured (Nov 2026), logL was identical from
+% gamma = 1e-8 down to 1e-40. Heavy-tailed data then drift along psi =
+% log(gamma) until the optimizer stalls, so alpha and gamma are not
+% identified: alpha's lower bound is effectively |beta|, and any reported
+% gamma is where the search stopped, not an estimate.
+%
+% The test re-evaluates the NLL with psi pushed STUDENT_T_PSI_SHIFT lower
+% (gamma times ~2e-9) at fixed (lambda, beta, delta, mu). If that costs less
+% than STUDENT_T_TOL nats, the fit sits on the flat Student-t limit.
+results.student_t_limit = false;
+p = theta_to_params(st.thetaZ, st.isNIG);
+if ~(p.lambda < 0)
+    return
+end
+t   = st.thetaZ;
+ip  = 3 - double(st.isNIG);               % position of psi in theta
+t(ip) = t(ip) - STUDENT_T_PSI_SHIFT();
+cost  = gh_nll_wrapper(t, st.z, st.isNIG) - st.nllZ;
+if isfinite(cost) && cost < STUDENT_T_TOL()
+    results.student_t_limit = true;
+    warning('GeneralizedHyperbolic_MLE:StudentTLimit', ...
+        ['The fit sits on the skewed Student-t limit (lambda = %.3g < 0, ' ...
+        'gamma -> 0, nu = -2*lambda = %.3g): moving gamma down by a factor ' ...
+        'of %.2g changes the NLL by only %.2g nats. alpha and gamma are not ' ...
+        'identified here (alpha -> |beta|); report the Student-t limit ' ...
+        'rather than the fitted alpha.'], ...
+        p.lambda, -2*p.lambda, exp(STUDENT_T_PSI_SHIFT()), cost);
+end
+end
+
+function v = STUDENT_T_PSI_SHIFT()
+% How far psi = log(gamma) is pushed down to probe the Student-t limit.
+v = 20;
+end
+
+function v = STUDENT_T_TOL()
+% NLL change (nats) below which the Student-t limit is declared flat.
+v = 1e-3;
+end
+
+function v = PROFILE_IMPROVE_TOL()
+% A profile NLL must beat nllMin by more than this (nats) to trigger a refit.
+v = 1e-3;
+end
+
+function v = MAX_PROFILE_REFITS()
+% Cap on point-estimate re-optimizations triggered by the profile search.
+v = 2;
+end
+
+function v = MIN_N_ERROR()
+% Fewest observations accepted at all.
+v = 10;
+end
+
+function v = MIN_N_WARN()
+% Below this many observations, a SmallSample warning is raised.
+v = 50;
 end
 
 function s = nll_noise(theta, data, isNIG)
@@ -462,8 +747,11 @@ if isequal(size(hess), [numel(d) numel(d)])
 end
 end
 
-function [theta, nll, hess, exitflag, output] = fit_GH_core(data)
+function [theta, nll, hess, exitflag, output] = fit_GH_core(data, thetaNIG)
 % GH point estimate: grid multistart, then a warm start from the NIG MLE.
+% thetaNIG is the polished NIG point estimate in the SAME standardized units
+% (fit_point standardizes both models identically). It used to be recomputed
+% here by a second NIG multistart; pass [] to fall back to that.
 % Step 1: multi-start search over a parameter grid.
 [theta, nll, hess, exitflag, output] = gh_multistart(data, false);
 
@@ -473,8 +761,10 @@ function [theta, nll, hess, exitflag, output] = fit_GH_core(data)
 % is known to be reasonable.  The warm start is accepted over the grid
 % solution if it converged when the grid did not, or if both have equal
 % convergence status and the warm start achieves a lower NLL.
-[thetaNIG, ~, ~, ~, ~] = gh_multistart(data, true);
-theta0 = [-0.5; thetaNIG];   % prepend lambda = -0.5 to NIG theta
+if nargin < 2 || isempty(thetaNIG)
+    [thetaNIG, ~, ~, ~, ~] = gh_multistart(data, true);
+end
+theta0 = [-0.5; thetaNIG(:)];   % prepend lambda = -0.5 to NIG theta
 opts = fit_options(2500, 1e-7);
 
 % Same delta floor as the grid search, so the warm start explores the
@@ -627,6 +917,41 @@ end
 
 function nll = gh_nll_from_params(p, data)
 % Evaluate the GH negative log-likelihood given a physical parameter struct.
+% The formula itself lives in gh_logpdf, shared with get_pdf_vals, so it
+% exists once. This function adds the feasibility rules an OPTIMIZER needs.
+[logpdf, argMax] = gh_logpdf(data, p);
+if ~all(isfinite(logpdf))
+    nll = Inf;  return
+end
+
+% ---- Numerical-validity guard on the Bessel arguments --------------------
+% The log-density forms (log K - arg) for both Bessel terms, so it adds and
+% subtracts quantities of order ARG. In double precision the absolute error of
+% that cancellation is about arg*eps per observation, and roughly n*arg*eps in
+% the summed NLL. Once that error is comparable to real differences in
+% likelihood, an optimizer will happily "improve" the fit by chasing pure
+% floating-point noise. MAX_BESSEL_ARG(n) caps it at ~1e-2 nats.
+%
+% This is not hypothetical. Without this guard, NIG fits to n >= 1000 ran away
+% to alpha ~ 4e52, delta ~ 1e36, arg ~ 4e88, reporting a log-likelihood of
+% +4.5e19 (impossible) while results.Fit evaluated to all NaN. Declaring such
+% parameters infeasible confines the search to the region where the likelihood
+% is actually computable. Legitimate fits stay far below the cap: even
+% delta = 50 with alpha = 3 gives arg ~ 150.
+if argMax > MAX_BESSEL_ARG(numel(data))
+    nll = Inf;  return
+end
+
+nll = -sum(logpdf);
+if ~isfinite(nll) || ~isreal(nll), nll = Inf; end
+end
+
+function [logpdf, argMax] = gh_logpdf(x, p)
+% GH log-density at x for physical parameters p. NaN marks a point where it
+% cannot be evaluated (invalid parameters, Bessel overflow or underflow), so a
+% caller can tell "not evaluable" from "legitimately tiny": a log-density of
+% -800 is a valid value even though exp() of it underflows to 0. argMax is the
+% largest Bessel argument used, for the noise estimate and the guard.
 %
 % The GH log-density is (Barndorff-Nielsen 1977):
 %
@@ -637,61 +962,34 @@ function nll = gh_nll_from_params(p, data)
 %              + log K_{lambda-0.5}(alpha*sqrt(delta^2+(x-mu)^2))  [data Bessel]
 %              + beta*(x - mu)
 %
-% Bessel functions are evaluated in scaled form:
-%   besselk(nu, x, 1) = besselk(nu, x) * exp(x)
-% so  log K(nu, x) = log(besselk(nu, x, 1)) - x.
-% This avoids overflow/underflow for large arguments.
-
-% Guard against any non-finite or physically invalid parameter values.
+% Bessel functions are evaluated in scaled form, besselk(nu, x, 1) =
+% besselk(nu, x)*exp(x), so log K(nu, x) = log(besselk(nu, x, 1)) - x.
+logpdf = NaN(size(x));
+argMax = NaN;
 if ~all(isfinite([p.lambda p.beta p.gamma p.alpha p.delta p.mu])) || ...
         p.gamma <= 0 || p.alpha <= 0 || p.delta <= 0
-    nll = Inf;  return
+    return
 end
-
-xm   = data - p.mu;
+xm   = x - p.mu;
 d2   = p.delta^2 + xm.^2;
-z    = sqrt(d2);
-
-% Arguments to the two Bessel evaluations.
-arg0 = p.delta * p.gamma;   % argument of the normalizing Bessel K_lambda
-argz = p.alpha * z;         % arguments of the data Bessel K_{lambda-0.5}
-
-if ~isfinite(arg0) || arg0 <= 0 || any(~isfinite(argz) | argz <= 0)
-    nll = Inf;  return
+arg0 = p.delta * p.gamma;     % argument of the normalizing Bessel K_lambda
+argz = p.alpha * sqrt(d2);    % arguments of the data Bessel K_{lambda-0.5}
+argMax = max([arg0; argz(:)]);
+if ~isfinite(arg0) || arg0 <= 0
+    return
 end
-
-% ---- Numerical-validity guard on the Bessel arguments --------------------
-% The log-density below forms (log K - arg) for both Bessel terms, so it adds
-% and subtracts quantities of order ARG. In double precision the absolute
-% error of that cancellation is about arg*eps per observation, and roughly
-% n*arg*eps in the summed NLL. Once arg exceeds ~1e10 that error swamps any
-% real difference in likelihood, and an optimizer will happily "improve" the
-% fit by chasing pure floating-point noise.
-%
-% This is not hypothetical. Without this guard, NIG fits to n >= 1000 ran away
-% to alpha ~ 4e52, delta ~ 1e36, arg ~ 4e88, reporting a log-likelihood of
-% +4.5e19 (impossible) while results.Fit evaluated to all NaN. Declaring such
-% parameters infeasible confines the search to the region where the likelihood
-% is actually computable. Legitimate fits stay far below the cap: even
-% delta = 50 with alpha = 3 gives arg ~ 150.
-if arg0 > MAX_BESSEL_ARG() || any(argz > MAX_BESSEL_ARG())
-    nll = Inf;  return
-end
-
-% Scaled Bessel evaluations; check for non-positive results (unphysical).
 K0 = besselk(p.lambda,       arg0, 1);
 Kz = besselk(p.lambda - 0.5, argz, 1);
-if ~isfinite(K0) || K0 <= 0 || any(~isfinite(Kz) | Kz <= 0)
-    nll = Inf;  return
+if ~isfinite(K0) || K0 <= 0
+    return
 end
-
-% Log-density: scaled Bessel logs are (log(K_scaled) - argument).
 logpdf = p.lambda*log(p.gamma) - p.lambda*log(p.delta) - 0.5*log(2*pi) ...
     - (p.lambda - 0.5)*log(p.alpha) - (log(K0) - arg0) ...
     + (p.lambda/2 - 0.25).*log(d2) + (log(Kz) - argz) + p.beta*xm;
-
-nll = -sum(logpdf);
-if ~isfinite(nll) || ~isreal(nll), nll = Inf; end
+bad = ~isfinite(argz) | argz <= 0 | ~isfinite(Kz) | Kz <= 0 | ...
+    ~isfinite(logpdf) | imag(logpdf) ~= 0;
+logpdf = real(logpdf);
+logpdf(bad) = NaN;
 end
 
 function d = delta_lower_bound(data)
@@ -795,19 +1093,25 @@ if all(isfinite(d)) && all(d > 0)
 end
 end
 
-function v = MAX_BESSEL_ARG()
-% Largest Bessel argument for which the log-density is numerically meaningful.
-% See the derivation in gh_nll_from_params: the summed NLL carries an absolute
-% error of roughly n*arg*eps, so 1e10 keeps that below ~1e-2 even for n = 1e6,
-% while sitting many orders of magnitude above any legitimate fit.
-v = 1e10;
+function v = MAX_BESSEL_ARG(n)
+% Largest Bessel argument for which the summed NLL over n points is
+% numerically meaningful. The NLL carries an absolute error of roughly
+% n*arg*eps (see gh_nll_from_params), so the cap keeps that at or below
+% 1e-2 nats, two orders under the 1.92 profile threshold:
+%   v = min(1e10, 1e-2/(n*eps)).
+% A fixed 1e10 used to be justified as "below ~1e-2 even for n = 1e6"; in fact
+% n*1e10*eps is 0.22 nats at n = 1e5 and 2.2 at n = 1e6, above the threshold.
+% For n <= ~4500 the cap is still 1e10. Bessel arguments are products like
+% alpha*delta and are scale-invariant, so the cap means the same in z-units
+% and in data units.
+v = min(1e10, 1e-2 / (n * eps));
 end
 
 % =========================================================================
 %                     PROFILE LIKELIHOOD CONFIDENCE INTERVALS
 % =========================================================================
 
-function ci = gh_profile_ci(theta, data, nllMin, isNIG, hess)
+function [ci, best] = gh_profile_ci(theta, data, nllMin, isNIG, hess)
 % Compute 95% profile likelihood CIs for all physical parameters.
 %
 % For each parameter, the CI boundary satisfies:
@@ -835,6 +1139,13 @@ s    = std(data);               % used to set scale-appropriate step sizes
 % (log_delta is profiled in log space, beta/mu/lambda in their own units),
 % which is what makes this usable directly.
 seT = local_wald_se(hess, numel(theta));
+
+% Lowest nuisance-refit NLL seen in ANY profile evaluation, with the full
+% theta it came from (a handle, so every evaluation updates it). fit_ci uses
+% it to check that nllMin really was the optimum.
+tracker = containers.Map('KeyType', 'char', 'ValueType', 'any');
+tracker('nll')   = nllMin;
+tracker('theta') = theta(:);
 
 if isNIG
     ci.lambda = [-0.5 -0.5];   % lambda is fixed for NIG
@@ -875,7 +1186,7 @@ for i = 1:numel(names)
     % One warm-start cache per parameter: each profile point starts its
     % nuisance optimization from the solution at the nearest point evaluated.
     cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
-    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache);
+    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker);
     % log(delta) is searched no lower than the estimator's own floor: the fit
     % may not return delta below it, so the interval must not claim support
     % there either. Without the limit the search walked down to log(delta)
@@ -887,7 +1198,7 @@ for i = 1:numel(names)
     end
     % The value AT the limit decides between an open bound and a finite one,
     % so it gets a harder nuisance fit (see find_root_robust).
-    funHard = @(qq) regular_profile_dev(qq, idx, theta, data, nllMin, crit, isNIG, opts, cache, true);
+    funHard = @(qq) regular_profile_dev(qq, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker, true);
     lo  = find_root_robust(fun, q0, -1, step, loLimit, funHard);
     hi  = find_root_robust(fun, q0,  1, step, Inf);
 
@@ -904,10 +1215,11 @@ end
 
 % Alpha is profiled exactly by fixing it physically and re-optimizing
 % all other parameters (see profile_alpha_ci for details).
-ci.alpha = profile_alpha_ci(theta, p.alpha, data, nllMin, crit, isNIG, opts);
+ci.alpha = profile_alpha_ci(theta, p.alpha, data, nllMin, crit, isNIG, opts, tracker);
+best = struct('nll', tracker('nll'), 'theta', tracker('theta'));
 end
 
-function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, hard)
+function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker, hard)
 % Profile deviance for parameters other than alpha.
 % Fix theta(idx) = q, re-optimize the remaining parameters,
 % and return  nll_profile - nllMin - crit.
@@ -934,7 +1246,7 @@ obj = @(x) gh_nll_wrapper(insert_param(base, x, mask), data, isNIG);
 lb = lbFull(mask);
 ub = ubFull(mask);
 
-if nargin < 10, hard = false; end
+if nargin < 11, hard = false; end
 starts = {min(max(theta(mask), lb), ub)};   % fmincon needs a feasible start
 if idx == 4 - double(isNIG)
     % Profiling log(delta): also start from the MLE's nuisance values with
@@ -963,7 +1275,19 @@ end
 if nargin >= 9 && isfinite(v)
     cache_store(cache, q, xbest);
 end
+if isfinite(v)
+    track_best(tracker, v, insert_param(base, xbest, mask));
+end
 d = v - nllMin - crit;
+end
+
+function track_best(tracker, v, thetaFull)
+% Record (v, thetaFull) in TRACKER (a containers.Map handle) if v is the
+% lowest NLL seen so far in any profile evaluation.
+if v < tracker('nll')
+    tracker('nll')   = v;
+    tracker('theta') = thetaFull(:);   %#ok<NASGU> containers.Map is a handle
+end
 end
 
 function [v, xbest] = multistart_nuisance(obj, starts, lb, ub, opts, vStop, hard)
@@ -1046,27 +1370,27 @@ end
 end
 % ---- Exact profile CI for physical alpha -----------------------------------
 
-function ci = profile_alpha_ci(theta, aHat, data, nllMin, crit, isNIG, opts)
+function ci = profile_alpha_ci(theta, aHat, data, nllMin, crit, isNIG, opts, tracker)
 % Profile alpha by searching in log(alpha) space.
 % Using q = log(alpha) keeps alpha positive throughout the search and
 % makes the step size scale-invariant regardless of alpha's magnitude.
 q0    = log(aHat);
 cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
-fun   = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, isNIG, opts, cache);
+fun   = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, isNIG, opts, cache, tracker);
 lo  = find_root_robust(fun, q0, -1, 0.1, -Inf);
 hi  = find_root_robust(fun, q0,  1, 0.1,  Inf);
 ci  = exp([lo hi]);   % ordered by construction; see gh_profile_ci on sort
 end
 
-function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, isNIG, opts, cache)
+function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, isNIG, opts, cache, tracker)
 % Profile deviance as a function of log(alpha).
 a = exp(logA);
 if ~isfinite(a) || a <= 0, d = Inf;  return;  end
-v = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, nllMin + crit);
+v = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, nllMin + crit, tracker);
 if isfinite(v), d = v - nllMin - crit;  else, d = Inf;  end
 end
 
-function nll = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, vStop)
+function nll = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, vStop, tracker)
 % Minimize NLL over all parameters except alpha, which is fixed at a.
 %
 % Reparameterize beta = a*tanh(xi), xi free in (-inf, inf).
@@ -1109,14 +1433,30 @@ end
 [nll, xbest] = multistart_nuisance(obj, starts, lb, ub, opts, vStop);
 if isfinite(nll)
     cache_store(cache, logA, xbest);
+    % Back to theta: beta = a*tanh(xi), psi = log(a/cosh(xi)), with
+    % log(cosh(xi)) = |xi| + log1p(exp(-2|xi|)) - log(2), which cannot
+    % overflow. Re-evaluated in theta coordinates, so the tracked value is
+    % exactly what a refit from that theta would start at.
+    xi   = xbest(2 - double(isNIG));
+    beta = a * tanh(xi);
+    psi  = log(a) - (abs(xi) + log1p(exp(-2*abs(xi))) - log(2));
+    if isNIG
+        thetaFull = [beta; psi; xbest(2); xbest(3)];
+    else
+        thetaFull = [xbest(1); beta; psi; xbest(3); xbest(4)];
+    end
+    track_best(tracker, gh_nll_wrapper(thetaFull, data, isNIG), thetaFull);
 end
 end
 function nll = alpha_core(a, lambda, xi, logDelta, mu, data)
 % NLL with alpha = a fixed and beta = a*tanh(xi).
-t          = tanh(xi);
+% gamma = a/cosh(xi) exactly. The old a*sqrt(max(1 - tanh(xi)^2, realmin))
+% cancels: relative error 8e-5 at xi = 15 and 100% from xi = 19, where tanh
+% rounds to 1. cosh overflow gives gamma = 0, which the density treats as
+% invalid (NLL = Inf).
 p.lambda   = lambda;
-p.beta     = a * t;
-p.gamma    = a * sqrt(max(1 - t^2, realmin));
+p.beta     = a * tanh(xi);
+p.gamma    = a / cosh(xi);
 p.alpha    = a;
 p.delta    = exp(logDelta);
 p.mu       = mu;
@@ -1413,7 +1753,9 @@ fitX = sort(data);
 results.Model   = model;
 results.Params  = [p.mu; p.lambda; p.alpha; p.beta; p.delta];
 results.LogLike = -nll;
-results.Fit     = get_pdf_vals(data, p);    % density at original data points
+[logFit, argMax] = gh_logpdf(data, p);
+results.Fit     = exp(logFit);              % density at original data points
+results.LogFit  = logFit;                   % log-density there (NaN = not evaluable)
 results.FitX    = fitX;                     % sorted x for smooth density plots
 results.FitPDF  = get_pdf_vals(fitX, p);    % density at sorted points
 results.AIC     = 2*k + 2*nll;
@@ -1422,27 +1764,29 @@ results.theta_hat = theta;
 
 % ---- Validate that the reported solution is a real fit -------------------
 % A returned parameter vector is only meaningful if the density can actually
-% be evaluated there AND reproduces the reported likelihood. get_pdf_vals
-% already marks failed evaluations as NaN, but nothing used to look, so a
-% degenerate run could report converged=true alongside an all-NaN density and
-% a nonsensical log-likelihood. Check both and say so loudly.
+% be evaluated there AND reproduces the reported likelihood. Nothing used to
+% look, so a degenerate run could report converged=true alongside an all-NaN
+% density and a nonsensical log-likelihood. Check both and say so loudly.
+%
+% The check works on the LOG-density. It used to test exp(logpdf) > 0, and a
+% legitimate log-density below about -745 (a gross outlier) underflows to 0,
+% which set valid = false with a misleading "optimizer ran away" warning.
 results.valid = true;
-badFit = ~all(isfinite(results.Fit)) || any(results.Fit <= 0);
+badFit = ~all(isfinite(logFit));
 if badFit
     results.valid = false;
     warning('GeneralizedHyperbolic_MLE:DensityNotEvaluable', ...
         ['The fitted parameters do not yield an evaluable density (%d of %d ' ...
-        'points are NaN or non-positive). results.LogLike is not trustworthy. ' ...
-        'This usually means the optimizer ran away to extreme parameters.'], ...
-        nnz(~isfinite(results.Fit) | results.Fit <= 0), n);
+        'points have a non-finite log-density). results.LogLike is not ' ...
+        'trustworthy. This usually means the optimizer ran away to extreme ' ...
+        'parameters.'], nnz(~isfinite(logFit)), n);
 else
-    llCheck = sum(log(results.Fit));
+    llCheck = sum(logFit);
     % The tolerance includes the log-density's own floating-point noise (see
     % NUMERICAL-VALIDITY GUARD). Near the Normal limit, Bessel arguments of
     % 1e9-1e10 are legitimate and the summed log-likelihood carries about
     % n*arg*eps of noise; a fixed 1e-6 failed a sound fit (n = 10, argument
     % 6.2e9, discrepancy 2e-5; Sep 2026).
-    argMax = max([p.delta*p.gamma; p.alpha*sqrt(p.delta^2 + (data - p.mu).^2)]);
     tol = max([1e-6, 1e-8 * abs(nll), 10 * n * max(argMax, 1) * eps]);
     if ~isfinite(llCheck) || abs(llCheck + nll) > tol
         results.valid = false;
@@ -1504,23 +1848,10 @@ results.converged            = ef > 0;
 end
 
 function pdf = get_pdf_vals(x, p)
-% Evaluate the GH density at points x given physical parameters p.
-xm = x - p.mu;
-d2 = p.delta^2 + xm.^2;
-z  = sqrt(d2);
-
-a0 = p.delta * p.gamma;
-az = p.alpha  * z;
-
-K0 = besselk(p.lambda,       a0, 1);
-Kz = besselk(p.lambda - 0.5, az, 1);
-
-logpdf = p.lambda*log(p.gamma) - p.lambda*log(p.delta) - 0.5*log(2*pi) ...
-    - (p.lambda - 0.5)*log(p.alpha) - (log(K0) - a0) ...
-    + (p.lambda/2 - 0.25).*log(d2) + (log(Kz) - az) + p.beta*xm;
-
-pdf = exp(logpdf);
-pdf(~isfinite(pdf)) = NaN;   % flag any density evaluation failures
+% Evaluate the GH density at points x given physical parameters p. NaN flags
+% a point where the log-density cannot be evaluated; a legitimately tiny
+% density underflows to 0, which is not a failure.
+pdf = exp(gh_logpdf(x, p));
 end
 
 function plot_results(data, results)
