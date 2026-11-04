@@ -16,7 +16,10 @@ function R = sleepVsCycleTests(T, options)
 %   per0 DD; fumin L, D; sss L, D x 2 outcomes); stratified Fisher z of the direction over the 7
 %   primary blocks (STRATIFIEDSPEARMANTEST). rho is exact; p, Holm and the stratified p are Monte Carlo.
 %   R   struct: blocks (table: genotype, phase, primary, n, sleep_med, n_dir, rho_dir, p_dir, holm_dir,
-%       n_J, rho_J, p_J, holm_J, n_nocycle, sleep_nocycle, sleep_cycle), strat (z, rhoEquiv, p)
+%       n_J, rho_J, p_J, holm_J, n_nocycle, sleep_nocycle, sleep_cycle), strat (z, rhoEquiv, p),
+%       overlap (fumin / sss, per phase: the common sleep range [lo, hi] of the rows with a finite direction,
+%       and inside it n, median sleep, median direction and median J per genotype; observed: J over cycle
+%       rows only, hidden: over all rows, as sqw22.py / sqw22h.py). All ranks use round(x, 10) (2026-11-04).
 %
 %   Example (from the Icode\sqw folder):
 %       D = buildPerFlyData("D:\flies", fullfile("..", "hmm_audit", "sqw20b_fit2_theta0.5.jsonl"), Cache="perfly_cache.mat");
@@ -52,4 +55,15 @@ pr = find(B.primary); h = holmAdjust([B.p_dir(pr); B.p_J(pr)]);      % same fami
 B.holm_dir(pr) = h(1:numel(pr)); B.holm_J(pr) = h(numel(pr) + 1:end);
 [z, pz, re] = stratifiedSpearmanTest(Xs, Ys, options.NPermStrat, rs);
 R.blocks = B; R.strat = struct('z', z, 'rhoEquiv', re, 'p', pz); R.direction = dv;
+Ov = table();                                      % fumin / sss overlap in sleep (sqw22.py "overlap", sqw22h.py "ov")
+for p = 1:2
+    f = T(T.genotype == "fumin" & T.phase == p & isfinite(T.(dv)), :); s = T(T.genotype == "sss" & T.phase == p & isfinite(T.(dv)), :);
+    if isempty(f) || isempty(s), continue, end
+    lo = max(min(f.sleep), min(s.sleep)); hi = min(max(f.sleep), max(s.sleep));
+    f = f(f.sleep >= lo & f.sleep <= hi, :); s = s(s.sleep >= lo & s.sleep <= hi, :);
+    if dv == "c_obs", fj = f.J(f.cycle); sj = s.J(s.cycle); else, fj = f.J; sj = s.J; end   % observed: J of cycle rows only
+    Ov = [Ov; table(p, lo, hi, height(f), height(s), median(f.sleep), median(s.sleep), median(f.(dv)), median(s.(dv)), median(fj), median(sj), ...
+        'VariableNames', {'phase', 'lo', 'hi', 'n_fumin', 'n_sss', 'sleep_fumin', 'sleep_sss', 'dir_fumin', 'dir_sss', 'J_fumin', 'J_sss'})]; %#ok<AGROW>
+end
+R.overlap = Ov;
 end

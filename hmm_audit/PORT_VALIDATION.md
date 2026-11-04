@@ -517,3 +517,20 @@ re-run, more permutations would settle it.
   null [0, 6] as Python; sss 6 h share median 0.5 vs 0.0, from the few simulated sets with any measurable window).
   Walk figure: flies with >= 60% scored minutes, mean ends CS LD +9.7 (92% > 0), CS DD +10.0 (80%), per0 LD +10.3,
   per0 DD +11.5 (72 h), sss -1.0 (49 flies, 48 h); per-window net counts as the Python's histogram definition.
+
+## 2026-11-04  cClaude's decisions after e4e1d43: rounding before ranking, tie-corrected signed-rank, overlap, sensitivity
+- spearmanPermTest / stratifiedSpearmanTest: values rounded to 10 decimals before ranking by default (RoundDigits;
+  Inf = off). Observed PRESPEC 22 from raw-data rows now equals the updated port_ref in all 20 rho (fumin L/D J
+  +0.3689/+0.5875, sss L/D -0.2666/+0.1747, c_obs fumin L -0.0505, ...); stratified p 0.977 (Py 0.972).
+- wilcoxonP now mirrors scipy's default exactly: exact distribution only when n <= 50 AND no ties in |x|, otherwise
+  the normal approximation with tie correction, no continuity correction (before: MATLAB's exact test with mid-ranks).
+  exportSssReversalFigure ranks round(J, 10) in both tests. sss light observed p 0.0022 (Py 0.0022), sss dark 0.637
+  (Py 0.637); HMM p 8.7e-5 (Py 7e-5, own paths). CS light observed p 0.145 (was 0.152). Re-exported (validation/figC).
+- fumin / sss overlap (sleepVsCycleTests R.overlap): observed EXACT vs port_ref (light: range [0.667, 12.42], n 43/42,
+  sleep 6.42 vs 3.42, c_obs +0.155 vs -0.032, J +0.097 vs -0.042; dark: n 52/53, sleep 3.15 vs 2.88, c_obs +0.246 vs
+  0.000, J +0.087 vs -0.018). Hidden: ranges, n and sleep exact; d dark +0.29 vs -0.04 (Py +0.28 vs -0.03), J +0.113
+  vs -0.014 (Py +0.109 vs -0.013), port's own paths.
+- Sensitivity (sleepSensitivityTests, new): model vs observed sleep Spearman 0.989-1.000 in all 7 primary blocks;
+  J_hmm against OBSERVED sleep: sss L -0.47 (p 0.0025), fumin D +0.53 (p 0.0002), fumin L +0.41 (p 0.005), sss D +0.15
+  (p 0.33) -- ledger -0.49 / +0.53 / +0.40 / +0.14 within path error. Tables in validation/fig22.
+- Suites after the change: test_sqw_stage1 21, test_sqw_modelFree 13, test_sqw_figures 11, test_sqw_r3 11 -- all pass.

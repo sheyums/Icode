@@ -12,13 +12,15 @@ function X = exportSssReversalFigure(D, outDir, options)
 %       pre-registered sign test is 20d.
 %   No-cycle rule (20s-A; FIGURE_RECIPES decision 2026-11-02): a fly whose observed chain has no
 %   cycle (|J_chain| < 1e-12) has J_chain set to exactly 0 and is PLOTTED at 0 but left out of the
-%   observed "% J < 0" and of its Wilcoxon test (its sign would be floating-point round-off). The
+%   observed "% J < 0" and of its Wilcoxon test (its sign would be floating-point round-off). Both Wilcoxon
+%   tests rank round(J, 10) (2026-11-04: quantised J values equal up to round-off are real ties; WILCOXONP
+%   then uses scipy's tie-corrected normal approximation). The
 %   bar (mean_obs) is over all flies. HMM J is not touched.
 %   Writes fig_sss_reversal_points.csv, fig_sss_reversal_summary.csv, fig_sss_reversal.mat and
 %   fig_sss_reversal.png / .pdf. Summary columns: n, n_noCycle, mean_obs, mean_hmm, neg_obs_cycleOnly,
 %   neg_hmm, p_obs_cycleOnly, p_hmm.
-%   Check (RESULTS_LEDGER correction 2026-11-02): sss light 37 of 50 with a cycle, J < 0 in 70%,
-%   p 0.0016, mean -0.038; HMM p 7e-5; sss dark 48 of 53, 56%, p 0.66.
+%   Check (RESULTS_LEDGER corrections 2026-11-02, 2026-11-04): sss light 37 of 50 with a cycle, J < 0 in
+%   70%, p 0.0022 (tie-corrected), mean -0.038; HMM p 7e-5; sss dark 48 of 53, 56%, p 0.637.
 %
 %   Example (from the Icode\sqw folder):
 %       dataRoot = "D:\flies";          % one subfolder of 1-s count files per genotype
@@ -46,7 +48,7 @@ for k = 1:4
     pts = [pts; table(repmat(B.genotype(k), height(T), 1), repmat(B.phase(k), height(T), 1), T.file, jo, jh, ...
         'VariableNames', {'genotype', 'phase', 'file', 'J_chain', 'J_hmm'})]; %#ok<AGROW>
     summ = [summ; table(B.genotype(k), B.phase(k), numel(jo), nnz(~cyc), mean(jo), mean(jh), mean(jo(cyc) < 0), mean(jh < 0), ...
-        wilcoxonP(jo(cyc)), wilcoxonP(jh), 'VariableNames', {'genotype', 'phase', 'n', 'n_noCycle', 'mean_obs', 'mean_hmm', ...
+        wilcoxonP(round(jo(cyc), 10)), wilcoxonP(round(jh, 10)), 'VariableNames', {'genotype', 'phase', 'n', 'n_noCycle', 'mean_obs', 'mean_hmm', ...
         'neg_obs_cycleOnly', 'neg_hmm', 'p_obs_cycleOnly', 'p_hmm'})]; %#ok<AGROW>
 end
 X.points = pts; X.summary = summ;
