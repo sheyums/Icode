@@ -449,3 +449,17 @@ re-run, more permutations would settle it.
 - Medians: all amendment values reproduced except the HMM model EPR for sss LIGHT, 0.0096 -> 0.0094: removing the
   0.0088 artefact moves the lower middle value from 0.00876 to 0.00834 (n 50), which in MATLAB crosses the rounding
   boundary (0.010 -> 0.009). The Python, with its own paths, may sit on the other side; quote 0.009-0.010.
+
+## 2026-11-03  Act 1: cumulative walk + loop accounting (fig_act1_walk.py, cycle_times.py) — REPRODUCED
+- New: sqw/completedLoops.m (loop erasure; missing minute resets; 3-state erased loop = completed cycle, forward = a
+  rotation of W->Q->S; duration from entry of the loop's first state; entry reset after erasure; phase of the
+  completion minute), sqw/cycleWalk.m (+1 S->W, -1 W->S over consecutive scored minutes), sqw/completedLoopRates.m
+  (cycle_times.json table), sqw/exportCumulativeWalkFigure.m (figAct1_cumulative_walk; validation/figAct).
+- completedLoopRates vs port_ref/cycle_times.json: all 12 fields of all 10 blocks agree to <= 1.1e-12 (n, fwd/back/net
+  per h, J_chain mean, h per net cycle, loop-duration medians and means, loop counts, e.g. CS dark 389/191 loops).
+- Walk vs net completed loops: max |difference| over every minute of all 209 flies = 1 (as stated).
+- Figure corner text: CS LD 92% of 25 flies end forward, mean +9.72 in 96 h; CS DD 80%, +9.96 -- as the Python.
+- NOT confirmed (and not true in the Python's own cycle_times.json either): "net loops/h equals chain J to 3
+  decimals in EVERY block". It holds in CS dark (0.165/0.165), CS DD, per0 DD, fumin L; elsewhere they differ by up to
+  0.002: CS light 0.0367 vs 0.0379, per0 LD dark 0.1204 vs 0.1222, fumin D 0.1022 vs 0.1028, sss L -0.0383 vs -0.0377,
+  sss D +0.0016 vs -0.0004. Agreement to ~0.002 cycles/h (2 decimals) is the accurate statement.
