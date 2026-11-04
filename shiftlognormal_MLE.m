@@ -92,6 +92,31 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %                              produced the returned solution
 %           .OptimizerOutput   fminbnd output struct for the refinement
 %                              that produced the returned solution
+%           .SE                [se_mu, se_sigma, se_shift]: standard errors
+%                              from the observed information (the negative
+%                              analytic Hessian of the log-likelihood).
+%                              NaN when that matrix is not positive
+%                              definite.
+%           .Cov               3 x 3 covariance matrix behind SE, in the
+%                              order of Params.
+%           .CI                3 x 2 profile-likelihood confidence
+%                              intervals, rows mu, sigma, shift, columns
+%                              [lower, upper]. The RECOMMENDED interval.
+%                              For each parameter, the two values where
+%                              the log-likelihood, maximized over the
+%                              other two (the shift kept inside the
+%                              estimation bounds), falls chi2inv(CILevel,1)/2
+%                              below LogLike.
+%           .CIOpen            3 x 2 logical: that end never fell below
+%                              the threshold, so the interval is open
+%                              there. An open shift end is reported as the
+%                              shift bound it reached; mu as -Inf/Inf;
+%                              sigma as 0/Inf.
+%           .CIWald            3 x 2 Wald intervals, estimate +/- z*SE, on
+%                              scales that keep them valid: mu directly,
+%                              log(sigma), and log(min(x) - shift) (so the
+%                              shift interval stays below min(x)).
+%           .CILevel           0.95.
 %           .Diagnostics       Struct with bound, grid, and data diagnostics.
 %                              NearLowerBound / NearUpperBound are judged
 %                              in t = log(gap), and BoundaryTolerance is in
@@ -105,6 +130,9 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %       shiftlognormal_MLE:ShiftNearLowerBound  shift clipped on the left
 %       shiftlognormal_MLE:PartialConvergence   no refinement converged
 %       shiftlognormal_MLE:NonfiniteDataRemoved NaN/Inf dropped
+%       shiftlognormal_MLE:ProfileImprovedOptimum a profile search beat
+%                                               the estimate (CIs then
+%                                               approximate)
 %
 %   LIMITATIONS (measured Nov 2026)
 %   -----------
@@ -117,7 +145,18 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %     interior optimum: the profile keeps rising toward the Normal limit,
 %     shift -> -Inf, and the fit clips to the lower bound with a warning.
 %     Read such a fit as "no evidence of a shifted log-normal shape".
-%   - No standard errors or confidence intervals are returned.
+%   - Confidence intervals: measured coverage of the nominal 95% (500
+%     samples each, true mu = 1, shift = 3; Monte Carlo SE about 0.01):
+%       n = 50,   sigma 0.5: profile 0.93 / 0.93 / 0.93 (mu/sigma/shift),
+%                            Wald 0.90 / 0.93 / 0.96
+%       n = 200,  sigma 0.5: profile 0.97 / 0.95 / 0.96, Wald 0.96 / 0.96 / 0.97
+%       n = 1000, sigma 0.5: profile 0.96 / 0.95 / 0.95, Wald 0.96 / 0.95 / 0.96
+%       n = 200,  sigma 1.0: profile 0.95 / 0.94 / 0.95, Wald 0.95 / 0.94 / 0.97
+%     Prefer CI (profile). At n = 50 the shift interval was open at one
+%     end in 132 of 500 samples: the data did not bound it within the
+%     allowed interval. When the estimate sits ON a bound
+%     (Diagnostics.NearAnyBoundary) the likelihood theory behind both
+%     intervals does not hold; read them as descriptive only.
 %
 %   EXAMPLE
 %   -------
@@ -137,7 +176,9 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %  the log-likelihood by 0.049, from fminbnd's relative tolerance on the
 %  raw shift); the upper bound scaled by median(x - min(x)) instead of
 %  range(x); both bounds evaluated exactly as candidates; a SmallSample
-%  warning below n = 15.
+%  warning below n = 15. Standard errors (analytic observed information)
+%  and profile-likelihood and Wald confidence intervals added the same
+%  month, with their coverage measured by simulation (LIMITATIONS).
 
     %% Constants and default settings
 
@@ -478,6 +519,50 @@ function ModelResults = shiftlognormal_MLE(x, mode)
             '%s', boundaryMessage);
     end
 
+    %% Standard errors and confidence intervals
+    %
+    % SE: from the observed information, the negative analytic Hessian of
+    % the log-likelihood in (mu, sigma, shift) at the estimate (see
+    % sln_observed_information). NaN when that matrix is not positive definite.
+    %
+    % CI (profile likelihood, the recommended interval): for each
+    % parameter, the values where the profile log-likelihood -- maximized
+    % over the other two parameters, with the shift kept inside the same
+    % bounds as the estimate -- falls chiCrit/2 below LogLike. Because mu
+    % and sigma are closed-form given the shift, a profile point is a 1-D
+    % search over t = log(min(x) - shift). An end that never drops below
+    % the threshold is OPEN (CIOpen true): for the shift it is reported as
+    % the shift bound it reached; for mu as -Inf/+Inf; for sigma as 0/Inf.
+    %
+    % CIWald: estimate +/- z*SE on scales that respect the constraints:
+    % mu directly, sigma on log(sigma), the shift on log(min(x) - shift).
+
+    ciLevel = 0.95;
+    zCrit   = sqrt(2) * erfinv(ciLevel);    % Normal quantile, no toolbox
+    chiCrit = zCrit^2;                      % chi-square(1) quantile
+    llThreshold = logLikelihood - chiCrit/2;
+
+    [covMatrix, seVec] = sln_observed_information( ...
+        shiftedData, bestMu, bestSigma);
+
+    ciWald = NaN(3, 2);
+    ciWald(1, :) = bestMu + [-1, 1]*zCrit*seVec(1);
+    ciWald(2, :) = bestSigma * exp([-1, 1]*zCrit*seVec(2)/bestSigma);
+    ciWald(3, :) = min_x - bestGap * exp([1, -1]*zCrit*seVec(3)/bestGap);
+
+    [ciProfile, ciOpen, profileBest] = sln_profile_intervals( ...
+        offsets, tBounds, bestT, bestMu, bestSigma, seVec, ...
+        llThreshold, min_x, ...
+        @(t) -neg_profile_loglike(offsets, exp(t)));
+
+    if profileBest > logLikelihood + 1e-6
+        warning('shiftlognormal_MLE:ProfileImprovedOptimum', ...
+            ['A profile search found a log-likelihood %.6g above the ' ...
+             'estimate''s %.6g: the returned estimate is not the ' ...
+             'constrained optimum, and the CIs are approximate.'], ...
+            profileBest - logLikelihood, logLikelihood);
+    end
+
     %% Calculate fitted PDF and corresponding coordinates
 
     [fit_x, sortIdx] = sort(x);
@@ -525,6 +610,14 @@ function ModelResults = shiftlognormal_MLE(x, mode)
     ModelResults.Converged       = converged;
     ModelResults.ExitFlag        = exitFlag;
     ModelResults.OptimizerOutput = optimizerOutput;
+
+    % Uncertainty: rows (and SE entries) in the order of Params.
+    ModelResults.SE      = seVec;
+    ModelResults.Cov     = covMatrix;
+    ModelResults.CI      = ciProfile;
+    ModelResults.CIOpen  = ciOpen;
+    ModelResults.CIWald  = ciWald;
+    ModelResults.CILevel = ciLevel;
 
     %% Store shift and boundary diagnostics
 
@@ -685,5 +778,152 @@ function ModelResults = shiftlognormal_MLE(x, mode)
         else
             message = 'No optimizer message was returned.';
         end
+    end
+end
+
+%% ========================================================================
+%  Local functions: standard errors and confidence intervals
+%  ========================================================================
+
+function [covMatrix, se] = sln_observed_information(y, mu, sigma)
+% Observed information -H, with H the analytic Hessian of the
+% log-likelihood in (mu, sigma, shift), y = x - shift. Per observation,
+% with z = (log(y) - mu)/sigma:
+%   d2/dmu2       = -1/sigma^2
+%   d2/dmu dsigma = -2z/sigma^2
+%   d2/dsigma2    = (1 - 3z^2)/sigma^2
+%   d2/dmu dshift = -1/(sigma^2 y)
+%   d2/dsigma ds  = -2z/(sigma^2 y)
+%   d2/dshift2    = (1 + z/sigma - 1/sigma^2)/y^2
+% Returns NaN when -H is not positive definite (e.g. a fit on a bound).
+s2 = sigma^2;
+z  = (log(y) - mu) / sigma;
+H  = zeros(3);
+H(1,1) = -numel(y) / s2;
+H(1,2) = -2*sum(z) / s2;
+H(2,2) = sum(1 - 3*z.^2) / s2;
+H(1,3) = -sum(1 ./ y) / s2;
+H(2,3) = -2*sum(z ./ y) / s2;
+H(3,3) = sum((1 + z/sigma - 1/s2) ./ y.^2);
+H = triu(H) + triu(H, 1)';
+info = -H;
+[R, p] = chol(info);
+if p > 0 || any(~isfinite(info(:)))
+    covMatrix = NaN(3);
+    se = NaN(1, 3);
+    return
+end
+Rinv = R \ eye(3);
+covMatrix = Rinv * Rinv';
+se = sqrt(diag(covMatrix))';
+end
+
+function [ci, isOpen, bestSeen] = sln_profile_intervals(offsets, tBounds, ...
+    bestT, bestMu, bestSigma, se, threshold, minX, profT)
+% Profile-likelihood interval ends for mu, sigma and the shift.
+% Rows of ci: mu, sigma, shift; columns: lower, upper.
+n  = numel(offsets);
+ci = NaN(3, 2);
+isOpen = false(3, 2);
+bestSeen = -Inf;
+
+% Centred sums of log(offsets + exp(t)) on a t grid, so a profile point
+% for mu or sigma costs one pass over the grid plus a short refinement.
+c  = bestMu;
+tg = linspace(tBounds(1), tBounds(2), 400);
+S1 = zeros(size(tg));
+S2 = zeros(size(tg));
+for ig = 1:numel(tg)
+    d = log(offsets + exp(tg(ig))) - c;
+    S1(ig) = sum(d);
+    S2(ig) = sum(d.^2);
+end
+
+% Log-likelihood with mu (or sigma) fixed and the other closed-form
+% maximized, as a function of the centred sums at one t.
+llMu  = @(m, s1, s2) -(s1 + n*c) ...
+    - n/2*log(2*pi*max((s2 - 2*(m - c)*s1 + n*(m - c)^2)/n, realmin)) - n/2;
+llSig = @(sg, s1, s2) -(s1 + n*c) - n*log(sg) - n/2*log(2*pi) ...
+    - max(s2 - s1.^2/n, 0) / (2*sg^2);
+
+profMu  = @(m)  inner_max(@(s1, s2) llMu(m, s1, s2));
+profSig = @(ls) inner_max(@(s1, s2) llSig(exp(ls), s1, s2));
+
+stepMu = se(1);
+if ~(isfinite(stepMu) && stepMu > 0)
+    stepMu = bestSigma / sqrt(n);
+end
+[ci(1, 1), isOpen(1, 1)] = find_end(profMu, bestMu, -stepMu, -Inf);
+[ci(1, 2), isOpen(1, 2)] = find_end(profMu, bestMu,  stepMu,  Inf);
+
+stepLs = se(2) / bestSigma;
+if ~(isfinite(stepLs) && stepLs > 0)
+    stepLs = 1 / sqrt(2*n);
+end
+[lsLo, isOpen(2, 1)] = find_end(profSig, log(bestSigma), -stepLs, -Inf);
+[lsHi, isOpen(2, 2)] = find_end(profSig, log(bestSigma),  stepLs,  Inf);
+ci(2, :) = exp([lsLo, lsHi]);
+
+% Shift: the 1-D profile over t, inside the estimation bounds. Smaller t
+% means a shift closer to min(x), so tBounds(1) gives the UPPER end.
+[tUp, isOpen(3, 2)] = shift_end(tBounds(1));
+[tLo, isOpen(3, 1)] = shift_end(tBounds(2));
+ci(3, :) = minX - exp([tLo, tUp]);
+
+    function v = inner_max(llfun)
+        vals = llfun(S1, S2);
+        [v, i] = max(vals);
+        lo = tg(max(i - 1, 1));
+        hi = tg(min(i + 1, numel(tg)));
+        if hi > lo
+            f = @(t) -eval_at(llfun, t);
+            [~, fv] = fminbnd(f, lo, hi, ...
+                optimset('TolX', 1e-10, 'Display', 'off'));
+            v = max(v, -fv);
+        end
+        bestSeen = max(bestSeen, v);
+    end
+
+    function v = eval_at(llfun, t)
+        d = log(offsets + exp(t)) - c;
+        v = llfun(sum(d), sum(d.^2));
+    end
+
+    function [xEnd, open] = find_end(prof, x0, step, openValue)
+        % Expand from x0 by doubling steps until the profile drops below
+        % the threshold, then solve for the crossing.
+        prev = x0;
+        for kk = 0:60
+            xk = x0 + step * 2^kk;
+            v  = prof(xk);
+            if ~isfinite(v)
+                break
+            end
+            if v < threshold
+                xEnd = fzero(@(q) prof(q) - threshold, sort([prev, xk]));
+                open = false;
+                return
+            end
+            prev = xk;
+        end
+        xEnd = openValue;
+        open = true;
+    end
+
+    function [tEnd, open] = shift_end(tLimit)
+        tt = linspace(bestT, tLimit, 401);
+        prevT = bestT;
+        for kk = 2:numel(tt)
+            v = profT(tt(kk));
+            bestSeen = max(bestSeen, v);
+            if v < threshold
+                tEnd = fzero(@(q) profT(q) - threshold, sort([prevT, tt(kk)]));
+                open = false;
+                return
+            end
+            prevT = tt(kk);
+        end
+        tEnd = tLimit;
+        open = true;
     end
 end

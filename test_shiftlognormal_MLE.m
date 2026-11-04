@@ -34,6 +34,9 @@
 % 18.  SmallSample warning         - raised at n = 10, not at n = 15
 % 19.  A bound is reached exactly  - a fit on the upper bound sits ON it
 % 20.  Fit consistent with LogLike - sum(log(Fit)) equals LogLike
+% 21-25 Standard errors and confidence intervals (see that section):
+%      SE vs an independent Hessian, CI ends on an independent profile's
+%      threshold, constraints, equivariance, open ends at the bound.
 
 nPassed = 0;
 nFailed = 0;
@@ -516,6 +519,137 @@ try
     nPassed = nPassed + 1;
 catch e
     fprintf('[FAIL] 20. Fit consistent with LogLike: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Standard errors and confidence intervals (added Nov 2026)
+%
+% 21. SE equals an independent numerical Hessian of a log-likelihood
+%     written here from the definition
+% 22. Profile CI ends sit on the threshold of an independent profile
+% 23. Intervals contain the estimate and respect sigma > 0, shift < min(x)
+% 24. CIs are equivariant under x -> a*x + b
+% 25. An open shift end is reported as the bound it reached
+
+LLfull = @(x, p) sum(-log(x - p(3)) - log(p(2)) - 0.5*log(2*pi) ...
+                     - (log(x - p(3)) - p(1)).^2 / (2*p(2)^2));
+chiHalf = 0.5 * (sqrt(2)*erfinv(0.95))^2;
+
+%% Test 21: SE vs an independent numerical Hessian
+
+try
+    p0 = rG.Params;  h = 1e-4 * max(abs(p0), 1e-2);  Hn = zeros(3);
+    for i = 1:3
+        for j = 1:3
+            ei = zeros(1, 3);  ej = ei;  ei(i) = h(i);  ej(j) = h(j);
+            Hn(i, j) = (LLfull(xG, p0+ei+ej) - LLfull(xG, p0+ei-ej) ...
+                      - LLfull(xG, p0-ei+ej) + LLfull(xG, p0-ei-ej)) ...
+                      / (4*h(i)*h(j));
+        end
+    end
+    seN = sqrt(diag(inv(-Hn)))';
+    relErr = max(abs(seN - rG.SE) ./ seN);
+    assert(relErr < 1e-4, sprintf('max relative SE error %.3g', relErr));
+    fprintf('[PASS] 21. SE matches an independent numerical Hessian\n');
+    nPassed = nPassed + 1;
+catch e
+    fprintf('[FAIL] 21. SE: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 22: profile CI ends sit on the threshold
+
+try
+    thr = rG.LogLike - chiHalf;
+    lo = rG.Diagnostics.LowerShift;  hi = rG.Diagnostics.UpperShift;
+    m  = min(xG);
+    sGrid = unique([linspace(lo, hi, 4001), ...
+                    m - logspace(log10(m - hi), log10(m - lo), 4001)]);
+    sGrid = sGrid(sGrid >= lo & sGrid <= hi);
+    % mu fixed: sigma closed form; sigma fixed: mu closed form.
+    llMuS  = @(mu, s) -sum(log(xG - s)) - numel(xG)/2 * ...
+        log(2*pi*mean((log(xG - s) - mu).^2)) - numel(xG)/2;
+    llSigS = @(sg, s) -sum(log(xG - s)) - numel(xG)*log(sg) ...
+        - numel(xG)/2*log(2*pi) - numel(xG)*var(log(xG - s), 1)/(2*sg^2);
+    profAt = @(f) max(arrayfun(f, sGrid));
+    d = [profAt(@(s) llMuS(rG.CI(1,1), s)),  profAt(@(s) llMuS(rG.CI(1,2), s)), ...
+         profAt(@(s) llSigS(rG.CI(2,1), s)), profAt(@(s) llSigS(rG.CI(2,2), s)), ...
+         profLL(xG, rG.CI(3,1)), profLL(xG, rG.CI(3,2))] - thr;
+    % The grid maximum can only fall short of the true profile, by at most
+    % its resolution; the closed-form shift profile is exact.
+    assert(all(abs(d(1:4)) < 1e-3) && all(abs(d(5:6)) < 1e-6) && ...
+        ~any(rG.CIOpen(:)), sprintf('profile - threshold: %s', mat2str(d, 3)));
+    fprintf('[PASS] 22. Profile CI ends sit on the threshold\n');
+    nPassed = nPassed + 1;
+catch e
+    fprintf('[FAIL] 22. Profile CI ends: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 23: intervals contain the estimate and respect the constraints
+
+try
+    P = rG.Params';
+    ok = all(rG.CI(:,1) < P & P < rG.CI(:,2)) && ...
+         all(rG.CIWald(:,1) < P & P < rG.CIWald(:,2)) && ...
+         rG.CI(2,1) > 0 && rG.CIWald(2,1) > 0 && ...
+         rG.CI(3,2) < min(xG) && rG.CIWald(3,2) < min(xG) && ...
+         rG.CILevel == 0.95 && isequal(size(rG.Cov), [3 3]);
+    assert(ok, 'an interval misses the estimate or breaks a constraint');
+    fprintf('[PASS] 23. Intervals contain the estimate and respect constraints\n');
+    nPassed = nPassed + 1;
+catch e
+    fprintf('[FAIL] 23. Interval sanity: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 24: CIs are equivariant under a*x + b
+
+try
+    a = 1e-3;  b = 1e6;
+    ws = warning('off', 'all');
+    r = shiftlognormal_MLE(a*xG + b);
+    warning(ws);
+    eMu    = max(abs(r.CI(1,:) - log(a) - rG.CI(1,:)));
+    eSigma = max(abs(r.CI(2,:) - rG.CI(2,:)) ./ rG.CI(2,:));
+    eShift = max(abs((r.CI(3,:) - b)/a - rG.CI(3,:)) ./ abs(rG.CI(3,:)));
+    errSE  = max(abs(r.SE ./ [1, 1, a] - rG.SE) ./ rG.SE);
+    assert(max([eMu, eSigma, eShift, errSE]) < 1e-5, ...
+        sprintf('mu %.3g, sigma %.3g, shift %.3g, SE %.3g', ...
+        eMu, eSigma, eShift, errSE));
+    fprintf('[PASS] 24. CIs and SEs equivariant under 1e-3*x + 1e6\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 24. CI equivariance: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 25: an open shift end is reported as the bound it reached
+
+try
+    found = false;
+    ws = warning('off', 'all');
+    for s = 1:60
+        rs = RandStream('twister', 'Seed', 2500 + s);
+        r  = shiftlognormal_MLE(3 + exp(1 + 0.5*randn(rs, 50, 1)));
+        if any(r.CIOpen(3, :))
+            found = true;
+            break
+        end
+    end
+    warning(ws);
+    assert(found, 'no n = 50 sample gave an open shift end');
+    bounds = [r.Diagnostics.LowerShift, r.Diagnostics.UpperShift];
+    okEnds = (~r.CIOpen(3,1) || abs(r.CI(3,1) - bounds(1)) <= 1e-9*abs(bounds(1))) && ...
+             (~r.CIOpen(3,2) || abs(r.CI(3,2) - bounds(2)) <= 1e-9*abs(bounds(2)));
+    assert(okEnds, sprintf('open end %s not at bound %s', mat2str(r.CI(3,:), 10), ...
+        mat2str(bounds, 10)));
+    fprintf('[PASS] 25. Open shift end reported at its bound\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 25. Open shift end: %s\n', e.message);
     nFailed = nFailed + 1;
 end
 
