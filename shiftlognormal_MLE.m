@@ -18,15 +18,26 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %   therefore constrains the shift to the data-derived interval
 %
 %       lowerShift = min(x) - range(x)
-%       upperShift = min(x) - gapFraction*range(x)
+%       upperShift = min(x) - gapFraction*median(x - min(x))
 %
-%   with gapFraction = 0.001.
+%   with gapFraction = 0.001 (range(x) replaces the median when more than
+%   half the observations tie at min(x)).
 %
 %   Upper bound: gapFraction controls the minimum permitted gap between
 %   the fitted shift and the smallest observation. This is a regularization
 %   choice, not a result derived from maximum-likelihood theory. If the
 %   fitted shift approaches this bound, the estimate is sensitive to
-%   gapFraction and a warning is issued.
+%   gapFraction and a warning is issued. The gap is scaled by the median
+%   distance above min(x), not by the range: the range is dominated by
+%   the right tail, and for heavy tails 0.001*range(x) exceeded the true
+%   distance from the shift to min(x), putting the true shift OUTSIDE the
+%   allowed interval (measured Nov 2026, n = 2000, true shift 3: sigma = 1
+%   clipped 10/20 fits, sigma = 1.5 clipped 20/20 with a median error of
+%   0.45; with the median scale, 0/20 and 0/20, median error 0.006).
+%
+%   The search runs over t = log(min(x) - shift), and the shifted data are
+%   formed as (x - min(x)) + gap. The fit is therefore equivariant under
+%   x -> a*x + b: shift -> a*shift + b, mu -> mu + log(a), sigma unchanged.
 %
 %   Lower bound: the shift cannot be further than one full data range below
 %   the minimum observation. This is a heuristic. If the true shift lies
@@ -81,7 +92,32 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %                              produced the returned solution
 %           .OptimizerOutput   fminbnd output struct for the refinement
 %                              that produced the returned solution
-%           .Diagnostics       Struct with bound, grid, and data diagnostics
+%           .Diagnostics       Struct with bound, grid, and data diagnostics.
+%                              NearLowerBound / NearUpperBound are judged
+%                              in t = log(gap), and BoundaryTolerance is in
+%                              t (1e-6 of the t interval). GapScale is the
+%                              median(x - min(x)) the upper bound uses.
+%
+%   WARNINGS
+%   --------
+%       shiftlognormal_MLE:SmallSample          n < 15 (see LIMITATIONS)
+%       shiftlognormal_MLE:ShiftNearUpperBound  shift on the min(x) spike
+%       shiftlognormal_MLE:ShiftNearLowerBound  shift clipped on the left
+%       shiftlognormal_MLE:PartialConvergence   no refinement converged
+%       shiftlognormal_MLE:NonfiniteDataRemoved NaN/Inf dropped
+%
+%   LIMITATIONS (measured Nov 2026)
+%   -----------
+%   - The likelihood is unbounded as shift -> min(x), so at small n the
+%     spike at the upper bound often beats any interior optimum: with
+%     log-normal data (sigma = 0.5) it won in 134/200 fits at n = 5,
+%     34/200 at n = 8, 9/200 at n = 10, 5/200 at n = 12 and 0/200 from
+%     n = 15. Hence the SmallSample warning below 15.
+%   - Data with no right skew (Normal, uniform, left-skewed) have no
+%     interior optimum: the profile keeps rising toward the Normal limit,
+%     shift -> -Inf, and the fit clips to the lower bound with a warning.
+%     Read such a fit as "no evidence of a shifted log-normal shape".
+%   - No standard errors or confidence intervals are returned.
 %
 %   EXAMPLE
 %   -------
@@ -95,18 +131,28 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 %       Params(3) = shift
 
 %% Original written by Sheyum. Hardened by ChatGPT and Claude.
+%  Audited against an independent profile likelihood (Claude Code,
+%  Nov 2026): the search moved to t = log(min(x) - shift), fixing a loss
+%  of equivariance under large offsets (x + 1e8 moved the shift by 2.3% and
+%  the log-likelihood by 0.049, from fminbnd's relative tolerance on the
+%  raw shift); the upper bound scaled by median(x - min(x)) instead of
+%  range(x); both bounds evaluated exactly as candidates; a SmallSample
+%  warning below n = 15.
 
     %% Constants and default settings
 
     gapFraction       = 0.001;
     minimumSampleSize = 5;
-    nGridPoints       = 100;  % Coarse scan resolution for multi-start
+    smallSampleSize   = 15;   % Below this the min(x) spike often wins
+    nGridPoints       = 200;  % Coarse scan resolution (in log gap)
     maxSeeds          = 5;    % Maximum number of local minima to refine
 
+    % TolX is on t = log(min(x) - shift), which is dimensionless, so one
+    % tolerance serves every unit and offset of x.
     optimizerOptions = optimset( ...
         'Display', 'off', ...
-        'TolX',    1e-8, ...
-        'TolFun',  1e-8, ...
+        'TolX',    1e-10, ...
+        'TolFun',  1e-12, ...
         'MaxIter', 500);
 
     %% Validate and parse mode
@@ -159,12 +205,34 @@ function ModelResults = shiftlognormal_MLE(x, mode)
              'constant data.']);
     end
 
-    %% Construct the data-derived shift bounds
+    if nSamples < smallSampleSize
+        warning('shiftlognormal_MLE:SmallSample', ...
+            ['Only %d observations. Below %d the unbounded spike of the ' ...
+             'likelihood at shift -> min(x) often beats any interior ' ...
+             'optimum (measured: 134/200 fits at n = 5, 9/200 at ' ...
+             'n = 10, 0/200 at n = 15), so the shift is likely to sit ' ...
+             'on its upper bound.'], nSamples, smallSampleSize);
+    end
 
-    minimumGap  = gapFraction * dataRange;
-    lowerShift  = min_x - dataRange;
+    %% Construct the data-derived shift bounds
+    %
+    % Work with offsets from the minimum, d = x - min(x) >= 0, and the gap
+    % g = min(x) - shift > 0, so the shifted data are d + g. Forming them
+    % this way (rather than x - shift) keeps full precision when x carries
+    % a large offset, and searching over log(g) makes the fit equivariant
+    % under x -> a*x + b.
+
+    offsets    = x - min_x;
+    gapScale   = median(offsets);       % typical distance above min(x)
+    if ~(gapScale > 0)
+        gapScale = dataRange;           % > half the data tied at min(x)
+    end
+    minimumGap  = gapFraction * gapScale;
+    maximumGap  = dataRange;
+    lowerShift  = min_x - maximumGap;
     upperShift  = min_x - minimumGap;
     shiftBounds = [lowerShift, upperShift];
+    tBounds     = log([minimumGap, maximumGap]);   % t = log(gap)
 
     if verbose
         fprintf('Fitting a constrained shifted log-normal model...\n');
@@ -173,17 +241,21 @@ function ModelResults = shiftlognormal_MLE(x, mode)
         fprintf('  Shift bounds: [%.8g, %.8g]\n', ...
             lowerShift, upperShift);
         fprintf('  Lower bound = min(x) - range(x)  [heuristic]\n');
-        fprintf(['  Upper bound = min(x) - %.4g*range(x)  ' ...
+        fprintf(['  Upper bound = min(x) - %.4g*median(x - min(x))  ' ...
                  '[gapFraction]\n'], ...
             gapFraction);
     end
 
-    %% Coarse grid scan to identify minimum basins (multi-start)
+    %% Coarse grid scan in t = log(gap) to find minimum basins
+    %
+    % shift = min(x) - exp(t). A grid uniform in t is dense near min(x),
+    % where the profile changes fastest, and coarse far to the left, where
+    % it flattens toward the Normal limit.
 
-    objectiveFunction = @(shift) neg_profile_loglike(x, shift);
+    objectiveFunction = @(t) neg_profile_loglike(offsets, exp(t));
 
-    gridShifts = linspace(lowerShift, upperShift, nGridPoints);
-    gridNLL    = arrayfun(objectiveFunction, gridShifts);
+    gridT   = linspace(tBounds(1), tBounds(2), nGridPoints);
+    gridNLL = arrayfun(objectiveFunction, gridT);
 
     % Find interior local minima on the grid using strict inequality.
     isInteriorMin = [false, ...
@@ -206,22 +278,28 @@ function ModelResults = shiftlognormal_MLE(x, mode)
     %      candidate with the lowest NLL.
     %   2. If no refinement converges, return the finite nonconverged
     %      candidate with the lowest NLL and set Converged to false.
+    %   3. The two bounds themselves are candidates too: fminbnd never
+    %      evaluates the ends of its interval, so a solution on a bound
+    %      would otherwise be returned slightly inside it, short of the
+    %      optimum. A bound is taken only when its NLL is strictly lower
+    %      than every refinement's; it then counts as converged, with
+    %      ExitFlag 1 and an OptimizerOutput saying so.
     %
     % Consequently, Converged, ExitFlag, and OptimizerOutput always
-    % describe the refinement that produced the returned solution.
+    % describe the step that produced the returned solution.
 
     % Search radius spans two grid steps on each side of each seed.
-    searchRadius = 2 * (upperShift - lowerShift) / (nGridPoints - 1);
+    searchRadius = 2 * (tBounds(2) - tBounds(1)) / (nGridPoints - 1);
 
     % Track the best converged candidate separately from the best finite
     % candidate. The latter is used only if no refinement converges.
-    bestConvergedShift  = NaN;
+    bestConvergedT  = NaN;
     bestConvergedNLL    = Inf;
     bestConvergedFlag   = -1;
     bestConvergedOutput = struct( ...
         'message', 'No converged refinement completed.');
 
-    bestFiniteShift  = NaN;
+    bestFiniteT  = NaN;
     bestFiniteNLL    = Inf;
     bestFiniteFlag   = -1;
     bestFiniteOutput = struct( ...
@@ -229,20 +307,18 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
     for k = 1:numel(seedIndices)
         idx     = seedIndices(k);
-        localLo = max(lowerShift, ...
-            gridShifts(idx) - searchRadius);
-        localHi = min(upperShift, ...
-            gridShifts(idx) + searchRadius);
+        localLo = max(tBounds(1), gridT(idx) - searchRadius);
+        localHi = min(tBounds(2), gridT(idx) + searchRadius);
 
         if localLo >= localHi
             continue;
         end
 
-        [shiftK, nllK, flagK, outK] = fminbnd( ...
+        [tK, nllK, flagK, outK] = fminbnd( ...
             objectiveFunction, localLo, localHi, optimizerOptions);
 
         candidateIsFinite = ...
-            isfinite(shiftK) && isfinite(nllK);
+            isfinite(tK) && isfinite(nllK);
 
         candidateConverged = ...
             candidateIsFinite && flagK > 0;
@@ -250,7 +326,7 @@ function ModelResults = shiftlognormal_MLE(x, mode)
         % Track the lowest-NLL finite candidate regardless of convergence.
         % This candidate is used only if no refinement converges.
         if candidateIsFinite && nllK < bestFiniteNLL
-            bestFiniteShift  = shiftK;
+            bestFiniteT  = tK;
             bestFiniteNLL    = nllK;
             bestFiniteFlag   = flagK;
             bestFiniteOutput = outK;
@@ -258,29 +334,41 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
         % Separately track the lowest-NLL converged candidate.
         if candidateConverged && nllK < bestConvergedNLL
-            bestConvergedShift  = shiftK;
+            bestConvergedT  = tK;
             bestConvergedNLL    = nllK;
             bestConvergedFlag   = flagK;
             bestConvergedOutput = outK;
         end
     end
 
+    % The bounds, evaluated exactly (policy 3).
+    for tEnd = tBounds
+        nllEnd = objectiveFunction(tEnd);
+        if isfinite(nllEnd) && nllEnd < min(bestConvergedNLL, bestFiniteNLL)
+            bestConvergedT      = tEnd;
+            bestConvergedNLL    = nllEnd;
+            bestConvergedFlag   = 1;
+            bestConvergedOutput = struct('message', ...
+                'Bound evaluated directly; it beat every refinement.');
+        end
+    end
+
     %% Select the returned solution
 
-    if isfinite(bestConvergedShift) && isfinite(bestConvergedNLL)
+    if isfinite(bestConvergedT) && isfinite(bestConvergedNLL)
         % At least one refinement converged. Return the converged candidate
         % with the lowest NLL, even if a nonconverged candidate reported a
         % slightly lower objective value.
-        bestShift       = bestConvergedShift;
+        bestT           = bestConvergedT;
         minNLL          = bestConvergedNLL;
         exitFlag        = bestConvergedFlag;
         optimizerOutput = bestConvergedOutput;
         converged       = true;
 
-    elseif isfinite(bestFiniteShift) && isfinite(bestFiniteNLL)
+    elseif isfinite(bestFiniteT) && isfinite(bestFiniteNLL)
         % No refinement converged, but at least one finite candidate was
         % obtained. Return the finite candidate with the lowest NLL.
-        bestShift       = bestFiniteShift;
+        bestT           = bestFiniteT;
         minNLL          = bestFiniteNLL;
         exitFlag        = bestFiniteFlag;
         optimizerOutput = bestFiniteOutput;
@@ -293,6 +381,9 @@ function ModelResults = shiftlognormal_MLE(x, mode)
              'The optimization failed completely.'], ...
             numel(seedIndices));
     end
+
+    bestGap   = exp(bestT);
+    bestShift = min_x - bestGap;
 
     if verbose
         fprintf(['  Grid seeds refined: %d  |  Best shift: %.8g  |  ' ...
@@ -314,7 +405,7 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
     %% Recover mu and sigma at the fitted shift
 
-    shiftedData = x - bestShift;
+    shiftedData = offsets + bestGap;   % = x - bestShift, without cancellation
 
     if any(shiftedData <= 0) || any(~isfinite(shiftedData))
         error('shiftlognormal_MLE:InvalidShiftedData', ...
@@ -346,20 +437,19 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
     %% Diagnose proximity to shift bounds
 
-    shiftIntervalWidth = upperShift - lowerShift;
+    % Judged in t = log(gap), which is dimensionless, so the same tolerance
+    % applies at every unit and offset of x. BoundaryTolerance is in t.
 
-    boundaryTolerance = max( ...
-        10*optimizerOptions.TolX, ...
-        1e-6*shiftIntervalWidth);
+    boundaryTolerance = 1e-6 * (tBounds(2) - tBounds(1));
 
     distanceToLowerBound = bestShift - lowerShift;
     distanceToUpperBound = upperShift - bestShift;
 
     nearLowerBound = ...
-        distanceToLowerBound <= boundaryTolerance;
+        tBounds(2) - bestT <= boundaryTolerance;
 
     nearUpperBound = ...
-        distanceToUpperBound <= boundaryTolerance;
+        bestT - tBounds(1) <= boundaryTolerance;
 
     nearAnyBoundary = nearLowerBound || nearUpperBound;
     boundaryMessage = '';
@@ -378,10 +468,11 @@ function ModelResults = shiftlognormal_MLE(x, mode)
     elseif nearUpperBound
         boundaryMessage = sprintf( ...
             ['The estimated shift (%.8g) is at or near the upper bound ' ...
-             '(%.8g). The result depends strongly on gapFraction ' ...
-             '(%.8g). Consider reducing gapFraction or checking the ' ...
-             'data.'], ...
-            bestShift, upperShift, gapFraction);
+             '(%.8g = min(x) - %.4g*median(x - min(x))). This is the ' ...
+             'unbounded spike of the likelihood at min(x), not an ' ...
+             'interior optimum: the result depends on gapFraction. ' ...
+             'Common below n = %d; otherwise check the data.'], ...
+            bestShift, upperShift, gapFraction, smallSampleSize);
 
         warning('shiftlognormal_MLE:ShiftNearUpperBound', ...
             '%s', boundaryMessage);
@@ -389,10 +480,11 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
     %% Calculate fitted PDF and corresponding coordinates
 
-    fit_x = sort(x);
+    [fit_x, sortIdx] = sort(x);
 
+    % Evaluated on the shifted values formed without cancellation.
     fitLogPDF = shifted_lognormal_logpdf( ...
-        fit_x, bestMu, bestSigma, bestShift);
+        shiftedData(sortIdx), bestMu, bestSigma);
 
     fitPDF = exp(fitLogPDF);
 
@@ -454,12 +546,15 @@ function ModelResults = shiftlognormal_MLE(x, mode)
          'if true value lies further left.'];
 
     ModelResults.Diagnostics.UpperBoundNote = sprintf( ...
-        ['upperShift = min(x) - %.4g*range(x).  Controlled by ' ...
-         'gapFraction.'], ...
+        ['upperShift = min(x) - %.4g*median(x - min(x)).  Controlled ' ...
+         'by gapFraction (range(x) replaces the median when more than ' ...
+         'half the data tie at min(x)).'], ...
         gapFraction);
 
+    ModelResults.Diagnostics.GapScale = gapScale;
+
     ModelResults.Diagnostics.ShiftToMinimumGap = ...
-        min_x - bestShift;
+        bestGap;
 
     ModelResults.Diagnostics.BoundaryTolerance = ...
         boundaryTolerance;
@@ -521,10 +616,11 @@ function ModelResults = shiftlognormal_MLE(x, mode)
 
     %% Nested helper functions
 
-    function nll = neg_profile_loglike(data, shift)
-        % NEG_PROFILE_LOGLIKE Profile negative log-likelihood over shift.
+    function nll = neg_profile_loglike(offsetsIn, gap)
+        % NEG_PROFILE_LOGLIKE Profile negative log-likelihood over the gap.
         %
-        % At a given shift, mu and sigma are concentrated out analytically:
+        % With x - shift = (x - min(x)) + gap, mu and sigma are
+        % concentrated out analytically:
         %
         %   NLL = n*log(sigma_hat) + sum(log(x - shift)) ...
         %       + n/2*(1 + log(2*pi))
@@ -532,7 +628,7 @@ function ModelResults = shiftlognormal_MLE(x, mode)
         % A large finite penalty is returned for degenerate inputs so that
         % fminbnd receives a continuous objective without hard Inf jumps.
 
-        shiftedValues = data - shift;
+        shiftedValues = offsetsIn + gap;
 
         if any(shiftedValues <= 0) || any(~isfinite(shiftedValues))
             nll = 1e15;
@@ -547,7 +643,7 @@ function ModelResults = shiftlognormal_MLE(x, mode)
             return;
         end
 
-        n = numel(data);
+        n = numel(offsetsIn);
 
         nll = n*log(sigmaMLE) ...
             + sum(logShifted) ...
@@ -558,13 +654,13 @@ function ModelResults = shiftlognormal_MLE(x, mode)
         end
     end
 
-    function logPDF = shifted_lognormal_logpdf(z, mu, sigma, shift)
-        % SHIFTED_LOGNORMAL_LOGPDF Log-PDF of the shifted log-normal.
+    function logPDF = shifted_lognormal_logpdf(shiftedZ, mu, sigma)
+        % SHIFTED_LOGNORMAL_LOGPDF Log-PDF of the shifted log-normal,
+        % taking the already-shifted values z - shift.
         %
         % Points at or below the shift receive log-density -Inf.
 
-        shiftedZ = z - shift;
-        logPDF   = -Inf(size(z));
+        logPDF   = -Inf(size(shiftedZ));
         valid    = shiftedZ > 0 & isfinite(shiftedZ);
 
         if any(valid)

@@ -21,6 +21,19 @@
 % 11.  Negative observations       - fits without error
 % 12.  Near-lower-bound clipping   - NearLowerBound diagnostic is true
 % 13.  VERBOSE mode                - does not error
+%
+% Regression guards for the Nov 2026 audit (14-19 each fail on the old code,
+% measured; 20 is a consistency check that both versions pass):
+% 14.  Offset equivariance         - x + 1e8 gives shift + 1e8, same LogLike
+% 15.  Scale equivariance          - 1e-6*x scales the shift, LogLike shifts
+%                                    by n*log(1e-6), sigma unchanged
+% 16.  Heavy right tail            - sigma = 1.5: the true shift is inside the
+%                                    allowed interval and is recovered
+% 17.  Global optimum              - LogLike matches an independent dense
+%                                    profile within the same bounds
+% 18.  SmallSample warning         - raised at n = 10, not at n = 15
+% 19.  A bound is reached exactly  - a fit on the upper bound sits ON it
+% 20.  Fit consistent with LogLike - sum(log(Fit)) equals LogLike
 
 nPassed = 0;
 nFailed = 0;
@@ -320,6 +333,189 @@ try
 catch e
     diary off;
     fprintf('[FAIL] 13. VERBOSE mode: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Regression guards (Nov 2026 audit)
+%
+% Independent profile log-likelihood at a shift: mu and sigma in closed form.
+% Written here from the definition, sharing no code with the fitter.
+profLL = @(x, s) -( numel(x)*log(std(log(x - s), 1)) + sum(log(x - s)) ...
+                    + numel(x)/2*(1 + log(2*pi)) );
+rsG = RandStream('twister', 'Seed', 2611);
+xG  = 3 + exp(1 + 0.5*randn(rsG, 300, 1));
+ws  = warning('off', 'all');
+rG  = shiftlognormal_MLE(xG);
+warning(ws);
+
+%% Test 14: offset equivariance
+% Old code: fminbnd's relative tolerance on the raw shift, sqrt(eps)*1e8 ~ 1.5,
+% moved the shift by 2.3% and LogLike by 0.049.
+
+try
+    ws = warning('off', 'all');
+    r = shiftlognormal_MLE(xG + 1e8);
+    warning(ws);
+    relShift = abs((r.Shift - 1e8) - rG.Shift) / abs(rG.Shift);
+    dLL      = abs(r.LogLike - rG.LogLike);
+    assert(relShift < 1e-6 && dLL < 1e-6, ...
+        sprintf('rel shift err %.3g, |dLogLike| %.3g', relShift, dLL));
+    fprintf('[PASS] 14. Offset equivariance (x + 1e8)\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 14. Offset equivariance: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 15: scale equivariance
+
+try
+    a  = 1e-6;
+    ws = warning('off', 'all');
+    r  = shiftlognormal_MLE(a*xG);
+    warning(ws);
+    relShift = abs(r.Shift/a - rG.Shift) / abs(rG.Shift);
+    dLL      = abs(r.LogLike + numel(xG)*log(a) - rG.LogLike);
+    dSig     = abs(r.Sigma - rG.Sigma);
+    assert(relShift < 1e-6 && dLL < 1e-8 && dSig < 1e-6, ...
+        sprintf('rel shift %.3g, dLogLike %.3g, dSigma %.3g', ...
+        relShift, dLL, dSig));
+    fprintf('[PASS] 15. Scale equivariance (1e-6*x)\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 15. Scale equivariance: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 16: heavy right tail keeps the true shift reachable
+% Old code: upper bound min(x) - 0.001*range(x) excluded the true shift (3)
+% in 20/20 samples at sigma = 1.5, n = 2000; median error 0.45.
+
+try
+    nBad = 0; errs = zeros(1, 5);
+    ws = warning('off', 'all');
+    for s = 1:5
+        rs = RandStream('twister', 'Seed', s);
+        x  = 3 + exp(1 + 1.5*randn(rs, 2000, 1));
+        r  = shiftlognormal_MLE(x);
+        nBad    = nBad + r.Diagnostics.NearUpperBound;
+        errs(s) = abs(r.Shift - 3);
+    end
+    warning(ws);
+    assert(nBad == 0 && median(errs) < 0.05, ...
+        sprintf('%d/5 on the upper bound, median |shift - 3| = %.3g', ...
+        nBad, median(errs)));
+    fprintf('[PASS] 16. Heavy right tail (sigma = 1.5) recovers the shift\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 16. Heavy right tail: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 17: the returned optimum is the global one within the bounds
+
+try
+    worst = -Inf;
+    ws = warning('off', 'all');
+    for s = 1:6
+        rs = RandStream('twister', 'Seed', 40 + s);
+        x  = 3 + exp(1 + (0.3 + 0.2*s)*randn(rs, 150*s, 1));
+        r  = shiftlognormal_MLE(x);
+        lo = r.Diagnostics.LowerShift;  hi = r.Diagnostics.UpperShift;
+        m  = min(x);
+        g  = unique([linspace(lo, hi, 20001), ...
+                     m - logspace(log10(m - hi), log10(m - lo), 20001)]);
+        g  = g(g >= lo & g <= hi);
+        L  = arrayfun(@(t) profLL(x, t), g);
+        [~, ib] = max(L);
+        sb = fminbnd(@(t) -profLL(x, t), g(max(ib-1, 1)), ...
+                     g(min(ib+1, end)), optimset('TolX', 1e-12));
+        best  = max([L, profLL(x, sb)]);
+        worst = max(worst, best - r.LogLike);
+    end
+    warning(ws);
+    assert(worst < 1e-8, sprintf('independent optimum beats the fit by %.3g', ...
+        worst));
+    fprintf('[PASS] 17. Global optimum matches an independent profile\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 17. Global optimum: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 18: SmallSample below n = 15
+
+try
+    rs = RandStream('twister', 'Seed', 18);
+    ws = warning('off', 'all');
+    warning('error', 'shiftlognormal_MLE:SmallSample');
+    raised10 = false;
+    try
+        shiftlognormal_MLE(3 + exp(randn(rs, 10, 1)));
+    catch eSmall
+        raised10 = strcmp(eSmall.identifier, 'shiftlognormal_MLE:SmallSample');
+    end
+    raised15 = false;
+    try
+        shiftlognormal_MLE(3 + exp(randn(rs, 15, 1)));
+    catch eSmall
+        raised15 = strcmp(eSmall.identifier, 'shiftlognormal_MLE:SmallSample');
+    end
+    warning(ws);
+    assert(raised10 && ~raised15, ...
+        sprintf('raised at n=10: %d, at n=15: %d', raised10, raised15));
+    fprintf('[PASS] 18. SmallSample raised at n = 10, not at n = 15\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 18. SmallSample: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 19: a fit on the upper bound sits exactly on it
+% fminbnd never evaluates its interval ends; the bounds are now candidates.
+
+try
+    found = false;
+    ws = warning('off', 'all');
+    for s = 1:50
+        rs = RandStream('twister', 'Seed', 1000 + s);
+        x  = 3 + exp(1 + 0.5*randn(rs, 5, 1));
+        r  = shiftlognormal_MLE(x);
+        if r.Diagnostics.NearUpperBound
+            found = true;
+            break
+        end
+    end
+    warning(ws);
+    assert(found, 'no n = 5 sample landed on the upper bound');
+    assert(r.Shift == r.Diagnostics.UpperShift || ...
+        abs(r.Shift - r.Diagnostics.UpperShift) <= 4*eps(r.Shift), ...
+        sprintf('shift %.17g, bound %.17g', r.Shift, r.Diagnostics.UpperShift));
+    assert(abs(profLL(x, r.Shift) - r.LogLike) < 1e-9, ...
+        'LogLike is not the profile at the returned bound');
+    fprintf('[PASS] 19. Upper-bound fit sits exactly on the bound\n');
+    nPassed = nPassed + 1;
+catch e
+    warning(ws);
+    fprintf('[FAIL] 19. Bound reached exactly: %s\n', e.message);
+    nFailed = nFailed + 1;
+end
+
+%% Test 20: Fit is consistent with LogLike
+
+try
+    dLL = abs(sum(log(rG.Fit)) - rG.LogLike);
+    assert(dLL < 1e-9 * max(1, abs(rG.LogLike)), ...
+        sprintf('|sum(log(Fit)) - LogLike| = %.3g', dLL));
+    fprintf('[PASS] 20. Fit consistent with LogLike\n');
+    nPassed = nPassed + 1;
+catch e
+    fprintf('[FAIL] 20. Fit consistent with LogLike: %s\n', e.message);
     nFailed = nFailed + 1;
 end
 
