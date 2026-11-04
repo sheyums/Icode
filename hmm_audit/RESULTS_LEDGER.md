@@ -2416,3 +2416,24 @@ secondary: per0 DD vs CS DD, E difference -0.031, Mann-Whitney p 0.30; per0 LD v
 - Physical reading: a fly's loops behave like independent tosses of a biased coin (about 60:40 forward in CS and
   per0), given its chain, with no switching between forward-running and backward-running modes at any timescale the
   loop sequence resolves.
+
+## 2026-11-04 Corrections after lClaude's MATLAB port (e4e1d43); no verdict changes
+1. PRESPEC 22 ranking ties. J and c_obs are quantised (many values exactly 1/24, 1/12, 1/8 cycles/h). Values that are
+   mathematically equal differed by round-off and were ranked as distinct, and Python and MATLAB break such ties
+   differently. sqw22.py and sqw22h.py now rank round(x, 10). Python and the port then agree. Observed rho(sleep, J):
+   fumin L +0.3678 -> +0.3689, fumin D +0.5893 -> +0.5875 (Holm 0.003), sss L -0.2595 -> -0.2666, sss D +0.1804 ->
+   +0.1747, CS L +0.0643 -> +0.0631, per0 LD L -0.0841 -> -0.0793. rho(sleep, c_obs): fumin L -0.0517 -> -0.0505,
+   fumin D -0.0031 -> -0.0075, sss L -0.0474 -> -0.0458, sss D +0.2322 -> +0.2342. Stratified c_obs rho 0.00,
+   p 0.98 -> 0.97. Hidden level unchanged (continuous values). Only fumin dark J has Holm < 0.05, as before.
+   Not yet checked: other analyses that rank J or c_obs (e.g. signed-rank tests on J) may carry the same round-off
+   ties.
+2. Completed loops vs chain J (2026-11-03 entry). "Net completed loops per hour equal the chain J in every block" was
+   too strong. They agree to <= 0.002 cycles/h (largest: sss D +0.0019, per0 LD D -0.0018, CS L -0.0013); exact to
+   3 decimals only in some blocks.
+3. PRESPEC 26 secondary Mann-Whitney. Recomputed on the port's own simulations, per0 DD vs CS DD gives 0.383
+   (Python 0.304) and per0 LD vs CS LD 0.558 (0.647). The simulation spread alone moves these by ~0.08. Quote
+   "p ~ 0.3-0.4" and "p ~ 0.6". SI and draft text updated.
+4. PRESPEC 25. The sss 6-h backward-share null median depends on the few simulated sets with any measurable window
+   (port 0.5, Python 0.0). It is not meaningful; do not quote it.
+5. Rule of three. The sss light HMM model EPR median is 0.0096 in one implementation and 0.0094 in the other; quote
+   0.009-0.010. r3_model.json is now in port_ref/.

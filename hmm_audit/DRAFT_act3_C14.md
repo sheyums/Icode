@@ -10,7 +10,7 @@ Could the reversal in *sleepless* simply reflect how little these flies sleep? *
 shortest sleepers in our panel, yet they circulate in opposite directions. To ask whether sleep amount sets the
 direction, we related each fly's cycle to its own sleep within each genotype and phase (Fig. Xa,b). The direction per
 transition did not depend on sleep amount in any genotype or phase (Spearman rho between -0.26 and +0.23, all
-corrected p = 1; pooled within-genotype rho = 0.00, p = 0.98). Where the cycle flux did depend on sleep, it did so
+corrected p = 1; pooled within-genotype rho = 0.00, p = 0.97). Where the cycle flux did depend on sleep, it did so
 through the number of transitions: *fumin* flies that slept more completed more forward cycles per hour at night
 (rho = +0.59, corrected p = 0.003), with no change in direction per transition. At matched sleep in the dark (about
 3 min h^-1 in both genotypes), *fumin* circulated forward and *sleepless* did not.

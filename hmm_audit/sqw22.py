@@ -16,9 +16,10 @@ for d in O:
         m = (ph == p) & (y >= 0); sl = 60.0 * np.mean(y[m] == 2)
         Jc = r['J_chain']; cyc = Jc is not None and abs(Jc) >= 1e-12
         rows.append(dict(g=g, fly=i, p=p, sleep=float(sl), c_obs=r['c_obs'], J=Jc if cyc else 0.0, cycle=bool(cyc)))
-def rho(x, y): return np.corrcoef(rankdata(x), rankdata(y))[0, 1]
+def rk(v): return rankdata(np.round(np.asarray(v, float), 10))   # ties that differ only by round-off rank as ties (2026-11-04, lClaude)
+def rho(x, y): return np.corrcoef(rk(x), rk(y))[0, 1]
 def perm(x, y):
-    x = np.asarray(x, float); y = np.asarray(y, float); r0 = rho(x, y); rx = rankdata(x); ry = rankdata(y)
+    x = np.asarray(x, float); y = np.asarray(y, float); r0 = rho(x, y); rx = rk(x); ry = rk(y)
     null = np.array([np.corrcoef(rx, rng.permutation(ry))[0, 1] for _ in range(NP)])
     return r0, (1 + np.sum(np.abs(null) >= abs(r0) - 1e-12)) / (NP + 1)
 def block(g, p): return [r for r in rows if r['g'] == g and r['p'] == p]

@@ -1,0 +1,15 @@
+block        n  | sleep med | rho(sleep,c_obs) p Holm (n) | rho(sleep,J | cycle) p Holm (n) | no-cycle n, sleep med vs cycle
+CS|0       25 |  30.7 | +0.03 p 0.9014 Holm 1.000 (25) | +0.06 p 0.7659 Holm 1.000 (24) | 1, 32.9 vs 29.1
+CS|1       25 |  41.3 | -0.26 p 0.2022 Holm 1.000 (25) | -0.16 p 0.4280 Holm 1.000 (25) | 0, None vs 41.3
+per0DD|0   25 |  42.2 | -0.06 p 0.7702 Holm 1.000 (25) | -0.25 p 0.2346 Holm 1.000 (24) | 1, 48.9 vs 41.6
+fumin|0    49 |   6.8 | -0.05 p 0.7273 Holm 1.000 (49) | +0.37 p 0.0121 Holm 0.157 (47) | 2, 2.7 vs 7.1
+fumin|1    53 |   3.2 | -0.01 p 0.9565 Holm 1.000 (53) | +0.59 p 0.0002 Holm 0.003 (49) | 4, 1.0 vs 3.3
+sss|0      50 |   3.0 | -0.05 p 0.7557 Holm 1.000 (48) | -0.27 p 0.1030 Holm 1.000 (37) | 13, 0.7 vs 3.5
+sss|1      53 |   2.9 | +0.23 p 0.0934 Holm 1.000 (53) | +0.17 p 0.2378 Holm 1.000 (48) | 5, 0.8 vs 3.2
+CSDD|0     25 |  30.1 | +0.48 p 0.0162 Holm nan (25) | +0.38 p 0.0606 Holm nan (25) | 0, None vs 30.1  [secondary]
+per0LD|0   27 |  41.8 | -0.09 p 0.6388 Holm nan (27) | -0.08 p 0.6870 Holm nan (26) | 1, 46.9 vs 40.3  [secondary]
+per0LD|1   27 |  41.4 | +0.07 p 0.7096 Holm nan (27) | +0.03 p 0.8744 Holm nan (27) | 0, None vs 41.4  [secondary]
+stratified c_obs: mean z +0.002 (rho ~ +0.00), within-block permutation p 0.9720
+overlap light {'range': [0.6666666666666667, 12.416666666666666], 'n_fumin': 43, 'n_sss': 42, 'sleep_med_fumin': 6.416666666666666, 'sleep_med_sss': 3.416666666666667, 'c_med_fumin': 0.15476190476190474, 'c_med_sss': -0.032372598162071844, 'J_med_fumin': 0.09679937922546289, 'J_med_sss': -0.04169562195970061}
+overlap dark {'range': [0.20833333333333331, 16.791666666666668], 'n_fumin': 52, 'n_sss': 53, 'sleep_med_fumin': 3.145833333333333, 'sleep_med_sss': 2.875, 'c_med_fumin': 0.24621212121212122, 'c_med_sss': 0.0, 'J_med_fumin': 0.08670908559126923, 'J_med_sss': -0.01814950451377695}
+figure saved
