@@ -449,3 +449,71 @@ re-run, more permutations would settle it.
 - Medians: all amendment values reproduced except the HMM model EPR for sss LIGHT, 0.0096 -> 0.0094: removing the
   0.0088 artefact moves the lower middle value from 0.00876 to 0.00834 (n 50), which in MATLAB crosses the rounding
   boundary (0.010 -> 0.009). The Python, with its own paths, may sit on the other side; quote 0.009-0.010.
+
+## 2026-11-03  Act 1: cumulative walk + loop accounting (fig_act1_walk.py, cycle_times.py) — REPRODUCED
+- New: sqw/completedLoops.m (loop erasure; missing minute resets; 3-state erased loop = completed cycle, forward = a
+  rotation of W->Q->S; duration from entry of the loop's first state; entry reset after erasure; phase of the
+  completion minute), sqw/cycleWalk.m (+1 S->W, -1 W->S over consecutive scored minutes), sqw/completedLoopRates.m
+  (cycle_times.json table), sqw/exportCumulativeWalkFigure.m (figAct1_cumulative_walk; validation/figAct).
+- completedLoopRates vs port_ref/cycle_times.json: all 12 fields of all 10 blocks agree to <= 1.1e-12 (n, fwd/back/net
+  per h, J_chain mean, h per net cycle, loop-duration medians and means, loop counts, e.g. CS dark 389/191 loops).
+- Walk vs net completed loops: max |difference| over every minute of all 209 flies = 1 (as stated).
+- Figure corner text: CS LD 92% of 25 flies end forward, mean +9.72 in 96 h; CS DD 80%, +9.96 -- as the Python.
+- NOT confirmed (and not true in the Python's own cycle_times.json either): "net loops/h equals chain J to 3
+  decimals in EVERY block". It holds in CS dark (0.165/0.165), CS DD, per0 DD, fumin L; elsewhere they differ by up to
+  0.002: CS light 0.0367 vs 0.0379, per0 LD dark 0.1204 vs 0.1222, fumin D 0.1022 vs 0.1028, sss L -0.0383 vs -0.0377,
+  sss D +0.0016 vs -0.0004. Agreement to ~0.002 cycles/h (2 decimals) is the accurate statement.
+
+## 2026-11-03  C14 / Act 3: PRESPEC 22 (sqw22.py) and its hidden-level post hoc (sqw22h.py) — REPRODUCED, one CASE
+- New: sqw/sleepVsCycleRows.m (observed: sleep = 60 x S share of scored phase minutes, c_obs, J = fitted J_chain,
+  cycle |J| >= 1e-12; hidden: 60 pi_S of the labelled P3, J_hmm, d per FFBS path averaged over paths with an onset,
+  defined if >= half), sqw/sleepVsCycleTests.m (14 primary tests, permutation p (10000), Holm over 14, stratified
+  Fisher z (2000)), sqw/spearmanPermTest.m, sqw/stratifiedSpearmanTest.m, sqw/exportSleepVsCycleFigure.m
+  (fig22_J_vs_sleep_obs_hidden; validation/fig22 with the block tables).
+- Rank code: from the PYTHON rows (port_ref) every rho of both levels equals cClaude's to 4 decimals (14 + 6 secondary
+  observed, 14 hidden); stratified z +0.0016 (obs) and +0.0188 (hidden) exactly; p and Holm within permutation error
+  (e.g. obs fumin D J Holm 0.001 vs 0.003; hidden sss L J 0.017 vs 0.023).
+- Observed rows from raw data: all 359 fly-phases identical (sleep exact, J within 4e-14, same cycle flags) once sss
+  is matched BY NAME (the Python's sss fly index is into the 57-file list, the port's into sss54).
+- CASE for cClaude (not changed): observed J and c_obs are QUANTISED (many flies have J = 1/24, 1/12, 1/8 cycles/h
+  exactly, i.e. the same small net count), so mathematically tied values differ only by round-off (~1e-14) and the
+  two implementations break the ties differently. Python's rho_J: fumin L +0.3678, D +0.5893, sss L -0.2595, D +0.1804;
+  the port's on identical data: +0.3664, +0.5881, -0.2716, +0.1695. With values rounded to 1e-10 (true ties as ties)
+  BOTH give: rho_J fumin L +0.3689, D +0.5875, sss L -0.2666, D +0.1747; rho_c fumin L -0.0505 (was -0.0517), D
+  -0.0075 (-0.0031), sss L -0.0458 (-0.0474), D +0.2342 (+0.2322). No verdict changes (fumin D J the only Holm
+  < 0.05: 0.001-0.003). Suggest ranking round(x, 10) in sqw22.py (and anywhere J or c_obs are ranked).
+- Hidden rows: sleep exact (from the stored P3); J_hmm and d from the port's own posterior paths, so rho differs within
+  path error: fumin D J +0.538 (Py +0.535, Holm 0.003 vs 0.006), sss L J -0.491 (Py -0.511, Holm 0.022 vs 0.023),
+  stratified d rho +0.014 (Py +0.019). The fumin-D and sss-L findings reproduce.
+- Not ported: the fumin/sss sleep-overlap summary (secondary, descriptive).
+
+## 2026-11-03  SI Fig S11a,b: PRESPEC 26 loop-direction persistence (sqw26.py, fig26_si.py) — REPRODUCED
+- New: sqw/loopPersistenceFly.m (loops with segments, S, runs, clock-matched 4-h and 12-h chain nulls, 500 records,
+  within-fly shuffle), sqw/loopPersistenceTests.m (Wilcoxon on E, Holm in {per0 DD, per0 LD} and {CS LD, CS DD},
+  Mann-Whitney per0 vs CS), sqw/exportLoopPersistenceFigure.m (fig26_SI_ab; validation/fig26 with the tables).
+  The full four-panel fig26_loop_sequence was not ported (optional).
+- EXACT, all 212 flies: n_loops, n_pairs, S_obs and the observed run lengths identical; genotype loops per0 DD 1472,
+  per0 LD 1450, CS LD 1282, CS DD 1230, fumin 510 (30 flies, 23 excluded), sss 123 (8, 49 excluded); S_obs medians equal.
+- Monte Carlo (port's own null draws): E_clock per fly differs by SD 0.011 (median +0.0004). Clock null: per0 DD E med
+  -0.016 (Py -0.016) p 0.037 Holm 0.073 (Py 0.034 / 0.068); per0 LD p 0.53 (0.51); CS LD 0.31 (0.33); CS DD 0.54
+  (0.60); fumin 0.045 (0.052, descr.); sss 0.195 (0.195). No Holm < 0.05 -- as the Python.
+- Mann-Whitney: the port's function on the PYTHON E values gives exactly 0.3038 and 0.6470; on the port's own E it
+  gives 0.383 (per0 DD vs CS DD) and 0.558 (per0 LD vs CS LD) -- the spread of E alone moves these p by ~0.08, so
+  quote them as "p ~0.3-0.4" and "~0.6", not to two decimals. Same verdict (no difference).
+- Barcode examples (fly closest to the genotype's median loop count): CS LD fly 16, CS DD fly 10, per0 DD fly 6.
+
+## 2026-11-03  PRESPEC 25 windows (sqw25.py) — REPRODUCED (tests and counts; figures not ported)
+- New: sqw/windowDirectionTests.m (6-h / 4-h windows from ZT0 or record start, N_SW / N_WS on pairs inside a window,
+  binomial measurability via betainc, Amendment A exclusion, clock-matched and 12-h chain nulls of 500 records,
+  p_B, Holm per family, Wilcoxon of B - mean null B). Block table: sqw/validation/s25_blocks.csv. 109 s.
+- EXACT: all 5130 windows (10 blocks) have the same N_SW, N_WS and class as port_ref/s25_windows.json. Measurable:
+  per0 DD 6 h 2 forward, CS LD 6 h 1, CS LD 4 h 1; 0 backward anywhere -- 4 forward / 0 backward in total.
+- Monte Carlo agrees: e.g. clock null F mean per0 DD 6 h 2.6 (Py 2.6), p_F 0.74 (0.75); CS 6 h p_F 0.75 (0.70);
+  every p_B and Holm 1.000, as the Python.
+- fig25.py / fig25_walk.py (SI figures) NOT ported yet (lowest priority).
+- 2026-11-03 addendum: fig25.py and fig25_walk.py ported as sqw/exportWindowDirectionFigures.m (fig25_raster_6h / _4h,
+  fig25_counts, fig25_cumulative_walk; validation/fig25). windowDirectionTests now also returns the forward null 95%
+  range and the backward-share null median / 95% range (agree with the Python within Monte Carlo, e.g. per0 DD 6 h F
+  null [0, 6] as Python; sss 6 h share median 0.5 vs 0.0, from the few simulated sets with any measurable window).
+  Walk figure: flies with >= 60% scored minutes, mean ends CS LD +9.7 (92% > 0), CS DD +10.0 (80%), per0 LD +10.3,
+  per0 DD +11.5 (72 h), sss -1.0 (49 flies, 48 h); per-window net counts as the Python's histogram definition.
