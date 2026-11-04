@@ -486,3 +486,18 @@ re-run, more permutations would settle it.
   path error: fumin D J +0.538 (Py +0.535, Holm 0.003 vs 0.006), sss L J -0.491 (Py -0.511, Holm 0.022 vs 0.023),
   stratified d rho +0.014 (Py +0.019). The fumin-D and sss-L findings reproduce.
 - Not ported: the fumin/sss sleep-overlap summary (secondary, descriptive).
+
+## 2026-11-03  SI Fig S11a,b: PRESPEC 26 loop-direction persistence (sqw26.py, fig26_si.py) — REPRODUCED
+- New: sqw/loopPersistenceFly.m (loops with segments, S, runs, clock-matched 4-h and 12-h chain nulls, 500 records,
+  within-fly shuffle), sqw/loopPersistenceTests.m (Wilcoxon on E, Holm in {per0 DD, per0 LD} and {CS LD, CS DD},
+  Mann-Whitney per0 vs CS), sqw/exportLoopPersistenceFigure.m (fig26_SI_ab; validation/fig26 with the tables).
+  The full four-panel fig26_loop_sequence was not ported (optional).
+- EXACT, all 212 flies: n_loops, n_pairs, S_obs and the observed run lengths identical; genotype loops per0 DD 1472,
+  per0 LD 1450, CS LD 1282, CS DD 1230, fumin 510 (30 flies, 23 excluded), sss 123 (8, 49 excluded); S_obs medians equal.
+- Monte Carlo (port's own null draws): E_clock per fly differs by SD 0.011 (median +0.0004). Clock null: per0 DD E med
+  -0.016 (Py -0.016) p 0.037 Holm 0.073 (Py 0.034 / 0.068); per0 LD p 0.53 (0.51); CS LD 0.31 (0.33); CS DD 0.54
+  (0.60); fumin 0.045 (0.052, descr.); sss 0.195 (0.195). No Holm < 0.05 -- as the Python.
+- Mann-Whitney: the port's function on the PYTHON E values gives exactly 0.3038 and 0.6470; on the port's own E it
+  gives 0.383 (per0 DD vs CS DD) and 0.558 (per0 LD vs CS LD) -- the spread of E alone moves these p by ~0.08, so
+  quote them as "p ~0.3-0.4" and "~0.6", not to two decimals. Same verdict (no difference).
+- Barcode examples (fly closest to the genotype's median loop count): CS LD fly 16, CS DD fly 10, per0 DD fly 6.

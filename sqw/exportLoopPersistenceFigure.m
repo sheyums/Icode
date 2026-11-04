@@ -46,7 +46,7 @@ for row = 1:height(ex)
     end
     text(ax, -1, yb, sprintf('%s (fly %d)', SH(G == ex.genotype(row)), ex.fly(row)), 'HorizontalAlignment', 'right', 'FontSize', 7);
 end
-set(ax, 'YTick', [], 'XLim', [0 96], 'YLim', [-0.6 height(ex) - 0.4], 'XTick', 0:24:96, 'YColor', 'none'); xlabel(ax, 'time (h)');
+set(ax, 'YTick', [], 'XLim', [-16 96], 'YLim', [-0.6 height(ex) - 0.4], 'XTick', 0:24:96, 'YColor', 'none'); ax.XRuler.FirstCrossoverValue = -0.6; xlabel(ax, 'time (h)');
 title(ax, 'each tick: one completed loop (blue forward, orange backward); grey: dark phase', 'FontSize', 7, 'FontWeight', 'normal', ...
     'HorizontalAlignment', 'left', 'Units', 'normalized', 'Position', [0 1.02]);
 text(ax, -0.12, 1.08, 'a', 'Units', 'normalized', 'FontSize', 10, 'FontWeight', 'bold');
@@ -66,8 +66,7 @@ yl = ylim(ax); for c = ax.Children', if isa(c, 'matlab.graphics.primitive.Text')
 yline(ax, 0, 'Color', [0.5 0.5 0.5], 'LineWidth', 0.6);
 set(ax, 'XTick', 1:numel(G), 'XTickLabel', SH, 'XLim', [0.4 numel(G) + 0.6], 'TickLabelInterpreter', 'tex');
 ylabel(ax, {'excess persistence E', '(same-direction fraction, data - chain)'});
-title(ax, 'above 0: runs of same-direction loops longer than the chain predicts (episodes); below 0: more alternation', ...
-    'FontSize', 6.5, 'FontWeight', 'normal', 'HorizontalAlignment', 'left', 'Units', 'normalized', 'Position', [0 1.12]);
+xlabel(ax, 'above 0: runs of same-direction loops longer than the chain predicts (episodes); below 0: more alternation', 'FontSize', 6.5);
 text(ax, -0.12, 1.12, 'b', 'Units', 'normalized', 'FontSize', 10, 'FontWeight', 'bold');
 X.examples = ex; X.points = pts;
 exportgraphics(fh, fullfile(outDir, "fig26_SI_ab.png"), 'Resolution', 300);
