@@ -501,3 +501,13 @@ re-run, more permutations would settle it.
   gives 0.383 (per0 DD vs CS DD) and 0.558 (per0 LD vs CS LD) -- the spread of E alone moves these p by ~0.08, so
   quote them as "p ~0.3-0.4" and "~0.6", not to two decimals. Same verdict (no difference).
 - Barcode examples (fly closest to the genotype's median loop count): CS LD fly 16, CS DD fly 10, per0 DD fly 6.
+
+## 2026-11-03  PRESPEC 25 windows (sqw25.py) — REPRODUCED (tests and counts; figures not ported)
+- New: sqw/windowDirectionTests.m (6-h / 4-h windows from ZT0 or record start, N_SW / N_WS on pairs inside a window,
+  binomial measurability via betainc, Amendment A exclusion, clock-matched and 12-h chain nulls of 500 records,
+  p_B, Holm per family, Wilcoxon of B - mean null B). Block table: sqw/validation/s25_blocks.csv. 109 s.
+- EXACT: all 5130 windows (10 blocks) have the same N_SW, N_WS and class as port_ref/s25_windows.json. Measurable:
+  per0 DD 6 h 2 forward, CS LD 6 h 1, CS LD 4 h 1; 0 backward anywhere -- 4 forward / 0 backward in total.
+- Monte Carlo agrees: e.g. clock null F mean per0 DD 6 h 2.6 (Py 2.6), p_F 0.74 (0.75); CS 6 h p_F 0.75 (0.70);
+  every p_B and Holm 1.000, as the Python.
+- fig25.py / fig25_walk.py (SI figures) NOT ported yet (lowest priority).
