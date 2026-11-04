@@ -2442,3 +2442,15 @@ secondary: per0 DD vs CS DD, E difference -0.031, Mann-Whitney p 0.30; per0 LD v
    |J| values are distinct. The tie-corrected p is 0.0022 (normal approximation 0.0021-0.0022). The reversal stands
    (70% backward); quote "p = 0.002". sss dark: 0.6555 -> 0.637 (MATLAB exact earlier 0.675); quote "p ~ 0.6-0.7,
    no net direction". fig_sss_reversal.py now ranks round(J, 10). Report and PLANS already said "p 0.002".
+
+## 2026-11-04 Documents updated with the post-freeze analyses (no new results)
+- Methods V8: four run-in paragraphs in "Direction of circulation" (completed loops and the cumulative walk; direction in
+  short windows, PRESPEC 25; persistence of loop direction, PRESPEC 26; sleep amount and the cycle, PRESPEC 22 + post hoc
+  hidden level). The statistics paragraph now states rounding to 10 decimals before ranking, with average ranks for ties.
+  The software paragraph now gives the tie-aware signed-rank rule (exact only without ties and n <= 50) and betainc for
+  binomial tails. New references: Kalpazidou 2006, Jiang, Qian & Qian 2004 (loop/cycle decomposition).
+- SI (draft of 4 November): Fig. S12 (five-genotype cumulative walk) and Table S5 (completed loops) in S7; S10 tie handling,
+  sss reversal p 0.002 (0.0016 if round-off ties were treated as distinct), simulation-dependent p as ranges; new S12
+  (sleep amount and the direction of the cycle) with Table S6 (all 28 correlations, both levels); S11 lists the November
+  reproductions.
+- Report: tags carry the current numbers and the MATLAB reproduction.
