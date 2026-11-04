@@ -16,7 +16,8 @@ function R = windowDirectionTests(dataRoot, options)
 %   Holm over the 4 blocks of {per0 LD, per0 DD} x sizes and of {CS LD, CS DD} x sizes; Wilcoxon of
 %   B - mean B_null per fly. Counts and classes are exact; null quantities are Monte Carlo.
 %   R  struct: blocks (table: key, genotype, size_min, n, windowsPerFly, F, B, flies_anyB, and per null:
-%      B_null_mean, B_null_lo, B_null_hi, p_B, holm_B, F_null_mean, p_F, wilcoxon_p), flies (cell per block:
+%      B_null_mean, B_null_lo, B_null_hi, p_B, holm_B, F_null_lo, F_null_hi, fracB_null_med / lo / hi (share of
+%      measurable windows that are backward, per simulated record set), F_null_mean, p_F, wilcoxon_p), frac_B, flies (cell per block:
 %      table of fly, nSW, nWS (per window), cls)
 %   Expected (port_ref/s25_windows.json): 4 measurable forward and 0 backward windows in total.
 %
@@ -61,10 +62,14 @@ for g = G
         Bo = sum(fl.B); Fo = sum(fl.F);
         row = table(g + "|" + L / 60 + "h", g, L, nF, numel(fl.cls{1}), Fo, Bo, nnz(fl.B > 0), 'VariableNames', ...
             {'key', 'genotype', 'size_min', 'n', 'windowsPerFly', 'F', 'B', 'flies_anyB'});
+        row.frac_B = NaN; if Bo + Fo > 0, row.frac_B = Bo / (Bo + Fo); end
         for nm = ["clock" "phase"]
             q = quantile7(Bn.(nm), [0.025 0.975]); d = fl.B - per.(nm); pw = 1; if any(d ~= 0), pw = wilcoxonP(d); end
             row.("B_null_mean_" + nm) = mean(Bn.(nm)); row.("B_null_lo_" + nm) = q(1); row.("B_null_hi_" + nm) = q(2);
             row.("p_B_" + nm) = (1 + nnz(Bn.(nm) >= Bo)) / (NR + 1); row.("holm_B_" + nm) = NaN;
+            qf = quantile7(Fn.(nm), [0.025 0.975]); fr = Bn.(nm) ./ max(Bn.(nm) + Fn.(nm), 1); fr(Bn.(nm) + Fn.(nm) == 0) = NaN; fr = fr(isfinite(fr));
+            if isempty(fr), qr = [NaN NaN]; mr = NaN; else, qr = quantile7(fr, [0.025 0.975]); mr = median(fr); end
+            row.("F_null_lo_" + nm) = qf(1); row.("F_null_hi_" + nm) = qf(2); row.("fracB_null_med_" + nm) = mr; row.("fracB_null_lo_" + nm) = qr(1); row.("fracB_null_hi_" + nm) = qr(2);
             row.("F_null_mean_" + nm) = mean(Fn.(nm)); row.("p_F_" + nm) = (1 + nnz(Fn.(nm) >= Fo)) / (NR + 1); row.("wilcoxon_p_" + nm) = pw;
         end
         B = [B; row]; FL{end + 1, 1} = fl; %#ok<AGROW>

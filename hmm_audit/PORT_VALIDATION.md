@@ -511,3 +511,9 @@ re-run, more permutations would settle it.
 - Monte Carlo agrees: e.g. clock null F mean per0 DD 6 h 2.6 (Py 2.6), p_F 0.74 (0.75); CS 6 h p_F 0.75 (0.70);
   every p_B and Holm 1.000, as the Python.
 - fig25.py / fig25_walk.py (SI figures) NOT ported yet (lowest priority).
+- 2026-11-03 addendum: fig25.py and fig25_walk.py ported as sqw/exportWindowDirectionFigures.m (fig25_raster_6h / _4h,
+  fig25_counts, fig25_cumulative_walk; validation/fig25). windowDirectionTests now also returns the forward null 95%
+  range and the backward-share null median / 95% range (agree with the Python within Monte Carlo, e.g. per0 DD 6 h F
+  null [0, 6] as Python; sss 6 h share median 0.5 vs 0.0, from the few simulated sets with any measurable window).
+  Walk figure: flies with >= 60% scored minutes, mean ends CS LD +9.7 (92% > 0), CS DD +10.0 (80%), per0 LD +10.3,
+  per0 DD +11.5 (72 h), sss -1.0 (49 flies, 48 h); per-window net counts as the Python's histogram definition.
