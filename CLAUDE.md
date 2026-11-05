@@ -80,9 +80,10 @@ of separate work, and **most of them DO fit durations** -- `ExpoMLE`,
 earlier version of this file said they fit noise or other quantities. That was
 wrong; only `shiftlognormal_MLE`, `GenNorm_MLE`, `multigaussian_MLE`,
 `GeneralizedHyperbolic_MLE`, `AsymLaplace_MLE` and `shiftweibull_MLE`, in the
-section below, are noise fitters here; the last four joined Icode in Nov 2026
-from the analysis folder, where `SelectBestModel` calls them, and all six are
-audited.) They are not candidates for three reasons
+section below, are noise fitters here; all six are called by the analysis
+folder's `SelectBestModel`, `GenNorm_MLE`, `multigaussian_MLE`,
+`AsymLaplace_MLE` and `shiftweibull_MLE` joined Icode from that folder in Nov
+2026, and all six are audited.) They are not candidates for three reasons
 that have nothing to do with what quantity they fit: the user decided the
 library is closed, they are **continuous** where `CompareBoutModels` is
 discrete by default, and most condition on **`[xmin, xmax]` with `xmax`
