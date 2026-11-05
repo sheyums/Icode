@@ -78,11 +78,11 @@ The analysis folder holds about 37 further `*_MLE` files from roughly ten years
 of separate work, and **most of them DO fit durations** -- `ExpoMLE`,
 `GammaMLE`, `LogNormMLE`, the `*ExpoMLE` mixtures, `PlMLE` and others. (An
 earlier version of this file said they fit noise or other quantities. That was
-wrong; only `shiftlognormal_MLE`, `GenNorm_MLE`, `multigaussian_MLE` and
-`GeneralizedHyperbolic_MLE`, in the section below, are noise fitters here;
-`GenNorm_MLE` and `multigaussian_MLE` joined Icode in Nov 2026, and the analysis folder's other noise
-fitters -- `shiftweibull_MLE` and `AsymLaplace_MLE`, both
-called by `SelectBestModel` -- are not in Icode and have not been audited.) They are not candidates for three reasons
+wrong; only `shiftlognormal_MLE`, `GenNorm_MLE`, `multigaussian_MLE`,
+`GeneralizedHyperbolic_MLE`, `AsymLaplace_MLE` and `shiftweibull_MLE`, in the
+section below, are noise fitters here; the last four joined Icode in Nov 2026
+from the analysis folder, where `SelectBestModel` calls them, and all six are
+audited.) They are not candidates for three reasons
 that have nothing to do with what quantity they fit: the user decided the
 library is closed, they are **continuous** where `CompareBoutModels` is
 discrete by default, and most condition on **`[xmin, xmax]` with `xmax`
