@@ -491,16 +491,16 @@ autoRes = {r12au, r11f};
 okA = true;  msgA = '';
 for i = 1:numel(autoRes)
     r = autoRes{i};
-    if ~(r.valid || contains(r.ModelSelection, 'both fits are invalid'))
+    if ~(r.valid || contains(r.ModelSelection, 'no fit is valid'))
         okA = false;  msgA = r.ModelSelection;
     end
     % The reported LRT must agree with the returned model's LogLike.
-    if startsWith(r.ModelSelection, 'GH'), llSel = r.LRT.LogLike_GH; else, llSel = r.LRT.LogLike_NIG; end
+    llSel = r.LRT.(['LogLike_' strtok(r.ModelSelection)]);
     if abs(llSel - r.LogLike) > 1e-9
         okA = false;  msgA = sprintf('LRT LogLike %.10g versus result %.10g', llSel, r.LogLike);
     end
 end
-[pf,~] = run_test('12A: AUTO returns an invalid fit only if both are invalid', ...
+[pf,~] = run_test('12A: AUTO returns an invalid fit only if all are invalid', ...
     @() check_condition(okA, msgA));
 nFail = nFail+~pf; nPass = nPass+pf;
 
@@ -633,6 +633,152 @@ for i = [3 7]   % NIG n=250 seed 1, t(1.5)
         @() check_equivariance(xs, 1e3, -7, stress{i,3}));
     nFail = nFail+~pf; nPass = nPass+pf;
 end
+
+% =========================================================================
+%  SECTION 13: HYPERBOLIC MODEL, STANDARD ERRORS, WALD CIs (Nov 2026)
+% =========================================================================
+% Ground truth that shares no code with the estimator: the hyperbolic
+% (lambda = 1) density in closed form,
+%   f(x) = gamma/(2*alpha*delta*K1(delta*gamma))
+%          * exp(-alpha*sqrt(delta^2 + (x-mu)^2) + beta*(x-mu)),
+% which needs only besselk(1, .), an independent Nelder-Mead multistart on
+% it, and an independent finite-difference Hessian in PHYSICAL coordinates.
+%   13A  'HYP' and 'HYPERBOLIC' fit lambda = 1 and agree.
+%   13B  HYP LogLike equals the closed-form density sum.
+%   13C  HYP reaches the global optimum of the closed form.
+%   13D  GH nests both: LogLike_GH >= max(LogLike_NIG, LogLike_HYP).
+%   13E  AUTO's restricted model is the better valid one; LRT p-values agree.
+%   13F  SEs equal an independent physical-coordinate Hessian's.
+%   13G  Wald CIs: formula, positivity, contain the estimate.
+%   13H  'NoProfile' returns the same fit and SEs, no profiles, faster.
+%   13I  SEs equivariant under c*x + b.
+%   13J  At the delta floor, no Wald SE is reported (all NaN, SEValid false).
+%   13K  A crossing made by the Bessel-argument guard is reported open.
+fprintf('\n=== SECTION 13: Hyperbolic model, SEs, Wald CIs ===\n');
+rs13 = RandStream('twister', 'Seed', 13);
+pHYP = struct('mu', 0.3, 'lambda', 1, 'alpha', 2, 'beta', 0.6, 'delta', 0.8);
+x13  = sample_HYP_rs(rs13, pHYP, 800);
+
+t0 = tic; r13  = GeneralizedHyperbolic_MLE(x13, 'HYP');               tHYPfull = toc(t0);
+r13b = GeneralizedHyperbolic_MLE(x13, 'hyperbolic');
+t0 = tic; r13w = GeneralizedHyperbolic_MLE(x13, 'HYP', 'NoProfile');  tHYPwald = toc(t0);
+
+[pf,~] = run_test('13A: HYP fits lambda = 1; HYPERBOLIC alias identical', ...
+    @() check_condition(r13.Params(2) == 1 && isequal(r13.profile_ci.lambda, [1 1]) && ...
+    startsWith(r13.Model, 'Hyperbolic') && isequal(r13.Params, r13b.Params) && ...
+    r13.LogLike == r13b.LogLike, 'lambda, Model or alias mismatch'));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+llRef = hyp_ll_ref(x13, r13.Params);
+[pf,~] = run_test('13B: HYP LogLike equals the closed-form density sum', ...
+    @() check_condition(abs(llRef - r13.LogLike) < 1e-8*abs(llRef), ...
+    sprintf('closed form %.12g versus %.12g', llRef, r13.LogLike)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+llInd = hyp_independent_max(x13, rs13);
+[pf,~] = run_test('13C: HYP reaches the independent closed-form optimum', ...
+    @() check_condition(llInd <= r13.LogLike + 1e-4, ...
+    sprintf('independent search higher by %.3g', llInd - r13.LogLike)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+xN = sample_NIG_rs(rs13, trueParams_NIG, 600);
+okD = true;  msgD = '';  autoR = {};
+for d = {x13, xN}
+    ra = GeneralizedHyperbolic_MLE(d{1}, 'AUTO', 'NoProfile');
+    autoR{end+1} = ra; %#ok<SAGROW>
+    gap = max(ra.LRT.LogLike_NIG, ra.LRT.LogLike_HYP) - ra.LRT.LogLike_GH;
+    if gap > 1e-6
+        okD = false;  msgD = sprintf('a nested model beats GH by %.3g', gap);
+    end
+end
+[pf,~] = run_test('13D: GH LogLike >= NIG and hyperbolic LogLike', ...
+    @() check_condition(okD, msgD));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+okE = true;  msgE = '';
+for i = 1:numel(autoR)
+    L = autoR{i}.LRT;
+    want = 'NIG';  if L.LogLike_HYP > L.LogLike_NIG, want = 'HYP'; end
+    pN = chi2cdf(max(2*(L.LogLike_GH - L.LogLike_NIG), 0), 1, 'upper');
+    pH = chi2cdf(max(2*(L.LogLike_GH - L.LogLike_HYP), 0), 1, 'upper');
+    if ~strcmp(L.Restricted, want) || abs(L.pValue_NIG - pN) > 1e-12 || ...
+            abs(L.pValue_HYP - pH) > 1e-12 || ...
+            abs(L.pValue - L.(['pValue_' want])) > 1e-12
+        okE = false;  msgE = sprintf('Restricted %s, expected %s', L.Restricted, want);
+    end
+end
+[pf,~] = run_test('13E: AUTO tests GH against the better restricted model', ...
+    @() check_condition(okE, msgE));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+seRef = hyp_se_ref(x13, r13.Params);
+relF  = max(abs(r13.SE([1 3 4 5]) - seRef) ./ seRef);
+[pf,~] = run_test('13F: SEs match an independent physical-coordinate Hessian', ...
+    @() check_condition(r13.SEValid && relF < 1e-3 && r13.SE(2) == 0, ...
+    sprintf('max relative SE difference %.3g', relF)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+zc = 1.959963984540054;  W = r13.CIWald;  P = r13.Params;  S = r13.SE;
+okG = max(abs(W.mu - (P(1) + [-1 1]*zc*S(1)))) < 1e-12*max(1, abs(P(1))) && ...
+    max(abs(W.beta - (P(4) + [-1 1]*zc*S(4)))) < 1e-12 && ...
+    max(abs(log(W.alpha) - (log(P(3)) + [-1 1]*zc*S(3)/P(3)))) < 1e-12 && ...
+    max(abs(log(W.delta) - (log(P(5)) + [-1 1]*zc*S(5)/P(5)))) < 1e-12 && ...
+    W.alpha(1) > 0 && W.delta(1) > 0 && isequal(W.lambda, [1 1]);
+names13 = {'mu','alpha','beta','delta'};  iP13 = [1 3 4 5];
+for j = 1:4
+    okG = okG && W.(names13{j})(1) <= P(iP13(j)) && P(iP13(j)) <= W.(names13{j})(2);
+end
+[pf,~] = run_test('13G: Wald CIs follow their formulas and contain the estimate', ...
+    @() check_condition(okG, 'Wald interval formula or ordering violated'));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+okH = isequal(r13w.Params, r13.Params) || r13.profile_refits > 0;
+okH = okH && max(abs(r13w.SE - r13.SE)) <= 1e-12 + 1e-9*max(abs(r13.SE)) || r13.profile_refits > 0;
+okH = okH && strcmp(r13w.CIMethod, 'wald') && strcmp(r13.CIMethod, 'profile') && ...
+    all(isnan([r13w.profile_ci.mu r13w.profile_ci.alpha r13w.profile_ci.beta r13w.profile_ci.delta])) && ...
+    tHYPwald < tHYPfull;
+[pf,~] = run_test('13H: NoProfile gives the same fit and SEs, no profiles, faster', ...
+    @() check_condition(okH, sprintf('NoProfile %.1f s versus %.1f s', tHYPwald, tHYPfull)));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+okI = true;  msgI = '';
+for c = [1e-3 -250]
+    rc = GeneralizedHyperbolic_MLE(c*x13 + 40, 'HYP', 'NoProfile');
+    want = r13w.SE .* [abs(c); 1; 1/abs(c); 1/abs(c); abs(c)];
+    rel = max(abs(rc.SE - want) ./ max(want, eps));
+    if ~(rel < 1e-4)
+        okI = false;  msgI = sprintf('c = %g: relative SE difference %.3g', c, rel);
+    end
+end
+[pf,~] = run_test('13I: SEs equivariant under c*x + 40 (c = 1e-3, -250)', ...
+    @() check_condition(okI, msgI));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% Laplace data: the hyperbolic delta -> 0 limit IS the (asymmetric) Laplace,
+% so the fit sits on the delta floor.
+xL = -log(rand(rs13, 3000, 1)) .* sign(rand(rs13, 3000, 1) - 0.5);
+prevW = warning('off', 'GeneralizedHyperbolic_MLE:DeltaAtBound');
+rL = GeneralizedHyperbolic_MLE(xL, 'HYP', 'NoProfile');
+warning(prevW);
+[pf,~] = run_test('13J: at the delta floor, no Wald SEs (NaN, SEValid false)', ...
+    @() check_condition(rL.delta_at_bound && ~rL.SEValid && all(isnan(rL.SE([1 3 4 5]))) && ...
+    rL.SE(2) == 0 && all(isnan([rL.CIWald.alpha rL.CIWald.delta rL.CIWald.mu])), ...
+    sprintf('delta_at_bound %d, SE = %s', rL.delta_at_bound, mat2str(rL.SE', 3))));
+nFail = nFail+~pf; nPass = nPass+pf;
+
+% 13K: a crossing made by the Bessel-argument guard is an OPEN bound. On this
+% hyperbolic sample (coverage replicate 2038) alpha and beta upper bounds
+% used to read ~8.5e8 -- where the guard starts, not where the likelihood
+% rises.
+rsK = RandStream('mt19937ar', 'Seed', 2038);
+xK  = sample_HYP_rs(rsK, struct('mu', 0, 'lambda', 1, 'alpha', 2, 'beta', 0.5, 'delta', 1), 500);
+rK  = GeneralizedHyperbolic_MLE(xK, 'HYP');
+hiA = rK.profile_ci.alpha(2);  hiB = rK.profile_ci.beta(2);
+okK = ~(isfinite(hiA) && hiA > 1e6*rK.Params(3)) && ~(isfinite(hiB) && hiB > 1e6*abs(rK.Params(4))) && ...
+    isfinite(rK.profile_ci.alpha(1)) && rK.profile_ci.alpha(1) < rK.Params(3);
+[pf,~] = run_test('13K: guard-made crossings reported open, not as ~1e9 bounds', ...
+    @() check_condition(okK, sprintf('alpha upper %.3g, beta upper %.3g', hiA, hiB)));
+nFail = nFail+~pf; nPass = nPass+pf;
 
 % =========================================================================
 %  SUMMARY
@@ -1237,4 +1383,69 @@ function [passed, msg] = check_equivariance(x, c, sh, flag)
         msg = sprintf('CI relative error %.3g', err);  return
     end
     passed = true;  msg = '';
+end
+
+% =========================================================================
+%  SECTION 13 HELPERS: closed-form hyperbolic ground truth
+% =========================================================================
+function x = sample_HYP_rs(rs, p, n)
+% Hyperbolic variates, X = mu + beta*W + sqrt(W)*Z with W ~ GIG(1, delta^2,
+% gamma^2), W drawn by inverting its CDF on a fine log-grid (error ~1e-7).
+    gam = sqrt(p.alpha^2 - p.beta^2);
+    lf  = @(u) u - 0.5*(p.delta^2*exp(-u) + gam^2*exp(u));   % log-density of log W
+    u   = linspace(-60, 60, 200001);  L = lf(u);  m = max(L);
+    k   = find(L > m - 60);
+    u   = linspace(u(max(k(1)-1, 1)), u(min(k(end)+1, numel(u))), 400001);
+    F   = cumtrapz(u, exp(lf(u) - m));  F = F / F(end);
+    [Fu, iu] = unique(F);
+    W   = exp(interp1(Fu, u(iu), rand(rs, n, 1), 'pchip'));
+    x   = p.mu + p.beta*W + sqrt(W).*randn(rs, n, 1);
+end
+
+function ll = hyp_ll_ref(x, P)
+% Closed-form hyperbolic log-likelihood; P = [mu; lambda; alpha; beta; delta].
+    mu = P(1);  a = P(3);  b = P(4);  d = P(5);  g = sqrt(a^2 - b^2);
+    ll = numel(x)*(log(g) - log(2*a*d) - log(besselk(1, d*g, 1)) + d*g) ...
+        + sum(-a*sqrt(d^2 + (x - mu).^2) + b*(x - mu));
+end
+
+function nll = hyp_nll_phys(x, q)
+% NLL in physical coordinates q = [mu; alpha; beta; delta]; Inf if infeasible.
+    if q(2) <= abs(q(3)) || q(4) <= 0, nll = Inf; return; end
+    nll = -hyp_ll_ref(x, [q(1); 1; q(2); q(3); q(4)]);
+end
+
+function llMax = hyp_independent_max(x, rs)
+% Independent 30-start Nelder-Mead on the closed form, in its own
+% unconstrained coordinates [mu, log(alpha-|beta|)... ] -- here
+% [mu, log(gamma), beta, log(delta)].
+    s = std(x);  m = median(x);  best = Inf;
+    f = @(v) hyp_nll_phys(x, [v(1); hypot(v(3), exp(v(2))); v(3); exp(v(4))]);
+    o = optimset('Display', 'off', 'MaxFunEvals', 8000, 'MaxIter', 8000, ...
+        'TolX', 1e-10, 'TolFun', 1e-10);
+    for k = 1:30
+        v0 = [m + 0.5*s*randn(rs); log((0.3 + 2*rand(rs))/s); (rand(rs) - 0.5)/s; ...
+            log((0.1 + 2*rand(rs))*s)];
+        v = fminsearch(f, v0, o);  v = fminsearch(f, v, o);
+        best = min(best, f(v));
+    end
+    llMax = -best;
+end
+
+function se = hyp_se_ref(x, P)
+% SEs of [mu; alpha; beta; delta] from a central-difference Hessian of the
+% closed-form NLL in PHYSICAL coordinates (relative steps 1e-4), inverted.
+    q = [P(1); P(3); P(4); P(5)];
+    s = std(x);
+    h = 1e-4 * max(abs(q), 0.1*[s; 1/s; 1/s; s]);
+    f = @(v) hyp_nll_phys(x, v);
+    H = zeros(4);
+    for i = 1:4
+        for j = i:4
+            ei = zeros(4,1); ei(i) = h(i);  ej = zeros(4,1); ej(j) = h(j);
+            H(i,j) = (f(q+ei+ej) - f(q+ei-ej) - f(q-ei+ej) + f(q-ei-ej)) / (4*h(i)*h(j));
+            H(j,i) = H(i,j);
+        end
+    end
+    se = sqrt(diag(inv(H)));
 end

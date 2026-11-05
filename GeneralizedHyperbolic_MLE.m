@@ -15,12 +15,19 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   modelFlag : 'GH'   – fit the full 5-parameter Generalized Hyperbolic.
 %               'NIG'  – fit the 4-parameter Normal-Inverse Gaussian
 %                        (GH with lambda fixed at -0.5).
-%               'AUTO' – (default) fit both models, then select the better
-%                        one via a likelihood-ratio test AND BIC, preferring
-%                        a VALID fit over an invalid one whatever the
-%                        criteria say. Profile CIs are computed only for the
-%                        selected model.
-%   mode      : pass 'PLOT' to display a histogram with the fitted density.
+%               'HYP'  – fit the 4-parameter hyperbolic distribution (GH with
+%                        lambda fixed at 1); 'HYPERBOLIC' is accepted too.
+%               'AUTO' – (default) fit all three, take the better of NIG and
+%                        hyperbolic (same number of parameters, so by
+%                        likelihood, a VALID fit preferred), then choose
+%                        between it and GH by a likelihood-ratio test AND
+%                        BIC, again preferring a VALID fit over an invalid
+%                        one whatever the criteria say. Profile CIs are
+%                        computed only for the selected model.
+%   mode      : text containing 'PLOT' displays a histogram with the fitted
+%               density; text containing 'NOPROFILE' skips the profile CIs
+%               (the dominant cost; 10-30x faster) and reports SEs and Wald
+%               CIs only. Both may be combined, e.g. 'NoProfile,Plot'.
 %
 % PHYSICAL PARAMETERS
 %   The GH distribution is parameterized by five physical quantities:
@@ -29,7 +36,7 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     alpha  : tail heaviness (> |beta|)
 %     beta   : skewness (real)
 %     delta  : scale (> 0)
-%   The NIG model fixes lambda = -0.5.
+%   The NIG model fixes lambda = -0.5; the hyperbolic model fixes lambda = 1.
 %
 %   Special cases of the GH family:
 %     lambda = -0.5              : Normal-Inverse Gaussian (NIG)
@@ -57,7 +64,7 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   estimation is performed in a transformed coordinate system:
 %
 %     GH  theta = [lambda; beta; psi; log_delta; mu]   (5-vector)
-%     NIG theta = [beta; psi; log_delta; mu]            (4-vector)
+%     NIG and hyperbolic theta = [beta; psi; log_delta; mu]   (4-vector)
 %
 %   where:
 %     psi       = log(gamma),  gamma = sqrt(alpha^2 - beta^2) > 0
@@ -89,12 +96,13 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %      intervals describe one feasible region.  An active bound is reported
 %      via results.delta_at_bound and a DeltaAtBound warning; such a point is
 %      a constrained optimum, not an interior MLE.
-%   3. For GH: an additional warm start is always attempted using the
-%      polished NIG point estimate as the initial point (with lambda freed
-%      from -0.5). Both models standardize identically, so the NIG theta is
-%      reused in z-units; it used to be recomputed by a second NIG multistart.
-%      The warm-start solution replaces the grid solution if it converged
-%      when the grid did not, or if both converged and it is better.
+%   3. For GH: two more warm starts are always attempted, from the polished
+%      NIG and hyperbolic point estimates (lambda freed from -0.5 and from
+%      1). Every model standardizes identically, so their thetas are reused
+%      in z-units. A warm-start solution replaces the current one if it
+%      converged when that did not, or if both converged and it is better.
+%      The warm-start POINTS are candidates too, so the GH likelihood can
+%      never come out below the NIG or hyperbolic one (GH nests both).
 %   4. The best converged solution is selected; if none converged, the
 %      best finite solution is used with a warning.
 %   5. The selected solution is polished by a derivative-free (Nelder-Mead)
@@ -179,23 +187,52 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %   the MLE's nuisance values and, if still at or past it, by a derivative-free
 %   Nelder-Mead search, before it is allowed to set a bound.
 %
-% HESSIAN WARNING
-%   results.hessian is the Hessian returned by fmincon in TRANSFORMED
-%   coordinates [lambda, beta, psi, log_delta, mu] (or the NIG subset).
-%   fmincon ran on the standardized data; the matrix is mapped to data units.
-%   Standard errors derived directly from this matrix are WRONG for
-%   physical alpha and delta because those involve nonlinear transforms.
-%   To obtain physical-space standard errors, apply the delta method:
-%     Var(g(theta)) ~ J * inv(H) * J'
-%   where J is the Jacobian of (alpha, delta) with respect to theta.
-%   The profile CIs do not have this limitation.
+% STANDARD ERRORS AND WALD INTERVALS (added Nov 2026)
+%   results.SE (and Cov) are delta-method standard errors of the physical
+%   parameters, in the order of Params, from results.information: the
+%   OBSERVED information, i.e. the Hessian of the NLL at the optimum in the
+%   transformed coordinates of theta_names, taken by central differences with
+%   Richardson extrapolation on the exact likelihood (lambda, the Bessel
+%   order, has no closed-form derivative). results.CIWald are the matching
+%   95% Wald intervals: symmetric for mu, lambda and beta, on the log scale
+%   for alpha and delta (so they stay positive). lambda's SE is 0 when it is
+%   fixed (NIG, hyperbolic).
+%   - At the delta floor (delta_at_bound) no Wald SE is reported (NaN,
+%     SEValid = false): conditional-on-delta intervals were measured to cover
+%     0 of 12 times there. Use the profile intervals.
+%   - A singular or indefinite information matrix (flat ridges: the Normal
+%     limit, the Student-t limit) gives NaN SEs and SEValid = false.
+%   - The profile intervals are the better summary whenever they differ from
+%     the Wald ones: the GH likelihood is far from quadratic in alpha, beta and
+%     lambda at ordinary sample sizes. See MEASURED COVERAGE.
 %
-%   SECOND CAVEAT, specific to the interior-point algorithm: fmincon returns
-%   a Hessian of the LAGRANGIAN (a quasi-Newton approximation), not the
-%   observed information matrix of the objective.  When a bound is active it
-%   includes the constraint contribution.  It is adequate for diagnosing
-%   ill-conditioning but should not be treated as the information matrix.
-%   Prefer the profile CIs, which make no such assumption.
+% MEASURED COVERAGE (Nov 2026, nominal 95%, 100 simulated samples each from
+%   mu = 0, alpha = 2, beta = 0.5, delta = 1; exact GH variates from the GIG
+%   mixture; every fit's LogLike was at or above the log-likelihood at the
+%   true parameters, so no fit stopped short of the optimum)
+%                       mu      lambda  alpha   beta    delta
+%   NIG n=500  profile  0.96    -       0.96    0.95    0.96
+%              Wald     0.94    -       0.98    0.95    0.97
+%   HYP n=500  profile  0.94    -       0.90    0.97    0.93
+%              Wald     0.96    -       0.96    0.97    0.97
+%   GH  n=1000 profile  0.95    0.96    0.98    0.96    0.95   (lambda -1.5)
+%              Wald     0.96    0.80    0.79    0.94    0.84
+%   GH, split: 88 interior fits, Wald 0.97/0.91/0.90/0.96/0.96 (profile
+%   0.96-1.00); 12 fits on the delta floor -- each confirmed to be the global
+%   optimum, the data's own variance-gamma corner (lambda 1.9 to 5.4) -- where
+%   the profile covered 0.75-0.92 and Wald, then still conditional on delta,
+%   covered lambda, alpha and delta 0 of 12 (now reported NaN). Binomial error
+%   on each entry is about +/-0.02. The hyperbolic alpha profile at 0.90 was
+%   checked replicate by replicate: each missed bound sits on the threshold
+%   to 1e-3 under an independent profile, so the shortfall is the chi-square
+%   approximation at n = 500, not the computation.
+%
+% results.hessian (kept for compatibility) is NOT the information: it is the
+%   matrix fmincon returned, a quasi-Newton (BFGS) approximation of the
+%   Hessian of the LAGRANGIAN, accumulated along the optimizer's path, mapped
+%   to data units. Use it, if at all, only to diagnose ill-conditioning. SEs
+%   used to be left to the caller to derive from it; they would have been
+%   wrong.
 %
 % OUTPUTS
 %   results : structure with the following fields:
@@ -210,7 +247,17 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     theta_hat   – MLE in transformed coordinates.
 %     theta_names – cell array naming each element of theta_hat.
 %     nll         – minimized negative log-likelihood.
-%     hessian     – Hessian in transformed coordinates (see warning above).
+%     hessian     – fmincon's quasi-Newton Hessian (NOT the information; see
+%                   STANDARD ERRORS AND WALD INTERVALS).
+%     information – observed information (NLL Hessian) in the coordinates of
+%                   theta_names, data units; the basis of SE.
+%     SE, Cov     – delta-method standard errors and covariance of Params
+%                   (order [mu; lambda; alpha; beta; delta]).
+%     SEValid     – false when the information could not be inverted (SE NaN).
+%     CIWald      – 95% Wald intervals, same layout as profile_ci.
+%     CILevel     – 0.95.
+%     CIMethod    – 'profile', or 'wald' when 'NoProfile' skipped the
+%                   profiles (profile_ci is then NaN, fixed lambda excepted).
 %     hessian_coordinates – same as theta_names, documents what hessian rows/cols mean.
 %     profile_ci  – struct with 95% profile CI [lo hi] for each physical
 %                   parameter: lambda, beta, alpha, delta, mu.
@@ -279,8 +326,11 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     ModelSelection – (AUTO only) string describing which model was chosen
 %                   and why, including when validity overrode the criteria
 %                   or the selected model was re-optimized during profiling.
-%     LRT         – (AUTO only) struct with LRstat, df, pValue, LogLike_GH,
-%                   LogLike_NIG, on the final (post-refit) log-likelihoods.
+%     LRT         – (AUTO only) struct: LRstat, df, pValue for GH against
+%                   the better fixed-lambda model (named in Restricted);
+%                   LogLike_GH, LogLike_NIG, LogLike_HYP; and pValue_NIG,
+%                   pValue_HYP, GH against each. All on the final
+%                   (post-refit) log-likelihoods.
 %                   The model NOT selected has no profile CIs computed.
 %
 % WARNINGS RAISED
@@ -313,6 +363,9 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     fits stop converging rather than a true crossing: an independent
 %     profile was still below the threshold at two such bounds. Read them as
 %     effectively open.
+%     Since Nov 2026 the commonest case, a crossing made by the Bessel-argument
+%     guard (bounds of a few e8 at n = 500), is reported as Inf itself; a far
+%     bound well short of the guard still needs this reading.
 %   - The profile CIs cost more than before the Sep 2026 fixes. On GH samples
 %     of n = 1000 the median fit took about 2.3 times as long (171 s versus
 %     75 s, both measured under concurrent load), mostly from searching delta
@@ -331,6 +384,15 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     on a fraction of a millinat. Read it as a rule check, not a detector of
 %     t-distributed data; a strongly negative lambda with a small gamma is
 %     the practical sign of a t-like sample.
+%   - A profile bound is exact for the likelihood, but its 95% LEVEL rests on
+%     the chi-square approximation, which is loose for the hyperbolic alpha
+%     at n = 500 (coverage 0.90; see MEASURED COVERAGE). Checked independently
+%     on every missed replicate: the bounds sit on the threshold to 1e-3.
+%   - Along a flat ridge the profile can be unknown (NaN) rather than open:
+%     one hyperbolic sample of n = 500 had mu = -1.95 (SE 3.5) and an
+%     independent profile stayed below the threshold to mu = -6, crossing only
+%     between -10 and -20 with beta ~ 1e5; the lower mu bound came back NaN.
+%     A Wald SE many times the usual one is the warning sign.
 %
 % REQUIREMENTS
 %   Optimization Toolbox  : fmincon
@@ -363,25 +425,36 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 % profile; an n-dependent Bessel-argument cap; n >= 10 with a SmallSample
 % warning below 50; validity judged on the log-density (LogFit), with one
 % shared log-density function.
+% Third revision (Claude Code, 2026-11-04): the hyperbolic model ('HYP', lambda
+% = 1), which AUTO now considers alongside NIG; GH warm-starts from both nested
+% fits and can no longer return a likelihood below theirs; standard errors
+% (SE, Cov) from a numerical observed information and Wald CIs (CIWald),
+% replacing the unusable quasi-Newton Hessian; the 'NoProfile' mode; profile
+% steps for every parameter, alpha included, sized from that information
+% and capped at 1 z-unit;
+% crossings made by the Bessel-argument guard reported open instead of as
+% ~1e9 bounds; and coverage of every interval measured by simulation.
 
 % ---- Validate and normalize inputs -----------------------------------------
 if nargin < 2 || isempty(modelFlag), modelFlag = 'AUTO'; end
 if nargin < 3 || isempty(mode),      mode      = '';     end
 
+flagMsg = ['MODELFLAG must be ''GH'', ''NIG'', ''HYP'' (or ''HYPERBOLIC''), ' ...
+    'or ''AUTO''.'];
 if ~(ischar(modelFlag) || (isstring(modelFlag) && isscalar(modelFlag)))
-    error('GeneralizedHyperbolic_MLE:InvalidModelFlag', ...
-        'MODELFLAG must be ''GH'', ''NIG'', or ''AUTO''.');
+    error('GeneralizedHyperbolic_MLE:InvalidModelFlag', flagMsg);
 end
 modelFlag = upper(char(modelFlag));
-if ~ismember(modelFlag, {'GH','NIG','AUTO'})
-    error('GeneralizedHyperbolic_MLE:InvalidModelFlag', ...
-        'MODELFLAG must be ''GH'', ''NIG'', or ''AUTO''.');
+if strcmp(modelFlag, 'HYPERBOLIC'), modelFlag = 'HYP'; end
+if ~ismember(modelFlag, {'GH','NIG','HYP','AUTO'})
+    error('GeneralizedHyperbolic_MLE:InvalidModelFlag', flagMsg);
 end
 if ~(ischar(mode) || (isstring(mode) && isscalar(mode)))
     error('GeneralizedHyperbolic_MLE:InvalidMode', ...
         'MODE must be a character vector or scalar string.');
 end
 mode = char(mode);
+doProfile = ~contains(upper(mode), 'NOPROFILE');
 
 validateattributes(data, {'numeric'}, ...
     {'vector','real','finite','nonempty'}, mfilename, 'data', 1);
@@ -420,102 +493,161 @@ end
 
 % ---- Fit the requested model(s) --------------------------------------------
 % Every fit has two stages: a POINT stage (multistart, polish, validity and
-% boundary diagnostics) and a CI stage (profile likelihood). The CI stage is
-% the dominant cost, so AUTO runs it only for the model it selects. The GH
-% point stage warm-starts from the polished NIG point estimate; both fits
-% standardize identically, so that z-unit theta is reused as is. GH alone
-% runs the NIG point stage too, so a GH fit is the same whether it was asked
-% for directly or reached through AUTO.
+% boundary diagnostics, standard errors) and a CI stage (profile likelihood).
+% The CI stage is the dominant cost, so AUTO runs it only for the model it
+% selects, and 'NoProfile' skips it. The GH point stage warm-starts from the
+% polished NIG and hyperbolic point estimates; every fit standardizes
+% identically, so those z-unit thetas are reused as is. GH alone runs both
+% nested point stages too, so a GH fit is the same whether it was asked for
+% directly or reached through AUTO.
 switch modelFlag
     case 'GH'
         fprintf('Fitting Generalized Hyperbolic (GH) model...\n');
-        stNIG   = fit_point(data, true);
-        stGH    = fit_point(data, false, stNIG.thetaZ);
-        results = fit_ci(stGH);
+        stNIG   = fit_point(data, -0.5);
+        stHYP   = fit_point(data, 1);
+        stGH    = fit_point(data, NaN, {warm_theta(stNIG), warm_theta(stHYP)});
+        results = fit_ci(stGH, doProfile);
 
     case 'NIG'
         fprintf('Fitting Normal-Inverse Gaussian (NIG) model...\n');
-        results = fit_ci(fit_point(data, true));
+        results = fit_ci(fit_point(data, -0.5), doProfile);
+
+    case 'HYP'
+        fprintf('Fitting hyperbolic (HYP, lambda = 1) model...\n');
+        results = fit_ci(fit_point(data, 1), doProfile);
 
     case 'AUTO'
-        fprintf('Running automatic model selection (GH versus NIG)...\n');
-        stNIG  = fit_point(data, true);
-        stGH   = fit_point(data, false, stNIG.thetaZ);
+        fprintf('Running automatic model selection (GH versus NIG and hyperbolic)...\n');
+        stNIG  = fit_point(data, -0.5);
+        stHYP  = fit_point(data, 1);
+        stGH   = fit_point(data, NaN, {warm_theta(stNIG), warm_theta(stHYP)});
         resGH  = stGH.results;
         resNIG = stNIG.results;
+        resHYP = stHYP.results;
 
-        % Likelihood-ratio test: H0 = NIG (lambda = -0.5).
-        % GH has one extra free parameter (lambda), so df = 1.
-        LR   = max(2*(resGH.LogLike - resNIG.LogLike), 0);
+        % Step 1: the better of the two fixed-lambda models. Both have four
+        % free parameters, so AIC, BIC and the likelihood rank them alike; a
+        % VALID fit is preferred over an invalid one whatever the likelihood.
+        if resHYP.valid ~= resNIG.valid
+            useHYP = resHYP.valid;
+        else
+            useHYP = resHYP.LogLike > resNIG.LogLike;
+        end
+        if useHYP, stR = stHYP; nameR = 'HYP'; else, stR = stNIG; nameR = 'NIG'; end
+        resR = stR.results;
+
+        % Step 2: GH against that model. Likelihood-ratio test, H0 = lambda
+        % fixed at the restricted model's value; GH has one extra free
+        % parameter, so df = 1. Testing against the BETTER restricted model
+        % gives the smaller of the two LR statistics, so the test is
+        % conservative for "lambda is -0.5 or 1"; each separate test is in
+        % results.LRT as well.
+        LR   = max(2*(resGH.LogLike - resR.LogLike), 0);
         pval = chi2cdf(LR, 1, 'upper');  % upper tail; accurate for small p
 
         % Prefer GH only when the improvement is both statistically
-        % significant (LRT) AND reflected in a lower BIC (penalizes
-        % the extra parameter). A VALID fit is preferred over an invalid one
-        % whatever the criteria say: an invalid fit's LogLike and BIC are not
+        % significant (LRT) AND reflected in a lower BIC (penalizes the extra
+        % parameter). A VALID fit is preferred over an invalid one whatever
+        % the criteria say: an invalid fit's LogLike and BIC are not
         % trustworthy (see 'valid'), so comparing them decides nothing.
-        ruleGH = pval < 0.05 && resGH.BIC < resNIG.BIC;
-        if resGH.valid && ~resNIG.valid
+        ruleGH = pval < 0.05 && resGH.BIC < resR.BIC;
+        if resGH.valid && ~resR.valid
             useGH = true;
-            why = 'the NIG fit is invalid (valid = false), so the criteria were not used';
-        elseif ~resGH.valid && resNIG.valid
+            why = sprintf('the %s fit is invalid (valid = false), so the criteria were not used', nameR);
+        elseif ~resGH.valid && resR.valid
             useGH = false;
             why = 'the GH fit is invalid (valid = false), so the criteria were not used';
         else
             useGH = ruleGH;
             why = '';
-            if ~resGH.valid   % both invalid
+            if ~resGH.valid   % all invalid
                 warning('GeneralizedHyperbolic_MLE:BothModelsInvalid', ...
-                    ['Neither the GH nor the NIG fit is valid; the usual ' ...
-                    'LRT/BIC rule was applied, but the selected result is ' ...
-                    'not trustworthy.']);
-                why = 'both fits are invalid; usual rule applied';
+                    ['Neither the GH nor the NIG or hyperbolic fit is valid; ' ...
+                    'the usual LRT/BIC rule was applied, but the selected ' ...
+                    'result is not trustworthy.']);
+                why = 'no fit is valid; usual rule applied';
             end
         end
 
         if useGH
-            results = fit_ci(stGH);
-            sel = 'GH';  bicSel = resGH.BIC;  bicOth = resNIG.BIC;
+            results = fit_ci(stGH, doProfile);
+            sel = 'GH';  bicSel = resGH.BIC;  bicOth = resR.BIC;  oth = nameR;
         else
-            results = fit_ci(stNIG);
-            sel = 'NIG'; bicSel = resNIG.BIC; bicOth = resGH.BIC;
+            results = fit_ci(stR, doProfile);
+            sel = nameR; bicSel = resR.BIC;   bicOth = resGH.BIC; oth = 'GH';
         end
-        results.ModelSelection = sprintf( ...
-            '%s selected (LRT p=%.4g; BIC %.3f versus %.3f).', ...
-            sel, pval, bicSel, bicOth);
-        if ~isempty(why)
-            results.ModelSelection = sprintf('%s selected: %s (LRT p=%.4g; BIC %.3f versus %.3f).', ...
-                sel, why, pval, bicSel, bicOth);
+        if isempty(why)
+            results.ModelSelection = sprintf( ...
+                '%s selected (LRT GH vs %s p=%.4g; BIC %.3f versus %s %.3f).', ...
+                sel, nameR, pval, bicSel, oth, bicOth);
+        else
+            results.ModelSelection = sprintf( ...
+                '%s selected: %s (LRT GH vs %s p=%.4g; BIC %.3f versus %s %.3f).', ...
+                sel, why, nameR, pval, bicSel, oth, bicOth);
         end
         % The CI stage can re-optimize the selected model (profile_refits),
         % which raises its LogLike. Report the LRT on the final values; the
         % selection stands, since a higher LogLike for the selected model only
         % strengthens the rule that chose it.
-        if useGH, llGH = results.LogLike; llNIG = resNIG.LogLike;
-        else,     llGH = resGH.LogLike;   llNIG = results.LogLike; end
+        llGH = resGH.LogLike;  llNIG = resNIG.LogLike;  llHYP = resHYP.LogLike;
+        switch sel
+            case 'GH',  llGH  = results.LogLike;
+            case 'NIG', llNIG = results.LogLike;
+            case 'HYP', llHYP = results.LogLike;
+        end
+        llR = llNIG;  if useHYP, llR = llHYP; end
         if results.profile_refits > 0
-            LR   = max(2*(llGH - llNIG), 0);
+            LR   = max(2*(llGH - llR), 0);
             pval = chi2cdf(LR, 1, 'upper');
             results.ModelSelection = sprintf( ...
                 '%s The selected model was re-optimized %d time(s) during profiling; LRT p is now %.4g.', ...
                 results.ModelSelection, results.profile_refits, pval);
         end
         results.LRT = struct('LRstat', LR, 'df', 1, 'pValue', pval, ...
-            'LogLike_GH', llGH, 'LogLike_NIG', llNIG);
+            'Restricted', nameR, ...
+            'LogLike_GH', llGH, 'LogLike_NIG', llNIG, 'LogLike_HYP', llHYP, ...
+            'pValue_NIG', chi2cdf(max(2*(llGH - llNIG), 0), 1, 'upper'), ...
+            'pValue_HYP', chi2cdf(max(2*(llGH - llHYP), 0), 1, 'upper'));
 end
 
 if contains(upper(mode), 'PLOT'), plot_results(data, results); end
+end
+
+function w = warm_theta(st)
+% A fixed-lambda point estimate as a GH theta (lambda first), in z-units.
+w = [st.fixLam; st.thetaZ(:)];
+end
+
+function tf = nfix(fixLam)
+% 1 when lambda is fixed (NIG, hyperbolic), 0 for GH; doubles as the offset
+% of every theta index, since a fixed-lambda theta has no lambda entry.
+tf = double(~isnan(fixLam));
+end
+
+function s = model_name(fixLam)
+% Descriptive model string for a fixed lambda (NaN = GH, lambda free).
+if isnan(fixLam)
+    s = 'Generalized Hyperbolic (mu, lambda, alpha, beta, delta)';
+elseif fixLam == -0.5
+    s = 'Normal-Inverse Gaussian (mu, lambda, alpha, beta, delta)';
+elseif fixLam == 1
+    s = 'Hyperbolic (mu, lambda = 1, alpha, beta, delta)';
+else
+    s = sprintf('GH with lambda fixed at %g (mu, lambda, alpha, beta, delta)', fixLam);
+end
 end
 
 % =========================================================================
 %                          TOP-LEVEL MODEL FITTERS
 % =========================================================================
 
-function st = fit_point(data, isNIG, thetaNIGz)
+function st = fit_point(data, fixLam, warmZ)
 % POINT stage: fit on z = (data - loc)/scl and assemble the data-unit results
 % WITHOUT profile CIs (profile_ci is all NaN until fit_ci runs). Returns the
-% z-unit state that fit_ci needs. thetaNIGz (GH only) is the polished z-unit
-% NIG point estimate, used as the GH warm start.
+% z-unit state that fit_ci needs. fixLam is the fixed lambda (-0.5 NIG, 1
+% hyperbolic) or NaN for GH, where lambda is free. warmZ (GH only) is a cell of
+% polished z-unit point estimates of the fixed-lambda models, used as GH warm
+% starts.
 %
 % WHY. The multistart grid, the optimizer and root-finder tolerances and the
 % profile step sizes are absolute numbers, so results used to depend on the
@@ -531,19 +663,20 @@ loc = median(data);
 scl = std(data);
 z   = (data - loc) / scl;
 
-if isNIG
-    [theta, nll, hess, exitflag, output] = gh_multistart(z, true);
-    model = 'Normal-Inverse Gaussian (mu, lambda, alpha, beta, delta)';
+if nfix(fixLam)
+    [theta, nll, hess, exitflag, output] = gh_multistart(z, fixLam);
+    model = model_name(fixLam);
 else
-    if nargin < 3, thetaNIGz = []; end
-    [theta, nll, hess, exitflag, output] = fit_GH_core(z, thetaNIGz);
-    model = 'Generalized Hyperbolic (mu, lambda, alpha, beta, delta)';
+    if nargin < 3, warmZ = {}; end
+    [theta, nll, hess, exitflag, output] = fit_GH_core(z, warmZ);
+    model = model_name(fixLam);
 end
-[theta, nll] = polish_point(theta, nll, z, isNIG);
+[theta, nll] = polish_point(theta, nll, z, fixLam);
+infoZ = gh_observed_information(theta, z, fixLam);
 
 st = struct('data', data, 'z', z, 'loc', loc, 'scl', scl, 'n', n, ...
-    'isNIG', isNIG, 'model', model, 'thetaZ', theta(:), 'nllZ', nll, ...
-    'hessZ', hess, 'exitflag', exitflag, 'output', output);
+    'fixLam', fixLam, 'model', model, 'thetaZ', theta(:), 'nllZ', nll, ...
+    'hessZ', hess, 'infoZ', infoZ, 'exitflag', exitflag, 'output', output);
 ciNaN = struct('lambda', [NaN NaN], 'beta', [NaN NaN], 'delta', [NaN NaN], ...
     'mu', [NaN NaN], 'alpha', [NaN NaN]);
 % Silent here: fit_ci re-packages the model that is returned and raises its
@@ -560,28 +693,39 @@ end
 warning(prevWarn);
 end
 
-function [theta, nll] = polish_point(theta, nll, z, isNIG)
+function [theta, nll] = polish_point(theta, nll, z, fixLam)
 % Step 5 of ESTIMATION STRATEGY: derivative-free polish of the point estimate.
 % The profile deviance is measured from nll, so an nll left short of the
 % optimum also mislocates every confidence bound.
-[lbP, ubP] = theta_bounds(z, isNIG);
-[thetaP, nllP] = polish_nelder_mead(@(t) gh_nll_wrapper(t, z, isNIG), theta, lbP, ubP);
+[lbP, ubP] = theta_bounds(z, fixLam);
+[thetaP, nllP] = polish_nelder_mead(@(t) gh_nll_wrapper(t, z, fixLam), theta, lbP, ubP);
 % Accept only an improvement larger than the likelihood's own floating-point
 % noise, about n*max(Bessel argument)*eps (see NUMERICAL-VALIDITY GUARD).
 % Without this the polish slid along the flat Normal-limit ridge toward the
 % guard and kept "improvements" made of noise: measured (Sep 2026) on n = 10,
 % a 2e-5 gain at Bessel argument 6.2e9, where the noise is ~1e-5, after which
 % the fit failed its own LikelihoodInconsistent check (valid = false).
-if nllP < nll - max(1e-9, nll_noise(thetaP, z, isNIG))
+if nllP < nll - max(1e-9, nll_noise(thetaP, z, fixLam))
     theta = thetaP(:);
     nll   = nllP;
 end
 theta = theta(:);
 end
 
-function results = fit_ci(st)
+function results = fit_ci(st, doProfile)
 % CI stage: profile-likelihood CIs for a point-stage state ST, followed by a
-% check that the point estimate really was the optimum.
+% check that the point estimate really was the optimum. With doProfile false
+% ('NoProfile' mode) the profiles are skipped: profile_ci is all NaN (fixed
+% lambda excepted) and only the Wald intervals are reported.
+if nargin < 2, doProfile = true; end
+if ~doProfile
+    ciZ = struct('lambda', [NaN NaN], 'beta', [NaN NaN], 'delta', [NaN NaN], ...
+        'mu', [NaN NaN], 'alpha', [NaN NaN]);
+    if nfix(st.fixLam), ciZ.lambda = [st.fixLam st.fixLam]; end
+    results = package_results(st, ciZ);
+    results.CIMethod = 'wald';
+    return
+end
 %
 % WHY THE CHECK. Every profile evaluation is a nuisance re-fit, and the
 % profiles explore the likelihood far more thoroughly than the point
@@ -595,8 +739,8 @@ function results = fit_ci(st)
 % at most MAX_PROFILE_REFITS times.
 refits = 0;
 while true
-    [ciZ, best] = gh_profile_ci(st.thetaZ, st.z, st.nllZ, st.isNIG, st.hessZ);
-    tolImp = max(PROFILE_IMPROVE_TOL(), nll_noise(best.theta, st.z, st.isNIG));
+    [ciZ, best] = gh_profile_ci(st.thetaZ, st.z, st.nllZ, st.fixLam, st.infoZ);
+    tolImp = max(PROFILE_IMPROVE_TOL(), nll_noise(best.theta, st.z, st.fixLam));
     if ~(best.nll < st.nllZ - tolImp)
         break
     end
@@ -613,6 +757,7 @@ while true
 end
 results = package_results(st, ciZ);
 results.profile_refits = refits;
+results.CIMethod = 'profile';
 end
 
 function st = reoptimize_point(st, theta0, nll0)
@@ -620,12 +765,12 @@ function st = reoptimize_point(st, theta0, nll0)
 % current optimum, with value nll0), by fmincon then the Nelder-Mead polish.
 % The better of the fmincon result and theta0 itself is kept, so the NLL can
 % only go down.
-[lb, ub] = theta_bounds(st.z, st.isNIG);
+[lb, ub] = theta_bounds(st.z, st.fixLam);
 opts = fit_options(2500, 1e-7);
 theta = theta0(:);  nll = nll0;
 try
     [tr, nr, er, orr, ~, ~, hr] = fmincon( ...
-        @(t) gh_nll_wrapper(t, st.z, st.isNIG), theta0(:), ...
+        @(t) gh_nll_wrapper(t, st.z, st.fixLam), theta0(:), ...
         [], [], [], [], lb, ub, [], opts);
     st.hessZ = hr;  st.exitflag = er;  st.output = orr;
     if isfinite(nr) && nr < nll
@@ -634,15 +779,16 @@ try
 catch
     % Keep theta0, which is already better than the old optimum.
 end
-[theta, nll] = polish_point(theta, nll, st.z, st.isNIG);
+[theta, nll] = polish_point(theta, nll, st.z, st.fixLam);
 st.thetaZ = theta;
 st.nllZ   = nll;
+st.infoZ  = gh_observed_information(theta, st.z, st.fixLam);
 end
 
 function results = package_results(st, ciZ)
 % Map a z-unit state and z-unit CIs back to the data's units and assemble the
 % results structure with every point-estimate diagnostic.
-[theta, hess] = unstandardize_theta(st.thetaZ, st.hessZ, st.loc, st.scl, st.isNIG);
+[theta, hess] = unstandardize_theta(st.thetaZ, st.hessZ, st.loc, st.scl, st.fixLam);
 nll = st.nllZ + st.n*log(st.scl);
 ci  = ciZ;
 ci.mu    = st.loc + st.scl*ci.mu;   % scl > 0 preserves order; no sort (NaN)
@@ -650,12 +796,150 @@ ci.alpha = ci.alpha / st.scl;
 ci.beta  = ci.beta / st.scl;
 ci.delta = ci.delta * st.scl;
 
-p = theta_to_params(theta, st.isNIG);
+p = theta_to_params(theta, st.fixLam);
 results = assemble_results(st.model, p, theta, nll, hess, ci, st.exitflag, ...
-    st.output, st.data, st.isNIG);
-results = flag_delta_at_bound(results, st.data, st.isNIG);
+    st.output, st.data, st.fixLam);
+results = flag_delta_at_bound(results, st.data, st.fixLam);
 results = flag_student_t_limit(results, st);
 results.profile_refits = 0;
+[~, info] = unstandardize_theta(st.thetaZ, st.infoZ, st.loc, st.scl, st.fixLam);
+results = add_wald(results, theta, info, st.fixLam);
+results.CIMethod = 'none';
+end
+
+% =========================================================================
+%                 OBSERVED INFORMATION, STANDARD ERRORS, WALD CIs
+% =========================================================================
+
+function H = gh_observed_information(theta, z, fixLam)
+% Observed information (Hessian of the NLL) at theta, in the transformed
+% coordinates and z-units, by central differences with Richardson
+% extrapolation: H = (4*H(h/2) - H(h))/3, error O(h^4).
+%
+% WHY NOT fmincon's HESSIAN. The interior-point algorithm returns a BFGS
+% approximation of the Lagrangian's Hessian, accumulated along the path the
+% optimizer happened to take. It is not the observed information, and
+% standard errors from it are not standard errors. The GH log-density has no
+% closed-form derivative in lambda (the order of the Bessel function), so the
+% information is taken numerically from the exact NLL.
+%
+% STEP. Every coordinate is O(1) in z-units (log scales for gamma and delta,
+% data scaled to unit SD), so h = 2e-3*max(1, |theta_i|) is well inside the
+% quadratic region of a regular optimum and far above rounding: the NLL's
+% noise is about n*arg*eps (see nll_noise), divided by h^2 ~ 1e-6.
+%
+% Returns NaN(k) if any evaluation is not finite (e.g. a step crosses the
+% Bessel-argument guard), so a caller never reads SEs off a partial matrix.
+f  = @(t) gh_nll_wrapper(t, z, fixLam);
+k  = numel(theta);
+h  = 2e-3 * max(1, abs(theta(:)));
+H1 = fd_hessian(f, theta(:), h);
+H2 = fd_hessian(f, theta(:), h/2);
+H  = (4*H2 - H1) / 3;
+H  = (H + H.') / 2;
+if ~all(isfinite(H(:))), H = NaN(k); end
+end
+
+function H = fd_hessian(f, x, h)
+% Central-difference Hessian of f at x with per-coordinate steps h.
+k  = numel(x);
+H  = NaN(k);
+f0 = f(x);
+fp = zeros(k, 1);  fm = zeros(k, 1);
+for i = 1:k
+    e = zeros(k, 1);  e(i) = h(i);
+    fp(i) = f(x + e);
+    fm(i) = f(x - e);
+    H(i,i) = (fp(i) - 2*f0 + fm(i)) / h(i)^2;
+end
+for i = 1:k
+    for j = i+1:k
+        ei = zeros(k, 1);  ei(i) = h(i);
+        ej = zeros(k, 1);  ej(j) = h(j);
+        v = (f(x+ei+ej) - f(x+ei-ej) - f(x-ei+ej) + f(x-ei-ej)) / (4*h(i)*h(j));
+        H(i,j) = v;  H(j,i) = v;
+    end
+end
+end
+
+function results = add_wald(results, theta, info, fixLam)
+% Standard errors and Wald CIs for the physical parameters, by the delta
+% method from the observed information INFO (data units, coordinates
+% theta = [lambda; beta; psi; log_delta; mu], lambda absent if fixed).
+%
+%   SE, Cov  : in the order of Params, [mu; lambda; alpha; beta; delta].
+%              lambda's SE is 0 when it is fixed (NIG, hyperbolic).
+%   CIWald   : same layout as profile_ci. mu, lambda and beta are symmetric;
+%              delta and alpha are formed on the log scale and
+%              back-transformed, so both stay positive.
+%
+% At the delta floor (delta_at_bound) the optimum is constrained, the
+% information is not the curvature of an interior maximum, and NO Wald SE is
+% reported (all NaN, SEValid = false). Holding log_delta fixed and inverting
+% the rest was tried and measured (Nov 2026): on GH samples (lambda = -1.5,
+% n = 1000) whose optimum sat on the floor -- 12 of 100, each confirmed as the
+% global optimum by refitting from the true parameters -- those conditional
+% Wald intervals covered lambda, alpha and delta 0 times in 12, because fixing
+% delta hides the lambda-delta trade-off that the data leave open. The
+% profile intervals covered 0.75-0.92 there.
+%
+% A singular or indefinite information matrix (the flat ridges near the
+% Normal and Student-t limits) gives NaN SEs and SEValid = false; profile
+% intervals remain the honest summary there.
+o    = nfix(fixLam);
+k    = numel(theta);
+p    = theta_to_params(theta, fixLam);
+iLd  = 4 - o;                         % index of log_delta in theta
+free = true(k, 1);
+
+C = NaN(k);
+Hf = info(free, free);
+ok = all(isfinite(Hf(:)));
+if ok
+    [R, flag] = chol((Hf + Hf.')/2);
+    ok = flag == 0 && rcond(Hf) > 1e-14;
+    if ok
+        Ri = R \ eye(size(R));
+        C(free, free) = Ri * Ri.';
+        C(~free, :) = 0;  C(:, ~free) = 0;
+    end
+end
+
+% Jacobian of [mu; lambda; alpha; beta; delta] with respect to theta.
+J = zeros(5, k);
+iB = 2 - o;  iP = 3 - o;  iMu = 5 - o;
+J(1, iMu) = 1;
+if ~o, J(2, 1) = 1; end
+J(3, iB)  = p.beta / p.alpha;          % alpha = hypot(beta, exp(psi))
+J(3, iP)  = p.gamma^2 / p.alpha;
+J(4, iB)  = 1;
+J(5, iLd) = p.delta;
+
+if ok
+    Cov = J * C * J.';
+    Cov = (Cov + Cov.') / 2;
+    se  = sqrt(max(diag(Cov), 0));
+    if results.delta_at_bound
+        ok = false;  Cov = NaN(5);  se = NaN(5, 1);
+    end
+else
+    Cov = NaN(5);  se = NaN(5, 1);
+end
+if o, se(2) = 0; if ok, Cov(2, :) = 0; Cov(:, 2) = 0; end, end
+
+zc = sqrt(2) * erfinv(0.95);          % 1.959964, no toolbox needed
+ci.lambda = p.lambda + [-1 1]*zc*se(2);
+ci.beta   = p.beta   + [-1 1]*zc*se(4);
+ci.delta  = p.delta * exp([-1 1]*zc*se(5)/p.delta);
+ci.mu     = p.mu     + [-1 1]*zc*se(1);
+ci.alpha  = p.alpha * exp([-1 1]*zc*se(3)/p.alpha);
+
+results.SE          = se;
+results.Cov         = Cov;
+results.CIWald      = ci;
+results.CILevel     = 0.95;
+results.SEValid     = ok;
+results.information = info;
 end
 
 function results = flag_student_t_limit(results, st)
@@ -671,14 +955,14 @@ function results = flag_student_t_limit(results, st)
 % (gamma times ~2e-9) at fixed (lambda, beta, delta, mu). If that costs less
 % than STUDENT_T_TOL nats, the fit sits on the flat Student-t limit.
 results.student_t_limit = false;
-p = theta_to_params(st.thetaZ, st.isNIG);
+p = theta_to_params(st.thetaZ, st.fixLam);
 if ~(p.lambda < 0)
     return
 end
 t   = st.thetaZ;
-ip  = 3 - double(st.isNIG);               % position of psi in theta
+ip  = 3 - nfix(st.fixLam);               % position of psi in theta
 t(ip) = t(ip) - STUDENT_T_PSI_SHIFT();
-cost  = gh_nll_wrapper(t, st.z, st.isNIG) - st.nllZ;
+cost  = gh_nll_wrapper(t, st.z, st.fixLam) - st.nllZ;
 if isfinite(cost) && cost < STUDENT_T_TOL()
     results.student_t_limit = true;
     warning('GeneralizedHyperbolic_MLE:StudentTLimit', ...
@@ -701,6 +985,12 @@ function v = STUDENT_T_TOL()
 v = 1e-3;
 end
 
+function v = PROFILE_STEP_CAP()
+% Largest first step of a profile bound search, in z-units (log units for
+% delta and alpha). See gh_profile_ci.
+v = 1;
+end
+
 function v = PROFILE_IMPROVE_TOL()
 % A profile NLL must beat nllMin by more than this (nats) to trigger a refit.
 v = 1e-3;
@@ -721,22 +1011,22 @@ function v = MIN_N_WARN()
 v = 50;
 end
 
-function s = nll_noise(theta, data, isNIG)
+function s = nll_noise(theta, data, fixLam)
 % Rough floating-point noise in the summed NLL at theta: each log-density
 % subtracts Bessel arguments of order ARG, so the sum carries an absolute error
 % of about n*ARG*eps. Factor 10 for margin.
-p = theta_to_params(theta, isNIG);
+p = theta_to_params(theta, fixLam);
 arg = max([p.delta*p.gamma; p.alpha*sqrt(p.delta^2 + (data - p.mu).^2)]);
 s = 10 * numel(data) * max(arg, 1) * eps;
 end
 
-function [theta, hess] = unstandardize_theta(theta, hess, loc, scl, isNIG)
+function [theta, hess] = unstandardize_theta(theta, hess, loc, scl, fixLam)
 % Map theta and its Hessian from z-units to data units, y = loc + scl*z:
 %   lambda unchanged, beta/scl, psi - log(scl), log_delta + log(scl), loc + scl*mu.
 % The map is affine with Jacobian J = diag(1, 1/scl, 1, 1, scl) in the order
 % (lambda, beta, psi, log_delta, mu), so H_y = inv(J)'*H_z*inv(J) = D*H_z*D
 % with D = diag(1, scl, 1, 1, 1/scl). NIG has no lambda entry.
-o = double(~isNIG);
+o = (1 - nfix(fixLam));
 theta(1+o) = theta(1+o) / scl;
 theta(2+o) = theta(2+o) - log(scl);
 theta(3+o) = theta(3+o) + log(scl);
@@ -747,44 +1037,59 @@ if isequal(size(hess), [numel(d) numel(d)])
 end
 end
 
-function [theta, nll, hess, exitflag, output] = fit_GH_core(data, thetaNIG)
-% GH point estimate: grid multistart, then a warm start from the NIG MLE.
-% thetaNIG is the polished NIG point estimate in the SAME standardized units
-% (fit_point standardizes both models identically). It used to be recomputed
-% here by a second NIG multistart; pass [] to fall back to that.
+function [theta, nll, hess, exitflag, output] = fit_GH_core(data, warmZ)
+% GH point estimate: grid multistart, then a warm start from each fixed-lambda
+% fit. warmZ is a cell of GH theta vectors (lambda first) built from the
+% polished NIG and hyperbolic point estimates in the SAME standardized units
+% (fit_point standardizes every model identically). Pass {} to fall back to a
+% NIG multistart here.
 % Step 1: multi-start search over a parameter grid.
-[theta, nll, hess, exitflag, output] = gh_multistart(data, false);
+[theta, nll, hess, exitflag, output] = gh_multistart(data, NaN);
 
-% Step 2: always attempt a warm start from the NIG MLE.
-% The NIG solution is a valid point in GH space (lambda = -0.5), so it
-% provides a useful starting point in a region where the GH likelihood
-% is known to be reasonable.  The warm start is accepted over the grid
-% solution if it converged when the grid did not, or if both have equal
-% convergence status and the warm start achieves a lower NLL.
-if nargin < 2 || isempty(thetaNIG)
-    [thetaNIG, ~, ~, ~, ~] = gh_multistart(data, true);
+% Step 2: always attempt a warm start from each nested fit. A fixed-lambda
+% solution is a valid point in GH space, so it provides a useful starting
+% point in a region where the GH likelihood is known to be reasonable. A warm
+% start is accepted over the current solution if it converged when that did
+% not, or if both have equal convergence status and it achieves a lower NLL.
+%
+% The warm-start POINT itself is also a candidate. GH nests both models, so
+% its maximized likelihood can never be below theirs; without this, an
+% fmincon run that wandered off a warm start could return a GH fit worse
+% than the NIG or hyperbolic fit it started from, and the LRT statistic would
+% be clipped at 0 for a reason that has nothing to do with the data.
+if nargin < 2 || isempty(warmZ)
+    [tN, ~, ~, ~, ~] = gh_multistart(data, -0.5);
+    warmZ = {[-0.5; tN(:)]};
 end
-theta0 = [-0.5; thetaNIG(:)];   % prepend lambda = -0.5 to NIG theta
 opts = fit_options(2500, 1e-7);
 
 % Same delta floor as the grid search, so the warm start explores the
 % identical feasible region.
-[lb, ub] = theta_bounds(data, false);
+[lb, ub] = theta_bounds(data, NaN);
+objGH = @(t) gh_nll_wrapper(t, data, NaN);
 
-try
-    [tr, nr, er, orr, ~, ~, hr] = fmincon( ...
-        @(t) gh_nll_wrapper(t, data, false), theta0, ...
-        [], [], [], [], lb, ub, [], opts);
-    oldConv  = exitflag > 0;
-    newConv  = er > 0;
-    useRescue = isfinite(nr) && ((newConv && ~oldConv) || ...
-        (newConv == oldConv && nr < nll));
-    if useRescue
-        theta = tr;  nll = nr;  hess = hr;
-        exitflag = er;  output = orr;
+for w = 1:numel(warmZ)
+    theta0 = warmZ{w}(:);
+    try
+        [tr, nr, er, orr, ~, ~, hr] = fmincon(objGH, theta0, ...
+            [], [], [], [], lb, ub, [], opts);
+        oldConv  = exitflag > 0;
+        newConv  = er > 0;
+        useRescue = isfinite(nr) && ((newConv && ~oldConv) || ...
+            (newConv == oldConv && nr < nll));
+        if useRescue
+            theta = tr;  nll = nr;  hess = hr;
+            exitflag = er;  output = orr;
+        end
+    catch
+        % Retain the best solution so far if the warm start crashes.
     end
-catch
-    % Retain the best multistart solution if the warm start crashes.
+    n0 = objGH(theta0);
+    if isfinite(n0) && n0 < nll
+        % The nested optimum beats every GH run: keep it (the polish in
+        % fit_point can still move it off lambda's fixed value).
+        theta = theta0;  nll = n0;  exitflag = max(exitflag, 1);
+    end
 end
 end
 
@@ -792,7 +1097,7 @@ end
 %                         MULTI-START OPTIMIZATION
 % =========================================================================
 
-function [bestTheta, bestNLL, bestHess, bestExit, bestOut] = gh_multistart(data, isNIG)
+function [bestTheta, bestNLL, bestHess, bestExit, bestOut] = gh_multistart(data, fixLam)
 muMed  = median(data);
 muMean = mean(data);
 [counts, edges] = histcounts(data, 'Normalization', 'pdf');
@@ -803,8 +1108,8 @@ muGrid = unique([muMed muMean muMode]);
 s0 = std(data);
 deltaGrid  = s0 * [0.5 1 1.5];
 betaGrid   = [0  -0.5/s0  0.5/s0];
-if isNIG
-    lambdaGrid = -0.5;
+if nfix(fixLam)
+    lambdaGrid = fixLam;
 else
     lambdaGrid = [-1.5  -0.5  0.5  1.5];
 end
@@ -820,13 +1125,13 @@ starts = cell(n, 1);
 vals   = inf(n, 1);
 
 for i = 1:n
-    if isNIG
+    if nfix(fixLam)
         t = [grid(i,2); psi0; log(grid(i,3)); grid(i,4)];
     else
         t = [grid(i,1); grid(i,2); psi0; log(grid(i,3)); grid(i,4)];
     end
     starts{i} = t;
-    vals(i)   = gh_nll_wrapper(t, data, isNIG);
+    vals(i)   = gh_nll_wrapper(t, data, fixLam);
 end
 
 % Sort by NLL and keep the best finite starting points.
@@ -844,7 +1149,7 @@ opts = fit_options(2000, 1e-7);
 % that spike can drive the likelihood up without limit. The floor is a fixed
 % fraction of the data spread so it scales with the problem. See
 % delta_lower_bound for why the value is what it is.
-[lb, ub] = theta_bounds(data, isNIG);
+[lb, ub] = theta_bounds(data, fixLam);
 
 template = struct('theta',[], 'nll',Inf, 'hess',[], 'exitflag',-Inf, 'output',[]);
 sol = repmat(template, numel(ord), 1);
@@ -861,7 +1166,7 @@ warning('off', 'MATLAB:illConditionedMatrix');
 for j = 1:numel(ord)
     try
         [t, v, ef, out, ~, ~, h] = fmincon( ...
-            @(x) gh_nll_wrapper(x, data, isNIG), starts{ord(j)}, ...
+            @(x) gh_nll_wrapper(x, data, fixLam), starts{ord(j)}, ...
             [], [], [], [], lb, ub, [], opts);
         sol(j) = struct('theta',t,'nll',v,'hess',h,'exitflag',ef,'output',out);
     catch ex
@@ -909,9 +1214,9 @@ end
 %                     LOG-LIKELIHOOD (CORE MATH)
 % =========================================================================
 
-function nll = gh_nll_wrapper(theta, data, isNIG)
+function nll = gh_nll_wrapper(theta, data, fixLam)
 % Convert transformed coordinates to physical params, then evaluate NLL.
-p = theta_to_params(theta, isNIG);
+p = theta_to_params(theta, fixLam);
 nll = gh_nll_from_params(p, data);
 end
 
@@ -1004,11 +1309,11 @@ function d = delta_lower_bound(data)
 d = 1e-3 * std(data);
 end
 
-function [lb, ub] = theta_bounds(data, isNIG)
+function [lb, ub] = theta_bounds(data, fixLam)
 % Box constraints in transformed coordinates. Only log_delta is bounded; every
 % other coordinate is free. Index of log_delta is 3 for NIG, 4 for GH.
 mld = log(delta_lower_bound(data));
-if isNIG
+if nfix(fixLam)
     lb = [-Inf; -Inf; mld;  -Inf];
     ub = [ Inf;  Inf; Inf;   Inf];
 else
@@ -1017,12 +1322,12 @@ else
 end
 end
 
-function results = flag_delta_at_bound(results, data, isNIG)
+function results = flag_delta_at_bound(results, data, fixLam)
 % Report when the fit is sitting on the delta floor. Such a point is a
 % CONSTRAINED optimum, not an MLE: the profile CIs are computed without the
 % bound, and standard errors from the Hessian assume an interior solution.
 % Returning it unannounced would misrepresent a boundary solution as a fit.
-idx = 4 - double(isNIG);          % position of log_delta in theta
+idx = 4 - nfix(fixLam);          % position of log_delta in theta
 mld = log(delta_lower_bound(data));
 % Tolerance in log(delta) units: 1e-2 means within 1% of the floor. fmincon's
 % interior-point algorithm never lands ON a bound, it stops strictly inside
@@ -1111,7 +1416,7 @@ end
 %                     PROFILE LIKELIHOOD CONFIDENCE INTERVALS
 % =========================================================================
 
-function [ci, best] = gh_profile_ci(theta, data, nllMin, isNIG, hess)
+function [ci, best] = gh_profile_ci(theta, data, nllMin, fixLam, hess)
 % Compute 95% profile likelihood CIs for all physical parameters.
 %
 % For each parameter, the CI boundary satisfies:
@@ -1126,7 +1431,7 @@ crit = chi2inv(0.95, 1) / 2;   % ~1.9208; profile deviance threshold
 % Nuisance optimizations run under the SAME box constraints as the point
 % estimate, so fit and CI describe one feasible region (see regular_profile_dev).
 opts = fit_options(1500, 1e-6);
-p    = theta_to_params(theta, isNIG);
+p    = theta_to_params(theta, fixLam);
 s    = std(data);               % used to set scale-appropriate step sizes
 
 % Wald standard errors in the TRANSFORMED coordinates, used only to size the
@@ -1147,8 +1452,8 @@ tracker = containers.Map('KeyType', 'char', 'ValueType', 'any');
 tracker('nll')   = nllMin;
 tracker('theta') = theta(:);
 
-if isNIG
-    ci.lambda = [-0.5 -0.5];   % lambda is fixed for NIG
+if nfix(fixLam)
+    ci.lambda = [fixLam fixLam];   % lambda is fixed (NIG, hyperbolic)
     names = {'beta','delta','mu'};
 else
     ci = struct();
@@ -1163,15 +1468,15 @@ for i = 1:numel(names)
             q0   = p.lambda;
             step = max(0.1, 0.1*max(1, abs(q0)));
         case 'beta'
-            idx  = 2 - double(isNIG);
+            idx  = 2 - nfix(fixLam);
             q0   = p.beta;
             step = max(0.05/s, 0.1*max(1/s, abs(q0)));
         case 'delta'
-            idx  = 4 - double(isNIG);
+            idx  = 4 - nfix(fixLam);
             q0   = log(p.delta);
             step = 0.1;
         case 'mu'
-            idx  = 5 - double(isNIG);
+            idx  = 5 - nfix(fixLam);
             q0   = p.mu;
             step = max(0.05*s, 0.1*max(s, abs(q0)));
     end
@@ -1182,11 +1487,19 @@ for i = 1:numel(names)
     if idx <= numel(seT) && isfinite(seT(idx)) && seT(idx) > 0
         step = 2 * seT(idx);
     end
+    % Cap the first step (z-units). On a flat profile the Wald SE is huge,
+    % and a first probe sized from it lands at the far end of the range,
+    % where a cold-started nuisance fit fails; measured (Nov 2026) on a
+    % near-Normal NIG sample of n = 60: a 7.1-unit first step in log(delta)
+    % to 0.3 above the floor, a failed fit (+49.5), and a bound reported
+    % UNKNOWN that walking out finds OPEN. The expanding bracket (1.5^k)
+    % still reaches 100 units in about 12 probes.
+    step = min(step, PROFILE_STEP_CAP());
 
     % One warm-start cache per parameter: each profile point starts its
     % nuisance optimization from the solution at the nearest point evaluated.
     cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
-    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker);
+    fun = @(q) regular_profile_dev(q, idx, theta, data, nllMin, crit, fixLam, opts, cache, tracker);
     % log(delta) is searched no lower than the estimator's own floor: the fit
     % may not return delta below it, so the interval must not claim support
     % there either. Without the limit the search walked down to log(delta)
@@ -1198,9 +1511,14 @@ for i = 1:numel(names)
     end
     % The value AT the limit decides between an open bound and a finite one,
     % so it gets a harder nuisance fit (see find_root_robust).
-    funHard = @(qq) regular_profile_dev(qq, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker, true);
+    funHard = @(qq) regular_profile_dev(qq, idx, theta, data, nllMin, crit, fixLam, opts, cache, tracker, true);
     lo  = find_root_robust(fun, q0, -1, step, loLimit, funHard);
     hi  = find_root_robust(fun, q0,  1, step, Inf);
+    % A crossing produced by the Bessel-argument guard, not the likelihood,
+    % is an open bound (see open_if_capped).
+    toP = @(qq, xx) theta_to_params(insert_param(setq(theta, idx, qq), xx, idx_mask(numel(theta), idx)), fixLam);
+    lo  = open_if_capped(lo, -1, cache, toP, data);
+    hi  = open_if_capped(hi,  1, cache, toP, data);
 
     % lo and hi come from searches below and above the MLE, so [lo hi] is
     % already ordered. Do NOT sort: sort moves NaN to the end, so an unknown
@@ -1215,11 +1533,25 @@ end
 
 % Alpha is profiled exactly by fixing it physically and re-optimizing
 % all other parameters (see profile_alpha_ci for details).
-ci.alpha = profile_alpha_ci(theta, p.alpha, data, nllMin, crit, isNIG, opts, tracker);
+% Its first step is 2 Wald SEs of log(alpha) when the information allows,
+% as for the other parameters (it used to be a fixed 0.1).
+stepA = 0.1;
+if all(isfinite(seT))
+    k  = numel(theta);  iB = 2 - nfix(fixLam);  iP = 3 - nfix(fixLam);
+    g  = zeros(k, 1);
+    g(iB) = p.beta / p.alpha^2;            % d log(alpha) / d beta
+    g(iP) = p.gamma^2 / p.alpha^2;         % d log(alpha) / d psi
+    Hs = (hess + hess.')/2;
+    vA = g.' * (Hs \ g);
+    if isfinite(vA) && vA > 0
+        stepA = min(max(2*sqrt(vA), 1e-3), PROFILE_STEP_CAP());
+    end
+end
+ci.alpha = profile_alpha_ci(theta, p.alpha, data, nllMin, crit, fixLam, opts, tracker, stepA);
 best = struct('nll', tracker('nll'), 'theta', tracker('theta'));
 end
 
-function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, isNIG, opts, cache, tracker, hard)
+function d = regular_profile_dev(q, idx, theta, data, nllMin, crit, fixLam, opts, cache, tracker, hard)
 % Profile deviance for parameters other than alpha.
 % Fix theta(idx) = q, re-optimize the remaining parameters,
 % and return  nll_profile - nllMin - crit.
@@ -1240,15 +1572,15 @@ mask       = true(numel(theta), 1);
 mask(idx)  = false;
 base       = theta;
 base(idx)  = q;
-obj = @(x) gh_nll_wrapper(insert_param(base, x, mask), data, isNIG);
+obj = @(x) gh_nll_wrapper(insert_param(base, x, mask), data, fixLam);
 
-[lbFull, ubFull] = theta_bounds(data, isNIG);
+[lbFull, ubFull] = theta_bounds(data, fixLam);
 lb = lbFull(mask);
 ub = ubFull(mask);
 
 if nargin < 11, hard = false; end
 starts = {min(max(theta(mask), lb), ub)};   % fmincon needs a feasible start
-if idx == 4 - double(isNIG)
+if idx == 4 - nfix(fixLam)
     % Profiling log(delta): also start from the MLE's nuisance values with
     % psi = log(gamma) shifted by the same amount as log(delta). That keeps
     % delta/gamma, hence the mean shift beta*delta/gamma and the scale of the
@@ -1256,9 +1588,9 @@ if idx == 4 - double(isNIG)
     % optimizer to rediscover them from values fitted at another delta.
     % Measured (Sep 2026), log-normal data at the delta floor: every other
     % start stalled at +252 above the threshold where an independent profile
-    % was 1.92 below it. psi sits at position 3 - isNIG of the masked vector.
+    % was 1.92 below it. psi sits at position 3 - fixLam of the masked vector.
     xm = theta(mask);
-    xm(3 - double(isNIG)) = xm(3 - double(isNIG)) + (q - theta(idx));
+    xm(3 - nfix(fixLam)) = xm(3 - nfix(fixLam)) + (q - theta(idx));
     starts = [starts, {min(max(xm, lb), ub)}];
 end
 if nargin >= 9 && isKey(cache, 'Q')
@@ -1370,27 +1702,31 @@ end
 end
 % ---- Exact profile CI for physical alpha -----------------------------------
 
-function ci = profile_alpha_ci(theta, aHat, data, nllMin, crit, isNIG, opts, tracker)
+function ci = profile_alpha_ci(theta, aHat, data, nllMin, crit, fixLam, opts, tracker, step)
 % Profile alpha by searching in log(alpha) space.
 % Using q = log(alpha) keeps alpha positive throughout the search and
 % makes the step size scale-invariant regardless of alpha's magnitude.
+if nargin < 9, step = 0.1; end
 q0    = log(aHat);
 cache = containers.Map('KeyType', 'char', 'ValueType', 'any');
-fun   = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, isNIG, opts, cache, tracker);
-lo  = find_root_robust(fun, q0, -1, 0.1, -Inf);
-hi  = find_root_robust(fun, q0,  1, 0.1,  Inf);
+fun   = @(q) alpha_profile_dev_log(q, theta, data, nllMin, crit, fixLam, opts, cache, tracker);
+lo  = find_root_robust(fun, q0, -1, step, -Inf);
+hi  = find_root_robust(fun, q0,  1, step,  Inf);
+toP = @(qq, xx) alpha_params(exp(qq), xx, fixLam);
+lo  = open_if_capped(lo, -1, cache, toP, data);
+hi  = open_if_capped(hi,  1, cache, toP, data);
 ci  = exp([lo hi]);   % ordered by construction; see gh_profile_ci on sort
 end
 
-function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, isNIG, opts, cache, tracker)
+function d = alpha_profile_dev_log(logA, theta, data, nllMin, crit, fixLam, opts, cache, tracker)
 % Profile deviance as a function of log(alpha).
 a = exp(logA);
 if ~isfinite(a) || a <= 0, d = Inf;  return;  end
-v = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, nllMin + crit, tracker);
+v = alpha_fixed_nll(a, theta, data, fixLam, opts, cache, logA, nllMin + crit, tracker);
 if isfinite(v), d = v - nllMin - crit;  else, d = Inf;  end
 end
 
-function nll = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, vStop, tracker)
+function nll = alpha_fixed_nll(a, theta, data, fixLam, opts, cache, logA, vStop, tracker)
 % Minimize NLL over all parameters except alpha, which is fixed at a.
 %
 % Reparameterize beta = a*tanh(xi), xi free in (-inf, inf).
@@ -1405,7 +1741,7 @@ function nll = alpha_fixed_nll(a, theta, data, isNIG, opts, cache, logA, vStop, 
 % log_delta carries the same floor as the point estimate, so this profile
 % explores the identical feasible region (see regular_profile_dev, which also
 % explains the warm start and the re-check against vStop).
-p = theta_to_params(theta, isNIG);
+p = theta_to_params(theta, fixLam);
 
 % Convert the current beta estimate to the xi parameterization.
 % Clamp to avoid atanh(+/-1) = +/-inf at the boundary.
@@ -1413,11 +1749,11 @@ r   = max(min(p.beta/a, 1-1e-8), -1+1e-8);
 xi0 = atanh(r);
 
 mld = log(delta_lower_bound(data));
-if isNIG
+if nfix(fixLam)
     x0  = [xi0; log(p.delta); p.mu];
     lb  = [-Inf; mld; -Inf];
     ub  = [ Inf; Inf;  Inf];
-    obj = @(x) alpha_core(a, -0.5, x(1), x(2), x(3), data);
+    obj = @(x) alpha_core(a, fixLam, x(1), x(2), x(3), data);
 else
     x0  = [p.lambda; xi0; log(p.delta); p.mu];
     lb  = [-Inf; -Inf; mld; -Inf];
@@ -1437,17 +1773,77 @@ if isfinite(nll)
     % log(cosh(xi)) = |xi| + log1p(exp(-2|xi|)) - log(2), which cannot
     % overflow. Re-evaluated in theta coordinates, so the tracked value is
     % exactly what a refit from that theta would start at.
-    xi   = xbest(2 - double(isNIG));
+    xi   = xbest(2 - nfix(fixLam));
     beta = a * tanh(xi);
     psi  = log(a) - (abs(xi) + log1p(exp(-2*abs(xi))) - log(2));
-    if isNIG
+    if nfix(fixLam)
         thetaFull = [beta; psi; xbest(2); xbest(3)];
     else
         thetaFull = [xbest(1); beta; psi; xbest(3); xbest(4)];
     end
-    track_best(tracker, gh_nll_wrapper(thetaFull, data, isNIG), thetaFull);
+    track_best(tracker, gh_nll_wrapper(thetaFull, data, fixLam), thetaFull);
 end
 end
+function root = open_if_capped(root, direction, cache, toP, data)
+% Report a profile crossing as OPEN (+/-Inf) when the nuisance fits that
+% located it sit against the Bessel-argument guard (MAX_BESSEL_ARG), i.e.
+% when the feasible region, not the likelihood, ended the search.
+%
+% WHY. Near a flat ridge the nuisance optimum runs out to ever larger alpha
+% and beta until the guard declares it infeasible; the best FEASIBLE value
+% then rises, and the root finder records that rise as a crossing. Measured
+% (Nov 2026, hyperbolic samples of n = 500): alpha upper bounds of 7.7e8 to
+% 8.5e8 against estimates of 3 to 13, in 7 of the 9 replicates examined --
+% always the same few e8, the place where alpha*sqrt(delta^2 + x^2) reaches
+% the cap of 1e10, whatever the data. CLAUDE.md already listed such bounds as
+% "effectively open"; this makes them so. A bound is only ever WIDENED here,
+% and only where the likelihood was not what stopped it.
+if ~isfinite(root) || ~isKey(cache, 'Q')
+    return
+end
+Q = cache('Q');  X = cache('X');
+[~, ord] = sort(abs(Q - root));
+cap = MAX_BESSEL_ARG(numel(data));
+for j = ord(1:min(2, numel(ord)))
+    [~, argMax] = gh_logpdf(data, toP(Q(j), X(:, j)));
+    if isfinite(argMax) && argMax > CAPPED_FRACTION() * cap
+        root = direction * Inf;
+        return
+    end
+end
+end
+
+function v = CAPPED_FRACTION()
+% A nuisance fit whose largest Bessel argument is within this fraction of the
+% guard counts as stopped by the guard. Legitimate fits sit near 1e1-1e3;
+% only fits on the Normal ridge approach the guard, where a bound cannot be
+% confirmed either way and open is the honest report.
+v = 0.1;
+end
+
+function t = setq(theta, idx, q)
+% theta with coordinate idx set to q.
+t = theta;  t(idx) = q;
+end
+
+function m = idx_mask(k, idx)
+% Logical mask of the k theta coordinates other than idx.
+m = true(k, 1);  m(idx) = false;
+end
+
+function p = alpha_params(a, x, fixLam)
+% Physical parameters from the alpha-profile coordinates (alpha = a fixed):
+% x = [xi; log_delta; mu] (fixed lambda) or [lambda; xi; log_delta; mu].
+o = nfix(fixLam);
+if o, p.lambda = fixLam; else, p.lambda = x(1); end
+xi = x(2 - o);
+p.beta  = a * tanh(xi);
+p.gamma = a / cosh(xi);
+p.alpha = a;
+p.delta = exp(x(3 - o));
+p.mu    = x(4 - o);
+end
+
 function nll = alpha_core(a, lambda, xi, logDelta, mu, data)
 % NLL with alpha = a fixed and beta = a*tanh(xi).
 % gamma = a/cosh(xi) exactly. The old a*sqrt(max(1 - tanh(xi)^2, realmin))
@@ -1711,7 +2107,7 @@ end
 %                              UTILITIES
 % =========================================================================
 
-function p = theta_to_params(theta, isNIG)
+function p = theta_to_params(theta, fixLam)
 % Convert transformed optimization coordinates to physical GH parameters.
 %
 % Transformation:
@@ -1721,8 +2117,8 @@ function p = theta_to_params(theta, isNIG)
 %
 % hypot is used instead of sqrt(beta^2+gamma^2) for numerical stability
 % when either beta or gamma is very large or very small.
-if isNIG
-    p.lambda = -0.5;
+if nfix(fixLam)
+    p.lambda = fixLam;
     p.beta   = theta(1);
     p.gamma  = exp(theta(2));
     p.delta  = exp(theta(3));
@@ -1744,7 +2140,7 @@ theta        = base;
 theta(mask)  = sub;
 end
 
-function results = assemble_results(model, p, theta, nll, hess, ci, ef, out, data, isNIG)
+function results = assemble_results(model, p, theta, nll, hess, ci, ef, out, data, fixLam)
 % Package all estimation outputs into a single results structure.
 n    = numel(data);
 k    = numel(theta);
@@ -1797,7 +2193,7 @@ else
     end
 end
 
-if isNIG
+if nfix(fixLam)
     results.theta_names = {'beta','psi_log_gamma','log_delta','mu'};
 else
     results.theta_names = {'lambda','beta','psi_log_gamma','log_delta','mu'};
