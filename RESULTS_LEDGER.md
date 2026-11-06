@@ -251,3 +251,72 @@ Not reportable  Do not quote the IAAFT/shuffle sleep p = 0.004 / 0.002 as a time
                 profile" is descriptive (no pre-specified test). Teliminate = 0: the first,
                 possibly less entrained, day is included.
 ```
+
+### 2026-11-06  per0 DD and CS LD: the bout-space AR(1) x(t+1) = A + B*x(t) + eps and its noise
+
+```
+Commit          328116c (Icode branch claude/shifted-lognormal-mle-wc03ob: BoutAR1Noise,
+                FitResidualFamilies; the six noise fitters at their audited versions) with the
+                analysis folder's scoring code (unchanged since its commit 23240e7); run from the
+                Icode folder behind which/pwd asserts for all seven functions, MATLAB R2026a,
+                2026-11-05/06.
+Script          run_ar1.m, session scratch, not in the repo
+Prespec         2026-11-05 "per0 DD and CS LD: can x(t+1) = A + B*x(t) + eps generate the bouts,
+                and what is eps?" (committed 14adef6 before the run)
+Time window     per0 DD: each fly's whole record (one block). CS LD: each fly's light phase and
+                dark phase fitted separately, every 12-h phase of every day its own block.
+n               per0: 48 flies, median 192 pairs per fly per bout type. CS: 40 flies; median
+                pairs per fly sleep light 94, sleep dark 70, wake light 95.5, wake dark 68.
+                Sleep xmin 300 s, wake 2 s; DataStartZT 0 and time order checked.
+Result          PRIMARY (Hetero = Spearman of |eps| with x(t); flies with p < 0.05 vs null):
+                  per0 sleep 8/48 (7 with spread GROWING with x(t)), count p 0.0024, Holm 0.0049
+                  per0 wake  6/48 (4 shrinking, 2 growing),           count p 0.0317, Holm 0.0317
+                  CS sleep light 2/40, sleep dark 3/40, wake light 3/40, wake dark 2/40;
+                  count p 0.32-0.60, Holm 1.00 for all four.
+                eps FAMILY, BIC winners per set (pre-set wording rule):
+                  per0 sleep: shifted Weibull 18, shifted exp 13, asym Laplace 7, shifted
+                    lognormal 7, GH 3 -> named "shifted Weibull (18/48)"; shifted-exp median
+                    DeltaBIC 13.8.
+                  per0 wake: shifted exp 18, shifted Weibull 11, asym Laplace 7, shifted
+                    lognormal 7, GH 5 -> most frequent shifted exp (18/48, not a majority);
+                    median DeltaBIC 4.9.
+                  CS sleep light: asym Laplace 18, shifted exp 14, shifted Weibull 4, GH 3,
+                    shifted lognormal 1 -> "asymmetric Laplace (18/40)"; DeltaBIC 7.2.
+                  CS sleep dark: shifted exp 21/40 (majority) -> "the bout distribution
+                    shifted by a constant"; DeltaBIC median 0.0.
+                  CS wake light: GH family 21, shifted lognormal 11, shifted exp 5, asym
+                    Laplace 3 -> "GH family (21/40)"; shifted-exp DeltaBIC 43.0.
+                  CS wake dark: shifted exp 17, shifted lognormal 11, GH 6, asym Laplace 4 ->
+                    most frequent shifted exp (17/40); DeltaBIC 2.2.
+                SECONDARY: B median (IQR): per0 sleep 0.037 (-0.015, 0.113), group mean 0.041,
+                  p 0.002, 11/48 flies (9 positive); per0 wake -0.035 (-0.106, 0.016), mean
+                  -0.042, p 0.002, 9/48 (7 negative); CS sleep light 0.080, 8/40 (count p
+                  0.0007); sleep dark 0.114, 4/40 (0.14); wake light 0.122, 8/40 (0.0007); wake
+                  dark -0.041, 4/40 (0.14).
+                  eps against the no-dynamics eps (same bouts, random order), medians: skewness
+                  per0 sleep 1.29 vs 1.31, per0 wake 2.03 vs 2.06, CS 1.46-3.20 vs 1.54-3.24;
+                  SD within 1-2% in every set (panel F). ShapeKS significant flies: per0 11 and
+                  6, CS 9, 5, 3, 1.
+                  Regeneration, median fraction of generated bouts below the floor: per0 sleep
+                  0.034, wake 0.050; CS 0.052-0.094 (max 0.27); generated vs observed KS 0.072-
+                  0.146 against a sampling reference of 0.058-0.092.
+Matched null    1000 surrogates per fly (per phase): within-block shuffles (per0), permutations
+                within 1-h ZT bins across the phase's days (CS). Count null Binomial(n, 0.05).
+                Family comparison calibrated: shifted exponential wins 100/100 when true.
+Verdict         Question (1): the additive-noise assumption is CONTRADICTED in per0 for both bout
+                types -- more flies than chance have noise whose spread depends on the previous
+                bout (sleep mostly growing, wake mostly shrinking) -- and NOT contradicted in any
+                CS LD phase. Question (2), by the pre-set rule: per0 sleep shifted Weibull, per0
+                wake shifted exponential (plurality), CS sleep light asymmetric Laplace, CS sleep
+                dark the bout distribution shifted by a constant, CS wake light GH family, CS
+                wake dark shifted exponential (plurality). In EVERY set, eps has nearly the same
+                skewness and width as the residuals of the same bouts in random order.
+Not reportable  Do not present the winning family as a property of the dynamics: panels E-F show
+                eps has the bouts' own shape, so the family describes each set's bout
+                distribution as seen through a near-flat line. Do not read GH winning CS wake
+                light as support for the collaborator's GH noise without that caveat. Per-fly
+                BIC winners at n = 68-192 are noisy; quote counts, not a single fly's family.
+                Hetero significant in 8/48 and 6/48 flies says the additive model fails for SOME
+                per0 flies, not which model is right. The CS LD calibration was simulated on
+                whole records, not per phase. Regeneration numbers are descriptive.
+```
