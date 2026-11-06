@@ -364,3 +364,67 @@ Notes           Why per-fly counts and not a group mean: the strata null's group
                 for sleep bouts only, with one profile shape; wake bouts and other profiles were
                 not simulated. Nothing handles censoring.
 ```
+
+### 2026-11-05  per0 DD and CS LD: can x(t+1) = A + B*x(t) + eps generate the bouts, and what is eps?
+
+```
+Question        For each fly and bout type, (1) does a linear AR(1) in BOUT SPACE (seconds, no
+                transform) with noise independent of the previous bout describe successive bouts,
+                and (2) what is the distribution of its noise eps? This is the question the
+                collaborator's PIT/AR(1) scheme set out to answer, asked directly.
+Data            (a) per0 DD: the same 48 flies, files, staging and scoring as the 2026-11-05 entry
+                "per0 DD: is there a time arrow ..." (committed 2df6bef), from the first sample.
+                (b) CS LD: the same 40 flies, files, staging and scoring as the 2026-11-05 entry
+                "CS LD: is there a time arrow ... beyond the day/night profile?" (58ac4d7), from ZT0.
+Time window     per0 DD: each fly's whole record is one block. CS LD: the two circadian phases are
+                fitted SEPARATELY (Sheyum, 2026-11-05): a bout belongs to the phase of its onset
+                (light ZT 0-12, dark ZT 12-24); every 12-h phase of every day is its own block, so
+                no pair spans lights-on or lights-off; one fit per fly per phase uses all that
+                phase's blocks. The narrowest block of a number is the fly (per0) or the fly's
+                light or dark phase (CS).
+Fixed choices   Bouts: as in the two entries above (bridged 1 s; sleep >= 300 s, wake >= 2 s; a fly
+                enters a bout type if it has >= 40 bouts of that type; OnsetBins order asserted).
+                CS onset ZT = mod(OnsetBins - 1, 86400)/3600; day = floor((OnsetBins - 1)/86400).
+                BoutAR1Noise(bouts, Xmin = 300 (sleep) or 2 (wake), NumSurrogates = 1000, Seed = 1,
+                MinPairs = 20, ReturnResiduals = true); per0 with the shuffle null; CS with
+                Strata = floor(onset ZT) (1-h bins) within each phase. Then FitResidualFamilies on
+                each fly's (per phase's) residuals: shifted exponential, Normal, Laplace,
+                asymmetric Laplace, shifted lognormal, shifted Weibull, GenNorm K = 1, GH family.
+                Code: Icode 328116c, run from the Icode folder behind the which/pwd assert (the six
+                noise fitters resolve to Icode's copies there).
+Decision rule   PRIMARY, question (1): the count of flies whose Hetero p (Spearman of |eps| with
+                x(t), against the null) is < 0.05, against Binomial(NFlies, 0.05). Tests: per0
+                sleep, per0 wake (Holm across these two); CS sleep-light, sleep-dark, wake-light,
+                wake-dark (Holm across these four). A rejection: the noise's spread depends on the
+                previous bout in more flies than chance, so additive iid noise is wrong there.
+                No rejection: the linear model's independence assumption is not contradicted.
+                Question (2), DESCRIPTIVE with a pre-set wording rule: per fly, the BIC winner among
+                the eight families and each family's DeltaBIC from the best. If the shifted
+                exponential wins in more than half the flies of a set, eps is reported as "the bout
+                distribution shifted by a constant" for that set; otherwise the family winning most
+                often is named, with its count, and the median DeltaBIC of the shifted exponential
+                is reported. Calibration behind this: the shifted exponential won 100/100 when true
+                (test_FitResidualFamilies), so a flexible family winning is not chance flexibility.
+                SECONDARY, descriptive, no correction: B per fly (with B_P; per0 group mean against
+                the shuffle null; CS counts only); ShapeKS count (fires whenever there is memory, so
+                read as "the dynamics change eps"); BelowHalfB; regeneration -- the fraction of
+                generated bouts below the floor (300 s sleep, 2 s wake; never clipped), the
+                smallest generated bout, and GenKS against GenKS_Ref; residual SD, skewness and
+                Bowley skewness against their no-dynamics values.
+Matched null    Per fly (per phase), 1000 surrogates of its own bouts: within-block shuffles (per0)
+                or permutations within 1-h ZT bins across the phase's days (CS). Same n and bouts.
+                Count null Binomial(NFlies, 0.05).
+Notes           Measured (BoutAR1Noise header): Hetero rejects 0.045 on iid bouts, 0.085 on EAR(1)
+                (linear, flat spread) and 0.695 on a transformed-Gaussian AR(1) -- the collaborator's
+                model class. In LD the day/night profile alone produced B ~ 0.18 and shuffle-null
+                rejection 0.465; with strata 0.030. That LD calibration was simulated on whole
+                records, NOT per phase; per-phase blocks were not simulated. CS phases have about
+                half the bouts of the whole record (and lose one pair per block), so power per fit
+                is lower than in per0. OLS on exponential-like bouts is dominated by the long bouts.
+                eps are treated as iid by the family fits although they overlap in time.
+                Expectation stated before the run, not a decision rule: per0 memory is very weak
+                (lag-1 rank correlation +0.03 sleep, -0.06 wake), so B ~ 0 and eps ~ the bout
+                distribution minus a constant is the anticipated answer for per0; a negative B
+                alone breaks the 2-s wake floor on regeneration (measured), so per0 wake
+                regeneration may put bouts below 2 s.
+```
