@@ -36,6 +36,13 @@ if ~fast
     res{end+1} = run_test('12: group calibration, reversible with memory', @t12);
 end
 res{end+1} = run_test('13: plot is light-themed', @t13);
+res{end+1} = run_test('14: strata null with one bout per stratum changes nothing', @t14);
+res{end+1} = run_test('15: strata input is checked; old outputs unchanged', @t15);
+if ~fast
+    res{end+1} = run_test('16: calibration, reversible with a day/night profile (LD-like)', @t16);
+    res{end+1} = run_test('17: power, irreversible with a day/night profile', @t17);
+    res{end+1} = run_test('18: group calibration, strata null, LD-like', @t18);
+end
 ok = cellfun(@(r) r, res);
 fprintf('\n=== SUMMARY ===\n  Passed: %d\n  Failed: %d\n  Total : %d\n  %.0f s\n', ...
     sum(ok), sum(~ok), numel(ok), toc(t0));
@@ -224,6 +231,136 @@ assert(isequal(fh.Color, [1 1 1]), 'figure not white');
 ax = findobj(fh, 'Type', 'axes');
 assert(numel(ax) == 3, 'three panels');
 assert(all(arrayfun(@(a) all(a.Color > 0.9), ax)), 'axes not light');
+end
+
+function t14
+x = reversible_ar(0.4, 120, 14);
+R = BoutIrreversibility({x}, Strata={(1:120).'}, NumSurrogates=49, MinPairs=5);
+T = R.PerFly;
+assert(all(T.StrataMovable == 0), 'StrataMovable');
+assert(all(T.UpFraction_P_Strata == 1 & T.Bowley_P_Strata == 1 & T.Rho_P_Strata == 1), ...
+    'surrogates identical to the data must give p = 1');
+G = R.Group;
+assert(all(G.UpFraction_NSig_Strata == 0 & G.UpFraction_CountP_Strata == 1), 'count of 0');
+xs = {reversible_ar(0.4, 60, 141), reversible_ar(0.4, 60, 142), reversible_ar(0.4, 60, 143)};
+R3 = BoutIrreversibility(xs, Strata={(1:60).', (1:60).', (1:60).'}, Lags=1, ...
+    NumSurrogates=9, MinPairs=5, Null="strata");
+assert(R3.Group.UpFraction_NSig_Strata == 0, 'immovable strata cannot be significant');
+end
+
+function t15
+x = reversible_ar(0.4, 100, 15);
+try
+    BoutIrreversibility(x, Null="strata", NumSurrogates=9);
+    error('no error without Strata');
+catch err
+    assert(strcmp(err.identifier, 'BoutIrreversibility:NoStrata'), err.message);
+end
+try
+    BoutIrreversibility({x}, Strata={ones(99, 1)}, NumSurrogates=9);
+    error('no error on mismatched strata');
+catch err
+    assert(strcmp(err.identifier, 'BoutIrreversibility:Strata'), err.message);
+end
+A = BoutIrreversibility(x, NumSurrogates=49, MinPairs=5);
+B = BoutIrreversibility({x}, Strata={mod((1:100).', 7)}, NumSurrogates=49, MinPairs=5);
+assert(isequaln(A.PerFly, B.PerFly(:, A.PerFly.Properties.VariableNames)), ...
+    'adding Strata changed the IAAFT/shuffle results');
+assert(~ismember('Bowley_P_Strata', A.PerFly.Properties.VariableNames));
+end
+
+% LD-like flies: alternating wake and sleep on a real clock, ZT from 0. Sleep
+% bout means follow a lopsided profile -- 15 min by day, rising 20 -> 80 min
+% through the night -- so the profile alone pushes UpFraction above 0.5.
+% Strata = 1-h ZT bins of each sleep bout's onset.
+function t16
+rates = calib_ld(false, 200, 199, 'LD-like, REVERSIBLE sleep (latent AR phi 0.5)');
+assert(all(rates(:, 2, 3) <= 0.095), 'strata null over-rejects UpFraction');
+end
+
+function t17
+rates = calib_ld(true, 200, 199, 'LD-like, IRREVERSIBLE sleep (AR phi 0.5, exp. innovations)');
+assert(rates(1, 2, 3) > 0.3, 'strata UpFraction has little power at lag 1');
+end
+
+% The group MEAN against the strata null over-rejected here (10 flies:
+% Bowley 0.18, UpFraction 0.15) because permuting within ZT bins cuts the
+% link between a bout's length and the next bout's onset time. So the
+% function reports no group strata p; the group verdict is the COUNT of
+% significant flies against Binomial(n, 0.05). This measures that count
+% test on 40-fly groups (the CS LD size).
+function t18
+reps = 100; nf = 40; R0 = 199;
+% (First run of this test, both counts: rejection Bowley 0.130, Up 0.030;
+% mean significant flies 2.71 and 2.06 -- so only UpFraction has a count.)
+rej = 0; ns = zeros(reps, 2);
+for i = 1:reps
+    xs = cell(1, nf); st = xs;
+    for f = 1:nf
+        [xs{f}, st{f}] = ld_fly(false, 70000 + 100*i + f);
+    end
+    R = BoutIrreversibility(xs, Strata=st, Lags=1, NumSurrogates=R0, MinPairs=10, Null="strata");
+    vn = R.Group.Properties.VariableNames;
+    assert(~ismember('UpFraction_P_Strata', vn) && ~ismember('Bowley_CountP_Strata', vn), ...
+        'a biased group strata verdict is reported');
+    ns(i, :) = [sum(R.PerFly.Bowley_P_Strata < 0.05), R.Group.UpFraction_NSig_Strata];
+    rej = rej + (R.Group.UpFraction_CountP_Strata < 0.05);
+end
+rate = rej / reps;
+fprintf(['        count test (40 LD-like reversible flies, %d groups): UpFraction rejection %.3f; ' ...
+    'mean flies significant Bowley %.2f, Up %.2f (2.00 expected)\n'], reps, rate, mean(ns));
+assert(rate <= 0.11, 'UpFraction count test over-rejects');
+end
+
+function rates = calib_ld(irrev, reps, R0, label)
+lags = [1 2 4 8];
+rej = zeros(4, 3, 3);   % lag x [Bowley UpFraction Rho] x [IAAFT shuffle strata]
+nb = zeros(reps, 1); mv = nb;
+for i = 1:reps
+    [x, st] = ld_fly(irrev, 3000 + i);
+    nb(i) = numel(x);
+    R = BoutIrreversibility({x}, Strata={st}, Lags=lags, NumSurrogates=R0, MinPairs=10);
+    T = R.PerFly;
+    mv(i) = T.StrataMovable(1);
+    P = cat(3, [T.Bowley_P_IAAFT,  T.UpFraction_P_IAAFT,  NaN(4, 1)], ...
+               [T.Bowley_P_Shuffle, T.UpFraction_P_Shuffle, T.Rho_P_Shuffle], ...
+               [T.Bowley_P_Strata,  T.UpFraction_P_Strata,  T.Rho_P_Strata]);
+    rej = rej + (P < 0.05);
+end
+rates = rej / reps;
+fprintf('        %s: %d flies, sleep bouts %d-%d (median %g), movable %.2f-%.2f, %d surrogates\n', ...
+    label, reps, min(nb), max(nb), median(nb), min(mv), max(mv), R0);
+fprintf('        lag | Bowley IAAFT shuffle strata | Up IAAFT shuffle strata | Rho shuffle strata\n');
+for l = 1:4
+    fprintf('        %3d |   %.3f  %.3f  %.3f |   %.3f  %.3f  %.3f |   %.3f  %.3f\n', lags(l), ...
+        rates(l, 1, 1), rates(l, 1, 2), rates(l, 1, 3), rates(l, 2, 1), rates(l, 2, 2), ...
+        rates(l, 2, 3), rates(l, 3, 2), rates(l, 3, 3));
+end
+end
+
+function [sleep, strat] = ld_fly(irrev, seed)
+rs = RandStream('mt19937ar', 'Seed', seed);
+phi = 0.5;
+t = 0; z = rs.randn; y = 1 / (1 - phi);
+sleep = []; strat = [];
+while t < 5 * 86400
+    zt = mod(t / 3600, 24);
+    mw = 25 * (zt < 12) + 8 * (zt >= 12);          % wake mean, min
+    t = t + 2 + round(60 * mw * -log(rs.rand));
+    zt = mod(t / 3600, 24);
+    if zt < 12, ms = 15; else, ms = 20 + 60 * (zt - 12) / 12; end
+    if irrev
+        y = phi * y - log(rs.rand);
+        e = (1 - phi) * y;                         % mean 1
+    else
+        z = phi * z + sqrt(1 - phi^2) * rs.randn;
+        e = -log(0.5 * erfc(z / sqrt(2)));         % exponential(1)
+    end
+    d = 300 + round(60 * ms * e);
+    sleep(end+1, 1) = d; %#ok<AGROW>
+    strat(end+1, 1) = floor(zt); %#ok<AGROW>
+    t = t + d;
+end
 end
 
 % ---------------------------------------------------------------------

@@ -56,7 +56,45 @@ function R = BoutIrreversibility(bouts, opts)
 %              spread, so this null can reject too often (MEASURED below).
 %              Its p-value for Rho is the memory test. Rho has no IAAFT
 %              p-value: IAAFT keeps the autocorrelation by construction.
-%   Both nulls are SAMPLE-SIZE MATCHED automatically -- each surrogate has
+%   'strata'   PROFILE-MATCHED permutation, run when the Strata option is
+%              given (added 2026-11-05 for light:dark data). Every bout
+%              carries a stratum label -- e.g. the 1-h ZT bin of its onset
+%              -- and a surrogate permutes bouts only among positions with
+%              the same label, across ALL the fly's blocks. Each position
+%              therefore keeps its time of day, so the fly's day/night
+%              profile (and any trend within a phase that follows ZT) is in
+%              the null, and only order BEYOND the profile is tested. Like
+%              the shuffle it removes memory; its Rho p-value is the test of
+%              memory beyond the profile. Strata with a single bout cannot
+%              move (reported as StrataMovable, the share of bouts that can).
+%              Why it is needed: in LD the profile alone is irreversible --
+%              e.g. night sleep bouts lengthening towards dawn, then a
+%              drop at lights-on -- and IAAFT, which does not know the
+%              clock, attributes that to the order (MEASURED below).
+%              GROUP LEVEL: no group-mean p-value is reported for this
+%              null. Permuting within ZT bins cuts the real link between a
+%              bout's length and the next bout's onset time (a long night
+%              bout pushes the next onset later, where bouts are longer),
+%              a per-fly bias too small to see one fly at a time but large
+%              once averaged: the group mean over-rejected 0.15-0.18 on
+%              10-fly LD-like groups (fixing each bout's ZT in advance
+%              removed most of it). The group verdict is instead the COUNT
+%              of flies with per-fly UpFraction p < 0.05 against
+%              Binomial(NFlies, 0.05): Group.UpFraction_NSig_Strata and
+%              UpFraction_CountP_Strata.
+%              MEASURED (test_BoutIrreversibility 16-18; LD-like flies: 5
+%              days, night sleep bouts rising 20 -> 80 min, latent AR phi
+%              0.5, 1-h ZT strata; 200 flies, 199 surrogates):
+%                per fly, reversible, lag 1-8: UpFraction 0.035-0.050,
+%                  Bowley 0.035-0.085, versus IAAFT 0.070-0.100 and
+%                  shuffle 0.090-0.135 for UpFraction (the profile fools
+%                  them);
+%                per-fly power, irreversible: UpFraction 0.535 at lag 1;
+%                count test, 40-fly reversible groups: UpFraction 0.030
+%                  (2.06 flies significant on average, 2.00 expected);
+%                  the Bowley count would have rejected 0.130, so Bowley
+%                  has per-fly p-values only.
+%   All nulls are SAMPLE-SIZE MATCHED automatically -- each surrogate has
 %   the fly's own blocks, lengths and bout values.
 %
 % P-VALUES are two-sided Monte Carlo values with the +1 correction,
@@ -87,9 +125,16 @@ function R = BoutIrreversibility(bouts, opts)
 %   Lags           Positive integers. Default [1 2 4 8].
 %   NumSurrogates  Surrogates per fly per null. Default 1000. The smallest
 %                  attainable p is 2/(NumSurrogates+1).
-%   Null           "both" (default), "iaaft" or "shuffle". The skipped
-%                  null's columns are NaN. A null that is not run costs
-%                  nothing; IAAFT is the slower of the two.
+%   Null           "both" (default), "iaaft", "shuffle" or "strata". The
+%                  skipped null's columns are NaN. "both" also runs the
+%                  strata null when Strata is given; "strata" runs only it.
+%                  A null that is not run costs nothing; IAAFT is slowest.
+%   Strata         Same shape as bouts (vector, matrix, or cell per fly of
+%                  vectors/blocks), one label per bout, e.g. floor(ZT) of
+%                  its onset. Default [] (no strata null). Its p-values are
+%                  columns *_P_Strata, and PerFly gains StrataMovable. Uses
+%                  substream 1e6 + f, so adding it never changes the other
+%                  nulls' results.
 %   Seed           Seeds a private RandStream ('mrg32k3a'); the global
 %                  stream is never used. Fly f, null j uses substream
 %                  2*(f-1)+j, so results for one fly do not depend on which
@@ -172,12 +217,14 @@ function R = BoutIrreversibility(bouts, opts)
 %
 % CHANGE LOG
 %   2026-11-05  First version.
+%   2026-11-05  Strata option: the profile-matched null for LD data.
 
 arguments
     bouts
     opts.Lags (1,:) double {mustBeInteger, mustBePositive} = [1 2 4 8]
     opts.NumSurrogates (1,1) double {mustBeInteger, mustBePositive} = 1000
-    opts.Null (1,1) string {mustBeMember(opts.Null, ["both","iaaft","shuffle"])} = "both"
+    opts.Null (1,1) string {mustBeMember(opts.Null, ["both","iaaft","shuffle","strata"])} = "both"
+    opts.Strata = []
     opts.Seed (1,1) double {mustBeInteger, mustBeNonnegative} = 1
     opts.MinPairs (1,1) double {mustBeInteger, mustBePositive} = 20
     opts.IAAFTMaxIter (1,1) double {mustBeInteger, mustBePositive} = 200
@@ -203,14 +250,34 @@ else
 end
 
 stats  = ["Bowley","Moment","UpFraction","Rho"];
-nulls  = ["iaaft","shuffle"];
-useNull = [opts.Null ~= "shuffle", opts.Null ~= "iaaft"];
+nulls  = ["iaaft","shuffle","strata"];
+hasStrata = ~isempty(opts.Strata);
+if opts.Null == "strata" && ~hasStrata
+    error('BoutIrreversibility:NoStrata', 'Null="strata" needs the Strata option.');
+end
+if hasStrata
+    strata = normalise_input(opts.Strata);
+    if numel(strata) ~= nF
+        error('BoutIrreversibility:Strata', 'Strata has %d flies, bouts has %d.', ...
+            numel(strata), nF);
+    end
+    for f = 1:nF
+        if numel(strata{f}) ~= numel(flies{f}) || ...
+                any(cellfun(@numel, strata{f}) ~= cellfun(@numel, flies{f}))
+            error('BoutIrreversibility:Strata', ...
+                'Strata of fly %d do not match its blocks bout for bout.', f);
+        end
+    end
+end
+useNull = [ismember(opts.Null, ["both","iaaft"]), ismember(opts.Null, ["both","shuffle"]), ...
+           hasStrata && ismember(opts.Null, ["both","strata"])];
 centre = [0 0 0.5 0];
 
 obs    = NaN(nF, nL, 4);
 nPairs = zeros(nF, nL);
 nBlk   = zeros(nF, 1);
-nullDraws = NaN(nF, nL, 4, Rn, 2);
+movable = NaN(nF, 1);
+nullDraws = NaN(nF, nL, 4, Rn, 3);
 
 for f = 1:nF
     blocks = flies{f};
@@ -220,18 +287,42 @@ for f = 1:nF
     ok = np >= opts.MinPairs;
     S(~ok, :) = NaN;
     obs(f, :, :) = reshape(S, 1, nL, 4);
-    for j = 1:2
+    if hasStrata
+        % Positions sharing a stratum, over all the fly's blocks: the
+        % profile-matched surrogate permutes bouts only within these sets,
+        % so every position keeps its stratum (e.g. its time of day).
+        xAll = vertcat(blocks{:});
+        [~, ~, g] = unique(vertcat(strata{f}{:}));
+        groups = accumarray(g, (1:numel(g)).', [], @(v) {v});
+        groups = groups(cellfun(@numel, groups) > 1);
+        movable(f) = sum(cellfun(@numel, groups)) / numel(xAll);
+        blen = cellfun(@numel, blocks);
+    end
+    for j = 1:3
         if ~useNull(j), continue, end
         rs = RandStream('mrg32k3a', 'Seed', opts.Seed);
-        rs.Substream = 2*(f-1) + j;
+        if j < 3
+            rs.Substream = 2*(f-1) + j;
+        else
+            rs.Substream = 1e6 + f;    % kept apart from the first two nulls'
+        end
         for r = 1:Rn
-            sb = cell(size(blocks));
-            for b = 1:numel(blocks)
-                if j == 1
-                    sb{b} = iaaft(blocks{b}, rs, opts.IAAFTMaxIter);
-                else
-                    xb = blocks{b};
-                    sb{b} = xb(randperm(rs, numel(xb)));
+            if j == 3
+                y = xAll;
+                for k = 1:numel(groups)
+                    ix = groups{k};
+                    y(ix) = xAll(ix(randperm(rs, numel(ix))));
+                end
+                sb = mat2cell(y, blen, 1).';
+            else
+                sb = cell(size(blocks));
+                for b = 1:numel(blocks)
+                    if j == 1
+                        sb{b} = iaaft(blocks{b}, rs, opts.IAAFTMaxIter);
+                    else
+                        xb = blocks{b};
+                        sb{b} = xb(randperm(rs, numel(xb)));
+                    end
                 end
             end
             Sr = seq_stats(sb, lags);
@@ -243,8 +334,8 @@ end
 % ---- per-fly p-values ----
 % IAAFT keeps the autocorrelation, so it is no null for Rho: no p-value,
 % but its Rho draws are kept (ReturnNull) as a check that it did.
-P = NaN(nF, nL, 4, 2);
-for j = 1:2
+P = NaN(nF, nL, 4, 3);
+for j = 1:3
     if ~useNull(j), continue, end
     for s = 1:4
         if ~hasP(s, j), continue, end
@@ -267,11 +358,14 @@ T = table(col(names(FL)), col(lags(LL)), col(nPairs(idx)), col(nBlk(FL)), ...
 for s = 1:4
     o = obs(:, :, s);
     T.(stats(s)) = col(o(idx));
-    for j = 1:2
-        if ~hasP(s, j), continue, end
+    for j = 1:3
+        if ~hasP(s, j) || (j == 3 && ~hasStrata), continue, end
         p = P(:, :, s, j);
         T.(stats(s) + "_P_" + label(nulls(j))) = col(p(idx));
     end
+end
+if hasStrata
+    T.StrataMovable = col(movable(FL));
 end
 R.PerFly = T;
 
@@ -279,7 +373,8 @@ R.PerFly = T;
 G = table(lags.', 'VariableNames', {'Lag'});
 G.NFlies = sum(isfinite(obs(:, :, 1)), 1).';
 GroupNull = struct();
-for j = 1:2
+for j = 1:3
+    if j == 3 && ~hasStrata, continue, end
     for s = 1:4
         draws = NaN(nL, Rn);
         gp = NaN(nL, 1);
@@ -302,8 +397,20 @@ for j = 1:2
             G.(stats(s)) = gm;
             G.(stats(s) + "_NPositive") = npos;
         end
-        if hasP(s, j)
+        if hasP(s, j) && j ~= 3   % no group p for strata: biased (see header)
             G.(stats(s) + "_P_" + label(nulls(j))) = gp;
+        end
+        if s == 3 && j == 3 && useNull(3)
+            % Group verdict for the strata null: COUNT of flies with
+            % per-fly p < 0.05, against Binomial(NFlies, 0.05), upper tail.
+            % UpFraction only: measured calibrated (0.030 on 40-fly LD-like
+            % groups); the Bowley count over-rejected (0.130, per-fly rate
+            % about 0.068), so Bowley gets no count verdict.
+            pf = P(:, :, s, 3);
+            nsig = sum(pf < 0.05, 1).';
+            ntest = sum(isfinite(pf), 1).';
+            G.(stats(s) + "_NSig_Strata") = nsig;
+            G.(stats(s) + "_CountP_Strata") = arrayfun(@(k, n) binom_upper(k, n, 0.05), nsig, ntest);
         end
         GroupNull.(nulls(j)).(stats(s)) = draws;
         GroupNull.(nulls(j)).(stats(s) + "Band") = band(draws);
@@ -312,7 +419,7 @@ end
 R.Group = G;
 R.GroupNull = GroupNull;
 if opts.ReturnNull
-    for j = 1:2
+    for j = 1:2 + hasStrata
         for s = 1:4
             R.PerFlyNull.(nulls(j)).(stats(s)) = squeeze(nullDraws(:, :, s, :, j));
         end
@@ -489,7 +596,8 @@ end
 end
 
 function s = label(nullName)
-if nullName == "iaaft", s = "IAAFT"; else, s = "Shuffle"; end
+s = containers.Map({'iaaft','shuffle','strata'}, {"IAAFT","Shuffle","Strata"});
+s = s(char(nullName));
 end
 
 % =====================================================================
@@ -539,4 +647,12 @@ function tf = hasP(s, j)
 %     0.05 even on iid bouts; shuffle rejected 0.22 at lag 1 with memory.
 %   Rho: shuffle only (IAAFT keeps the autocorrelation by construction).
 tf = s ~= 2 && ~(s == 4 && j == 1);
+end
+
+function p = binom_upper(k, n, q)
+% P(X >= k) for X ~ Binomial(n, q), toolbox-free.
+if n == 0, p = NaN; return, end
+j = k:n;
+lp = gammaln(n + 1) - gammaln(j + 1) - gammaln(n - j + 1) + j*log(q) + (n - j)*log1p(-q);
+p = min(1, sum(exp(lp)));
 end
