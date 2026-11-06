@@ -2454,3 +2454,25 @@ secondary: per0 DD vs CS DD, E difference -0.031, Mann-Whitney p 0.30; per0 LD v
   (sleep amount and the direction of the cycle) with Table S6 (all 28 correlations, both levels); S11 lists the November
   reproductions.
 - Report: tags carry the current numbers and the MATLAB reproduction.
+
+## PRESPEC 27 — which state's exits carry the clock's rhythm in the cycle flux (2026-11-06; PRESPEC 58c6ec0, committed before running; code sqw27.py, this commit; sqw27.log, s27_decomp.json, fig27_clock_decomposition)
+GATE passed: the full model reproduces C10 (CS DD A 0.0628 vs 0.063; CS LD 0.0774 vs 0.077).
+R_i = share of the rhythm REMOVED when state i's exits are flattened; O_i = rhythm from state i's exits alone, relative
+to the full rhythm. Intervals are 95% fly bootstrap (1000).
+```
+CS DD  A 0.063 [0.034,0.100] | Q: R -1.00 [-3.38,+0.04] O 2.49 [1.56,4.42] | W: R -1.24 [-2.24,-0.53] O 1.36 [0.75,2.52] | S: R -0.32 [-1.82,+0.46] O 1.05 [0.43,2.71]
+CS LD  A 0.077 [0.037,0.130] | Q: R +0.54 [-0.87,+0.84] O 1.14 | W: R +0.49 [-0.02,+0.79] O 0.47 | S: R -0.46 [-1.65,+0.03] O 0.87
+per0 LD A 0.071 | all R intervals span 0 | per0 DD (control) A 0.006: not interpreted (129/1000 replicates with A < 0.01)
+```
+- Decision rule: NO state meets it in any genotype -> "the rhythm is shared across states".
+- Reading: in CS DD the clock modulates the exits from EVERY state, more strongly than the net flux shows. Each
+  state's exits alone would make a rhythm as large as the observed one or larger (O 1.0-2.5). Flattening any one of
+  them ENLARGES the rhythm (R < 0; for active wake the interval excludes 0). The single-state rhythms peak at
+  different times (fig27 a), so they partly cancel: the cycle-flux rhythm is the small residue of larger, opposing
+  modulations.
+- Descriptive (old Fig. 3A analogue): every exit probability has a daily rhythm in CS DD (relative amplitude 0.20-0.70;
+  largest W->S 0.70 [0.49,0.97], peak ~20 h) and essentially none in per0 DD (<= 0.04). So the clock acts on all six
+  transitions, not on one state. Sleep-occupancy rhythm: shared about equally in CS DD (RS 0.28-0.34). In CS LD it is
+  carried mainly by sleep exits (RS 0.73 [0.33,0.90]), where light and clock cannot be separated.
+- This overturns the old Fig. 3A-C reading ("H1 is the primary source"). With identified states, no single state is the
+  source.
