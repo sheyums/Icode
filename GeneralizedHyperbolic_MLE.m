@@ -34,7 +34,11 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     mu     : location (real)
 %     lambda : tail index (real; controls the shape of the tails)
 %     alpha  : tail heaviness (> |beta|)
-%     beta   : skewness (real)
+%     beta   : skewness PARAMETER (real). It fixes the SIGN of the skewness
+%              but not its size, and it has units of 1/x, so it cannot be
+%              compared across samples of different scale. For a comparable
+%              number use results.Skewness or results.SkewnessBowleyData (see
+%              SKEWNESS below).
 %     delta  : scale (> 0)
 %   The NIG model fixes lambda = -0.5; the hyperbolic model fixes lambda = 1.
 %
@@ -206,6 +210,67 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     the Wald ones: the GH likelihood is far from quadratic in alpha, beta and
 %     lambda at ordinary sample sizes. See MEASURED COVERAGE.
 %
+% SKEWNESS (added Nov 2026)
+%   Three dimensionless skewness summaries. All three are unchanged by a shift
+%   or a positive rescaling of the data and change sign when the data are
+%   negated, so they can be compared across samples, units and flies; beta
+%   cannot (see PHYSICAL PARAMETERS).
+%
+%   results.Skewness - moment skewness E[(X - EX)^3]/SD^3 of the FITTED
+%     distribution, in closed form. Writing GH as the normal variance-mean
+%     mixture X = mu + beta*V + sqrt(V)*Z, with V ~ GIG(lambda, delta, gamma)
+%     and k1, k2, k3 the mean, variance and third central moment of V:
+%         Var X    = k1 + beta^2*k2
+%         Skewness = (3*beta*k2 + beta^3*k3) / (Var X)^(3/2)
+%     with E[V^r] = (delta/gamma)^r * K_{lambda+r}(delta*gamma) /
+%     K_lambda(delta*gamma). k2 and k3 are positive, so the sign is beta's.
+%     For NIG this reduces to 3*beta/(alpha*sqrt(delta*gamma)).
+%     NaN on the flagged Student-t limit (student_t_limit), where gamma is not
+%     identified and the moment skewness grows without bound as gamma -> 0.
+%     It is a property of the fitted model: heavy tails make it sensitive to
+%     gamma, so a fit with a small gamma can report a large value with a
+%     large SkewnessSE.
+%   results.SkewnessSE, SkewnessCIWald - delta-method SE from the observed
+%     information, and the matching 95% Wald interval. NaN whenever SEValid
+%     is false (e.g. delta at its floor). See MEASURED COVERAGE.
+%   results.SkewnessBowleyData - Bowley's quartile skewness of the DATA,
+%     (Q3 + Q1 - 2*Q2)/(Q3 - Q1), in [-1, 1]. Model-free and robust to the
+%     tails. Quartiles are MID-QUANTILES (Parzen 2004): the mid-distribution
+%     function Fmid(u) = (#{x < u} + #{x = u}/2)/n at each distinct value,
+%     interpolated linearly. Without ties this is exactly quantile()'s
+%     default. With ties (integer-minute data) ordinary quartiles can only take
+%     lattice values, and the statistic jumps in coarse steps: measured (Nov
+%     2026) on NIG data scaled to a few units and rounded to integers, plain
+%     quartiles gave 0.333 against 0.067 for the unrounded data; the
+%     mid-quantiles gave 0.056.
+%   results.SkewnessBowleyModel - Bowley's skewness of the FITTED
+%     distribution, from its quartiles (CDF integrated numerically). Exists for
+%     every fit, Student-t limit included. Far from SkewnessBowleyData, it
+%     says the fit misplaces the body of the data, whatever the likelihood.
+%
+%   MEASURED (Nov 2026, 'NoProfile' fits to exact GIG-mixture samples, mu = 0,
+%   alpha = 2, beta = 0.8, delta = 1; true values from the closed form and a
+%   4e6-point CDF):
+%                      true   SkewnessCIWald   sd of est.  median    Bowley sd
+%                      skew   coverage (valid) Skewness    SE        model  data
+%   NIG n=150  (200)   0.886  0.923 (195)      0.40        0.41      0.034  0.10
+%   NIG n=500  (200)   0.886  0.965 (200)      0.20        0.21      0.017  0.059
+%   HYP n=500  (200)   0.892  0.940 (200)      0.16        0.16      0.023  0.059
+%   GH  n=1000 (100)   0.749  0.963 (82)       0.26        0.21      0.016  0.038
+%     (GH lambda = -1.5; the 18 without an SE are delta-floor fits or the
+%     Student-t limit.) Both Bowley estimates were within about 0.01 of the
+%     true value on average (true 0.081, 0.081, 0.104, 0.058); the data
+%     version is 2.5-3.5 times as variable as the model version, the price of
+%     being model-free. Wald is adequate from n ~ 500; at n = 150 it
+%     undercovers slightly.
+%
+%   INDEPENDENCE. Every SE and interval in this function assumes independent
+%   observations. Successive differences of a sequence are not independent
+%   (adjacent differences share a term; for independent durations their
+%   correlation is -0.5), so for such data these SEs are too small, and
+%   uncertainty should come from resampling that respects the order (e.g. a
+%   shuffle or block null computed by the caller).
+%
 % MEASURED COVERAGE (Nov 2026, nominal 95%, 100 simulated samples each from
 %   mu = 0, alpha = 2, beta = 0.5, delta = 1; exact GH variates from the GIG
 %   mixture; every fit's LogLike was at or above the log-likelihood at the
@@ -256,6 +321,10 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     SEValid     – false when the information could not be inverted (SE NaN).
 %     CIWald      – 95% Wald intervals, same layout as profile_ci.
 %     CILevel     – 0.95.
+%     Skewness    – moment skewness of the fitted distribution (see SKEWNESS).
+%     SkewnessSE, SkewnessCIWald – its delta-method SE and 95% Wald interval.
+%     SkewnessBowleyData  – Bowley quartile skewness of the data (mid-quantiles).
+%     SkewnessBowleyModel – Bowley quartile skewness of the fitted distribution.
 %     CIMethod    – 'profile', or 'wald' when 'NoProfile' skipped the
 %                   profiles (profile_ci is then NaN, fixed lambda excepted).
 %     hessian_coordinates – same as theta_names, documents what hessian rows/cols mean.
@@ -403,6 +472,9 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 %     for the logarithm of particle size. Proc. R. Soc. Lond. A, 353, 401-419.
 %   Barndorff-Nielsen, O.E. (1997). Normal Inverse Gaussian distributions
 %     and stochastic volatility modelling. Scand. J. Statist., 24, 1-13.
+%   Bowley, A.L. (1901). Elements of Statistics. P.S. King, London.
+%   Parzen, E. (2004). Quantile probability and statistical data modeling.
+%     Statistical Science, 19, 652-662.
 %
 % Originally written by Sheyum but beefed up/stabilized/optimized 
 % by Claude, Gemini and ChatGPT, Dec 2025.
@@ -434,6 +506,11 @@ function results = GeneralizedHyperbolic_MLE(data, modelFlag, mode)
 % and capped at 1 z-unit;
 % crossings made by the Bessel-argument guard reported open instead of as
 % ~1e9 bounds; and coverage of every interval measured by simulation.
+% Fourth revision (Claude Code, 2026-11-05): skewness outputs (Skewness with
+% SE and Wald CI, SkewnessBowleyData, SkewnessBowleyModel; see SKEWNESS);
+% beta described as the skewness parameter, not the skewness. Fix: Wald SEs
+% are now inverted in z-units; inverting the data-unit information made
+% SEValid depend on the units (data rescaled by 1e-6 returned all-NaN SEs).
 
 % ---- Validate and normalize inputs -----------------------------------------
 if nargin < 2 || isempty(modelFlag), modelFlag = 'AUTO'; end
@@ -803,8 +880,153 @@ results = flag_delta_at_bound(results, st.data, st.fixLam);
 results = flag_student_t_limit(results, st);
 results.profile_refits = 0;
 [~, info] = unstandardize_theta(st.thetaZ, st.infoZ, st.loc, st.scl, st.fixLam);
-results = add_wald(results, theta, info, st.fixLam);
+results = add_wald(results, theta, info, st.fixLam, st.infoZ, st.scl);
+results = add_skewness(results, st);
 results.CIMethod = 'none';
+end
+
+% =========================================================================
+%                                SKEWNESS
+% =========================================================================
+
+function results = add_skewness(results, st)
+% Dimensionless skewness summaries; see SKEWNESS in the header. Everything is
+% computed in z-units: each measure is invariant under y = loc + scl*z with
+% scl > 0, so the z-unit value is the data-unit value.
+%
+%   Skewness            moment skewness of the FITTED distribution, closed form
+%   SkewnessSE          delta method from the observed information (infoZ)
+%   SkewnessCIWald      Skewness +/- 1.96*SkewnessSE
+%   SkewnessBowleyData  Bowley's quartile skewness of the DATA (mid-quantiles)
+%   SkewnessBowleyModel Bowley's quartile skewness of the FITTED distribution
+pZ = theta_to_params(st.thetaZ, st.fixLam);
+g  = gh_moment_skewness(pZ);
+% On the flagged Student-t limit gamma is not identified (any value down to
+% 1e-40 fits equally well), and the moment skewness depends on gamma without
+% bound there, so a number would be wherever the optimizer stopped.
+if results.student_t_limit, g = NaN; end
+
+se = NaN;
+if isfinite(g) && results.SEValid
+    % Five-point central differences of the closed form in theta (z-units);
+    % the closed form is smooth, so h = 1e-4 relative is ample.
+    th   = st.thetaZ(:);
+    k    = numel(th);
+    f    = @(t) gh_moment_skewness(theta_to_params(t, st.fixLam));
+    grad = NaN(k, 1);
+    for i = 1:k
+        e = zeros(k, 1);  e(i) = 1e-4 * max(1, abs(th(i)));
+        grad(i) = (-f(th + 2*e) + 8*f(th + e) - 8*f(th - e) + f(th - 2*e)) / (12*e(i));
+    end
+    Hz = (st.infoZ + st.infoZ.') / 2;
+    [R, flag] = chol(Hz);
+    if all(isfinite(grad)) && flag == 0
+        v  = R.' \ grad;          % grad' * inv(Hz) * grad = ||R' \ grad||^2
+        se = sqrt(v.' * v);
+    end
+end
+zc = sqrt(2) * erfinv(0.95);
+
+results.Skewness            = g;
+results.SkewnessSE          = se;
+results.SkewnessCIWald      = g + [-1 1]*zc*se;
+results.SkewnessBowleyData  = bowley_mid(st.z);
+results.SkewnessBowleyModel = gh_bowley_model(pZ);
+end
+
+function g = gh_moment_skewness(p)
+% Moment skewness of GH(lambda, alpha, beta, delta, mu), from the normal
+% variance-mean mixture X = mu + beta*V + sqrt(V)*Z, V ~ GIG(lambda, delta,
+% gamma). The cumulant generating function is K_X(t) = mu*t + K_V(beta*t +
+% t^2/2), which gives
+%   Var X  = k1 + beta^2*k2
+%   kappa3 = 3*beta*k2 + beta^3*k3
+% with k1, k2, k3 the mean, variance and third central moment of V, and
+%   E[V^r] = (delta/gamma)^r * K_{lambda+r}(w) / K_lambda(w),  w = delta*gamma.
+% Scaled Bessel functions are used; the exp(w) factors cancel in each ratio.
+% Returns NaN where the Bessel ratios are not finite.
+w = p.delta * p.gamma;
+g = NaN;
+if ~(isfinite(w) && w > 0), return, end
+K0 = besselk(p.lambda, w, 1);
+r  = [besselk(p.lambda + 1, w, 1), besselk(p.lambda + 2, w, 1), ...
+      besselk(p.lambda + 3, w, 1)] / K0;
+s  = p.delta / p.gamma;
+m1 = s   * r(1);
+m2 = s^2 * r(2);
+m3 = s^3 * r(3);
+k2 = m2 - m1^2;
+k3 = m3 - 3*m1*m2 + 2*m1^3;
+v  = m1 + p.beta^2 * k2;
+g  = (3*p.beta*k2 + p.beta^3*k3) / v^1.5;
+if ~(isfinite(g) && isreal(g)), g = NaN; end
+end
+
+function b = bowley_mid(x)
+% Bowley's quartile skewness (Q3 + Q1 - 2*Q2)/(Q3 - Q1), with quartiles read
+% off the MID-DISTRIBUTION function: at each distinct value u_j with count
+% c_j, Fmid(u_j) = (#{x < u_j} + c_j/2)/n, linearly interpolated (Parzen
+% 2004). Without ties this is exactly quantile()'s default ((i - 0.5)/n,
+% linear). With ties -- integer-minute data -- ordinary sample quartiles can
+% only take a few lattice values, so the statistic jumps in coarse steps
+% whose size depends on the spread of the data; the mid-quantiles move
+% continuously with the counts. NaN when Q3 = Q1.
+x = sort(x(:));
+n = numel(x);
+[u, ~, j] = unique(x);
+b = NaN;
+if numel(u) < 2, return, end
+c  = accumarray(j, 1);
+Fm = (cumsum(c) - c/2) / n;
+P  = [0.25 0.5 0.75];
+q  = interp1(Fm, u, P, 'linear');
+q(P < Fm(1))   = u(1);
+q(P > Fm(end)) = u(end);
+d = q(3) - q(1);
+if d > 0, b = (q(3) + q(1) - 2*q(2)) / d; end
+end
+
+function b = gh_bowley_model(p)
+% Bowley's quartile skewness of the fitted GH (z-units), from quartiles found
+% by root-finding on the CDF, itself integrated numerically from the density.
+% The integral is split at mu, where a small delta concentrates the density
+% into a near-cusp that an adaptive rule can step over. Unlike the moment
+% skewness it exists for every fit, the Student-t limit included. NaN if the
+% density cannot be integrated.
+b = NaN;
+pdf = @(x) reshape(exp(gh_logpdf(x(:), p)), size(x));
+opt = {'AbsTol', 1e-12, 'RelTol', 1e-10};
+prevW = warning('off', 'MATLAB:integral:NonFiniteValue');
+cleanW = onCleanup(@() warning(prevW));
+try
+    lowMass = integral(pdf, -Inf, p.mu, opt{:});
+    tot     = lowMass + integral(pdf, p.mu, Inf, opt{:});
+    % A density that does not integrate to 1 means the integration failed
+    % (a NaN from an unevaluable point, or a missed spike): report nothing.
+    if ~(abs(tot - 1) < 1e-6), return, end
+    F       = @(x) gh_mass_below(pdf, p.mu, lowMass, x, opt) / tot;
+    q   = zeros(1, 3);
+    P   = [0.25 0.5 0.75];
+    for i = 1:3
+        lo = p.mu - 1;  hi = p.mu + 1;
+        while F(lo) > P(i) && lo > p.mu - 1e6, lo = p.mu - 2*(p.mu - lo); end
+        while F(hi) < P(i) && hi < p.mu + 1e6, hi = p.mu + 2*(hi - p.mu); end
+        q(i) = fzero(@(x) F(x) - P(i), [lo hi], optimset('TolX', 1e-10));
+    end
+catch
+    return
+end
+d = q(3) - q(1);
+if all(isfinite(q)) && d > 0, b = (q(3) + q(1) - 2*q(2)) / d; end
+end
+
+function v = gh_mass_below(pdf, mu, lowMass, x, opt)
+% Unnormalized mass of PDF below x, split at mu (lowMass = mass below mu).
+if x <= mu
+    v = integral(pdf, -Inf, x, opt{:});
+else
+    v = lowMass + integral(pdf, mu, x, opt{:});
+end
 end
 
 % =========================================================================
@@ -862,9 +1084,10 @@ for i = 1:k
 end
 end
 
-function results = add_wald(results, theta, info, fixLam)
+function results = add_wald(results, theta, info, fixLam, infoZ, scl)
 % Standard errors and Wald CIs for the physical parameters, by the delta
-% method from the observed information INFO (data units, coordinates
+% method from the observed information INFOZ (z-units; INFO, the same matrix
+% in data units, is only stored), coordinates
 % theta = [lambda; beta; psi; log_delta; mu], lambda absent if fixed).
 %
 %   SE, Cov  : in the order of Params, [mu; lambda; alpha; beta; delta].
@@ -892,15 +1115,22 @@ p    = theta_to_params(theta, fixLam);
 iLd  = 4 - o;                         % index of log_delta in theta
 free = true(k, 1);
 
+% Invert in z-units, where every coordinate is O(1), and map the covariance to
+% data units with the Jacobian of unstandardize_theta, jt = d theta_y/d theta_z
+% = diag(1, 1/scl, 1, 1, scl). Inverting the data-unit information instead
+% made the rcond test depend on the units: rescaling the data by 1e-6 puts
+% scl^-2 ~ 1e12 on the mu entry, rcond fell below 1e-14, and every SE came
+% back NaN on a sample whose unscaled copy had valid SEs (measured Nov 2026).
 C = NaN(k);
-Hf = info(free, free);
+Hf = infoZ(free, free);
 ok = all(isfinite(Hf(:)));
 if ok
     [R, flag] = chol((Hf + Hf.')/2);
     ok = flag == 0 && rcond(Hf) > 1e-14;
     if ok
         Ri = R \ eye(size(R));
-        C(free, free) = Ri * Ri.';
+        jt = [ones(1, 1 - o), 1/scl, 1, 1, scl].';
+        C(free, free) = (jt * jt.') .* (Ri * Ri.');
         C(~free, :) = 0;  C(:, ~free) = 0;
     end
 end
