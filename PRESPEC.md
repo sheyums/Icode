@@ -656,3 +656,50 @@ Changes         A, per0 DD: unchanged; both primaries stand. The reading rule st
 Consequence     The only pre-specified test that is both calibrated and specific to a homeostat is
                 A's Delta on per0 DD.
 ```
+
+### 2026-11-06  E. Is cumulative sleep mean-reverting? Variance-time against a renewal null
+
+```
+Question        In per0 flies in constant darkness, does the running sleep surplus (time asleep
+                minus the fly's average sleep fraction times elapsed time) wander LESS over long
+                stretches than the same bouts in random order allow -- i.e. are sleep deficits and
+                surpluses repaid (mean reversion, the regulation of sleep AMOUNT a homeostat
+                implies) -- and on what timescale?
+Data            per0 DD only (48 flies), as in entries C and D (preliminaries entry, fe307b0); the
+                rhythmic sets need a null that keeps a free-running or entrained rhythm, which does
+                not exist, and a 24-h rhythm dominates long-scale variance.
+Statistic       SleepVarianceTime (Icode e327aab or later): per fly and scale L in {1, 2, 4, 8, 16,
+                24} h, V(L) = variance over start times (15-min grid, overlapping windows) of the
+                sleep surplus change over L; logR(L) = log(V(L) / mean renewal-surrogate V(L)).
+                Per fly, Slope = least-squares slope of logR on log2(L). Group: mean Slope.
+Null            1000 RenewalSurrogate draws per fly (Seed 1, substream = fly index: the SAME
+                surrogates as entries C and D).
+Decision rule   PRIMARY: group mean Slope, one-sided, more negative than the surrogates' group
+                means -> mean reversion that grows with timescale (SUPPORTED if p < 0.05). The
+                opposite tail (persistence) is reported as the second, two-sided reading of the
+                same statistic, not as a separate test. SECONDARY, descriptive: logR at each
+                scale (where the bend happens); per-fly slopes and p; the runs test per bout type
+                (more runs than the surrogates = reversion at the bout level).
+Calibration     MEASURED before this entry was committed (test_SleepVarianceTime 6/6, Icode
+                e327aab; SimulateSleepWake 48-fly groups, 199 surrogates; one-sided at 0.05):
+                  independent bouts (100 groups): reversion 0.040, persistence 0.020 -> calibrated;
+                    median group Slope -0.031 (log ratio drifts below 0 at long scales even under
+                    the null: a log-of-variance bias the null shares).
+                  homeostat, Tw 2 h, Ts 1 h, gain 2 (50): reversion 1.000; median Slope -0.235,
+                    logR -0.10 at 1 h down to -1.16 at 24 h.
+                  shared slow state, no homeostat (50): reversion 0.140; median Slope -0.038 (about
+                    the independent-bout value); persistence 0.020 -- it does NOT bend up.
+                  runs test: shared slow state 1.000 for sleep and wake, homeostat 0.800 / 1.000:
+                    not specific, so the runs test stays descriptive.
+                Reading rule fixed by this: a supported reversion is reported as regulation of
+                sleep AMOUNT, with its Slope set against the two simulations (homeostat about
+                -0.24, shared slow state about -0.04); it is called homeostat-like only if the
+                Slope is below -0.10, a value the shared slow state did not reach in median
+                (and is reported with that caveat, since only one shared-state structure was
+                simulated).
+Notes           Records are 3-7.9 days, so the 16- and 24-h scales rest on few independent
+                stretches in short records; the group mean weights flies equally. A renewal null
+                already contains the bouts' own variance-time behaviour, so the test is about
+                ORDER only. The descriptive dip of entry C at 1-1.5 h is the short-lag view of the
+                same question; E integrates over lags instead of scanning them.
+```
