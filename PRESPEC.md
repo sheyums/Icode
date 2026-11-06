@@ -617,3 +617,42 @@ Notes           With short tw, S at sleep onset is mostly the preceding wake bou
                 A cannot see. A positive result says the proxy predicts sleep; it does not
                 identify the circuit that integrates pressure.
 ```
+
+### 2026-11-06  AMENDMENT to entries A, C, D (calibration results; written and committed BEFORE any data run)
+
+```
+Basis           The calibrations the preliminaries entry required, run on SimulateSleepWake flies
+                (independent bouts; a shared slow state with no homeostat; a homeostat with Tw 2 h,
+                Ts 1 h, gain 2; an LD-like profile) with the code committed alongside this
+                amendment (test_BoutCrossType 9/9, test_SleepAmountACF 5/6, test_ProcessSProxy 6/6).
+                Rejection rates at nominal 0.05 (rule: above 0.095 = fails):
+                A per0 DD (shift), 48-fly groups x 100: r_pre 0.050, Delta 0.040 -> calibrated.
+                  Homeostat power (50 groups): r_pre 1.000, Delta 0.980. Shared slow state, per
+                  fly (200): r_pre 0.375, Delta 0.020.
+                A profile sets (strata), 40-fly count test x 100: r_pre 0.060 -> calibrated;
+                  Delta 0.120 -> FAILS; DeltaW 0.150 and r_pre2 0.120 (secondary) also above 0.095.
+                C independent bouts, 48-fly groups x 100: compensation (MinP) 0.100 -> FAILS;
+                  persistence (MaxP) 0.030. Homeostat: 1.000 (minimum at 1.0 h). Shared slow state:
+                  0.580.
+                D independent bouts, 48-fly groups x 60: rho_S 0.017, rho_W 0.017 -> calibrated
+                  (conservative). Homeostat: 1.000 and 1.000. Shared slow state: rho_S 1.000,
+                  rho_W 0.367. Best grid pair: homeostat (2, 1) h in 9/30 groups; shared slow
+                  state (0.5, 0.5) h in 10/30.
+Changes         A, per0 DD: unchanged; both primaries stand. The reading rule stands and is now
+                  measured to work: a shared slow state gives r_pre > 0 but not Delta > 0.
+                A, profile sets: the Delta count is DEMOTED to descriptive. The r_pre count stays
+                  primary, Holm across the three sets (not six). A positive r_pre there can come
+                  from a shared slow state as well as a homeostat, so it will be reported as
+                  coupling between a wake bout and the next sleep, NOT as evidence of a homeostat.
+                C: the whole entry is DEMOTED to descriptive (compensation over-rejects on
+                  independent bouts, and a shared slow state also produces it 58% of the time).
+                  Curves, extremes and p-values are reported with these calibration numbers and
+                  no verdict.
+                D: the primary test stands (calibrated), but its READING changes: a positive
+                  result says a slow variable links successive bouts -- a homeostat OR a shared
+                  slow state -- not a homeostat. The best (tw, ts) is reported descriptively,
+                  noting that the two models placed it differently in simulation.
+                B: unaffected (its null is its own simulation).
+Consequence     The only pre-specified test that is both calibrated and specific to a homeostat is
+                A's Delta on per0 DD.
+```
