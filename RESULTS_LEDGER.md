@@ -160,3 +160,52 @@ Not reportable  Do not quote 0.001 on its own. The bin sensitivity here is a los
                 is against a falling-hazard null only: it says nothing about whether the rise is in
                 the flies or is produced by scoring bursty movement into wake bouts.
 ```
+
+### 2026-11-05  per0 DD: time arrow in successive sleep and wake bouts
+
+```
+Commit          f46b912 (Icode branch claude/shifted-lognormal-mle-wc03ob: BoutIrreversibility)
+                with the analysis folder's scoring code at its commit 23240e7
+                (process_LocomToSleep, extractBoutsForModelCompetition); run from the Icode
+                folder behind the which/pwd assert, MATLAB R2026a, 2026-11-05.
+Script          run_per0dd.m, session scratch, not in the repo
+Prespec         2026-11-05 "per0 DD: is there a time arrow in the sleep and wake bout
+                sequences?" (committed 2df6bef before the run)
+Time window     Each fly's whole retained record, one block per fly (3-7.9 days, constant
+                darkness, read from the first sample); group numbers pool the 48 blocks.
+n               48 of 48 flies passed the pipeline and the >= 40-bout rule for both types.
+                Sleep: 83-426 bouts per fly (median 193), 9790 lag-1 pairs; wake: 84-425
+                (median 193), 9775 pairs. Ties (zero differences) 0.1%. Bouts verified in time
+                order (OnsetBins strictly increasing in every row).
+Result          Group means at lag 1 (IAAFT p; shuffle p for memory):
+                  sleep  UpFraction 0.5070 (p 0.020)  Bowley -0.0075 (p 0.55)
+                         Moment -0.073 (descriptive)  Rho +0.028 (shuffle p 0.002)
+                  wake   UpFraction 0.4903 (p 0.004)  Bowley +0.0178 (p 0.14)
+                         Moment +0.052 (descriptive)  Rho -0.060 (shuffle p 0.002)
+                Lags 2, 4, 8, UpFraction: sleep 0.5050 / 0.4998 / 0.4977 (p 0.12 / 0.95 / 0.48);
+                wake 0.4996 / 0.4985 / 0.5007 (p 0.92 / 0.62 / 0.82). Bowley p >= 0.45 at every
+                lag in both. Memory: sleep Rho 0.024 / 0.007 / 0.018 (p 0.008 / 0.26 / 0.036),
+                wake 0.021 / 0.004 / 0.010 (p 0.014 / 0.38 / 0.19).
+                Flies individually p < 0.05 at lag 1 (IAAFT): UpFraction sleep 4 of 48 (3 above
+                0.5), wake 2 (both below); Bowley 1 and 1. Memory (shuffle) sleep 9 (7 positive),
+                wake 8 (all 8 NEGATIVE). Per-fly UpFraction at lag 1 spans 0.460-0.555 (sleep),
+                0.449-0.524 (wake).
+Matched null    1000 IAAFT surrogates per fly (same bouts, about the same autocorrelation,
+                reversible); group null = mean of the flies' r-th surrogates. Group null 95%
+                band for UpFraction at lag 1 is about 0.494-0.506 in both types.
+Verdict         PRIMARY, Holm across four: wake UpFraction p 0.004 -> 0.016, SUPPORTED: a time
+                arrow in successive wake bouts at lag 1, direction = slightly more decreases
+                than increases (49.0% increases). Sleep UpFraction 0.020 -> 0.060, sleep Bowley
+                0.55, wake Bowley 0.28: not supported. So: a small but detectable arrow in wake,
+                none detected in sleep at the family-wise level.
+Not reportable  Do not quote sleep UpFraction p = 0.020 as significant; it fails the Holm
+                correction. Do not quote the shuffle p-values for the skew statistics (they
+                over-reject with memory, as measured). The effect is ONE percentage point of
+                increases, carried by the group, not by individual flies (2 of 48 individually),
+                so it is not a per-fly trait at this n. It concerns the ORDER of successive
+                bouts; it says nothing about the GH skew of the collaborator's bout-space
+                residuals, whose null is different (simulation from the fitted model). IAAFT
+                calibration was measured only for positive memory (latent AR phi 0.5); wake
+                memory here is NEGATIVE at lag 1 (-0.06), which was not simulated. The six
+                12_29_2017 plain files were used whole (see the PRESPEC's open point).
+```
