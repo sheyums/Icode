@@ -2476,3 +2476,24 @@ per0 LD A 0.071 | all R intervals span 0 | per0 DD (control) A 0.006: not interp
   carried mainly by sleep exits (RS 0.73 [0.33,0.90]), where light and clock cannot be separated.
 - This overturns the old Fig. 3A-C reading ("H1 is the primary source"). With identified states, no single state is the
   source.
+
+## PRESPEC 24 — 23E10>Kir2.1 vs 23E10>Kir2.1-NC (2026-11-06; PRESPEC c5d7349, committed before computing any behaviour; code sqw24.py, this commit; sqw24.log, s24_23E10.json)
+Flies: Kir 59 (4 died, 1 excluded with < 2 days; 55 with 8 days); NC 64 (16 died, 13 excluded; 48 with 8 days). The
+difference in mortality is noted. Genotype is confounded with monitor (4brc2 vs 4bWC).
+- PRIMARY, J dark, one-sided (Kir > NC): Kir +0.005 vs NC -0.010 cycles/h (n 58/49), diff +0.016 [-0.010, +0.042],
+  p 0.066, Cliff +0.17 -> NOT CONFIRMED. Without day 0 (sensitivity, not primary): p 0.048.
+- Context: this background sleeps ~50 min/h in both phases, and its cycle is essentially absent (J ~0 at night in both
+  groups). Sensitivity to a flux change is therefore low.
+- Family A (Holm 6): nothing (smallest EPR dark p 0.038, Holm 0.23).
+- Sleep: day +2.0 min/h (Holm 0.016); night unchanged. 23E10 silencing did NOT reduce sleep, unlike the dFB and VNC
+  split lines of 20y.
+- Transitions (Holm 12): wake transitions RISE: W->Q day +0.072 (Holm 2e-6) and night +0.050 (0.024); W->S day +0.043
+  (1e-5); Q->W day +0.060 (0.006). S->Q day falls -0.002 (0.035).
+- Landscape: printed as depths (E_Q - E_W, E_Q - E_S; the PRESPEC named E_W - E_Q and E_S - E_Q, which are the same
+  tests with the sign reversed). Sleep well DEEPER by day, +0.15 nats (Holm 0.043). dFB/VNC split lines made it
+  shallower.
+- Across backgrounds (descriptive): the sign agrees with the dFB split for J (light -, dark +), c_obs dark, EPR light
+  and most transitions (W->Q, W->S, Q->W, S->W up). It disagrees for sleep amount and sleep-well depth. 23E10 flux
+  changes are about 1/7 of the dFB split's (dark J +0.016 vs +0.104).
+- Reading: the 20y dFB night-flux hint is NOT replicated in this background. Silencing 23E10 makes wake more labile
+  (more wake-to-quiet and wake-to-sleep switching) without reducing sleep, and in a near-cycle-free background.

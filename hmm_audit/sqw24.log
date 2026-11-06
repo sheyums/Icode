@@ -1,0 +1,80 @@
+kir flies 59 | died 4 | excluded (<2 days) 1 | days used [1, 0, 0, 0, 1, 1, 1, 0, 55]
+nc flies 64 | died 16 | excluded (<2 days) 13 | days used [13, 0, 1, 0, 0, 0, 2, 0, 48]
+
+[main] PRIMARY J dark one-sided: Kir +0.005 vs NC -0.010 (n (58, 49)) diff +0.016 [-0.010,+0.042] p 0.06646 Cliff +0.17
+  familyA     c_obs light Kir +0.0294 NC +0.0263 diff +0.0031 [-0.0378,+0.0404] p 0.936 Holm 1 d +0.01
+  familyA     c_obs dark  Kir +0.0067 NC -0.0079 diff +0.0146 [-0.0323,+0.0498] p 0.464 Holm 1 d +0.08
+  familyA     J     light Kir +0.0208 NC +0.0365 diff -0.0156 [-0.0469,+0.0208] p 0.313 Holm 1 d -0.11
+  familyA     J     dark  Kir +0.0052 NC -0.0104 diff +0.0156 [-0.0104,+0.0417] p 0.133 Holm 0.665 d +0.17
+  familyA     EPR   light Kir +0.0125 NC +0.0138 diff -0.0013 [-0.0137,+0.0090] p 0.414 Holm 1 d -0.09
+  familyA     EPR   dark  Kir +0.0106 NC +0.0170 diff -0.0064 [-0.0276,+0.0040] p 0.0382 Holm 0.229 d -0.23
+  sleep       sleep light Kir +52.1823 NC +50.2031 diff +1.9792 [-0.0680,+3.3655] p 0.00799 Holm 0.016 d +0.30
+  sleep       sleep dark  Kir +49.4323 NC +49.3229 diff +0.1094 [-1.6771,+3.0577] p 0.38 Holm 0.38 d +0.10
+  transitions QW    light Kir +0.3366 NC +0.2769 diff +0.0597 [+0.0202,+0.1035] p 0.000606 Holm 0.00606 d +0.38
+  transitions QW    dark  Kir +0.3332 NC +0.3320 diff +0.0012 [-0.0575,+0.0642] p 0.567 Holm 1 d +0.06
+  transitions QS    light Kir +0.1084 NC +0.1026 diff +0.0059 [-0.0066,+0.0208] p 0.263 Holm 1 d +0.13
+  transitions QS    dark  Kir +0.0938 NC +0.1053 diff -0.0115 [-0.0264,+0.0048] p 0.347 Holm 1 d -0.11
+  transitions WQ    light Kir +0.2733 NC +0.2016 diff +0.0717 [+0.0399,+0.1000] p 1.77e-07 Holm 2.13e-06 d +0.58
+  transitions WQ    dark  Kir +0.2562 NC +0.2060 diff +0.0502 [+0.0084,+0.0823] p 0.00261 Holm 0.0235 d +0.34
+  transitions WS    light Kir +0.0968 NC +0.0540 diff +0.0428 [+0.0263,+0.0607] p 9.82e-07 Holm 1.08e-05 d +0.55
+  transitions WS    dark  Kir +0.0755 NC +0.0630 diff +0.0124 [-0.0082,+0.0317] p 0.168 Holm 1 d +0.16
+  transitions SQ    light Kir +0.0068 NC +0.0090 diff -0.0022 [-0.0034,-0.0007] p 0.00438 Holm 0.035 d -0.32
+  transitions SQ    dark  Kir +0.0083 NC +0.0086 diff -0.0003 [-0.0023,+0.0013] p 0.393 Holm 1 d -0.10
+  transitions SW    light Kir +0.0092 NC +0.0068 diff +0.0024 [+0.0003,+0.0045] p 0.0476 Holm 0.333 d +0.22
+  transitions SW    dark  Kir +0.0086 NC +0.0086 diff +0.0000 [-0.0066,+0.0055] p 0.998 Holm 1 d +0.00
+  landscape   E21   light Kir +0.1971 NC +0.2699 diff -0.0728 [-0.2037,+0.0804] p 0.169 Holm 0.338 d -0.16
+  landscape   E21   dark  Kir +0.3215 NC +0.3463 diff -0.0248 [-0.2433,+0.1219] p 0.077 Holm 0.231 d -0.20
+  landscape   E31   light Kir +2.6301 NC +2.4842 diff +0.1459 [-0.0388,+0.4589] p 0.0108 Holm 0.043 d +0.29
+  landscape   E31   dark  Kir +2.4802 NC +2.4607 diff +0.0195 [-0.3267,+0.2148] p 0.95 Holm 0.95 d -0.01
+
+[nod0] PRIMARY J dark one-sided: Kir +0.012 vs NC -0.017 (n (58, 49)) diff +0.029 [-0.006,+0.054] p 0.04817 Cliff +0.19
+  familyA     c_obs light Kir +0.0264 NC +0.0204 diff +0.0060 [-0.0422,+0.0544] p 0.749 Holm 1 d +0.04
+  familyA     c_obs dark  Kir +0.0117 NC -0.0158 diff +0.0275 [-0.0248,+0.0595] p 0.316 Holm 1 d +0.11
+  familyA     J     light Kir +0.0179 NC +0.0357 diff -0.0179 [-0.0476,+0.0298] p 0.366 Holm 1 d -0.10
+  familyA     J     dark  Kir +0.0119 NC -0.0167 diff +0.0286 [-0.0060,+0.0595] p 0.0963 Holm 0.578 d +0.19
+  familyA     EPR   light Kir +0.0172 NC +0.0237 diff -0.0065 [-0.0177,+0.0090] p 0.367 Holm 1 d -0.10
+  familyA     EPR   dark  Kir +0.0236 NC +0.0222 diff +0.0014 [-0.0214,+0.0130] p 0.11 Holm 0.578 d -0.18
+  sleep       sleep light Kir +52.2083 NC +50.2857 diff +1.9226 [-0.0427,+3.6970] p 0.00525 Holm 0.0105 d +0.31
+  sleep       sleep dark  Kir +49.6548 NC +49.1310 diff +0.5238 [-1.9763,+2.7202] p 0.571 Holm 0.571 d +0.06
+  transitions QW    light Kir +0.3352 NC +0.2692 diff +0.0659 [+0.0248,+0.1073] p 0.000373 Holm 0.0034 d +0.40
+  transitions QW    dark  Kir +0.3329 NC +0.3284 diff +0.0045 [-0.0461,+0.0752] p 0.466 Holm 1 d +0.08
+  transitions QS    light Kir +0.1080 NC +0.1055 diff +0.0026 [-0.0070,+0.0128] p 0.504 Holm 1 d +0.08
+  transitions QS    dark  Kir +0.0952 NC +0.1079 diff -0.0127 [-0.0266,+0.0036] p 0.219 Holm 1 d -0.14
+  transitions WQ    light Kir +0.2762 NC +0.2152 diff +0.0610 [+0.0365,+0.0901] p 2.87e-06 Holm 3.45e-05 d +0.52
+  transitions WQ    dark  Kir +0.2599 NC +0.2245 diff +0.0354 [-0.0097,+0.0635] p 0.0418 Holm 0.335 d +0.23
+  transitions WS    light Kir +0.0993 NC +0.0522 diff +0.0471 [+0.0241,+0.0625] p 3.88e-06 Holm 4.26e-05 d +0.52
+  transitions WS    dark  Kir +0.0756 NC +0.0713 diff +0.0042 [-0.0122,+0.0270] p 0.383 Holm 1 d +0.10
+  transitions SQ    light Kir +0.0069 NC +0.0093 diff -0.0025 [-0.0038,-0.0008] p 0.00034 Holm 0.0034 d -0.40
+  transitions SQ    dark  Kir +0.0081 NC +0.0092 diff -0.0010 [-0.0026,+0.0013] p 0.239 Holm 1 d -0.13
+  transitions SW    light Kir +0.0093 NC +0.0065 diff +0.0028 [+0.0007,+0.0045] p 0.0462 Holm 0.335 d +0.22
+  transitions SW    dark  Kir +0.0084 NC +0.0082 diff +0.0002 [-0.0065,+0.0061] p 0.893 Holm 1 d +0.02
+  landscape   E21   light Kir +0.2042 NC +0.2027 diff +0.0014 [-0.1247,+0.0921] p 0.675 Holm 1 d -0.05
+  landscape   E21   dark  Kir +0.3758 NC +0.2650 diff +0.1108 [-0.0812,+0.2107] p 0.919 Holm 1 d -0.01
+  landscape   E31   light Kir +2.6408 NC +2.4200 diff +0.2208 [+0.0200,+0.4937] p 0.00177 Holm 0.00708 d +0.36
+  landscape   E31   dark  Kir +2.4622 NC +2.5126 diff -0.0504 [-0.3256,+0.2368] p 0.94 Holm 1 d -0.01
+
+ACROSS BACKGROUNDS (median difference vs own control; descriptive)
+  c_obs light 23E10 +0.0031 | dfb -0.0229 | vnc -0.0410 | sign 23E10=dfb False =vnc False
+  c_obs dark  23E10 +0.0146 | dfb +0.0327 | vnc -0.0345 | sign 23E10=dfb True =vnc False
+  J     light 23E10 -0.0156 | dfb -0.0208 | vnc -0.0417 | sign 23E10=dfb True =vnc True
+  J     dark  23E10 +0.0156 | dfb +0.1042 | vnc -0.0521 | sign 23E10=dfb True =vnc False
+  EPR   light 23E10 -0.0013 | dfb -0.0078 | vnc +0.0009 | sign 23E10=dfb True =vnc False
+  EPR   dark  23E10 -0.0064 | dfb +0.0583 | vnc -0.0283 | sign 23E10=dfb False =vnc True
+  sleep light 23E10 +1.9792 | dfb -0.8229 | vnc -14.5885 | sign 23E10=dfb False =vnc False
+  sleep dark  23E10 +0.1094 | dfb -7.9479 | vnc -17.3594 | sign 23E10=dfb False =vnc False
+  QW    light 23E10 +0.0597 | dfb +0.0080 | vnc +0.0750 | sign 23E10=dfb True =vnc True
+  QW    dark  23E10 +0.0012 | dfb +0.0628 | vnc +0.1040 | sign 23E10=dfb True =vnc True
+  QS    light 23E10 +0.0059 | dfb -0.0073 | vnc -0.0487 | sign 23E10=dfb False =vnc False
+  QS    dark  23E10 -0.0115 | dfb -0.0226 | vnc -0.0595 | sign 23E10=dfb True =vnc True
+  WQ    light 23E10 +0.0717 | dfb +0.0296 | vnc +0.0076 | sign 23E10=dfb True =vnc True
+  WQ    dark  23E10 +0.0502 | dfb +0.0368 | vnc -0.0013 | sign 23E10=dfb True =vnc False
+  WS    light 23E10 +0.0428 | dfb +0.0139 | vnc +0.0059 | sign 23E10=dfb True =vnc True
+  WS    dark  23E10 +0.0124 | dfb +0.0018 | vnc -0.0299 | sign 23E10=dfb True =vnc False
+  SQ    light 23E10 -0.0022 | dfb +0.0053 | vnc +0.0092 | sign 23E10=dfb False =vnc False
+  SQ    dark  23E10 -0.0003 | dfb +0.0063 | vnc +0.0094 | sign 23E10=dfb False =vnc False
+  SW    light 23E10 +0.0024 | dfb +0.0072 | vnc +0.0202 | sign 23E10=dfb True =vnc True
+  SW    dark  23E10 +0.0000 | dfb +0.0123 | vnc +0.0083 | sign 23E10=dfb True =vnc True
+  E21   light 23E10 -0.0728 | dfb -0.2899 | vnc +0.1374 | sign 23E10=dfb True =vnc False
+  E21   dark  23E10 -0.0248 | dfb -0.0052 | vnc +0.2203 | sign 23E10=dfb True =vnc False
+  E31   light 23E10 +0.1459 | dfb -0.3670 | vnc -1.0790 | sign 23E10=dfb False =vnc False
+  E31   dark  23E10 +0.0195 | dfb -0.5828 | vnc -1.0525 | sign 23E10=dfb False =vnc False
