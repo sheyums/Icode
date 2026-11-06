@@ -428,3 +428,192 @@ Notes           Measured (BoutAR1Noise header): Hetero rejects 0.045 on iid bout
                 alone breaks the 2-s wake floor on regeneration (measured), so per0 wake
                 regeneration may put bouts below 2 s.
 ```
+
+### 2026-11-06  Four homeostat analyses: shared data and preliminaries (applies to entries A-D)
+
+```
+Datasets        All raw per-second beam counts under
+                C:\Users\sheyu\Box\HMM paper_Activity based\different genotypes activity data
+                (read only). 140 recordings, all distinct (content hashes; no file's first day
+                occurs inside another; checked across the four sets on 2026-11-06).
+                per0 DD  48 flies: as in the 2026-11-05 per0 DD entries (2df6bef), from sample 1.
+                CS LD    40 flies: as in the 2026-11-05 CS LD entry (58ac4d7), from ZT0.
+                CS DD    25 flies, folder "CS DD", the 25 "_from1stLD" files (4.00 days each). The
+                         zip in that folder holds the same flies (Sheyum) and is not used. Pooled
+                         activity peaks 10.25-11.75 h after the record start, consistent with a CT0
+                         start and an evening peak. START PHASE: CT0 (confirmed by Sheyum,
+                         2026-11-06).
+                per0 LD  27 flies, folder "per0 ld", plain files, 4.74-8.71 days. Sheyum's
+                         impression: records start at or near ZT0. Checked 2026-11-06 from the
+                         lights-on/off startles (per0 has no clock, so its activity peaks in LD
+                         mark the light transitions; per0ld_phase_check_2026-11-06.png in the
+                         analysis folder): 9_21_2020 (11 flies) and 8_18_2017 (1) show
+                         transitions within about 0.5-1.5 h of the record start -- consistent
+                         with a ZT0 start; 8_25_2017 (3), 9_22_2017 (3) and 9_29_2017 (4) show
+                         stripes at about 4 h and 16 h every day -- transitions about 4 h off a
+                         ZT0 start; 9_1_2017 (5) is unclear (one stripe near 14 h). (The
+                         2026-08-30 work estimated 9_21_2020 at ZT 11.5 from a different copy of
+                         that experiment, Per0_LD_all.) START PHASE, decided 2026-11-06 (Sheyum:
+                         estimate from the startles): EstimatePhaseStamp(folder,
+                         ClockState="arrhythmic"), analysis folder copy, gives startZT
+                           8_18_2017 11.0 (1 fly; = the schedule-validated 2026-08-30 value),
+                           9_21_2020 11.5 (11; = the schedule-validated 2026-08-30 value; partner
+                                     rise 6.5 h away, anchor margin 10.9),
+                           8_25_2017 20.0 (3; partner rise 12.0 h away, no flag),
+                           9_22_2017 20.5 (3; no flag),
+                           9_29_2017  8.0 (4; no flag),
+                           9_1_2017   7.5 (5; FLAG partner rise 9.0 h away) -> DROPPED as not
+                                     reliably phased (no schedule).
+                         None starts at ZT0. per0 is more active in the dark (EstimatePhaseStamp
+                         header: the sleep-in-dark measure is inverted for arrhythmic flies),
+                         which is why 9_21_2020 is busy in its first 12 h. Teliminate per
+                         experiment = hours to its first ZT0: 13, 12.5, 4, 3.5, 16 respectively,
+                         startZT as above, so every retained record starts at ZT0. 22 flies. Each
+                         experiment is processed in its own staging folder (startZT is one value
+                         per call). Every retained day must show its lights-on and lights-off
+                         rises within 1 h of the stated ZT (checked at run time; a failing
+                         experiment is dropped and named in the ledger).
+Scoring         process_LocomToSleep(timeInterval=1, segmentMode=1, startZT and Teliminate as
+                above (both 0 for the three ZT0/CT0 sets), dayLength=24, daytime=12,
+                nighttime=12, deadThresh=12, minDays=3, bridgeWakeSeconds=1); sleep and wake bouts
+                with OnsetBins from extractBoutsForModelCompetition; sleep >= 300 s, wake >= 2 s.
+                A fly enters if it has >= 40 bouts of each type.
+Alternation     Sleep and wake bouts are merged in onset order per fly. Two bouts are ADJACENT
+                only if the later starts exactly where the earlier ends (onset = previous onset +
+                previous duration, in bins); non-adjacent pairs are never formed, and their
+                number is reported. Which state starts each record is read from the onsets.
+Time of day     "Profile sets": CS LD, per0 LD (ZT) and CS DD (CT, assuming a 24-h free run).
+                The CS free-running period is NOT estimated per fly, so over 4 days its rhythm
+                can slide against the CT bins (about 1 h per 0.25 h of period error): a stated
+                limitation. per0 DD has no profile.
+Code            New functions, each with a test suite and a calibration on simulated flies,
+                written, committed and run BEFORE any data analysis: BoutCrossType (A),
+                SleepAmountACF (C), ProcessSProxy (D). B uses existing code. If a calibration
+                fails (null rejection above 0.095 at nominal 0.05 over 200 replicates), the
+                affected test is NOT run as a verdict: a dated amendment below the entry,
+                committed before the run, demotes it to descriptive.
+```
+
+### 2026-11-06  A. Cross-type homeostat test: does a sleep bout depend on the wake bout before it more than on the one after it?
+
+```
+Question        Per fly, is a sleep bout's length correlated with the preceding wake bout's length
+                (homeostat: longer wake -> more pressure -> longer sleep), and is that correlation
+                larger than with the FOLLOWING wake bout (the time arrow a homeostat predicts;
+                reversing time would swap the two)?
+Data            All four datasets (preliminaries). Whole record, one block per fly.
+Statistics      Per fly, over adjacent triples (wake w_pre, sleep s, wake w_post):
+                r_pre = Spearman(s, w_pre); r_post = Spearman(s, w_post); Delta = r_pre - r_post.
+                Mirror for wake bouts: q_pre = Spearman(w, s_pre), q_post = Spearman(w, s_post),
+                DeltaW = q_pre - q_post.
+Nulls           per0 DD: circular shift of the fly's wake sequence against its sleep sequence, all
+                shifts k with 2 <= k <= n-2 (keeps each sequence's own memory, breaks the pairing).
+                Profile sets: 1000 permutations of the fly's wake bouts among wake positions in
+                the same 1-h ZT/CT bin of onset, across days, sleep bouts fixed.
+Decision rule   PRIMARY, per0 DD: group mean of r_pre (one-sided, > 0) and group mean of Delta
+                (one-sided, > 0) against the shift null's group means; Holm across the two.
+                PRIMARY, profile sets (only if their calibration passes): count of flies with
+                per-fly one-sided p < 0.05 for r_pre, and for Delta, against Binomial(n, 0.05);
+                Holm across the six (3 sets x 2).
+                Reading: r_pre > 0 AND Delta > 0 supports a homeostat. r_pre > 0 with Delta ~ 0 is
+                a symmetric co-variation of sleep and wake (a shared slow state), not a homeostat.
+                SECONDARY: r_post, q_pre, q_post, DeltaW; per-fly values; lag-2 versions (s with
+                the wake two bouts back).
+Calibration     Before the run, 200 simulated flies each: (i) alternating independent exponential
+                bouts (every test ~0.05); (ii) a shared slow state, no homeostat (sleep and wake
+                means modulated by one latent AR(1)): r_pre > 0 expected, Delta must stay
+                calibrated; (iii) LD-like flies with a ZT profile and no coupling: the profile
+                null must stay <= 0.095 (the timeline-coupling bias measured for the strata null
+                in BoutIrreversibility may reappear: permuting a wake bout cuts its link with the
+                next sleep's onset time); (iv) a homeostat (Process-S-modulated rates) for power.
+Matched null    Shifts or permutations of each fly's own bouts, same n; count null
+                Binomial(n, 0.05).
+Notes           The fly-labelled per0 DD subset in C:\Users\sheyu\Icode had an unknown first state
+                for 13 flies; this entry uses the raw files, where onsets resolve it.
+```
+
+### 2026-11-06  B. Cox-process check: do memory and state-dependent noise go together, as a slowly drifting rate predicts?
+
+```
+Question        If each bout is exponential with a mean set by a slowly varying hidden state (a
+                doubly stochastic, Cox-type process), flies with positive memory B should show
+                noise that SPREADS after long bouts (Hetero > 0), and negative B should go with
+                shrinking spread. Across flies, are B and Hetero positively related beyond what
+                independent bouts give at the same n?
+Data            The per-fly B and Hetero of the 2026-11-06 ledger entry (625dc08): per0 DD sleep
+                and wake (primary); CS LD sleep/wake x light/dark (secondary).
+Statistic       Per set, Spearman correlation across flies of B with Hetero.
+Null            1000 simulated sets, each fly matched to its real n (pairs), xmin and mean bout,
+                bouts independent exponential; B and Hetero by the same formulas (checked to equal
+                BoutAR1Noise's on the real data to 1e-12). This measures how far the two
+                estimators are tied MECHANICALLY, with no biology.
+Decision rule   PRIMARY: per0 sleep and per0 wake, one-sided (> 0) Monte Carlo p against that
+                null; Holm across the two. Support: the relation exceeds the mechanical one.
+                SECONDARY: the four CS LD sets; and the correlation a Cox process would give --
+                simulated flies whose log-mean follows a latent AR(1) (phi 0.5), its SD set so the
+                set's median B is reproduced.
+Notes           NOT BLIND. The sign concordance that motivated this (per0 sleep: 9 of 11 flies with
+                significant B positive, 7 of 8 with significant Hetero growing; wake: 7 of 9
+                negative, 4 of 6 shrinking) was seen in the 2026-11-06 results before this entry.
+                The test uses ALL flies and a new null, but a positive result confirms a pattern
+                already noticed and must be reported that way.
+```
+
+### 2026-11-06  C. Sleep amount in windows: compensation beyond independent bouts?
+
+```
+Question        In per0 flies in constant darkness, are the minutes of sleep in one window
+                followed, hours later, by deviations the other way (compensation, the hallmark of
+                a homeostat), more than the same bouts in random order produce?
+Data            per0 DD only (48 flies): the one dataset with neither a clock nor light. The
+                profile sets need a null that keeps a free-running or entrained rhythm together
+                with its timeline, which does not exist yet; they are NOT part of this entry.
+Statistics      Per fly, from the first bout onset to the last bout end: sleep minutes per window,
+                30-min windows (PRIMARY) and 60-min (secondary), both reported. Autocorrelation at
+                lags 0.5-12 h. Deviation curve = observed ACF minus the null mean ACF.
+Null            Renewal surrogates, 1000 per fly: sleep bouts permuted among the fly's sleep
+                positions and wake bouts among its wake positions (alternation and first state
+                kept), the trace rebuilt end to end and binned identically. Keeps both bout
+                distributions; removes all sequence dependence. Binning's own positive ACF (a long
+                bout fills several windows) is in the null.
+Decision rule   PRIMARY: the minimum over lags 1-12 h of the group-mean deviation curve, against
+                the same minimum on the surrogates' group means (a max-statistic null, which
+                corrects for scanning lags); one-sided (more negative than the null). Support:
+                compensation beyond independent bouts, at the lag of the minimum. SECONDARY: the
+                maximum (persistence), the same way; 60-min windows; per-fly curves; the count of
+                flies whose minimum is below their own null 5th percentile.
+Calibration     Before the run, 200 simulated per0-like flies each: independent alternating
+                exponential bouts (<= 0.095), and a homeostat (Process-S-modulated rates) for power
+                and to see where the minimum appears.
+Notes           Records differ in length (3-7.9 days), so long lags rest on fewer windows in short
+                records; the group mean weights flies equally.
+```
+
+### 2026-11-06  D. A sleep-pressure proxy: does accumulated wake predict the next sleep bout?
+
+```
+Question        In per0 DD, does a Borbely-type pressure proxy S built from each fly's own history
+                predict how long the next sleep bout lasts (and the next wake bout, inversely),
+                beyond independent bouts -- and on what timescale?
+Data            per0 DD only (48 flies), for the reason given in C.
+Proxy           S in [0, 1], computed exactly bout by bout: during wake S <- 1 - (1 - S)*exp(-dt/tw);
+                during sleep S <- S*exp(-dt/ts); S = 0.5 at the record start; bouts starting in
+                the first 12 h are excluded from the statistics. Grid fixed now: tw and ts each in
+                {0.5, 1, 2, 4, 8, 16} h (36 pairs).
+Statistics      Per fly and grid pair: rho_S = Spearman(S at sleep onset, that sleep bout's
+                length); rho_W = Spearman(S at wake onset, that wake bout's length).
+Null            The renewal surrogates of C (1000 per fly), S recomputed on each.
+Decision rule   PRIMARY: the group mean of rho_S maximised over the 36 grid pairs, against the
+                same maximum on the surrogates' group means (max-statistic null, corrects the grid
+                scan); one-sided (> 0). SECONDARY: rho_W minimised the same way (< 0); the best
+                (tw, ts), descriptive only (a grid peak is not an estimate with an interval);
+                whether S adds to the immediately preceding wake bout (rho_S against A's r_pre,
+                per fly).
+Calibration     Before the run: independent alternating bouts (<= 0.095); a homeostat with known
+                tw and ts (power, and whether the grid maximum lands near the truth); a shared slow
+                state without a homeostat (does S pick it up? reported).
+Notes           With short tw, S at sleep onset is mostly the preceding wake bout, so D overlaps A
+                at that end of the grid; long time constants carry several bouts of history, which
+                A cannot see. A positive result says the proxy predicts sleep; it does not
+                identify the circuit that integrates pressure.
+```
