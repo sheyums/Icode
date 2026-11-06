@@ -320,3 +320,67 @@ Not reportable  Do not present the winning family as a property of the dynamics:
                 per0 flies, not which model is right. The CS LD calibration was simulated on
                 whole records, not per phase. Regeneration numbers are descriptive.
 ```
+
+### 2026-11-06  Four homeostat analyses (A cross-type, B Cox check, C window ACF, D Process S proxy)
+
+```
+Commit          141b620 (Icode branch claude/shifted-lognormal-mle-wc03ob: BoutCrossType,
+                SleepAmountACF, ProcessSProxy, RenewalSurrogate; B used 328116c's BoutAR1Noise
+                results of ledger 625dc08) with the analysis folder's scoring code (unchanged since
+                23240e7); run from the Icode folder behind which/pwd asserts, MATLAB R2026a.
+Script          homeo_run/run_homeo.m (A, C, D), homeo_run/run_B.m (B), stage_check.m (per0 LD
+                phase check); session scratch, not in the repo
+Prespec         2026-11-06 preliminaries and entries A-D (fe307b0) as AMENDED by the 2026-11-06
+                calibration amendment (141b620), both committed before any data run.
+Time window     Each fly's whole record, one block per fly (per0 DD from sample 1; CS LD from ZT0;
+                CS DD from CT0; per0 LD trimmed to its first ZT0). C and D: per0 DD only.
+n               per0 DD 48, CS LD 40, CS DD 25 flies; every record strictly alternating with no
+                non-adjacent link. per0 LD: the run-time phase check (largest rise within 1 h of
+                each transition in the top 10% of that day's rises, fixed before looking) passed
+                every day only for 8_25_2017; 8_18 (lights-on 5/6 days), 9_21 (5/8), 9_22 (5/6),
+                9_29 (lights-on 4/6, lights-off 5/6) were DROPPED by the committed rule -> per0 LD
+                = 3 flies, uninformative. Lights-off was found on 31 of 32 days; the misses are
+                the weak lights-on startle of arrhythmic flies.
+Result          A per0 DD (shift null), group means: r_pre +0.104 (p 0.001), r_post +0.115
+                (0.002), Delta -0.011 (0.74), r_pre2 -0.007 (0.67), q_pre +0.113 (0.001),
+                q_post +0.103 (0.002), DeltaW +0.010 (0.25). Flies p < 0.05: r_pre 24/48,
+                r_post 20, Delta 5, q_pre 24.
+                A profile sets (strata null), flies with r_pre p < 0.05: CS LD 7/40 (count p
+                0.0034), CS DD 14/25 (1.6e-12), per0 LD 0/3. Descriptive: CS DD Delta 5/25,
+                r_pre2 mean -0.097 (0/25 positive-significant); CS LD q_pre 12/40.
+                B (Spearman across flies of B with Hetero; null = independent exponential flies
+                matched in n, xmin, mean bout): per0 sleep +0.714 vs null median +0.754 (95th
+                0.853), p 0.69; per0 wake +0.630 vs +0.757, p 0.94. Secondary CS LD: sleep light
+                +0.714 (p 0.64), sleep dark +0.724 (0.53), wake light +0.932 (0.001), wake dark
+                +0.915 (0.002).
+                C per0 DD (DESCRIPTIVE): group deviation 30-min min -0.035 at 1.5 h (p 0.005),
+                max +0.045 at 10.5 h; 60-min min -0.069 at 1 h (p 0.001), max +0.072 at 4 h.
+                D per0 DD: max group rho_S +0.092 at (Tw 0.5, Ts 0.5) h, p 0.001; min group rho_W
+                -0.140 at (0.5, 0.5) h, p 0.001; both decline monotonically with longer time
+                constants. Per fly, rho_S at (0.5, 0.5) vs A's r_pre: Spearman +0.825.
+Matched null    A: all circular shifts (per fly) / 1000 random shifts (group) of each fly's wake
+                sequence; strata: 1000 within-1-h-bin permutations; count Binomial(n, 0.05). B:
+                1000 matched simulated sets. C, D: 1000 renewal surrogates per fly (identical in C
+                and D).
+Verdict         A per0 DD: r_pre SUPPORTED (Holm 0.002): a longer wake bout precedes a longer sleep
+                bout. Delta NOT SUPPORTED (Holm 0.74): no before/after asymmetry -- by the
+                pre-set and simulation-checked reading rule, a symmetric coupling of adjacent
+                bouts (the shared-slow-state pattern), NOT the homeostat signature. A profile
+                sets: coupling SUPPORTED in CS LD (Holm 0.0068) and CS DD (4.8e-12), read as
+                coupling, not homeostat (amendment); per0 LD uninformative (3 flies).
+                B: NOT SUPPORTED for per0 (Holm 1.00, 1.00): the B-Hetero concordance is what
+                the estimators produce on independent bouts.
+                C: descriptive only (no verdict, per the amendment).
+                D: SUPPORTED as amended (p 0.001): a short-memory variable links successive bouts.
+                Its optimum at the shortest time constants, and its per-fly agreement with r_pre
+                (+0.825), say it is the adjacent-bout coupling of A, not multi-hour pressure.
+Not reportable  Do not call the per0 DD coupling homeostatic: Delta is flat, and coupling reaches
+                only the immediate neighbour (r_pre2 ~ 0), which a multi-hour pressure would not
+                do. Do not quote C's p-values as tests (over-rejecting, non-specific). Do not
+                present the earlier "B and spread go together, so a slowly drifting rate" reading
+                (session discussion, not a ledger result): B refutes it for per0. per0 LD carries
+                no result. The shared-slow-state model was simulated with one structure (a
+                per-cycle AR(1)); a symmetric coupling confined to adjacent bouts is a different
+                pattern from that model's (whose coupling also reaches further), so "shared slow
+                state" names the reading rule's category, not a fitted mechanism.
+```
