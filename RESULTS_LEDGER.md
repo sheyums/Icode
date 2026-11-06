@@ -209,3 +209,45 @@ Not reportable  Do not quote sleep UpFraction p = 0.020 as significant; it fails
                 memory here is NEGATIVE at lag 1 (-0.06), which was not simulated. The six
                 12_29_2017 plain files were used whole (see the PRESPEC's open point).
 ```
+
+### 2026-11-05  CS LD: time arrow beyond the day/night profile
+
+```
+Commit          4426e08 (Icode branch claude/shifted-lognormal-mle-wc03ob: BoutIrreversibility with
+                the strata null) with the analysis folder's scoring code (process_LocomToSleep,
+                extractBoutsForModelCompetition; unchanged since its commit 23240e7); run from the
+                Icode folder behind the which/pwd assert, MATLAB R2026a, 2026-11-05.
+Script          run_csld.m, session scratch, not in the repo
+Prespec         2026-11-05 "CS LD: is there a time arrow in successive bouts beyond the day/night
+                profile?" (committed 58ac4d7 before the run)
+Time window     Each fly's whole record (4-5 days, 12:12 LD, from ZT0; DataStartZT = 0 checked),
+                one block per fly; strata = 1-h ZT bins of onset. The count pools the 40 flies.
+n               40 of 40 flies passed the pipeline and the >= 40-bout rule for both types. Sleep:
+                98-234 bouts per fly (median 178); wake 97-233 (median 177). Bouts in time order
+                (checked). 95-100% of bouts per fly sit in a stratum with at least one other bout.
+Result          PRIMARY, flies with per-fly UpFraction p < 0.05 vs their own strata null, lag 1:
+                  sleep 1 of 40 (count p 0.87), wake 0 of 40 (count p 1.00). 2 expected by chance.
+                Lags 2, 4, 8: sleep 3, 2, 2; wake 1, 2, 2 (count p >= 0.32 everywhere).
+                Median per-fly UpFraction minus its own strata-null mean, lag 1: sleep +0.0072,
+                wake +0.0021.
+                Clock-blind nulls, group mean (NOT for a verdict; shown to be fooled by the
+                profile): sleep UpFraction 0.5107 at lag 1, IAAFT p 0.004, shuffle p 0.002; wake
+                0.4996, IAAFT p 0.88.
+                Memory: group Rho at lag 1 sleep 0.152, wake 0.094 -- larger than per0 DD (0.028,
+                -0.060) -- but only 2 (sleep) and 1 (wake) flies keep significant memory against
+                the strata null; median Rho minus strata-null mean +0.02 (sleep), +0.04 (wake).
+                Bowley vs strata, flies significant at lag 1: sleep 3, wake 3 (descriptive; its
+                per-fly null rate was measured at about 0.068).
+Matched null    Per fly, 1000 surrogates permuting its own bouts within 1-h ZT bins across its
+                days (same bouts, same time-of-day profile); count against Binomial(40, 0.05).
+Verdict         NOT SUPPORTED for either bout type (Holm 1.00 and 1.00): no time arrow beyond the
+                day/night profile detected by the per-fly count.
+Not reportable  Do not quote the IAAFT/shuffle sleep p = 0.004 / 0.002 as a time arrow: on
+                LD-like simulated flies the profile alone made those nulls reject 0.07-0.135 per
+                fly, and their group mean is exactly where that bias accumulates. Do not read this
+                null as contradicting per0 DD wake: the count is far weaker (per-fly power 0.535
+                against a strong simulated arrow; an effect of per0's size, 2/48 flies, is
+                invisible to it), so the two results are not comparable. "Memory is mostly the
+                profile" is descriptive (no pre-specified test). Teliminate = 0: the first,
+                possibly less entrained, day is included.
+```
