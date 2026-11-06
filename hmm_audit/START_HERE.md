@@ -1,4 +1,20 @@
-# START HERE (for lClaude or anyone writing the MATLAB functions) — state as of 2026-10-31
+# START HERE
+
+**Reading to understand the science (added 2026-11-06), not to implement it:**
+1. The report, "The Measured Sleep-Wake Cycle" (claude.ai artifact 2JFn62CYxDRbgfn8pTzpcZ): every finding in one
+   sentence and one figure, with a physics and a neurobiology reading. Its first section, "The story", is the paper's
+   three-act structure.
+2. `PLANS.md`: "The story" (the acts, with the HMM's role in each) and the claim list C1-C14.
+3. `DRAFT_HMM_motivation.md`, `DRAFT_act2_loops.md` and `DRAFT_act3_C14.md`: draft paper text.
+4. `RESULTS_LEDGER.md`: the record behind every number. Look up entries by PRESPEC number; it is long and
+   append-only, so later corrections follow earlier entries.
+Time-reversal asymmetry in brief: C2-C5 (the directed W->Q->S->W cycle, flux, affinity, entropy production), C9/C9*
+(irreversibility beneath the observed chain, dwell times that depend on the direction of travel) and C13 (the
+asymmetry in raw 1-s activity: flies wind down gradually and wake abruptly).
+
+---
+
+# Implementation guide (for lClaude or anyone writing the MATLAB functions) — state as of 2026-10-31
 
 This folder holds several weeks of analysis history. Most of it is RECORD, not instruction. For the paper (Plan A)
 read only the files marked CURRENT, in this order. Where an older file disagrees with a CURRENT one, the CURRENT one
