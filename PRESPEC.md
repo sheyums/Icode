@@ -257,3 +257,110 @@ Notes           Purpose: a model-free check of the "noise skew is irreversibilit
                 If any plain file in fact opens with non-DD days, those days are inside its
                 block.
 ```
+
+### 2026-11-05  CS LD: is there a time arrow in successive bouts beyond the day/night profile?
+
+```
+Question        In wild-type (Canton-S) flies in 12:12 light:dark, are successive bouts of the
+                same type asymmetric in time BEYOND what each fly's own time-of-day profile
+                produces -- i.e. does bout order carry an arrow that the light cycle and clock
+                do not explain?
+Data            CS, LD 12:12, raw per-second beam counts in
+                C:\Users\sheyu\Box\HMM paper_Activity based\different genotypes activity data\CS ld
+                (read only). All 40 files, every one a "_from1stLD" file; each is one fly read
+                from its FIRST sample, which is ZT0 (Sheyum, 2026-11-05). Checked before writing
+                this entry: 40 distinct recordings (content hashes all differ; no file's first
+                day occurs inside another), and in all 8 experiments the largest 15-min activity
+                bins fall within 30 min after ZT0 and ZT12 -- the lights-on and lights-off
+                startles -- consistent with a ZT0 start. Files are copied unchanged into one
+                staging folder. Name ("_from1stLD.txt" omitted), days, SHA-256 prefix:
+                  10_1_2020_4b_rc2_pruned_55.txt         4.00  065FFA25C770DF19
+                  10_5_2017_multibeam_pruned2_11.txt     5.00  F47A9793561E1DFF
+                  10_5_2017_multibeam_pruned2_20.txt     5.00  4E4A8F876533B76D
+                  10_5_2017_multibeam_pruned2_21.txt     5.00  804C786C4955817E
+                  10_5_2017_multibeam_pruned2_23.txt     5.00  DAACD5A8F11F12CD
+                  10_5_2017_multibeam_pruned2_24.txt     5.00  0B2A51496EE80E99
+                  10_5_2017_multibeam_pruned2_27.txt     5.00  09900A9B1BFE23A4
+                  10_5_2017_multibeam_pruned2_29.txt     5.00  7BA4308969B6D1D5
+                  10_5_2017_multibeam_pruned2_30.txt     5.00  8FBE79BA2DAAAB59
+                  10_5_2017_multibeam_pruned2_32.txt     5.00  0C506A9B5BFF6280
+                  10_5_2017_multibeam_pruned2_4.txt      5.00  37D7F3F078549456
+                  10_5_2017_multibeam_pruned2_9.txt      5.00  220646F92DB64F97
+                  6_30_2017_multibeam_pruned10.txt       5.00  A6673E46C5985731
+                  6_30_2017_multibeam_pruned11.txt       5.00  6DBF1878C7B5C325
+                  6_30_2017_multibeam_pruned13.txt       5.00  6B7BE34FDD45F526
+                  6_30_2017_multibeam_pruned6.txt        5.00  F07B9D48460878EC
+                  6_30_2017_multibeam_pruned7.txt        5.00  9C6C972A81D48117
+                  6_30_2017_multibeam_pruned9.txt        5.00  34BBAE255F5E29EA
+                  6_9_2017_mb_pruned10.txt               5.00  280938BDDB3ACD3B
+                  6_9_2017_mb_pruned15.txt               5.00  F7F5DB9302410443
+                  6_9_2017_mb_pruned6.txt                5.00  EA8F9F4D22D40AEE
+                  6_9_2017_mb_pruned8.txt                5.00  AF186CA3643F9B49
+                  7_10_2017_multibeam_pruned15.txt       5.00  FD705DE7D0F9A62E
+                  7_10_2017_multibeam_pruned5.txt        5.00  BA99998D8D5F7A49
+                  7_10_2017_multibeam_pruned7.txt        5.00  69D8079519E9E2DE
+                  7_10_2017_multibeam_pruned9.txt        5.00  F206A18D19E54F63
+                  7_19_2018_2boardmb_pruned_24.txt       4.00  88EEC651D3F68100
+                  7_19_2018_2boardmb_pruned_27.txt       4.00  0F881EB8C5FE3EE1
+                  7_19_2018_2boardmb_pruned_29.txt       4.00  8EC51C265D191D1F
+                  7_19_2018_2boardmb_pruned_31.txt       4.00  57FF785A981253A2
+                  8_25_2017_multibeam_pruned25.txt       5.00  6982E8E396F3E25E
+                  8_25_2017_multibeam_pruned26.txt       5.00  954313FD0BCCBF28
+                  8_25_2017_multibeam_pruned28.txt       5.00  AB22ED4D6A31C341
+                  8_25_2017_multibeam_pruned31.txt       5.00  E097376D7717C3B7
+                  8_25_2017_multibeam_pruned32.txt       5.00  478FB83C5FE3B5CE
+                  9_29_2017_multibeam_pruned2_10.txt     5.00  BE763A5F7F663D18
+                  9_29_2017_multibeam_pruned2_6.txt      5.00  B8778313A57A812E
+                  9_29_2017_multibeam_pruned2_7.txt      5.00  DEED7E8FB1F3D3F0
+                  9_29_2017_multibeam_pruned2_8.txt      5.00  B65DC8429F44835F
+                  9_29_2017_multibeam_pruned2_9.txt      5.00  74EB8F2CC1ED1813
+Time window     Each fly's whole retained record as ONE block (4-5 days); pairs DO span lights-on
+                and lights-off, because the null keeps every position's time of day and so
+                carries the transitions. Strata are 1-h ZT bins of bout onset. The fly's whole
+                record is the narrowest block of every per-fly number; the count pools flies.
+Fixed choices   Scoring: process_LocomToSleep(timeInterval=1, segmentMode=1, Teliminate=0,
+                startZT=0, dayLength=24, daytime=12, nighttime=12, deadThresh=12, minDays=3,
+                bridgeWakeSeconds=1, selectAll=true) on the staging folder; then
+                extractBoutsForModelCompetition(S, "entire", "sleep") and (S, "entire", "wake").
+                Sleep >= 300 s, wake >= 2 s. Assert OnsetBins strictly increase along every row.
+                A fly enters a bout type's analysis if it has >= 40 bouts of that type.
+                Strata: bout onset ZT = mod((OnsetBins - 1)*1/3600 + 0, 24) hours, stratum =
+                floor(ZT), i.e. 24 one-hour bins, built separately for sleep and wake.
+                Test: BoutIrreversibility(bouts, Strata=strata, Lags=[1 2 4 8],
+                NumSurrogates=1000, Null="both", Seed=1, MinPairs=20), sleep and wake run
+                separately. Code: Icode at the commit adding the strata null or later, run from the
+                Icode folder behind assert(isequal(fileparts(which('BoutIrreversibility')), pwd)).
+Decision rule   PRIMARY (2 tests): for sleep and for wake, the number of flies whose per-fly
+                UpFraction p at lag 1 against the STRATA null is < 0.05, against
+                Binomial(NFlies, 0.05), upper tail (UpFraction_CountP_Strata). Holm across the two
+                at family-wise 0.05. A rejection: order beyond the day/night profile carries an
+                arrow in more flies than chance; report how many flies, and in which direction
+                (UpFraction above or below its strata null). No rejection: no arrow beyond the
+                profile detected by this per-fly count. That is a finding, not a cue to change
+                strata, lags or blocks.
+                SECONDARY, descriptive, no correction: lags 2, 4, 8 (same count); per-fly Bowley
+                against the strata null (number of flies only, no count p -- its per-fly rate
+                under the null was measured at about 0.068); memory beyond the profile (per-fly
+                Rho against the strata null); the IAAFT and shuffle results, reported as what a
+                clock-blind test says, NOT used for any verdict (measured to be fooled by the
+                profile: per-fly UpFraction rejection 0.070-0.135 on reversible LD-like flies).
+Matched null    Per fly, 1000 profile-matched surrogates: the fly's own bouts permuted only among
+                positions in the same 1-h ZT bin, across all its days. Same n, same bouts, same
+                time-of-day profile. The count's null is Binomial(NFlies, 0.05).
+Notes           Why per-fly counts and not a group mean: the strata null's group mean was
+                measured to over-reject (0.15-0.18 on 10-fly LD-like groups) because permuting
+                within ZT bins cuts the link between a bout's length and the next bout's onset
+                time; the count was measured calibrated for UpFraction (0.030 on 40-fly groups,
+                2.06 flies significant on average against 2.00 expected). Sheyum chose per-fly
+                tests over building a timeline-regenerating null (2026-11-05).
+                POWER: the count is far weaker than the per0 DD group-mean test. Per-fly power
+                was 0.535 against a strong simulated arrow; an effect the size of per0 wake (one
+                percentage point of increases, 2 of 48 flies individually significant) would be
+                invisible here. A null result here therefore does NOT contradict per0 DD, and the
+                two results are not directly comparable. For comparison only, the per0 DD per-fly
+                counts at lag 1 were sleep 4/48 and wake 2/48 (IAAFT null, not strata).
+                ASSUMPTION for review: Teliminate=0 (no entrainment trim), reading from ZT0 as
+                for per0 DD; the 2026-08-30 CS work used Teliminate=24. Calibration was simulated
+                for sleep bouts only, with one profile shape; wake bouts and other profiles were
+                not simulated. Nothing handles censoring.
+```
