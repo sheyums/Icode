@@ -2538,3 +2538,14 @@ Flies: silenced 64 (7 died, 5 excluded), control 64 (11 died, 10 excluded); 8 da
   day (+0.17, Holm 0.025).
 - Reading (rule: "sleep only"): EPG silencing slightly raises daytime sleep by routing quiet wake toward sleep
   rather than active wake. The S/Q/W cycle's direction, flux and dissipation do not change detectably.
+
+## 2026-11-06 POST HOC (Sheyum's question): size of the 20y dFB night-flux effect, and dFB against VNC
+Descriptive effect sizes; not a test of any claim.
+Dark count J medians: dFB +0.188, control +0.083, VNC +0.031 cycles/h.
+- dFB vs control: Cliff +0.34, 72% of dFB flies above the control median (pre-specified MW p 0.055, Holm 0.66).
+- VNC vs control: Cliff -0.23 (p 0.17).
+- dFB vs VNC (POST HOC, same experiment and background): Cliff +0.45, MW p 0.0036. Light phase: nothing (all |Cliff|
+  <= 0.22).
+Wording agreed for the paper: dFB silencing is accompanied by a large but statistically unconfirmed increase in
+night-time cycle flux, opposite in direction to VNC silencing. 23E10 (PRESPEC 24) did not confirm it, but that cross
+also failed to reduce sleep, so it is a weak test of the hypothesis.
