@@ -2506,3 +2506,23 @@ Days 0-3: silenced flies sleep MORE, not less (light +2.6 min/h, p 0.0005; dark 
 group sleeps more than the control in every light phase and in dark phases 0-4. Days 4-7: the difference shrinks
 (light +0.9, p 0.066; dark +0.3, p 0.57); the control's sleep rises over the recording (dark 47.0 -> 52.6). There is no
 sign of a sleep reduction in any day or phase. Answer: no sleep reduction in the first 4 days either.
+
+## PRESPEC 23 — Shaker minisleep (2026-11-06; PRESPEC 8571978, committed before computing any behaviour; code sqw23.py, this commit; s23_shmns.json, fig23_shmns)
+64 flies, none died or were excluded; days used: 4 (42 flies), 3 (7), 2 (15).
+```
+light: n 58 (3 no cycle) | sleep 8.8 min/h | J median -0.042, J<0 in 76% | Wilcoxon p 0.00017, Holm 0.00034 | c_obs median -0.077 | E_S-E_Q +0.59 [+0.22,+1.18]
+dark : n 64 (2 no cycle) | sleep 16.4 min/h | J median -0.013, J<0 in 52% | Wilcoxon p 0.24, Holm 0.24 | c_obs -0.003 | E_S-E_Q -0.05 [-0.32,+0.18]
+C14 (Holm over 4): sleep vs c_obs light +0.06, dark -0.12; sleep vs J light -0.17 (p 0.21), dark -0.09; all Holm >= 0.83
+Onsager L: Sh^mns 0.282 [0.224,0.321] vs CS 0.272 [0.230,0.307], diff +0.010, p 0.79
+```
+- Decision rule: "Sh^mns REVERSES the cycle by day, like sss" (P1 Holm 0.0003, median J < 0). No net direction at night,
+  also like sss.
+- C14 holds within Sh^mns: direction does not depend on sleep amount. The day J-sleep slope is negative (-0.17, n.s.),
+  the same sign as sss.
+- Unlike sss, the Onsager conductance is NOT lowered (equal to CS). The reversal is therefore not tied to low
+  conductance.
+- Sleep well by day is shallow (E_S - E_Q > 0), as in fumin and sss.
+- Reading: two mutants that reduce Shaker function (sss, a Shaker regulator; Sh^mns, the channel itself) both reverse
+  the cycle by day. fumin, a short sleeper through dopamine, runs it forward. This is consistent with the daytime
+  reversal following the Shaker pathway and not short sleep. Caveat: comparisons with CS, fumin and sss cross
+  recording runs and years.
