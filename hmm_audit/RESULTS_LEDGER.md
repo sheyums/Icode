@@ -2526,3 +2526,15 @@ Onsager L: Sh^mns 0.282 [0.224,0.321] vs CS 0.272 [0.230,0.307], diff +0.010, p 
   the cycle by day. fumin, a short sleeper through dopamine, runs it forward. This is consistent with the daytime
   reversal following the Shaker pathway and not short sleep. Caveat: comparisons with CS, fumin and sss cross
   recording runs and years.
+
+## PRESPEC 28 — R60D05 (EPG) > Kir2.1 vs > Kir2.1-NC (2026-11-06; PRESPEC 25110ce, committed before computing any behaviour; code sqw28.py = sqw24.py with paths, this commit; sqw28.log, s28_epg.json, fig28_epg_J)
+Flies: silenced 64 (7 died, 5 excluded), control 64 (11 died, 10 excluded); 8 days for 58 / 53.
+- PRIMARY (c_obs, J, EPR x light/dark, Holm 6): NO CHANGE (all Holm 1). J dark +0.021 [-0.010, +0.042], p 0.41;
+  J light 0.000. As with 23E10, this background's night-time cycle is near zero in both groups.
+- Sleep: day +3.2 min/h (49.6 vs 46.4; Holm 0.004); night unchanged. Silencing did not reduce sleep.
+- Transitions by day: quiet wake -> active wake DOWN (-0.036, Holm 0.002), quiet wake -> sleep UP (+0.013, Holm
+  0.012). Others Holm >= 0.18.
+- Landscape (depths): E_Q - E_W lower by day and night (-0.16, Holm 0.002; -0.21, Holm 0.008). E_Q - E_S deeper by
+  day (+0.17, Holm 0.025).
+- Reading (rule: "sleep only"): EPG silencing slightly raises daytime sleep by routing quiet wake toward sleep
+  rather than active wake. The S/Q/W cycle's direction, flux and dissipation do not change detectably.
