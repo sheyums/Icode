@@ -384,3 +384,32 @@ Not reportable  Do not call the per0 DD coupling homeostatic: Delta is flat, and
                 pattern from that model's (whose coupling also reaches further), so "shared slow
                 state" names the reading rule's category, not a fitted mechanism.
 ```
+
+### 2026-11-06  E. Mean reversion of cumulative sleep (variance-time), per0 DD
+
+```
+Commit          e327aab (SleepVarianceTime, RenewalSurrogate) on the bouts of the 2026-11-06 homeostat
+                run (same scoring, 48 flies, contiguous, strictly alternating); MATLAB R2026a.
+Script          homeo_run/run_E.m, session scratch, not in the repo
+Prespec         2026-11-06 entry E (committed 06b38b9 before the run)
+Time window     Each fly's whole record (3-7.9 days), one block; scales 1-24 h within it.
+n               48 flies; 1000 renewal surrogates per fly (the same as entries C and D).
+Result          Group mean Slope -0.0089; one-sided p (reversion) 0.903; persistence tail 0.098.
+                Per-fly slope median +0.002 (IQR -0.084 to +0.141); 5/48 flies p < 0.05 for
+                reversion; 10/48 slopes below -0.10.
+                Mean logR at 1, 2, 4, 8, 16, 24 h: -0.122, -0.209, -0.280, -0.265, -0.197, -0.183.
+                For comparison (calibration medians): independent bouts -0.002 ... -0.160 (the
+                log-variance bias); homeostat -0.10 ... -1.16; shared slow state -0.05 ... -0.24.
+                Runs (descriptive): mean Z sleep +0.18 (p 0.18), wake +0.36 (p 0.010).
+Matched null    Renewal surrogates of each fly's own bouts; group null from the surrogate index.
+Verdict         NOT SUPPORTED: no mean reversion that GROWS with timescale (Slope ~ 0, p 0.90);
+                by the pre-set rule nothing here is homeostat-like.
+Not reportable  The logR profile (descriptive, not a test): the surplus varies LESS than the renewal
+                null already at 1-8 h (-0.12 to -0.28, against the null's own bias of -0.002 to
+                -0.05 there), then the gap narrows towards 24 h. That shape -- reduced variability
+                at a few hours that does not keep growing -- is what the Slope cannot see, and it
+                must not be reported as a test result: it was looked at after the primary failed.
+                It may be the short-range reversion of entries C (dip at 1-1.5 h) and of the wake
+                runs; a scale-specific test would need its own pre-specified entry. The runs test
+                is non-specific (a shared slow state triggered it every time).
+```
