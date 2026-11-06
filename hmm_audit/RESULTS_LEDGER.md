@@ -2497,3 +2497,5 @@ difference in mortality is noted. Genotype is confounded with monitor (4brc2 vs 
   changes are about 1/7 of the dFB split's (dark J +0.016 vs +0.104).
 - Reading: the 20y dFB night-flux hint is NOT replicated in this background. Silencing 23E10 makes wake more labile
   (more wake-to-quiet and wake-to-sleep switching) without reducing sleep, and in a near-cycle-free background.
+
+2026-11-06 PRESPEC 24 note: Sheyum confirmed the 23E10 flies are males in LD 12:12 (the PRESPEC assumption).
