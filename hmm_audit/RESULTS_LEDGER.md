@@ -2499,3 +2499,10 @@ difference in mortality is noted. Genotype is confounded with monitor (4brc2 vs 
   (more wake-to-quiet and wake-to-sleep switching) without reducing sleep, and in a near-cycle-free background.
 
 2026-11-06 PRESPEC 24 note: Sheyum confirmed the 23E10 flies are males in LD 12:12 (the PRESPEC assumption).
+
+## 2026-11-06 POST HOC (Sheyum, after PRESPEC 24's result): 23E10 sleep, day by day (sqw24_days.py)
+Not pre-specified. Reported for every day, so no window is chosen after looking. Uncorrected Mann-Whitney.
+Days 0-3: silenced flies sleep MORE, not less (light +2.6 min/h, p 0.0005; dark +2.1, p 0.038). Per day, the silenced
+group sleeps more than the control in every light phase and in dark phases 0-4. Days 4-7: the difference shrinks
+(light +0.9, p 0.066; dark +0.3, p 0.57); the control's sleep rises over the recording (dark 47.0 -> 52.6). There is no
+sign of a sleep reduction in any day or phase. Answer: no sleep reduction in the first 4 days either.
