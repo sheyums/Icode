@@ -2,6 +2,8 @@
 
 **ANALYSIS FREEZE 2026-11-01** (ledger): no new PRESPEC unless a referee asks or the controlled deprivation experiment is run.
 
+**Multiple-comparison policy (Sheyum, 2026-11-07):** Holm for primary, confirmatory families (small; their claims carry the paper). In FUTURE PRESPECs, BH may be pre-specified for large exploratory families (e.g. transition-by-transition screens). Analyses already run keep their pre-specified correction; BH q may be shown only as a labelled sensitivity column. For our small families the smallest p gets the same m*p adjustment under both methods, so no headline depends on the choice.
+
 **Status 2026-11-01.** Plan A and Plan B are merged into ONE paper (Sheyum). The final claim list is C1-C13 below;
 the paper outline is in 'The merged paper' at the end. Plan B's per-fly regulator model failed feasibility (20t F1,
 F5); its group-level tests 1-4 have run (planB-feasibility, RESULTS_LEDGER_planB.md); test 5 is a Discussion
