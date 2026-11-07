@@ -2549,3 +2549,37 @@ Dark count J medians: dFB +0.188, control +0.083, VNC +0.031 cycles/h.
 Wording agreed for the paper: dFB silencing is accompanied by a large but statistically unconfirmed increase in
 night-time cycle flux, opposite in direction to VNC silencing. 23E10 (PRESPEC 24) did not confirm it, but that cross
 also failed to reduce sleep, so it is a weak test of the hypothesis.
+
+## PRESPEC 29 — fly-to-fly heterogeneity of direction (2026-11-07; PRESPEC ee691ad, committed before running; code sqw29.py, this commit; sqw29.log, s29_hetero.json, fig29_retest)
+T1 = test-retest Spearman of per-fly J, days {0,2} vs {1,3}. T2 = between-fly SD of whole-record J against 500
+cohorts simulated from the genotype-pooled chain.
+```
+block         | OBS T1 rho (n) p       | T2 SD obs vs null, p | HIDDEN T1 rho (n) p
+sss light     | +0.17 (50) p 0.12 Holm 0.48 | 0.082 vs 0.080, p 0.43 Holm 0.61 | +0.38 (54) p 0.0025 Holm 0.0025
+Sh^mns light  | +0.11 (58) p 0.20 Holm 0.61 | 0.113 vs 0.097, p 0.29 Holm 0.61 | +0.70 (64) p 0.0001 Holm 0.0002
+sss dark      | +0.21 p 0.058 | p 0.32 | +0.50 p 0.0001
+Sh^mns dark   | +0.18 p 0.071 | p 0.29 | +0.67 p 0.0001
+CS light/dark | +0.05 / +0.16 (n.s.) | p 0.33 / 0.084 | +0.09 / +0.70
+CS DD         | +0.43 p 0.017 | 0.108 vs 0.073, p 0.004 | (no fits)
+per0 LD L/D   | +0.10 / +0.21 (n.s.) | p 0.028 / 0.048 | +0.26 / +0.61
+per0 DD       | +0.52 p 0.004 | 0.156 vs 0.086, p 0.002 | +0.65
+fumin L/D     | +0.25 p 0.04 / +0.15 | p 0.45 / 0.012 | +0.51 / +0.57
+```
+- PRIMARY (observed, Holm 4): sss light and Sh^mns light show NO fly-to-fly differences (all Holm >= 0.48). By rule:
+  "the spread of directions is what one shared process gives at this record length". sss is "not resolved" (2-day
+  records).
+- The apparent split into forward and backward flies in sss and Sh^mns is sampling noise around one weak backward
+  bias: a fly's direction on days 0 and 2 does not predict it on days 1 and 3.
+- Reference: stable individual differences exist in constant darkness (CS DD rho +0.43, per0 DD +0.52, both with
+  excess spread). They are differences in RATE around a forward median (80% of flies forward), not distinct
+  directions: a 1- vs 2-component mixture prefers one group (descriptive).
+- HIDDEN T1 is high everywhere (+0.38 to +0.70), including blocks with no observed reliability (CS dark, Sh^mns). It
+  is NOT interpretable as fly-to-fly differences: each fly's HMM is fitted on its whole record, so both halves'
+  posterior paths share the fly's fitted transition matrix, which correlates them by construction (shared
+  estimation). The PRESPEC did not anticipate this. A valid hidden-level test would refit the HMM separately on each
+  half, or calibrate against cohorts simulated from a common chain and fitted the same way. Not run.
+- Descriptive, outside the decision rule (which requires T1 and T2): a mixture fit on Sh^mns light per-fly J prefers
+  2 components (BIC -97.7 vs -88.6). With no reliability and no excess spread, this reflects the shape of noisy values
+  (tails), not established groups.
+- The old per0 "two groups": at the observed level, per0 LD shows no test-retest reliability (rho +0.10 / +0.21), and
+  per0 DD's reliable differences are in rate around a forward median. There is no support for direction groups.
