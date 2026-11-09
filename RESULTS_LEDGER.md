@@ -469,3 +469,38 @@ Not reportable  This is largely guaranteed by construction (the randomized PIT m
                 biology. It does not test time reversal, and says nothing about wake bouts or other
                 genotypes (not in the export).
 ```
+
+### 2026-11-09  H. Long sleep bouts cluster beyond the collaborator's Gaussian latent AR(1); short ones do not
+
+```
+Commit          61a040d (PRESPEC only; self-contained MATLAB script on his export); MATLAB R2026a.
+Script          F_run/run_H.m (+ fig_H.m), session scratch, not in the repo
+Figure          extreme_bout_clustering_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry H (committed 61a040d before the run)
+Time window     His CS LD day and night phases; pairs of consecutive sleep bouts within one phase
+                segment of one fly (narrowest block).
+n               Day 56 flies (median 113 bouts), night 55 (median 85); 200 fitted and 200 phi0
+                replicates per fly; 1000 within-fly permutations.
+Result          Group mean C (1 = no clustering), observed | fitted [2.5-97.5%] | phi0 | shuffle:
+                day upper 10%   1.880 | 1.155 [0.921-1.398] | 0.912 | 0.913   p 0.0100 (MC floor)
+                day lower 10%   0.964 | 1.169 [0.922-1.365] | 0.919 | 0.918   p 0.0995
+                night upper 10% 1.402 | 1.059 [0.790-1.318] | 0.881 | 0.886   p 0.0100 (MC floor)
+                night lower 10% 0.993 | 1.088 [0.860-1.308] | 0.901 | 0.893   p 0.4478
+                PRIMARY Holm: day upper 0.040, night upper 0.040, day lower 0.199, night lower 0.448.
+                Descriptive 20% tails: upper day 1.365 vs 1.111 (p 0.010), night 1.463 vs 1.056
+                (0.010); lower day 0.989 vs 1.114 (0.040), night 0.970 vs 1.058 (0.159).
+                Per fly (secondary, low power): upper 4/56 day (Binomial p 0.31), 4/55 night (0.30);
+                lower 0/56, 0/55; observed above its fitted mean in 42/56 and 33/55 flies (upper),
+                24/56 and 23/55 (lower). Small-sample baseline without memory is ~0.9, not 1.
+Matched null    Each fly's own fitted-model simulations: same marginal, block lengths and n.
+Verdict         REJECTED for long bouts in both phases (observed beyond all 200 fitted groups): a
+                long sleep bout is followed by another long one ~1.9x (day) / ~1.4x (night) as often
+                as chance, against ~1.1x in his model. NOT REJECTED for short bouts, which sit at the
+                no-memory level, BELOW his model. The bout-to-bout dependence is asymmetric --
+                concentrated in long bouts -- whereas a Gaussian copula spreads its (tiny) phi
+                symmetrically over both tails. This qualifies ledger G: the Gaussian latent AR(1) fits
+                the residual moments but not the dependence of extremes.
+Not reportable  Cannot yet separate tail dependence from a slow drift within a phase segment (e.g.
+                long bouts concentrated at one time of night/day): both give clustered long bouts, and
+                onsets are not in the export. Not a time-arrow test; CS LD sleep only.
+```
