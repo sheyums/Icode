@@ -2586,3 +2586,6 @@ fumin L/D     | +0.25 p 0.04 / +0.15 | p 0.45 / 0.012 | +0.51 / +0.57
 
 ## 2026-11-09 Documents: Sh^mns added (no new results)
 PLANS: claim C15, act 3 row updated. SI (draft of 9 November): new S13 with Fig. S14 (fig23_shmns) and Fig. S15 (fig29_retest). Report: C15 finding after the sss reversal; act 3 row updated.
+
+## 2026-11-09 Methods V8 updated (no new results)
+Added: Shmns genotype and record handling, and the death rule (animals); R23E10 and R60D05 lines with non-conducting Kir2.1 controls (neurogenetics; Jenett et al. 2012); the 23E10 / EPG experiments, including the one-sided primary for R23E10 (silencing section); the clock decomposition, PRESPEC 27 (circadian section); fly-to-fly differences, PRESPEC 29, with the reason the hidden-level version is not reported (direction section).
