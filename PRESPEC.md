@@ -743,3 +743,26 @@ Notes           Expected from our bout-space results (not a decision rule): phi 
                 best-fitting family (GH vs shifted exponential) is NOT tested here: family choice is
                 not a skewness measure.
 ```
+
+### 2026-11-09  G. Collaborator's latent residuals: are they Gaussian, as his model assumes?
+
+```
+Question        In Shreenath's latent-AR(1) model of CS LD sleep bouts, do the observed latent
+                residuals (latent coordinate minus its AR(1) prediction) depart from the Gaussian
+                innovations the model assumes -- in skewness or tail weight -- beyond what his own
+                fitted-model simulations, scored identically, produce?
+Data            The export of entry F (same files; column latent_residual), day 56 / night 55 flies.
+Statistics      Per fly and phase: moment skewness and excess kurtosis of latent_residual, for the
+                observed sequence and for each of the 200 "fitted" replicates.
+Decision rule   PRIMARY (4 tests, Holm): per phase and statistic, the count of flies whose observed
+                value is outside its 200 fitted replicates (two-sided Monte Carlo p < 0.05), against
+                Binomial(n, 0.05). Rejection: the latent noise is not Gaussian in that respect, i.e.
+                the dependence between successive bouts is not the Gaussian (copula) kind.
+                SECONDARY, descriptive: mean skewness, excess kurtosis and SD (observed vs fitted vs
+                phi0); SD against sqrt(1 - phi^2).
+Matched null    Each fly's own fitted-model simulations (Gaussian innovations), same n and scoring.
+Notes           The randomized PIT makes each fly's latent MARGINAL Gaussian by construction, so a
+                departure can arise only from the dependence structure; with phi ~ 0.03 (entry F) the
+                expected outcome is no departure, and a null result confirms the construction rather
+                than adding biology. Skewness of latent residuals is not by itself a time arrow.
+```
