@@ -879,3 +879,46 @@ Notes           Memory and a fast state are not separable by any shuffle; a posi
                 survival under N4 is the closest this design comes to memory. The two primary
                 readings may disagree; both are reported.
 ```
+
+### 2026-11-09  K. Is the clock-free slow variation of sleep-bout length a trend or a fluctuating state?
+
+```
+Question        Entries I and J: in per0 DD, long sleep bouts cluster because the typical bout
+                length differs between 12-h stretches of the record. Is that a TREND (bouts
+                steadily lengthen or shorten over the record, e.g. habituation, food, age; or a
+                first-day effect common to flies) or a FLUCTUATING STATE (stretches of consolidated
+                and fragmented sleep that come and go)?
+Data            As entries I and J (homeo_results.mat): per0 DD 48 flies (2.97-7.89 days, median
+                5.91; median 193 sleep bouts), sleep bouts only, y = log(duration in s), t = onset
+                in days from the record start, 12-h segments from the record start. CS LD 40 flies
+                descriptive only (day-phase and night-phase series separately; segments = phase
+                segments).
+Statistics      TREND: per fly, least-squares slope b of y on t. Group: mean b; null = random sign
+                flips of the per-fly slopes (10000; flies independent), two-sided. Effect reported
+                as exp(mean b) - 1 per day.
+                FLUCTUATION: per fly, residuals of y after (i) the fly's own linear trend in t and
+                (ii) the common time course (group mean of the per-fly segment means, by segment
+                index); V = variance over segments (>= 3 bouts) of the segment means of those
+                residuals. Null: durations permuted within fly (positions fixed), then the SAME
+                detrending (own trend refitted, common course recomputed from the permuted group),
+                1000 permutations (Seed 3, substream = fly). Per fly logRatio = log(V / mean null
+                V); group mean logRatio against the null group means, one-sided (greater).
+Decision rule   PRIMARY (2 tests, per0 DD, Holm): 1 trend; 2 fluctuation.
+                Fluctuation SUPPORTED -> a state that comes and goes beyond any per-fly linear drift
+                and any time course shared by the flies (incl. a first-day effect). Trend only ->
+                the clock-free "state" is a drift. Neither -> the clustering of I/J came from
+                something else (reported as such).
+Calibration     Run in the same script BEFORE the data, on simulated flies that keep each real
+                per0 fly's bout onsets and draw durations 300 s + Exp(fly mean - 300 s): (a)
+                stationary; (b) common linear trend +10%/day; (c) fly-specific trends, slopes
+                N(0, 0.1)/day; (d) common first-day step x1.5; (e) a fluctuating state, independent
+                level per 12-h segment, SD 0.3 in log mean (power). 100 groups x 199 permutations.
+                Rejection rate of the fluctuation test above 0.095 in any of (a)-(d) demotes it to
+                descriptive (stated in the ledger).
+SECONDARY       Descriptive: excess between-segment variance without any detrending vs after
+                detrending (share removed by trends); long-bout clustering C (entry H/I) on the
+                detrended durations vs their plain within-fly shuffle; dropping the first 24 h;
+                4-h segments; per0 split by record length (< 4 d vs >= 5 d); the same statistics
+                for CS LD day and night series; lag-1 correlation of successive segment levels.
+Narrowest block One 12-h segment of one fly (fluctuation); the whole record of one fly (trend).
+```
