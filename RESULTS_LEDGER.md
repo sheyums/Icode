@@ -504,3 +504,37 @@ Not reportable  Cannot yet separate tail dependence from a slow drift within a p
                 long bouts concentrated at one time of night/day): both give clustered long bouts, and
                 onsets are not in the export. Not a time-arrow test; CS LD sleep only.
 ```
+
+### 2026-11-09  I. Long-bout clustering: time of day at night; beyond time of day by day; between 12-h stretches in per0 DD
+
+```
+Commit          d66e6df (PRESPEC only; script uses no repo function, data from homeo_results.mat of
+                the preliminaries entry); MATLAB R2026a.
+Script          I_run/run_I.m (+ fig_I.m), session scratch, not in the repo
+Figure          long_bout_clustering_source_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry I (committed d66e6df before the run)
+Time window     Pairs of consecutive sleep bouts within one 12-h segment of one fly (CS LD: day ZT
+                0-12 or night ZT 12-24 of one day; per0 DD: 12-h stretches from record start).
+n               CS LD 40 flies, per0 DD 48; 1000 permutations per null and fly; gaps per fly median 0.
+Result          Upper 10%, group mean C: observed | N1 ZT 1-h | N2 within-segment | N3 plain (p):
+                CS LD day    1.511 | 1.104 (0.016) | 1.183 (0.022) | 0.915 (0.002)
+                CS LD night  1.629 | 1.550 (0.663) | 0.797 (0.002) | 0.888 (0.002)
+                per0 DD      1.340 | 0.930 (0.002) | 1.290 (0.597) | 0.954 (0.002)
+                PRIMARY Holm: CS LD day vs N1 0.032; CS LD night vs N1 0.663; per0 DD vs N3 0.006.
+                N1 at 2 h / 3 h (pre-specified sensitivity): day 1.086 (0.004) / 1.095 (0.002); night
+                1.499 (0.51) / 1.439 (0.27); per0 0.931 / 0.944 (0.002 both) -- same reading as 1 h.
+                Lower 10%: no clustering under any null (all p >= 0.19): day 0.817, night 1.079,
+                per0 1.041. Consecutive pairs sharing a 1-h bin on the same day: 0.53 day, 0.39
+                night, 0.44 per0.
+Verdict         CS LD NIGHT: the clustering is time of day -- fully reproduced by keeping each fly's
+                ZT profile (pooled across days), not by keeping each night's level. CS LD DAY:
+                survives the ZT profile and survives each day's level -> a slow state within the
+                day or bout-to-bout memory (not separable with these nulls). per0 DD: clustering
+                without a clock (Holm 0.006), fully reproduced by keeping each 12-h stretch's
+                level -> slow variation between half-days (a fly-specific state or a trend over
+                the record). Short bouts never cluster. Entry H (his export) is reproduced in our
+                flies under the plain shuffle.
+Not reportable  Day: a combined ZT-by-day null was not pre-specified; whether the day excess is
+                within-day slow drift or memory needs its own entry. per0 DD: half-day differences
+                cannot be split into trend (e.g. first day) vs fluctuating state here. Sleep only.
+```
