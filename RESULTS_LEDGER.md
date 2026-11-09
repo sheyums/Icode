@@ -646,3 +646,49 @@ Verdict         Reading "1 rejected, 2 not": after the first day per0 long bouts
 Not reportable  "Clock-free hours-scale state" -- not supported. The CS LD daytime within-day drift
                 (entry J) therefore has no clock-free counterpart in per0 at this power.
 ```
+
+### 2026-11-09  M. Neighbouring sleep and wake bouts: a coupling finer than 2 h, and long wake is followed (not preceded) by long sleep in per0 DD
+
+```
+Commit          6cdeca7 (PRESPEC only; script uses no repo function; data as entries I-L); MATLAB R2026a.
+Script          M_run/run_M.m (+ fig_M.m, diag_M.m), session scratch, not in the repo
+Figure          sleep_wake_coupling_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry M (committed 6cdeca7 before the run)
+Time window     per0 DD bouts from 24 h after the record start; CS LD whole records from ZT0. Pairs =
+                time-adjacent bouts within one 12-h block of one fly (narrowest block).
+n               per0 DD 48 flies, median 169 wake->sleep and 164.5 sleep->wake pairs per fly; CS LD 40
+                flies, median 170 / 174.5. 1000 permutations (Seed 5); sign flips 10000.
+Calibration     As pre-specified (100 groups x 199 permutations, 2000 flips), rejection R vs P / R vs
+                W2 / Dtail: per0 (a)-(d) all 0.00; CS LD (a) 0.01/0.01/0.00, (b)-(d) 0.00. All sizes
+                hold; no test demoted. FLAW FOUND AFTER THE RUN: the permutation seed was the same in
+                every simulated group, so the 100 groups were not independent and the near-zero
+                rates are not a size estimate. Unplanned check (diag_M.m), 150 per0 groups under (a)
+                with fresh seeds, 99 permutations: R vs P rejection 0.033 (null z SD 0.975), Dtail
+                0.020 -> both tests are calibrated, Dtail slightly conservative. POWER: (b) a shared
+                2-h state of SD 0.3 and (d) a homeostat of power 0.15 were essentially never
+                detected -- both are far weaker than the effects seen in the data.
+Result          per0 DD: coupling R 0.104 | P -0.000 (p 0.002) | S12 0.020 (p 0.002) | W2 0.047
+                (p 0.002). r_pre 0.113, r_post 0.096, Delta 0.017 (sign-flip p 0.53).
+                Dtail 0.537 [Cpre 1.85, Cpost 1.32], sign-flip p 0.007; flies > 0: 27/48.
+                Reverse tail (long sleep: wake after minus before) -0.44, p 0.028 (same direction:
+                long wake sits BEFORE long sleep; shares the long-long pairs, not independent).
+                CS LD: R 0.037 | P -0.000 (p 0.002) | S12 0.012 (p 0.004) | W2 -0.002 (p 0.002) | Z
+                -0.022 (p 0.002). r_pre 0.044, r_post 0.030, Delta p 0.46. Dtail 0.264 [1.52, 1.26]
+                p 0.33, 18/40 (descriptive); reverse tail +0.30 p 0.078.
+                PRIMARY Holm: all five 0.010 (per0 R vs P, per0 R vs W2, per0 Dtail, CS LD R vs P,
+                CS LD R vs W2).
+Verdict         Q1, reading "rejected vs W2": neighbouring sleep and wake bouts are coupled beyond
+                anything that shuffling within the same 2-h window keeps -- in per0 about half the
+                coupling (0.047 of 0.104) is the slow layer, the rest is at finer than 2 h. It is
+                symmetric (wake->sleep = sleep->wake), so it looks like a shared fast "tempo"
+                (consolidated vs fragmented stretches), not a one-way homeostat; the test cannot
+                tell a bout-to-bout dependence from a state lasting well under 2 h. In CS LD the
+                coupling is a third the size but likewise exceeds the 2-h and clock-hour shuffles.
+                Q2: in per0 DD after day 1, a long wake is followed by a long sleep 1.85x chance and
+                preceded by one 1.32x chance (Holm 0.010) -- a homeostat-direction asymmetry in the
+                tail, and a time-reversal asymmetry of the clock-free sleep/wake sequence. It is
+                carried by a subset of flies (27/48 positive). CS LD shows the same direction, not
+                significant (descriptive).
+Not reportable  "Bout-to-bout memory" as such (a sub-2-h state is not excluded). A bulk homeostat
+                (the symmetric correlation is not directional). A per-fly homeostat trait (27/48).
+```
