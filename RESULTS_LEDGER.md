@@ -413,3 +413,36 @@ Not reportable  The logR profile (descriptive, not a test): the surplus varies L
                 runs; a scale-specific test would need its own pre-specified entry. The runs test
                 is non-specific (a shared slow state triggered it every time).
 ```
+
+### 2026-11-09  F. Collaborator's latent-AR residuals: model adequacy and the memory effect on skewness
+
+```
+Commit          50beb18 (PRESPEC only; analysis is a self-contained MATLAB script on his export, no
+                Icode function used); MATLAB R2026a.
+Script          F_run/run_F.m, session scratch, not in the repo
+Prespec         2026-11-09 entry F (committed 50beb18 before the run)
+Time window     His CS LD day and night phases separately; each fly's sleep-bout residuals in a phase.
+n               Day 56 flies, 6215 observed residuals, 2,486,000 simulated; night 55 flies, 4623 and
+                1,849,200. 200 replicates per fly per version, all successful. phi median 0.036
+                (IQR -0.000 to 0.079) by day, 0.032 (-0.018 to 0.070) by night.
+Result          (1) Adequacy, flies whose observed moment skewness lies outside their 200 fitted-model
+                replicates (p < 0.05): day 0/56, night 0/55 (count p 1.00).
+                (2) Memory, mean moment skewness fitted vs phi0: day 2.035 vs 2.048 (difference
+                -0.013, -0.6%; 39/56 flies lower; sign-flip p 0.0004); night 1.839 vs 1.850 (-0.011,
+                -0.6%; 37/55; p 0.0012).
+                Descriptive: observed skewness mean 2.18 (day), 1.99 (night) -- close to the
+                exponential's 2. Bowley obs/fitted/phi0 day 0.304/0.315/0.310, night
+                0.210/0.220/0.217 (memory moves Bowley UP by 0.003-0.006). SD obs/fitted/phi0 day
+                1167/1145/1153 s, night 1757/1718/1730 s (memory lowers SD by 7-12 s, under 1%).
+Matched null    (1) each fly's fitted-model simulations, scored identically; (2) paired phi0 simulations.
+Verdict         (1) NOT REJECTED: the residuals' skewness is what his fitted model produces, in every
+                fly. (2) SUPPORTED in direction (Holm 0.0016 day, 0.0036 night): memory lowers the
+                moment skewness, but by 0.6%; the paired design detects a negligible effect.
+Not reportable  Do not write "memory reduces the skewness" without its size (0.6%, and Bowley moves
+                the other way). The GH-versus-shifted-exponential family change he observed cannot be
+                attributed to memory on this evidence: a 0.6% skewness change does not move a family
+                choice; the phi0 residuals share the same shape. The residuals are, to within 1%,
+                the empirical bout distribution re-centred -- the result of the bout-space analysis
+                (ledger 625dc08), reproduced in his framework. His scoring (bridging, record start)
+                is not stated in the export; 24 of his 56 flies overlap our CS LD set.
+```
