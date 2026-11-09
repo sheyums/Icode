@@ -922,3 +922,40 @@ SECONDARY       Descriptive: excess between-segment variance without any detrend
                 for CS LD day and night series; lag-1 correlation of successive segment levels.
 Narrowest block One 12-h segment of one fly (fluctuation); the whole record of one fly (trend).
 ```
+
+### 2026-11-09  L. per0 DD after the first day: does long-bout clustering survive, and on what timescale?
+
+```
+Question        Entry K: per0 DD half-day variation in sleep-bout length is mostly the first day
+                (acclimation) plus a ~2%/day decline. After the first 24 h, do long sleep bouts
+                still cluster -- and if so, is it slow drift between 12-h stretches, a clock-free
+                state lasting hours (within 12-h stretches but slower than ~2 h), or something
+                faster than 2 h (memory or a fast state)?
+Data            per0 DD 48 flies (homeo_results.mat, as I-K), sleep bouts with onset >= 24 h from
+                the record start (cutoff fixed here; 48 h reported alongside, never substituted).
+                Segments = 12-h stretches from the record start; pairs = consecutive sleep bouts
+                within one segment (narrowest block: one 12-h stretch of one fly).
+Statistic       C, upper 10% (entry H/I): thresholds from the fly's retained bouts. Lower 10%
+                descriptive. Lag profile C_k, k = 1..4.
+Nulls           1000 within-fly permutations of the durations, positions fixed (Seed 4, substream =
+                fly): P plain (all retained bouts); S12 within the same 12-h stretch; W2 within
+                the same 2-h window (floor(onset / 2 h)).
+Decision rule   PRIMARY (3 tests, Holm), two-sided Monte Carlo p of the group mean C:
+                  1 vs P   -- any clustering after day 1 (not robust to trends; descriptive of
+                             the data, not of mechanism);
+                  2 vs S12 -- clustering beyond differences between 12-h stretches;
+                  3 vs W2  -- clustering beyond drift slower than ~2 h.
+                Reading: 1 not rejected -> per0's clustering was acclimation; the clock-free
+                claim is dropped. 1 and 2 rejected, 3 not -> a clock-free state lasting hours.
+                3 rejected -> dependence faster than ~2 h (memory or a fast state; the lag profile
+                then reads which). 1 rejected, 2 not -> slow drift between stretches only.
+                SECONDARY: lag profile excess over S12 and Dlag = excess_1 - mean(excess_2..4)
+                (as J); lower tail; the 48-h cutoff; per-fly counts.
+Calibration     In the same script BEFORE the data, simulated flies on each real fly's retained
+                onsets, durations 300 s + Exp(m(t)), m from the fly's mean: (a) stationary; (b)
+                common trend -2%/day; (c) acclimation fading past 24 h, m x (1 + 0.5 exp(-t/0.75 d));
+                (d) fly-specific trends N(0, 0.1)/day; (e) POWER: a state, independent level per
+                3-h block, SD 0.3 in log mean. 100 groups x 199 permutations. P must hold size in
+                (a); S12 and W2 in (a)-(d); rejection above 0.095 where size is required demotes
+                that test to descriptive. Power in (e) reported.
+```
