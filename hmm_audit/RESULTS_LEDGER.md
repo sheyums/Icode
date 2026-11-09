@@ -2583,3 +2583,6 @@ fumin L/D     | +0.25 p 0.04 / +0.15 | p 0.45 / 0.012 | +0.51 / +0.57
   (tails), not established groups.
 - The old per0 "two groups": at the observed level, per0 LD shows no test-retest reliability (rho +0.10 / +0.21), and
   per0 DD's reliable differences are in rate around a forward median. There is no support for direction groups.
+
+## 2026-11-09 Documents: Sh^mns added (no new results)
+PLANS: claim C15, act 3 row updated. SI (draft of 9 November): new S13 with Fig. S14 (fig23_shmns) and Fig. S15 (fig29_retest). Report: C15 finding after the sss reversal; act 3 row updated.
