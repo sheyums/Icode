@@ -959,3 +959,54 @@ Calibration     In the same script BEFORE the data, simulated flies on each real
                 (a); S12 and W2 in (a)-(d); rejection above 0.095 where size is required demotes
                 that test to descriptive. Power in (e) reported.
 ```
+
+### 2026-11-09  M. Sleep-wake and wake-sleep pairs: what drives the coupling, and is there a before/after asymmetry after long wake?
+
+```
+Question        (Q1) Adjacent sleep and wake bouts are positively coupled (homeostat entry A: per0
+                DD r_pre +0.104, r_post +0.115). Is that coupling the same slow layer that makes long
+                sleep bouts cluster (entries I-L), or a bout-to-bout dependence that survives the
+                shuffle ladder? (Q2) A homeostat should act mainly after LONG wake bouts: is a long
+                wake bout followed by a long sleep bout more often than it is preceded by one? (A
+                before/after asymmetry is also a time-reversal asymmetry of the two-state sequence.)
+Data            homeo_results.mat (as I-L): per0 DD 48 flies, bouts with onset >= 24 h from the
+                record start; CS LD 40 flies, whole records from ZT0. Sleep >= 300 s, wake >= 2 s,
+                1-s scoring, 1-s bridging. Blocks: per0 12-h stretches from the record start; CS LD
+                phase segments (day ZT 0-12, night ZT 12-24 of one day). A PAIR = two bouts adjacent
+                in time (onset = previous onset + duration), both in the same block. pre = (wake,
+                following sleep); post = (sleep, following wake). Narrowest block: one 12-h segment
+                of one fly.
+Statistics      Q1: per fly, Pearson correlation of within-fly ranks (Spearman) for pre and post
+                pairs; coupling R = (r_pre + r_post) / 2; group mean R.
+                Q2: per fly, long = top 10% of the fly's retained bouts of that type (>= the
+                ceil(0.9 n)-th smallest). Cpre = P(sleep after a long wake is long) / P(sleep long);
+                Cpost = P(sleep before a long wake is long) / P(sleep long); Dtail = Cpre - Cpost
+                (positive = homeostat direction). Group mean Dtail.
+Nulls           Q1: sleep durations permuted among sleep bouts and wake durations among wake bouts,
+                independently, within fly, positions fixed, 1000 times (Seed 5, substream = fly):
+                P plain; S12 same block; W2 same 2-h window (floor(onset / 2 h)); for CS LD also
+                Z same 1-h ZT bin pooled over days (descriptive).
+                Q2: random sign flips of per-fly Dtail (10000): under time reversal each fly's
+                Dtail is symmetric about 0.
+Decision rule   PRIMARY (5 tests, Holm), two-sided:
+                  1 per0 R vs P;  2 per0 R vs W2;  3 per0 Dtail (sign flip);
+                  4 CS LD R vs P; 5 CS LD R vs W2.
+                Reading Q1: rejected vs P but not W2 -> the coupling is the slow layer (hours-scale
+                drift shared by sleep and wake; positive = a consolidation "tempo" state, negative
+                = an arousal trade-off); rejected vs W2 -> a bout-to-bout coupling, the first
+                bout-level dependence found. Q2: Dtail > 0 -> homeostat-direction asymmetry after
+                long wake; Dtail ~ 0 -> no bout-level homeostat signature even in the tail.
+                CS LD Dtail is DESCRIPTIVE only: a time-of-day profile makes the sequence locally
+                non-stationary and can produce Dtail without any homeostat (cf. the CS LD time-arrow
+                entry), and no profile-respecting null is calibrated for it here.
+                SECONDARY: r_pre, r_post and Delta = r_pre - r_post (sign flip); S12 and Z rungs;
+                the reverse tail (long sleep -> next vs previous wake); per-fly counts.
+Calibration     In the same script BEFORE the data: simulated flies keep each real fly's bout
+                positions, types and blocks; durations resampled from the fly's own sleep / wake
+                durations: (a) independent; (b) shared slow state, one factor exp(N(0, 0.3^2)) per
+                2-h window multiplying sleep and wake; (c) sleep durations declining 2%/day; (d)
+                POWER, homeostat: a sleep bout x (preceding wake / median wake)^0.15. 100 groups;
+                199 permutations, 2000 sign flips. Size required: R vs P in (a); R vs W2 in (a)-(c);
+                Dtail in (a)-(c). Rejection above 0.095 where required demotes that test to
+                descriptive.
+```
