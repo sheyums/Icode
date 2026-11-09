@@ -766,3 +766,37 @@ Notes           The randomized PIT makes each fly's latent MARGINAL Gaussian by 
                 expected outcome is no departure, and a null result confirms the construction rather
                 than adding biology. Skewness of latent residuals is not by itself a time arrow.
 ```
+
+### 2026-11-09  H. Collaborator's model: do extreme sleep bouts cluster beyond what Gaussian dependence allows?
+
+```
+Question        In CS LD sleep bouts, is a very long (or very short) bout followed by another very
+                long (very short) bout more often than Shreenath's fitted Gaussian latent AR(1)
+                produces? A Gaussian copula has no tail dependence, so excess clustering of extremes
+                would be the one dependence feature his model cannot carry (candidate: a shared slow
+                state); no excess means a non-Gaussian dependence model has nothing to find here.
+Data            The export of entries F and G (same files), day 56 / night 55 flies; column
+                observed_duration_seconds, rows of version "observed" (replicate -1) and "fitted" /
+                "phi0" (replicates 0-199), ordered by block_index then bout_index_within_block.
+Statistic       Per fly, phase and tail: thresholds from the fly's own bouts in that sequence (upper:
+                duration >= the ceil(0.9 n)-th smallest; lower: <= the ceil(0.1 n)-th smallest).
+                Pairs = consecutive bouts within one block (bout indices differing by 1).
+                C = P(next bout extreme | current bout extreme) / (fraction of bouts extreme);
+                C = 1 means no clustering. Identical computation on every replicate (its own
+                thresholds). NaN if no extreme bout starts a pair.
+Decision rule   PRIMARY (4 tests: day/night x upper/lower, Holm): group mean C over flies (flies with
+                finite C) against the group means on each fitted replicate index (200 values, each a
+                full 56- or 55-fly group with matched bout counts); two-sided Monte Carlo p.
+                Rejection with observed ABOVE the replicates = extremes cluster beyond the Gaussian
+                model (tail dependence or a slow state); BELOW = extremes avoid each other.
+                SECONDARY: per fly, two-sided Monte Carlo p against its 200 fitted replicates, count
+                p < 0.05 against Binomial(n, 0.05) (low power: ~11 extreme bouts per fly);
+                descriptive: the same group means under phi0 replicates and under 1000 within-fly
+                permutations of the observed durations (block structure kept); the same statistics
+                at the 20%/80% tails, reported only, never substituted for the primary.
+Matched null    Each fly's own fitted-model simulations: same marginal, same block lengths, same n.
+Narrowest block One day or night phase segment of one fly (pairs never cross blocks).
+Notes           The group-level test is primary because per-fly counts of extreme pairs are ~1.
+                The 10% tail is fixed here and will not be changed after the run. A C above 1 under
+                the fitted null is expected from phi alone and is already in the null.
+```
