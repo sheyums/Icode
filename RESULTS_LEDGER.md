@@ -538,3 +538,38 @@ Not reportable  Day: a combined ZT-by-day null was not pre-specified; whether th
                 within-day slow drift or memory needs its own entry. per0 DD: half-day differences
                 cannot be split into trend (e.g. first day) vs fluctuating state here. Sleep only.
 ```
+
+### 2026-11-09  J. Daytime long-bout clustering is a slow state within the day, not detectable memory
+
+```
+Commit          efe3256 (PRESPEC only; script uses no repo function; data as entry I); MATLAB R2026a.
+Script          J_run/run_J.m (+ fig_J.m), session scratch, not in the repo
+Figure          long_bout_state_vs_memory_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry J (committed efe3256 before the run)
+Time window     Pairs of sleep bouts 1-4 apart within one 12-h segment of one fly; N4 permutes only
+                within one 2-h ZT window of one day of one fly (narrowest block).
+n               CS LD 40 flies, per0 DD 48; 1000 permutations per null and fly (Seed 2).
+Result          PRIMARY, CS LD day, upper 10%:
+                  1 observed C 1.511 vs N4 day x 2-h 1.347: p 0.106, Holm 0.212 (1 h 1.427 p 0.29;
+                    3 h 1.426 p 0.48). NOT REJECTED.
+                  2 lag profile, excess over N1 at lags 1-4: 0.407 0.305 0.101 0.283; Dlag 0.178,
+                    N1 95% -0.331..0.308, p 0.262, Holm 0.262. NOT REJECTED (no decay after lag 1).
+                Descriptive: per0 DD observed 1.340 vs N4 2-h 1.309 (p 0.63), excess 0.412 0.367
+                0.111 0.332, Dlag p 0.19. CS LD night observed 1.629 vs N4 2-h 1.262 (p 0.006; 1 h
+                1.414 p 0.016; 3 h 1.201 p 0.012) although N1 (ZT pooled over days) reproduced it in
+                entry I (1.550, p 0.66); night lag-2 C 0.952 vs N1 1.476. Lower tails: no clustering
+                (all p >= 0.07). Occupancy, day x 2-h bins: bouts alone 0.03 / 0.08 / 0.04, in bins
+                >= 3: 0.88 / 0.72 / 0.83 (day / night / per0).
+Verdict         CS LD day: keeping each day's 2-h windows brings the null from 1.10 (time of day
+                only) to 1.35 of the observed 1.51, and the remainder is not significant; the excess
+                does not fall off after one bout. The daytime clustering is a slow state on the
+                scale of hours within each day, with no detectable bout-to-bout memory. per0 DD:
+                the same, without a clock. CS LD night: UNRESOLVED -- the ZT-pooled null explains
+                it and the day x ZT null does not; within-day permutation of small bins samples
+                without replacement and can push C down, so N4 may be biased low at night (fewer
+                bouts per bin; the night N2 of entry I also fell below the plain shuffle).
+Not reportable  Absence of memory is "not detected", with N4 95% ranges about +-0.15 around 1.35.
+                A state faster than ~2 h cannot be told from memory by any shuffle. The night
+                discrepancy needs a calibrated null (simulated flies with a known ZT profile) before
+                any night claim.
+```
