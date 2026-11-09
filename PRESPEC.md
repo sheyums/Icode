@@ -846,3 +846,36 @@ Notes           1-h bins: about 9 bouts per bin per fly per phase pooled over da
                 less of the profile. Non-adjacent bouts (gaps) do not break pairs; their count is
                 reported. Our CS LD flies overlap 24 of his 56; scoring differs (ours bridged 1 s).
 ```
+
+### 2026-11-09  J. CS LD daytime long-bout clustering: slow state within the day, or bout-to-bout memory?
+
+```
+Question        Entry I: CS LD daytime clustering of long sleep bouts survives keeping each fly's
+                time-of-day profile (pooled across days) and survives keeping each day's level.
+                Does it survive keeping BOTH -- each fly's bout lengths at that hour on that day --
+                and does it decay with bout lag the way memory would, or stay flat like a state?
+Data            As entry I (homeo_results.mat; CS LD 40 flies from ZT0, per0 DD 48), sleep bouts
+                only, same phase segments, thresholds and statistic C (top 10% primary).
+Nulls           N4 DAY-BY-ZT: permute sleep durations only among bouts on the same day whose onsets
+                fall in the same ZT bin (bin width 2 h primary). Keeps the time-of-day profile, each
+                day's level and any drift slower than the bin; breaks order within the bin.
+                Bin width fixed from occupancy, counted BEFORE this entry (no results seen): day x
+                1-h bins leave 16% of daytime bouts alone in their bin and only 48% in bins of >= 3
+                (a near-degenerate null that would reproduce any clustering); 2 h: 3% alone, 88% in
+                bins >= 3; 3 h: 1%, 95%. 1 h and 3 h are reported alongside, never substituted.
+                N1 as entry I (ZT 1-h bins pooled across days) for the lag profile.
+Lag profile     C_k for pairs k sleep bouts apart within a segment, k = 1..4 (lag 4 ~ 2 h by day).
+                Excess_k = observed C_k - mean N1 C_k. Contrast Dlag = Excess_1 - mean(Excess_2..4),
+                its null from the N1 permutations scored the same way.
+Decision rule   PRIMARY (2 tests, Holm), CS LD day, upper 10%, two-sided Monte Carlo p, 1000
+                permutations (Seed 2, substream = fly):
+                  1 group mean C vs N4 (2-h).  SURVIVES -> dependence on a sub-2-h scale (memory, or
+                    a state faster than ~2 h); VANISHES -> a slow state within the day (hours).
+                  2 group mean Dlag vs N1.  POSITIVE -> the excess is concentrated at lag 1 and
+                    decays (memory-like); NOT -> flat over lags 1-4 (state-like).
+                SECONDARY, descriptive: the same for CS LD night and per0 DD (per0: same 12-h
+                segment and same 2-h bin of time since start); lower tails; occupancy per set.
+Notes           Memory and a fast state are not separable by any shuffle; a positive Dlag with
+                survival under N4 is the closest this design comes to memory. The two primary
+                readings may disagree; both are reported.
+```
