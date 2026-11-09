@@ -2589,3 +2589,6 @@ PLANS: claim C15, act 3 row updated. SI (draft of 9 November): new S13 with Fig.
 
 ## 2026-11-09 Methods V8 updated (no new results)
 Added: Shmns genotype and record handling, and the death rule (animals); R23E10 and R60D05 lines with non-conducting Kir2.1 controls (neurogenetics; Jenett et al. 2012); the 23E10 / EPG experiments, including the one-sided primary for R23E10 (silencing section); the clock decomposition, PRESPEC 27 (circadian section); fly-to-fly differences, PRESPEC 29, with the reason the hidden-level version is not reported (direction section).
+
+## 2026-11-09 Methods V8: equations restored
+V8 had no equation objects since 2026-11-02: the step that accepted V7's tracked changes (acc3.docx) dropped all OMML (374 in V6 and V7, 0 after). V7 was re-accepted directly on the XML (accept_xml.py: deletions removed, insertions unwrapped, emptied equation zones and paragraphs dropped); text identical to before except that two equation numbers are no longer run together. V8 rebuilt from it: Eqs. 1-18 and the unnumbered display equations are present (86 math zones). LibreOffice cannot render this OMML in its PDF preview (V6 shows the same blanks), so it was checked in the XML; Word renders it natively.
