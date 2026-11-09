@@ -615,3 +615,34 @@ Not reportable  "Clock-free slow state" as a finding: deflated to "mostly a firs
                 effect" for per0 DD until a first-day-robust test is pre-specified. Whether the
                 first-day effect is acclimation to the tube or to DD cannot be told from these data.
 ```
+
+### 2026-11-09  L. per0 DD after the first day: long bouts still cluster, explained by differences between 12-h stretches
+
+```
+Commit          13ebef5 (PRESPEC only; script uses no repo function; data as entries I-K); MATLAB R2026a.
+Script          L_run/run_L.m (+ fig_L.m), session scratch, not in the repo
+Figure          per0dd_after_day1_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry L (committed 13ebef5 before the run)
+Time window     Sleep bouts from 24 h after the record start; pairs within one 12-h stretch of one
+                fly (narrowest block).
+n               per0 DD 48 flies, median 172 retained sleep bouts; 1000 permutations (Seed 4).
+Calibration     100 simulated groups x 199 permutations, rejection P / S12 / W2: (a) stationary
+                0.02/0.01/0.01; (b) trend -2%/d 0.02/0.03/0.05; (c) acclimation tau 18 h
+                0.06/0.08/0.06; (d) fly trends 0.12/0.01/0.03 (P not required to hold here);
+                (e) 3-h state, POWER 0.80/0.60/0.17. All required sizes hold; no test demoted.
+Result          Upper 10%, from 24 h: observed C 1.356 | P 0.938 (p 0.002, Holm 0.006) | S12 1.211
+                (p 0.184, Holm 0.184) | W2 1.203 (p 0.060, Holm 0.120).
+                Lag profile excess over S12: 0.145 -0.071 -0.127 -0.098; Dlag 0.244 (S12 95%
+                -0.270..0.276), p 0.106. Per fly: outside S12 range 1/48, W2 2/48. Lower 10%: 1.090,
+                no test rejected (p >= 0.18).
+                From 48 h (descriptive): upper 1.264 | P 0.912 (p 0.008) | S12 1.117 (p 0.23) | W2
+                1.184 (p 0.39); lower 1.231 | P 0.904 (p 0.014) | S12 0.994 (p 0.058).
+Verdict         Reading "1 rejected, 2 not": after the first day per0 long bouts still cluster
+                (Holm 0.006), and keeping each 12-h stretch's bouts together reproduces it -- slow
+                differences between 12-h stretches (fly-specific drift, or slow variation on >= 12 h;
+                not separable here), not a clock-free state lasting hours within a stretch, and no
+                detectable memory. Power caveat: a 3-h state of SD 0.3 would be caught by the S12
+                test only 60% of the time, so a moderate hours-scale state is not excluded.
+Not reportable  "Clock-free hours-scale state" -- not supported. The CS LD daytime within-day drift
+                (entry J) therefore has no clock-free counterpart in per0 at this power.
+```
