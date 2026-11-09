@@ -37,3 +37,19 @@ HIDDEN (secondary, Holm over 2): T1 on hidden J for sss light and Sh^mns light; 
 
 ## Output
 `sqw29.py` -> `sqw_out/s29_hetero.json`, `figures/fig29_retest.png`. Ledger entry with commit hashes.
+
+## Amendment A (2026-11-09; written and committed BEFORE running): corrected hidden-level test-retest
+The original hidden T1 is not interpretable: each fly's HMM was fitted to its whole record, so both halves' posterior
+paths share one fitted transition matrix (shared estimation). Corrected design:
+- For each fly, two masked records: y_A keeps days {0, 2} and sets the other days' minutes to missing (-1); y_B keeps
+  days {1, 3}. EM marginalises missing minutes, so no transition is invented across the gaps.
+- Each half is fitted separately with the 20b procedure (K = 3, 20 starts, phase-specific transitions, shared
+  emissions, label3b). 200 FFBS paths are drawn from each half's own fit and record; J per day-phase is counted on the
+  half's own days and averaged over paths. The halves share nothing but the fly.
+- A fly enters the hidden T1 for a block only if neither half's fit is degenerate and both halves have the phase.
+- T1 as before (Spearman, values rounded to 10 decimals, 10,000 permutations, one-sided). PRIMARY hidden: sss light
+  and Sh^mns light, Holm over 2. Reference: CS L/D, per0 LD L/D, per0 DD, fumin L/D, sss D, Sh^mns D (descriptive).
+- sss halves are single days, so its fits may be unstable. The number of degenerate or failed fits is reported per
+  genotype.
+- The decision rule of the observed level is unchanged. The hidden level is a check: a positive hidden T1 with null
+  observed T1 and T2 is reported as "possible hidden-level consistency", not as subgroups.
