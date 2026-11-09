@@ -446,3 +446,26 @@ Not reportable  Do not write "memory reduces the skewness" without its size (0.6
                 (ledger 625dc08), reproduced in his framework. His scoring (bridging, record start)
                 is not stated in the export; 24 of his 56 flies overlap our CS LD set.
 ```
+
+### 2026-11-09  G. Collaborator's latent residuals: Gaussian as assumed
+
+```
+Commit          2559473 (PRESPEC only; self-contained MATLAB script on his export); MATLAB R2026a.
+Script          F_run/run_G.m, session scratch, not in the repo
+Prespec         2026-11-09 entry G (committed 2559473 before the run)
+Time window     His CS LD day and night phases; each fly's latent residuals within a phase.
+n               Day 56 flies, night 55; 200 fitted-model replicates per fly.
+Result          Flies outside their fitted-model range (p < 0.05): skewness day 4/56 (count p 0.31),
+                night 1/55 (0.94); excess kurtosis day 2/56 (0.78), night 1/55 (0.94). Holm 1.00 for
+                all four. Means obs/fitted/phi0: skewness day -0.018/-0.001/-0.002, night
+                -0.045/+0.002/+0.001; excess kurtosis day +0.059/-0.021/-0.030, night
+                +0.030/-0.040/-0.043; SD day 0.984/0.986/0.994, night 0.975/0.985/0.992 (sqrt(1 - phi^2)
+                ~ 0.998).
+Matched null    Each fly's own fitted-model simulations with Gaussian innovations, scored identically.
+Verdict         NOT REJECTED: the latent residuals are Gaussian as far as these flies can show; the
+                Gaussian latent AR(1) describes the dependence between successive sleep bouts.
+Not reportable  This is largely guaranteed by construction (the randomized PIT makes each latent
+                marginal Gaussian, and phi ~ 0.03), so it confirms the model rather than adding
+                biology. It does not test time reversal, and says nothing about wake bouts or other
+                genotypes (not in the export).
+```
