@@ -800,3 +800,49 @@ Notes           The group-level test is primary because per-fly counts of extrem
                 The 10% tail is fixed here and will not be changed after the run. A C above 1 under
                 the fitted null is expected from phi alone and is already in the null.
 ```
+
+### 2026-11-09  I. Is the clustering of long sleep bouts (entry H) time of day, a slow state, or memory?
+
+```
+Question        Entry H: in Shreenath's CS LD export, long sleep bouts follow long sleep bouts far
+                more often than his stationary Gaussian latent AR(1) allows; short bouts do not. A
+                drifting mean bout length predicts exactly that asymmetry. Does the clustering
+                survive a null that keeps each fly's time-of-day profile of bout lengths? And does
+                it appear in per0 DD, which has no clock and no light cycle?
+Data            Our own bouts, as staged and scored for the homeostat entries (preliminaries entry
+                2026-11-06; flies saved in homeo_results.mat): CS LD 40 flies from ZT0, per0 DD 48
+                flies from sample 1. 1-s scoring, sleep >= 300 s. Sleep bouts only, in onset order.
+Blocks          CS LD: phase segments, day = onset ZT 0-12, night = ZT 12-24 of the same 24-h day
+                (as in H). per0 DD: 12-h segments from the record start, all pooled as one phase.
+                Pairs = two sleep bouts consecutive among the fly's sleep bouts within one segment
+                (narrowest block: one 12-h segment of one fly).
+Statistic       As entry H: per fly and phase, thresholds from that fly's sleep bouts in that phase
+                (upper: >= the ceil(0.9 n)-th smallest; lower: <= the ceil(0.1 n)-th smallest);
+                C = P(next extreme | current extreme) / fraction extreme; group mean over flies.
+Nulls           Permutations of the sleep-bout durations within fly and phase, positions fixed,
+                1000 each (Seed 1, substream = fly index):
+                N1 ZT-STRATIFIED (time of day kept): only among bouts whose onsets fall in the same
+                   1-h ZT bin, pooled across days (each bin draws on bouts from every day of the
+                   record, so the permutation is not degenerate; it breaks day-to-day differences,
+                   slow states within a day and bout-to-bout memory, and keeps the ZT profile).
+                N2 WITHIN-SEGMENT (each day's level kept): only within the same 12-h segment; keeps
+                   day-to-day differences, breaks the profile within a phase.
+                N3 PLAIN: within fly and phase; reproduces the H comparison in our data.
+                For per0 DD, N1 uses 1-h bins of time since record start modulo 24 h.
+Decision rule   PRIMARY (3 tests, Holm), upper 10% tail, two-sided Monte Carlo p of the group mean
+                against the null group means:
+                  1 CS LD day vs N1;  2 CS LD night vs N1;  3 per0 DD vs N3.
+                Reading: CS LD clustering that VANISHES under N1 (and is present under N3) = time of
+                day; clustering that SURVIVES N1 = a slow state or memory, not the ZT profile. Under
+                N2 (descriptive) survival = within-day slow state or memory; vanishing = differences
+                between days. per0 DD clustering beyond N3 = clustering without a clock.
+                SECONDARY, descriptive: lower 10% tails; every tail x null combination; N1 at 2-h
+                and 3-h bins (pre-specified here, reported alongside, never substituted for 1 h);
+                the fraction of consecutive pairs whose two bouts share a 1-h ZT bin on the same day.
+Calibration     Permutation within strata is exact under exchangeability within strata, so no
+                simulation calibration is needed for size; small-sample bias of C (~0.9 under no
+                clustering, entry H) is present equally in data and nulls.
+Notes           1-h bins: about 9 bouts per bin per fly per phase pooled over days; wider bins keep
+                less of the profile. Non-adjacent bouts (gaps) do not break pairs; their count is
+                reported. Our CS LD flies overlap 24 of his 56; scoring differs (ours bridged 1 s).
+```
