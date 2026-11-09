@@ -1,13 +1,13 @@
 # Draft main text, act 2: steadiness of the direction without a clock (PRESPEC 26)
 
 Status: draft, 2026-11-03. Pre-registered (PRESPEC 9a8ff19). Numbers from RESULTS_LEDGER.md, "PRESPEC 26".
-SI figure: Fig. S11 in SupplementaryInformation_draft.docx (fig26_SI_ab.png). The number will shift if SI figures
+SI figure: Fig. S12 in SupplementaryInformation_draft.docx (fig26_SI_ab.png). The number will shift if SI figures
 are added before it.
 
 ## Sentence (Sheyum, 2026-11-03)
 Removing the clock does not make the cycle's direction less steady: loop by loop, *per0* flies switch direction as
 often as wild type, and in both the sequence of directions is that of a fly tossing its own biased coin (about 60:40
-forward), with no episodes of backward running (Fig. S11a,b).
+forward), with no episodes of backward running (Fig. S12a,b).
 
 ## Optional second sentence (for Results, if space)
 Same-direction runs of loops were no longer than each fly's own Markov chain predicts, in clockless or wild-type flies

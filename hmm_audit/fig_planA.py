@@ -98,7 +98,8 @@ print('A_eff medians:',{g:tuple(round(float(v),2) for v in AE[g][:3])+(AE[g][3],
 fig.text(0.01,0.97,'a',fontsize=10,fontweight='bold'); fig.text(0.60,0.97,'b',fontsize=10,fontweight='bold'); fig.text(0.80,0.97,'c',fontsize=10,fontweight='bold')
 for ext in ('png','pdf'): fig.savefig(f'figures/figA2_epr_j_onsager_observable.{ext}',dpi=300,bbox_inches='tight')
 # ---------------- Fig A3 ----------------
-fig,axs=plt.subplots(1,3,figsize=(7.0,2.8),gridspec_kw=dict(width_ratios=[1.3,1.3,1]),constrained_layout=True)
+fig,axs=plt.subplots(1,2,figsize=(5.6,2.8),constrained_layout=True)   # 2026-11-09: routing panel moved to the SI (figS_A3c_routing)
+figc,axc=plt.subplots(figsize=(2.8,2.8),constrained_layout=True)
 def strip_cyc(ax,key,ylabel):
     x=0; ticks=[]; labs=[]
     for g,p in BL:
@@ -109,7 +110,7 @@ def strip_cyc(ax,key,ylabel):
     ax.axhline(0,color='0.6',lw=0.5); ax.set_xticks(ticks); ax.set_xticklabels(labs,fontsize=6,rotation=90); ax.set_ylabel(ylabel)
     for s in ('top','right'): ax.spines[s].set_visible(False)
 strip_cyc(axs[0],'E21','$E_W - E_Q$ = ln($\\pi_Q/\\pi_W$) (nats)'); strip_cyc(axs[1],'E31','$E_S - E_Q$ = ln($\\pi_Q/\\pi_S$) (nats)')
-ax=axs[2]
+ax=axc
 for g,p in BL:
     R_=rows(g,p,cyc=True); fill=(p==1 or g in DDg)
     for kp,kc,mk in (('F_SW','Xn_cnt','o'),('F_WS','Yn_cnt','s')):
@@ -118,6 +119,7 @@ for g,p in BL:
 ax.plot([-1,1],[-1,1],color='k',lw=0.7); ax.set_xlim(-1,1); ax.set_ylim(-1,1); ax.set_aspect('equal')
 ax.set_xlabel('landscape prediction'); ax.set_ylabel('counted routing (observed)'); ax.text(0.05,-0.88,'o S$\\to$W ($X_n$)\n□ W$\\to$S ($Y_n$)',fontsize=6)
 for s in ('top','right'): ax.spines[s].set_visible(False)
-for a,l in zip(axs,'abc'): a.text(-0.12,1.03,l,transform=a.transAxes,fontsize=10,fontweight='bold')
+for a,l in zip(axs,'ab'): a.text(-0.12,1.03,l,transform=a.transAxes,fontsize=10,fontweight='bold')
+for ext in ('png','pdf'): figc.savefig(f'figures/figS_A3c_routing.{ext}',dpi=300)
 for ext in ('png','pdf'): fig.savefig(f'figures/figA3_landscape_observable.{ext}',dpi=300)
 print('saved; L:',{g:tuple(round(x,3) for x in v) for g,v in Ls.items()})
