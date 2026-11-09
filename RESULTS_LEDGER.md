@@ -573,3 +573,45 @@ Not reportable  Absence of memory is "not detected", with N4 95% ranges about +-
                 discrepancy needs a calibrated null (simulated flies with a known ZT profile) before
                 any night claim.
 ```
+
+### 2026-11-09  K. per0 DD half-day variation in sleep-bout length: mostly the first day; fluctuation test failed calibration
+
+```
+Commit          04cbce3 (PRESPEC only; script uses no repo function; data as entries I-J); MATLAB R2026a.
+Script          K_run/run_K.m (+ fig_K.m), session scratch, not in the repo
+Figure          per0dd_trend_vs_state_2026-11-09.png (analysis folder)
+Prespec         2026-11-09 entry K (committed 04cbce3 before the run)
+Time window     Trend: the whole record of one fly. Fluctuation: 12-h segments of one fly.
+n               per0 DD 48 flies (CS LD 40 descriptive); 1000 permutations (Seed 3); trend 10000
+                sign flips.
+Calibration     100 simulated 48-fly groups on the real per0 onsets, 199 permutations. Fluctuation
+                test rejection: (a) stationary 0.01, (b) common trend 0.04, (c) fly trends 0.03,
+                (d) common first-day x1.5 0.26 -> FAILS the 0.095 limit, (e) real 12-h state 1.00.
+                Trend test: 0.07 / 1.00 / 0.08 / 1.00 / 0.08. Per the prespec, the FLUCTUATION test
+                is DEMOTED TO DESCRIPTIVE. Trend test passes.
+Result          TREND (primary): mean slope -0.0205/day (-2.0%/day), 18/48 flies positive, p 0.032,
+                Holm 0.032. SUPPORTED, small: per0 sleep bouts shorten ~2%/day on average.
+                FLUCTUATION (descriptive): group logRatio 0.271 (null 95% upper 0.011), p 0.001,
+                36/48 flies > 0; without detrending 0.419; trends remove 27% of the excess variance.
+                First 24 h dropped: logRatio -0.041, p 0.048 (null centre is negative), trend -2.5%/day
+                p 0.15. 4-h segments: -0.000, p 0.19. Records < 4 d (19 flies) 0.027 p 0.065; >= 5 d
+                (28) 0.412 p 0.001. Lag-1 correlation of successive detrended 12-h levels -0.174 vs
+                null -0.225 (p 0.10). Long-bout clustering C on detrended durations 1.174 vs shuffle
+                0.948 (p 0.020; raw 1.340). Group levels (figure): highest in the second 12 h
+                (~1.2x the fly's average), then a slow decline.
+                CS LD (descriptive): day trend -6.3%/day (p 0.0001), no day-to-day fluctuation after
+                detrending (logRatio -0.42, p 0.64; raw p 0.006); night trend -2.0%/day (p 0.18), no
+                fluctuation (p 0.67). C on detrended durations day 1.351 vs 0.900 (p 0.004), night
+                1.345 vs 0.886 (p 0.002).
+Verdict         The per0 DD half-day differences that reproduced long-bout clustering in entry I
+                are mostly the first day of the record (the excess collapses from 0.27 to near the
+                null when the first 24 h are dropped, and the calibration shows a first-day effect
+                alone fakes this test), plus a small decline. Some clustering remains after
+                detrending (1.17 vs 0.95), and the >= 5-day records still show excess variance, so
+                a weaker recurring state is NOT excluded -- but it is not established. In CS LD the
+                day-to-day differences are a trend (day bouts shorten 6%/day), and the within-day
+                clustering of entries I-J is untouched by detrending.
+Not reportable  "Clock-free slow state" as a finding: deflated to "mostly a first-day / acclimation
+                effect" for per0 DD until a first-day-robust test is pre-specified. Whether the
+                first-day effect is acclimation to the tube or to DD cannot be told from these data.
+```
