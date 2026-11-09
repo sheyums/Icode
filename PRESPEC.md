@@ -703,3 +703,43 @@ Notes           Records are 3-7.9 days, so the 16- and 24-h scales rest on few i
                 ORDER only. The descriptive dip of entry C at 1-1.5 h is the short-lag view of the
                 same question; E integrates over lags instead of scanning them.
 ```
+
+### 2026-11-09  F. Collaborator's latent-AR residuals: does the model reproduce the noise shape, and does memory change it?
+
+```
+Question        In Shreenath's latent-AR(1) (PIT) model of CS LD sleep bouts, (1) do the observed
+                bout-space residuals have the skewness the fitted model produces, and (2) does memory
+                (fitted phi) change residual skewness compared with phi = 0? (His reading: "memory
+                reduces the skewness".)
+Data            His export, read only: C:\Users\sheyu\Box\Data from Shreenath\
+                memory_vs_no_memory_residuals_raw_export\{day,night}\{residuals,sim_residuals}.csv
+                and notes.json (dated 2026-11-06; sizes day 964162 / 432764116 B, night 729130 /
+                326537424 B). CS LD sleep bouts, K = 1; day 56 flies, night 55. Residual =
+                observed minus predicted duration (s); prediction = empirical inverse CDF of
+                Phi(refitted intercept + phi * z), a conditional median. Simulations: 200 replicates
+                per fly per version, "fitted" (his phi) and "phi0" (iid latent, same empirical
+                marginal), paired draws, each scored by refitting exactly like the data. His
+                extraction and scoring are used as delivered (bridging and record start not stated
+                in the export). 24 of his 56 flies are in our 40-fly CS LD set; no cross-matching here.
+Time window     His day and night phases separately; each fly's residuals within a phase.
+Statistics      Per fly, phase and sequence (observed, or one replicate of a version): moment
+                skewness and Bowley skewness (Parzen mid-quantiles) of residual_seconds, and SD.
+Decision rule   PRIMARY (4 tests, Holm across them):
+                (1) model adequacy, per phase: per fly, two-sided Monte Carlo p of the observed
+                    moment skewness among the fly's 200 "fitted" replicate values; count of flies
+                    with p < 0.05 against Binomial(n, 0.05). Exactly calibrated if the model is right
+                    (replicates are exchangeable with the data). Rejection: the noise's shape is NOT
+                    what the fitted model produces.
+                (2) memory effect, per phase: per fly, mean moment skewness over "fitted" replicates
+                    minus over "phi0" replicates; across flies, two-sided sign-flip permutation test
+                    of the mean difference (10000 flips, seed 1). Rejection: memory changes the
+                    noise's skewness, in the direction of the sign.
+                SECONDARY, descriptive: the same with Bowley skewness and SD; observed vs phi0;
+                per-fly phi; effect sizes (mean difference and its ratio to the phi0 skewness).
+Matched null    (1) the fly's own fitted-model simulations, same n and scoring; (2) the paired phi0
+                simulations of the same fly.
+Notes           Expected from our bout-space results (not a decision rule): phi is tiny (|phi| <
+                ~0.1), so memory should change skewness by a few percent at most. A change in the
+                best-fitting family (GH vs shifted exponential) is NOT tested here: family choice is
+                not a skewness measure.
+```
