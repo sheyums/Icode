@@ -1066,3 +1066,27 @@ Decision rule   PRIMARY tim0: the four tests dL, dA, dcL, dcA, Holm. DROP the fi
                 user's call. per0 values are a reference only (descriptive).
                 Also shown: the day-by-day profiles (L, A, both halves) per genotype.
 ```
+
+### 2026-11-10  O. tim0 DD from 24 h: repeat entries L (long-bout clustering) and M (sleep-wake pairs)
+
+```
+Question        Do the two per0 DD results that survive the first-day cut replicate in a second
+                clock-less genotype? (L) long sleep bouts cluster, explained by 12-h stretch
+                differences; (M) neighbouring sleep/wake bouts coupled beyond 2-h shuffles, and
+                long wake followed (not preceded) by long sleep.
+Data            tim0 DD, 25 flies (N_run/tim0_flies.mat, entry N pipeline), bouts with onset >=
+                24 h (user's choice after entry N). 72 h per fly = six 12-h blocks.
+Methods         EXACTLY entries L and M (same statistics, thresholds, nulls, permutation counts and
+                data seeds: L Seed 4, M Seed 5), with the corrected calibration of the 2026-11-10
+                amendments (independent seed per simulated group; M counter fixed). Only the
+                from-24-h run of L (no 48-h run: 48 h would leave 2 days).
+Decision rule   Two families, Holm within each, as in the originals:
+                  L: upper-10% C vs P, S12, W2 (3 tests).
+                  M: R vs P, R vs W2, Dtail (3 tests).
+                Calibration and demotion rules unchanged (size > 0.095 where required ->
+                descriptive), computed on tim0's own bout positions.
+                Reading: as in L and M. A result "replicates" if it rejects in tim0 with the same
+                sign as per0; a non-rejection with the same sign is "consistent, underpowered"
+                (25 flies vs 48), stated with the tim0 calibration power where available.
+                tim0 vs per0 effect sizes are descriptive only (no between-genotype test).
+```
