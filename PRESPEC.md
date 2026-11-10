@@ -1029,3 +1029,15 @@ Decision rule   Apply each entry's original rule to the new rates. A test whose 
                 statements (L scenario e; M scenarios b, d) are replaced by the new rates. Results
                 go to the ledger as correction entries; earlier entries are not edited.
 ```
+
+### 2026-11-10  Second amendment to M: calibration counter bug
+
+```
+Why             The M calibration line `rej(sc,:) = rej(sc,:) + [p...] < 0.05` lacks parentheses;
+                MATLAB applies + before <, so the count never accumulates and every reported rate
+                is 0.00 or 0.01. The original M calibration AND the fresh-seed rerun begun under
+                the first amendment are both invalid. K and L count correctly.
+Change          `+ ([p...] < 0.05)`, plus the independent seeds of the first amendment. per0 DD and
+                CS LD calibrated in two parallel processes; nothing else changes. Same decision
+                rule as the first amendment.
+```
