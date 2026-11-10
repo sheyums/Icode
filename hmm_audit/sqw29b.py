@@ -24,8 +24,16 @@ def one(a):
             out['halves'][h] = 'fail:' + str(e)[:60]
     return out
 if __name__ == '__main__':
-    jobs = [(g, i) for g in G for i in range(len(SHF) if g == 'shmns' else len(sqw.files(g)))]
-    with Pool(4) as pool: HB = pool.map(one, jobs)
+    import os, time
+    up = float(open('/proc/uptime').read().split()[0])
+    print(f"START {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())} UTC | machine booted {time.strftime('%H:%M:%S', time.gmtime(time.time() - up))} UTC | boot id {open('/proc/sys/kernel/random/boot_id').read().strip()[:8]}", flush=True)
+    FN = sqw.OUTD + 's29b_flies.jsonl'; done = set()
+    if os.path.exists(FN): done = {(d['g'], d['fly']) for d in map(json.loads, open(FN))}
+    jobs = [(g, i) for g in G for i in range(len(SHF) if g == 'shmns' else len(sqw.files(g))) if (g, i) not in done]
+    with Pool(4) as pool:
+        for k, r in enumerate(pool.imap_unordered(one, jobs)):
+            open(FN, 'a').write(json.dumps(r) + '\n'); print('done', r['g'], r['fly'], f'{k + 1}/{len(jobs)}', flush=True)
+    HB = list(map(json.loads, open(FN)))
     res = {}
     for g in G:
         rr = [r for r in HB if r['g'] == g]; ok = [r for r in rr if isinstance(r['halves'].get('A'), list) and isinstance(r['halves'].get('B'), list)]
