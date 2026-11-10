@@ -753,3 +753,42 @@ Verdict         No tim0 test Holm < 0.05 -> by the rule, no automatic cut. The "
                 its day-1 bouts are longer, but as the first step of a decline over all four days
                 (about -7%/day), not a day-1 step.
 ```
+
+### 2026-11-10  O. tim0 DD from 24 h: neighbour coupling replicates (and is stronger sleep -> wake); long-bout clustering and the long-wake asymmetry do not
+
+```
+Commit          baaac08 (PRESPEC only); scripts O_run/run_OL.m, run_OM.m (+ fig_O.m), session
+                scratch = run_L.m / run_M.m with tim0 data and the corrected calibration.
+Figure          tim0_vs_per0_2026-11-10.png (analysis folder)
+Data            tim0 DD 25 flies (entry N pipeline), bouts with onset >= 24 h; 72 h per fly.
+Time window     Narrowest block: one 12-h stretch of one fly.
+Calibration     L (P / S12 / W2): (a) 0.08/0.06/0.04 (b) 0.06/0.02/0.07 (c) 0.07/0.07/0.04
+                (d) 0.11/0.09/0.03; POWER (e) 3-h state 0.40/0.28/0.04 (per0: 0.78/0.61/0.12).
+                All required sizes hold.
+                M (R vs P / R vs W2 / Dtail): (a) 0.07/0.06/0.03 (b) 1.00/0.03/0.10 (c) 0.04/0.04/
+                0.06; POWER (d) homeostat 1.00/1.00/0.73 (per0 1.00/1.00/1.00). Dtail size 0.10 in
+                (b) > 0.095 -> Dtail DEMOTED to descriptive.
+Result L        Upper 10%: C 1.033 | P 0.922 (p 0.476, Holm 0.735) | S12 1.172 (p 0.368, Holm
+                0.735) | W2 1.200 (p 0.136, Holm 0.408). Lower 10%: 0.888, no rejection. Per fly
+                outside S12 / W2 range 0/25. per0 for comparison: C 1.356 vs P 0.938.
+Result M        Coupling R 0.131 | P 0.000 (p 0.002, Holm 0.006) | S12 0.019 (p 0.002) | W2 0.065
+                (p 0.002, Holm 0.006). r_pre 0.090, r_post 0.171, Delta -0.081 sign-flip p 0.006
+                (secondary); r_pre alone vs W2: 0.068, p 0.19.
+                Dtail 0.042 [Cpre 1.29, Cpost 1.25] p 0.886 (descriptive after demotion), 12/25
+                flies > 0; reverse tail 0.000 p 1.00.
+Verdict         REPLICATES: neighbouring sleep and wake bouts are coupled beyond the 2-h-window
+                shuffle (Holm 0.006), at a similar size to per0 (0.131 vs 0.104; about half again
+                is slow, W2 null 0.065).
+                DOES NOT REPLICATE: (L) long-bout clustering -- C 1.03 is near chance, not merely
+                underpowered (per0's excess over the plain null was 0.42, tim0's 0.11, though power
+                for a 3-h state is only 0.40 here); (M) long wake -> long sleep -- Dtail 0.04 vs per0
+                0.54, point estimate near zero.
+                NEW DIFFERENCE (secondary, not corrected): tim0's coupling is directional the OTHER
+                way -- sleep -> next wake (0.171) stronger than wake -> next sleep (0.090), and the
+                wake -> sleep part does not exceed the 2-h shuffle. per0 was symmetric.
+Caveats         25 flies, 3 days each; different recordings (2018-2020 boards, Zichao) from per0,
+                so genotype and setup are confounded. tim0 bouts shorten ~7%/day (entry N); the
+                calibration's decline scenario is 2%/day.
+Not reportable  "The long-wake asymmetry is a general clock-less property" (one genotype only).
+                A genotype difference as such (no between-genotype test; setups differ).
+```
