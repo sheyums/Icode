@@ -692,3 +692,38 @@ Verdict         Q1, reading "rejected vs W2": neighbouring sleep and wake bouts 
 Not reportable  "Bout-to-bout memory" as such (a sub-2-h state is not excluded). A bulk homeostat
                 (the symmetric correlation is not directional). A per-fly homeostat trait (27/48).
 ```
+
+### 2026-11-10  Correction to K, L, M: calibrations rerun with independent seeds (and M's counter fixed)
+
+```
+Commit          Amendments 64d1afe (independent seeds) and c3c11b6 (M counter); scripts
+                recal/calK.m, calL.m, calM1.m, calM2.m (session scratch). Data sections not rerun;
+                every data p-value in K, L and M stands.
+Defects         (1) K, L, M: every simulated group used the same permutation seed, so the 100 groups
+                were not independent. (2) M only: `rej + [p] < 0.05` without parentheses never
+                accumulated, so every M rate was 0.00 or 0.01. The original M calibration was void;
+                the "fresh-seed check" in entry M (0.033 / 0.020) came from a separate, correct
+                script and stands.
+K               Fluctuation / trend rejection: (a) 0.01/0.08 (b) 0.03/1.00 (c) 0.02/0.06 (d) 0.25/1.00
+                (e) 1.00/0.06. Fluctuation test size still fails in (d) -> stays DESCRIPTIVE.
+                K unchanged.
+L               Rejection P / S12 / W2: (a) 0.03/0.02/0.01 (b) 0.02/0.03/0.05 (c) 0.05/0.10/0.03
+                (d) 0.14/0.02/0.04 (e) POWER 0.78/0.61/0.12. S12 size 0.10 in (c) exceeds 0.095 ->
+                the S12 test is DEMOTED to descriptive (was primary, p 0.184, not rejected). The
+                verdict stands: a non-rejection by a slightly liberal test is no weaker. Power for
+                a 3-h state: S12 0.61 (was 0.60), W2 0.12.
+M               Rejection R vs P / R vs W2 / Dtail.
+                per0: (a) 0.01/0.05/0.03 (b) 1.00/0.04/0.04 (c) 0.05/0.01/0.03 (d) 1.00/1.00/1.00.
+                CS LD: (a) 0.03/0.04/0.09 (b) 1.00/0.04/0.05 (c) 0.03/0.08/0.05 (d) 1.00/1.00/0.99.
+                All required sizes hold; no test demoted; Holm results of entry M stand.
+                CORRECTED CLAIM: entry M said the 2-h state and the homeostat (power 0.15) were
+                "essentially never detected" -- wrong (counter bug). The whole-record shuffle
+                catches the 2-h state every time, and all three tests catch the homeostat every
+                time. What holds: a shared 2-h state does NOT pass the 2-h-window test (0.04) or
+                the long-wake test (0.04-0.05), so neither result can come from a slow state.
+                New point: a homeostat ALSO passes the 2-h-window test (1.00), so "finer than 2 h"
+                alone does not tell a homeostat from a fast tempo; the direction symmetry of the
+                data (r_pre 0.113 vs r_post 0.096, p 0.53) is what argues against a bulk
+                homeostat, since scenario (d) acts on wake -> sleep only. CS LD Dtail size 0.09 in
+                (a) is borderline; it was descriptive already.
+```
