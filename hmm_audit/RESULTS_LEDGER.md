@@ -2599,3 +2599,21 @@ V8 had no equation objects since 2026-11-02: the step that accepted V7's tracked
 
 ## 2026-11-09 Documents: routing deviations dropped, Fig. A3c moved to SI (no new results)
 Methods V8: former Eqs. 15-16 (routing deviation, observed minus predicted) and their two paragraphs removed; subheading now "Routing fraction"; equations run 1-16 (likelihood equations now 15-16); range references updated (Eqs. 1-14, 7-14). Fig. A3 main = panels a-b (state energies); panel c (Eq. 14 prediction vs Eqs. 12-13 counts) is now SI Fig. S6 (figS_A3c_routing). SI figures after S5 renumbered +1 (loops S12, walk S13, Sh^mns S15, test-retest S16); references in SI, report, PLANS and DRAFT_act2_loops updated.
+
+## PRESPEC 30 — long-bout sleep after 9-h deprivation (2026-11-10; PRESPEC a439a0c, committed before the data were in this session; code sqw30.py, this commit; s30_longbouts.json, fig30_longbouts)
+Data: CS_9hrdeprExp (SHA-256 ee3bd9d4...), 26 flies, 821,901 s. Long bout = bridged sleep bout >= 25 min (>= 30 min
+also reported). Delta = recovery day - days 0-2; placebo = day 2 - days 0-1.
+- PRIMARY (long-bout sleep, day 4, 24 h): Delta +144 min (p 0.022), but the placebo is +101 min; excess -29 min,
+  paired p 0.75. NO REBOUND beyond the day-to-day drift.
+- SECONDARY (excess over placebo; Holm over 8): all Holm 0.67-1. Day 5 excess -3 min, day 6 +37 min; >= 30 min -1 min;
+  long-bout share -0.036; mean bout duration -0.9 min; ZT0-6 long-bout sleep +28 min (p 0.44); long-bout exit to
+  active wake -0.061 (p 0.42); entry from quiet wake -0.042 (p 0.084).
+- Descriptive (medians): long-bout sleep rises steadily through the baseline days: 565 -> 633 -> 709 min (days 0-2),
+  then 771, 802, 765, 728, 792 (days 4-8); day 3 (deprivation) 388. All-bout sleep 934 -> 1000 (days 0-2), about
+  1010-1090 after. Long-bout share 0.64 -> 0.73 over baseline. Mean bout duration 22.7 -> 27.2 min over baseline.
+  The drift is itself a long-bout drift. Day 4 lies BELOW the baseline trend extrapolated linearly (about 850 min),
+  not above it.
+- Reading (fixed rule): "no long-bout rebound detectable beyond the drift". This is WEAK evidence (Chowdhury et al.
+  2023: rebound invisible without yoked controls; here a 9-h deprivation and no parallel controls). For the controlled
+  experiment: parallel undeprived AND yoked flies, and long-bout sleep and bout duration over recovery days 1-3,
+  pre-registered.
