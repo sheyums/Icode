@@ -1010,3 +1010,22 @@ Calibration     In the same script BEFORE the data: simulated flies keep each re
                 Dtail in (a)-(c). Rejection above 0.095 where required demotes that test to
                 descriptive.
 ```
+
+### 2026-11-10  Amendment to K, L, M: calibration rerun with an independent permutation seed per simulated group
+
+```
+Why             In the calibration sections of entries K, L and M, every simulated group passed the
+                SAME permutation / sign-flip seed to the test (K: 7; L: 9; M: 11), so the 100 groups
+                reused identical shuffles and were not independent. Rejection rates were therefore
+                not valid size or power estimates (M showed 0.00 almost everywhere). The data
+                sections are unaffected (one dataset, its own permutations) and are NOT rerun.
+Change          Only the test seed: K seed 40000 + 100 k + g; L 30000 + 100 k + g; M 20000 + 100 sc
+                + g (same seed for the M sign flips). Everything else exactly as pre-specified:
+                same scenarios, 100 groups, 199 permutations, 2000 sign flips, simulation seeds,
+                required-size sets and the 0.095 demotion threshold.
+Decision rule   Apply each entry's original rule to the new rates. A test whose required size now
+                exceeds 0.095 is demoted to descriptive and its verdict is re-read; a test that was
+                demoted (K fluctuation) is restored only if all its required sizes hold. Power
+                statements (L scenario e; M scenarios b, d) are replaced by the new rates. Results
+                go to the ledger as correction entries; earlier entries are not edited.
+```
