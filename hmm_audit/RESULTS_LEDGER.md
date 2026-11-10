@@ -2617,3 +2617,26 @@ also reported). Delta = recovery day - days 0-2; placebo = day 2 - days 0-1.
   2023: rebound invisible without yoked controls; here a 9-h deprivation and no parallel controls). For the controlled
   experiment: parallel undeprived AND yoked flies, and long-bout sleep and bout duration over recovery days 1-3,
   pre-registered.
+
+## PRESPEC 29 Amendment A — hidden test-retest with SEPARATE fits per half (2026-11-10; amendment a133e8d, committed before running; code sqw29b.py, this commit; s29b_flies.jsonl, s29b_hidden_split.json)
+Each fly fitted twice (days {0,2} and {1,3}, the other half masked), 200 FFBS paths per half. 251 flies. Degenerate
+fits: per0 DD 4, sss 6, others 0. The run was interrupted by machine replacements and resumed from per-fly saves.
+```
+block        | hidden T1 (separate fits) rho (n) p      | observed T1 rho, p (for comparison)
+sss light    | +0.17 (54) p 0.11, Holm 0.11             | +0.17, p 0.12
+Sh^mns light | +0.27 (64) p 0.019, Holm 0.038           | +0.11, p 0.20
+sss dark     | +0.11 p 0.23                             | +0.21, p 0.058
+Sh^mns dark  | +0.39 p 0.0016                           | +0.18, p 0.071
+CS light/dark| -0.32 p 0.94 / +0.39 p 0.027             | +0.05 / +0.16
+per0 LD L/D  | +0.06 p 0.39 / +0.36 p 0.034             | +0.10 / +0.21
+per0 DD      | +0.25 p 0.13                             | +0.52, p 0.004
+fumin L/D    | +0.19 p 0.087 / +0.21 p 0.070            | +0.25 / +0.15
+```
+- The shared-fit inflation is gone: the earlier hidden values (+0.38 to +0.70) drop to the observed range.
+- Sh^mns light: hidden T1 +0.27, Holm 0.038, while the observed T1 and T2 are null. By the amendment's rule this is
+  "possible hidden-level consistency" in Sh^mns, NOT subgroups: flies whose hidden flux is more negative on some days
+  tend to be so on others. This concerns the SIZE of the daytime reversal per fly. A 1- vs 2-group split was already
+  not supported (observed T1/T2 null).
+- sss light: no consistency at either level (2-day records, single-day fits).
+- Pattern across blocks: hidden-level consistency tends to appear at night (CS, per0 LD, Sh^mns), where flux is
+  larger. Descriptive.
