@@ -1041,3 +1041,28 @@ Change          `+ ([p...] < 0.05)`, plus the independent seeds of the first ame
                 CS LD calibrated in two parallel processes; nothing else changes. Same decision
                 rule as the first amendment.
 ```
+
+### 2026-11-10  N. tim0 DD: does the first 24 h carry an LD / acclimation effect (as in per0 DD)?
+
+```
+Question        per0 DD half-day differences in sleep-bout length were mostly the first day (entry
+                K), so per0 analyses start at 24 h. Does tim0 DD's first day differ from the later
+                days in the same way? If yes, all tim0 analyses start at 24 h.
+Data            tim0 DD from Zichao (zip of 25 per-fly 1-s activity files, 96 h each, "_from1stLD"
+                cut: time 0 = start of the first subjective day). Pipeline exactly as per0 DD
+                (run_homeo.m): process_LocomToSleep timeInterval 1, segmentMode 1, startZT 0,
+                Teliminate 0, deadThresh 12, minDays 3, bridgeWakeSeconds 1; sleep >= 300 s;
+                flies kept with >= 40 sleep and >= 40 wake bouts. Reference: per0 DD 48 flies
+                (homeo_results.mat), same statistics on its days 1-4 only, so the windows match.
+Statistics      Per fly, per 24-h day d (1-4 from record start), per half H1 = 0-12 h, H2 = 12-24 h:
+                L = mean log sleep-bout duration (bouts by onset); A = sleep minutes.
+                Level effect   dL = L(day 1) - mean L(days 2-4); dA likewise.
+                LD carry-over  contrast c = value(H2) - value(H1) within a day;
+                               dcL = cL(day 1) - mean cL(days 2-4); dcA likewise.
+Nulls           Random sign flips across flies (10000, Seed 1), two-sided, of the per-fly values.
+Decision rule   PRIMARY tim0: the four tests dL, dA, dcL, dcA, Holm. DROP the first 24 h if any is
+                Holm < 0.05. If none is but a day-1 effect matches per0's in sign and is >= half
+                its size, report it as underpowered and say so (25 flies) -- the cut is then the
+                user's call. per0 values are a reference only (descriptive).
+                Also shown: the day-by-day profiles (L, A, both halves) per genotype.
+```
