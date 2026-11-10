@@ -727,3 +727,29 @@ M               Rejection R vs P / R vs W2 / Dtail.
                 homeostat, since scenario (d) acts on wake -> sleep only. CS LD Dtail size 0.09 in
                 (a) is borderline; it was descriptive already.
 ```
+
+### 2026-11-10  N. tim0 DD first day: no LD-like half-day effect; day-1 bouts longer as part of a steady decline
+
+```
+Commit          a3acc8d (PRESPEC only). Pipeline functions process_LocomToSleep and
+                extractBoutsForModelCompetition from the ANALYSIS folder (analysis repo 04e0508; not
+                in Icode), the same copies that built per0 DD. MATLAB R2026a.
+Script          N_run/run_N.m (+ fig_N.m), session scratch; tim0 bouts saved as N_run/tim0_flies.mat
+Figure          tim0dd_first_day_2026-11-10.png (analysis folder)
+Data            tim0 DD (Zichao zip), 25 files, 95-96 h each; all 25 kept (>= 40 bouts per type).
+Time window     Narrowest block: one 12-h half of one 24-h day of one fly. per0 reference uses its
+                days 1-4 only.
+Result          tim0 (sign flips, 10000): dL +0.132 (15/25 > 0) p 0.019, Holm 0.077 | dA +3.1 min
+                p 0.88 | dcL -0.024 p 0.70 | dcA +5.2 min p 0.66; day-1 contrast alone cL -0.035
+                p 0.47. Mean log bout length by day: 7.10, 7.03, 6.95, 6.91 (geometric mean 24.0,
+                20.8, 20.2, 19.0 min) -- a steady decline, both halves alike.
+                per0 reference (descriptive): dL +0.037 p 0.42; dcL +0.131 p 0.059; day-1 contrast
+                cL +0.135 p 0.025 (night-half bouts longer on day 1 only); dcA +20.8 min p 0.12.
+                per0 day-4 sleep minutes are low because several records end during day 4
+                (19 flies have < 4 days); not a biological drop.
+Verdict         No tim0 test Holm < 0.05 -> by the rule, no automatic cut. The "underpowered" clause
+                applies: dL matches per0's sign and exceeds half its size, so the cut is the user's
+                call. Reading: tim0 shows NO LD-like (half-day) carry-over on day 1, unlike per0;
+                its day-1 bouts are longer, but as the first step of a decline over all four days
+                (about -7%/day), not a day-1 step.
+```
