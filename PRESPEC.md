@@ -1090,3 +1090,25 @@ Decision rule   Two families, Holm within each, as in the originals:
                 (25 flies vs 48), stated with the tim0 calibration power where available.
                 tim0 vs per0 effect sizes are descriptive only (no between-genotype test).
 ```
+
+### 2026-11-11  P. CS DD from 24 h: neighbouring sleep and wake bouts (entry M repeated)
+
+```
+Question        Is the entry-M sleep/wake neighbour coupling (beyond 2-h shuffles in per0 DD and
+                CS LD) visible in wild type in constant darkness, i.e. with a free-running clock
+                and no light cycle?
+Data            CS DD, 25 flies, 96 h each: CS_DD_activfiles.zip, byte-identical to the files
+                staged for the homeostat entries (csdd_stage), so the existing build in
+                homeo_results.mat (flies.CSDD, per0 pipeline settings) is used. Bouts with onset
+                >= 24 h (first day in DD dropped, as for per0 and tim0): 72 h per fly.
+Methods         Exactly entry M with the corrected calibration (independent seed per simulated
+                group, counter fixed): coupling R = mean of r_pre and r_post (within-fly ranks);
+                nulls P, S12, W2, and Z (same hour since record start, pooled over days;
+                descriptive -- the free-running period makes it approximate). 1000 permutations,
+                Seed 5. Calibration scenarios (a)-(d), 100 groups x 199 permutations.
+Decision rule   PRIMARY (Holm over 2): CS DD R vs P; R vs W2. Reading as in M: rejected vs W2 ->
+                coupling finer than 2 h. Dtail (long wake: sleep after vs before) is DESCRIPTIVE,
+                as for CS LD: a circadian profile makes the sequence locally non-stationary.
+                SECONDARY: r_pre, r_post, Delta (sign flip). Demotion rule unchanged (size > 0.095).
+                Comparison with per0 DD / CS LD / tim0 sizes is descriptive.
+```
