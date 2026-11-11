@@ -792,3 +792,36 @@ Caveats         25 flies, 3 days each; different recordings (2018-2020 boards, Z
 Not reportable  "The long-wake asymmetry is a general clock-less property" (one genotype only).
                 A genotype difference as such (no between-genotype test; setups differ).
 ```
+
+### 2026-11-11  P. CS DD from 24 h: neighbouring sleep and wake bouts coupled beyond 2-h shuffles; the slow part is negative
+
+```
+Commit          01b3fc2 (PRESPEC only); script P_run/run_P.m (= run_OM.m on flies.CSDD, corrected
+                calibration) + fig_P.m, session scratch. Print labels "CSLD"/"tim0" in its log are
+                leftovers from the adapted script; the numbers are CS DD.
+Figure          csdd_sleep_wake_coupling_2026-11-11.png (analysis folder)
+Data            CS DD 25 flies; CS_DD_activfiles.zip is byte-identical to csdd_stage, so the
+                homeo_results.mat build (per0 pipeline) is used. Bouts with onset >= 24 h; median
+                93 wake->sleep and 91 sleep->wake pairs per fly.
+Time window     Narrowest block: one 12-h stretch of one fly.
+Calibration     R vs P / R vs W2 / Dtail: (a) 0.01/0.04/0.01 (b) 1.00/0.06/0.04 (c) 0.05/0.02/0.05;
+                POWER (d) homeostat 1.00/1.00/0.96. All sizes hold; nothing demoted.
+Result          Coupling R 0.036 | P 0.001 (p 0.020, Holm 0.020) | S12 -0.031 (p 0.002) | W2
+                -0.024 (p 0.002, Holm 0.004) | Z -0.052 (p 0.002, descriptive).
+                r_pre 0.059, r_post 0.013, Delta 0.047 p 0.16.
+                Dtail (DESCRIPTIVE) 0.556 [Cpre 1.19, Cpost 0.63] sign-flip p 0.018, 16/25 flies;
+                reverse tail -0.30 p 0.15.
+Verdict         Both primary tests reject: in CS DD, neighbouring sleep and wake bouts are coupled
+                beyond what the 2-h-window shuffle keeps. Split into slow (W2 null mean) and fast
+                (observed minus it), across datasets (descriptive):
+                  per0 DD  0.104 = slow +0.047 + fast 0.058
+                  CS LD    0.037 = slow -0.002 + fast 0.039
+                  CS DD    0.036 = slow -0.024 + fast 0.060
+                The fast part is similar in all three (0.04-0.06): it needs neither light nor a
+                clock. The slow part is positive without a clock and zero/negative with one; the
+                cause of the negative sign (e.g. rest vs active phase) is not tested.
+                Long wake -> long sleep in CS DD points the same way as per0 at a similar size
+                (0.56 vs 0.54) but stays descriptive (clock profile not removed).
+Not reportable  The fast split as a test (no test of fast-part equality across sets). A clock
+                mechanism for the negative slow part.
+```
