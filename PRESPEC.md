@@ -1112,3 +1112,40 @@ Decision rule   PRIMARY (Holm over 2): CS DD R vs P; R vs W2. Reading as in M: r
                 SECONDARY: r_pre, r_post, Delta (sign flip). Demotion rule unchanged (size > 0.095).
                 Comparison with per0 DD / CS LD / tim0 sizes is descriptive.
 ```
+
+### 2026-11-11  Q. Does the fast sleep/wake coupling carry across a bout? (sleep-sleep vs sleep-wake)
+
+```
+Question        Entries M and P: a sleep bout and its neighbouring wake bouts share a fast (< 2 h)
+                component in per0 DD, CS LD and CS DD. Is that a one-step, pair-local link (the
+                dependence fades after one bout, so successive SLEEP bouts are nearly independent),
+                or a fast state lasting several bouts (successive sleep bouts share it too)?
+Data            Pooled: per0 DD from 24 h (48 flies), CS LD whole record (40), CS DD from 24 h (25)
+                = 113 flies, homeo_results.mat. Per-dataset results descriptive.
+Statistics      Per fly, the bout sequence in time order (strictly alternating). A lag-k pair =
+                bouts i and i+k with every intervening bout adjacent in time and all in one 12-h
+                block (narrowest block). Ranks within type (sleep among sleep, wake among wake).
+                r1 = mean(r wake->sleep, r sleep->wake) (as entry M); r2 = mean(r sleep->sleep,
+                r wake->wake), across one bout of the other type; r3 = mean of the two lag-3 kinds.
+                Fast part: fast_k(fly) = r_k - mean of r_k under the W2 null (sleep durations
+                permuted among sleep bouts, wake among wake, within the same 2-h window; 1000
+                permutations, Seed 6, substream = fly). Group F_k = mean over flies.
+                kappa = F_2 / F_1: how much of the one-step fast coupling survives a second step
+                (a one-step chain gives kappa ~ r1 ~ 0.05; a fast state with per-step persistence
+                rho gives kappa ~ rho). 95% CI: bootstrap over flies stratified by dataset, 2000
+                resamples (Seed 7), percentile.
+Decision rule   PRIMARY (2): (T1) F_2 > 0? group permutation test of mean r_2 vs its W2-null
+                distribution, two-sided. (T2) kappa: CI upper < 0.5 -> "pair-local: the fast
+                link does not carry across a bout"; CI lower > 0.5 -> "multi-bout fast state";
+                otherwise unresolved. Holm applies to T1 only (T2 is an interval reading).
+                SECONDARY: sleep->sleep and wake->wake separately; F_3 and kappa3 = F_3/F_1;
+                per-dataset F_1, F_2, kappa.
+Calibration     Before the data, on the pooled flies' real positions: durations resampled from each
+                fly's own, then reordered by a Gaussian latent over the alternating sequence
+                (rank coupling): (a) independent; (b) shared fast state, AR(1) rho 0.8, signal
+                fraction 0.075 (lag-1 latent corr 0.06); (c) one-step chain, AR(1) rho 0.06, no
+                extra noise. 100 groups x 199 permutations x 500 bootstraps, independent seeds per
+                group. Report T1 rejection in (a) (size) and the T2 classification rates in (b)
+                and (c). T1 size > 0.095 -> T1 descriptive. If (b) is called "pair-local" in more
+                than 0.095 of groups, T2 is demoted to descriptive.
+```
