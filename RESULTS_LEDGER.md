@@ -825,3 +825,38 @@ Verdict         Both primary tests reject: in CS DD, neighbouring sleep and wake
 Not reportable  The fast split as a test (no test of fast-part equality across sets). A clock
                 mechanism for the negative slow part.
 ```
+
+### 2026-11-11  Q. The fast sleep/wake link is one-step: it does not carry to the next sleep (or wake) bout
+
+```
+Commit          e2bad56 (PRESPEC only); scripts Q_run/ (qload, qprep, qstats, qrun, qkappa, qsim,
+                run_Qcal, run_Qdata, fig_Q), session scratch. Speed-up: within-type ranks computed
+                once and permuted (verified identical, max diff 0). First attempt crashed in the
+                bootstrap (row/column bug) before printing any result; fixed and rerun.
+Figure          one_step_link_2026-11-11.png (analysis folder)
+Data            Pooled 113 flies: per0 DD from 24 h (48), CS LD whole record (40), CS DD from 24 h
+                (25). Narrowest block: one 12-h stretch of one fly.
+Calibration     100 groups x 199 permutations x 500 bootstraps, independent seeds:
+                (a) independent: T1 rejection 0.01; kappa called pair-local 0.01, multi 0.00.
+                (b) shared fast state rho 0.8: T1 0.88; kappa pair-local 0.00, multi-bout 0.19,
+                    unresolved 0.81; median kappa 0.89.
+                (c) one-step chain rho 0.06: T1 0.07; kappa pair-local 0.81, unresolved 0.19;
+                    median kappa 0.07.
+                T1 size holds; (b) never misread as pair-local -> T2 stays primary.
+Result          Fast parts (observed - W2-null mean): F1 0.0514, F2 0.0034, F3 -0.0294;
+                sleep->sleep 0.0115, wake->wake -0.0048. Raw r1 0.066, r2 0.059, r3 -0.025; W2-null
+                means 0.014, 0.055, 0.004 (r2 is almost all slow).
+                T1: mean r2 0.0587 vs W2 null 0.0553, p 0.41 -> no fast 2-step coupling.
+                T2: kappa 0.065, 95% CI -0.121..0.252 -> PAIR-LOCAL.
+                Per dataset (descriptive): per0 F1 0.058 F2 -0.019 (kappa -0.32); CS LD 0.039 /
+                0.023 (0.59); CS DD 0.060 / 0.015 (0.24). kappa3 = F3/F1 = -0.57 (descriptive).
+Verdict         The fast sleep/wake link acts across one boundary only: a sleep bout is linked to
+                the wake bouts beside it, and the link is gone two bouts away (like a one-step
+                chain, kappa ~0.07 vs ~0.9 for a fast state lasting several bouts). Successive
+                sleep bouts are correlated (r2 0.059) but only through the slow layer. This is
+                the premise of the revised outline story: the dependence lives in the sleep/wake
+                alternation, not in the sleep sequence.
+Open            The negative 3-step fast part (-0.029; CI excludes 0 in the bootstrap) is not
+                explained and was not pre-specified. per0's 2-step part is negative (wake->wake
+                -0.046). Pooling is across genotypes and conditions; per-dataset kappas are noisy.
+```
