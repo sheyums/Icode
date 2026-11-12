@@ -5,3 +5,4 @@ data/
 *.npz
 __pycache__/
 *.tmp
+supervisor.log
