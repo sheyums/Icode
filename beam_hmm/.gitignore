@@ -1,0 +1,5 @@
+# Raw beam data never enters the repository (brief, 2026-11-12).
+data/
+*.mat
+*.npy
+*.npz
