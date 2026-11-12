@@ -201,3 +201,23 @@ adds a SECONDARY count: promoted AND Jaccard >= 0.5 (the threshold C4 already us
 count is still computed and reported first. The same smoke test showed the HMM splitting sleep by ZONE
 (quiescent states at END, MIDDLE and BEYOND1); that observation is logged in the ledger and is NOT acted on
 here: the gate runs as specified.
+
+### 2026-11-12  D1-B — behaviour separated from place (user decision; replaces D1's symbol and type)
+
+Why: the D1 code smoke test (ledger 2f6d5a1) showed the HMM spending states on WHERE a resting fly sits
+(persistent position makes zone look like hidden state), which crowds out behavioural sub-states. User
+decision 2026-11-12: discover states from behaviour only; treat place as a separate layer.
+The D1 gate run (as specified) was STOPPED at the user's decision before any synthetic fly finished; no
+gate result for D1 exists or was seen. D1's gate is therefore neither passed nor failed: it is superseded.
+
+Changes to D1 (everything not named here stays exactly as in D1, D1-A and D1-A2):
+1 Symbol       Activity class only: STILL / FLICK / LOCAL / TRAVEL (M = 4), definitions unchanged.
+2 TYPE         (still band, movement, S/Q/W label): D1-A item 1 without the zone.
+3 Place layer  For every state of the K* fit, reported descriptively: share of its posterior mass in
+               BEYOND1 / END / MIDDLE windows (zones as defined in D1), light and dark separately. Any
+               claim about place within a state (e.g. "rest at the food end") needs its own PRESPEC.
+4 C4           (a) unchanged: refit at K* with FLICK merged into STILL; candidate must still be found
+               (Jaccard >= 0.5). (b) replaced: a candidate with >= 50% of its posterior mass in BEYOND1
+               windows (where movement is unseen) is DETECTION-LIMITED and not promoted.
+5 Gate         G1, G2 and their pass rules unchanged (truth unchanged, D1-A item 7); evaluation per D1-A
+               item 6 with the D1-A2 secondary count (Jaccard >= 0.5) reported.
