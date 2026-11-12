@@ -2640,3 +2640,22 @@ fumin L/D    | +0.19 p 0.087 / +0.21 p 0.070            | +0.25 / +0.15
 - sss light: no consistency at either level (2-day records, single-day fits).
 - Pattern across blocks: hidden-level consistency tends to appear at night (CS, per0 LD, Sh^mns), where flux is
   larger. Descriptive.
+
+## 2026-11-12 POST HOC SUBSET: deprivation re-analysed without flies 1-15 (20x + post hoc P1-P2, and PRESPEC 30)
+Why: the experimenter reports that the beam-break recordings of flies 1-15 are likely faulty (technical). The
+exclusion was decided AFTER both analyses were known, on technical grounds. Everything below is a post hoc subset
+analysis with the pre-specified code unchanged. Subset (subset_CS_9hrdeprExp.zip): 13 flies, LD18-26 and LD28-31;
+every file is byte-identical to the same-named file of the full set. Logs: hmm_audit/depr_subset/.
+- 20x Stage 0: ZT0-6 sleep rebound +37 min [+3, +59], p 0.027 -> PASS (as in the full set).
+- 20x primary (c_obs, count J, count EPR in ZT0-6): no change beyond the placebo (paired p 0.95 / 0.67 / 0.50);
+  EPR's rise is matched by the placebo trend (+0.092, time-trend p 0.013).
+- Transitions: W->S x1.59 (Holm < 0.001), but the post hoc placebo arm moves it x1.36: not separable (contrast p
+  0.43). Q->S contrast +0.26, p 0.009, Holm 0.054: the largest, but short of Holm. All six: "not separable from the
+  trend".
+- P2 (wake activity, ZT0-6): -0.033 after deprivation against 0.000 on placebo days, paired p 0.043. One uncorrected
+  post hoc readout in a post hoc subset: a hint for the controlled experiment, not a result.
+- PRESPEC 30 (long bouts): no rebound. Day 4 +35 min against placebo +101 (excess -80, p 0.38). All 8 secondary
+  readouts Holm 1. Long-bout drift over baseline days again strong (553 -> 616 -> 745 min).
+- Reading: removing the suspect flies does not change any verdict. With 13 flies the power is lower still; the two
+  hints (quiet wake -> sleep up, wake activity down in the recovery morning) can be pre-registered for the new
+  experiment.
