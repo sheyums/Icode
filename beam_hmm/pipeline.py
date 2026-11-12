@@ -157,3 +157,26 @@ def minute_descriptors(x, t, valid):
     bad = np.bincount(m, weights=(~valid).astype(float), minlength=nm) > 0
     for k in out: out[k] = np.where(bad[:len(out[k])], np.nan, out[k][:nm])
     return out
+
+
+def hub_repair(x, thr=4, min_share=0.30, min_return=0.20):
+    """P1-B item 2. Returns (repaired, info). Runs at the hub entered by a >= thr jump are replaced by the
+    last value before them."""
+    x = np.asarray(x).copy(); d = np.diff(x.astype(int)); big = np.nonzero(np.abs(d) >= thr)[0] + 1
+    info = dict(hub=None, share=0.0, returns=0.0, replaced=0)
+    if len(big) == 0:
+        return x, info
+    v, n = np.unique(x[big], return_counts=True); hub = v[np.argmax(n)]; share = n.max() / len(big)
+    starts = big[x[big] == hub]
+    runs = []
+    for i in starts:
+        k = i
+        while k + 1 < len(x) and x[k + 1] == hub:
+            k += 1
+        runs.append((i, k))
+    ret = np.mean([(k + 1 < len(x)) and x[k + 1] == x[i - 1] for i, k in runs]) if runs else 0.0
+    info.update(hub=int(hub), share=float(share), returns=float(ret))
+    if share >= min_share and ret >= min_return:
+        for i, k in runs:
+            x[i:k + 1] = x[i - 1]; info['replaced'] += k - i + 1
+    return x, info
