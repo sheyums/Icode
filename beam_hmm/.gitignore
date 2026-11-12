@@ -4,3 +4,4 @@ data/
 *.npy
 *.npz
 __pycache__/
+*.tmp
