@@ -191,3 +191,13 @@ code has been run once. Nothing in D1's criteria or thresholds changes.
   Movement per 0.4 s: SLEEP none; QUIET +-1 with p .03; TRAVEL moves with p .5, keeps direction with
   p .85, step 2 with p .1 (else 1); BOUNDARY none, plus single-sample flicker to an adjacent position at
   rate 1/min (p = 0.4/60 per sample). G2 heterogeneity and 6-h modulation exactly as in D1.
+
+### 2026-11-12  D1-A2 — gate evaluation fix, written after a code smoke test and BEFORE the gate runs
+
+A smoke test of the gate code (toy settings: 4 days, K <= 4, 1 restart, 60 iterations, 2 bootstrap
+replicates; 1 synthetic fly per scenario; not the gate) showed that D1-A item 6 counts the planted state as
+"recovered" by whichever fitted state overlaps it most, even at Jaccard 0.06. The gate report therefore
+adds a SECONDARY count: promoted AND Jaccard >= 0.5 (the threshold C4 already uses). The pre-specified
+count is still computed and reported first. The same smoke test showed the HMM splitting sleep by ZONE
+(quiescent states at END, MIDDLE and BEYOND1); that observation is logged in the ledger and is NOT acted on
+here: the gate runs as specified.
