@@ -258,3 +258,13 @@ as a 2-beam step. Cost, stated now: time genuinely spent at the hub beam and mov
 in that fly-week.
 R1 is re-run unchanged (same synthetic flies, seeds, artifact model and pass criteria). If it fails again,
 the 7 artifact-labelled flies stay out of pooled analyses (P1 rule) and are reported separately.
+
+### 2026-11-12  P1-D — post-repair artifact rule (written after seeing the week-1 repair QC)
+
+P1-B/C left open what happens to a fly-week that is still artifact-heavy after the repair. Rule: P1's
+artifact threshold is re-applied AFTER the repair: a fly-week with > 5% of changes being >= 4-beam jumps
+after spike filter + hub repair is excluded from pooled analyses and reported separately. Disclosure: written
+after seeing that ch27, ch31 and ch32 stay above it in week 1; it reuses P1's threshold unchanged.
+Sets: PRIMARY = fly-weeks passing this rule (week 1: ch18-26, 28, 29 = 12 flies); SENSITIVITY = flies never
+labelled artifact-heavy (week 1: ch18, 19, 20, 22, 24, 26, 28, 29 = 8 flies). Every pilot result is reported
+in both. Applied per fly-week, so a fly can enter or leave in later weeks.

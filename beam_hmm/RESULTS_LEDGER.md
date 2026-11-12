@@ -67,3 +67,16 @@ Window-symbol agreement: before 0.86-0.88, after 0.93-0.97 (need >= 0.95).
 Cause: the rule only repairs hub runs entered by a >= 4-beam jump; when the fly rests within 3 beams of the
 hub, blocking episodes look like small steps, are kept, and each one breaks a sleep bout.
 Per P1-B, repaired data are NOT used; the rule is changed in a new entry (P1-C).
+
+## 2026-11-12 — R1 re-run under P1-C (code 17d5de1): PASS
+Hub found in 10/10 synthetic flies; S/Q/W agreement after repair 0.969-0.993 (before 0.21-0.33); window
+symbols 0.991-0.995 (before 0.86-0.88); artifact-free flies changed: 0 samples in 10/10.
+
+## 2026-11-12 — P1-C hub repair applied to week 1 (code 17d5de1; QC only)
+Dead-hub rule fires in exactly the 7 artifact-labelled flies and in none of the 8 others (their top-target
+shares 0.15-0.39 with returns 0.00-0.25 do not meet both conditions).
+Samples replaced / >= 4-beam jumps remaining (share of changes): ch17 8.0% / 3.1%; ch21 12.1% / 2.4%;
+ch23 21.8% / 3.1%; ch25 11.7% / 2.5%; ch31 29.1% / 11.3%; ch32 9.9% / 18.1%; ch27 97.6% / 27.5%.
+Clean flies for comparison: 0.1-3.7% jumps >= 4.
+ch27 is essentially unreadable (hub 16 holds 97.6% of its readings). ch31 and ch32 keep a second artifact
+source (e.g. ch32's second target, 16, takes 39% of its big jumps).
