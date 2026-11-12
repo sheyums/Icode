@@ -58,3 +58,12 @@ target that return to the pre-jump value. Artifact-heavy: ch17 16 (45%, returns 
 ch23 3 (44%, 30%), ch25 8 (40%, 45%), ch27 16 (45%, 52%), ch31 3 (47%, 35%), ch32 11 (41%, 55%); median stay
 at the hub 1.2-3.8 s. Clean channels: top target 15-39%, returns 0-8%. Reading: an intermittently blocked
 beam whose reading overrides the fly's position.
+
+## 2026-11-12 — R1 synthetic check of the P1-B hub repair (code 40b5c3a): FAIL
+10 synthetic G1 flies x 7 days with a hub artifact. Hub identified correctly in 10/10 (share 0.50, returns
+0.94-0.97); no false hub in the 10 artifact-free flies (0 samples changed).
+S/Q/W minute agreement with the artifact-free fly: before repair 0.21-0.33, after 0.61-0.84 (need >= 0.95).
+Window-symbol agreement: before 0.86-0.88, after 0.93-0.97 (need >= 0.95).
+Cause: the rule only repairs hub runs entered by a >= 4-beam jump; when the fly rests within 3 beams of the
+hub, blocking episodes look like small steps, are kept, and each one breaks a sleep bout.
+Per P1-B, repaired data are NOT used; the rule is changed in a new entry (P1-C).

@@ -247,3 +247,14 @@ like everything in the pilot, confirmed only on the repeat experiment.
               agreement >= 95% in every fly; (b) D1-B window-symbol agreement >= 95% in every fly; and (c) on
               the 10 artifact-free flies the repair changes <= 0.1% of samples. Agreement before repair is
               reported beside it.
+
+### 2026-11-12  P1-C — hub beam declared dead (replaces P1-B item 2 after R1 FAILED; ledger)
+
+Rule: hub identification exactly as P1-B (most frequent target of >= 4-beam jumps, share >= 30%, returns
+>= 20%). If a fly-week qualifies, the hub beam is treated as DEAD, as the hardware already does for beam 15:
+EVERY sample reading the hub value is replaced by the last value before it that is not the hub. A fly
+genuinely at the hub position therefore appears at its previous position, and a crossing of the hub appears
+as a 2-beam step. Cost, stated now: time genuinely spent at the hub beam and movement onto it are invisible
+in that fly-week.
+R1 is re-run unchanged (same synthetic flies, seeds, artifact model and pass criteria). If it fails again,
+the 7 artifact-labelled flies stay out of pooled analyses (P1 rule) and are reported separately.
