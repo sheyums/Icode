@@ -5,7 +5,7 @@ import pipeline as pl
 import hmm_cat as hc
 import sim_positions as sp
 
-M = 12; NP = 2; KS = list(range(2, 9)); WPD = 8640          # windows per day
+M = 4; NP = 2; KS = list(range(2, 9)); WPD = 8640          # windows per day
 NB = 19
 
 
@@ -26,17 +26,15 @@ def sqw_per_window(x, t, valid):
 
 def type_of(B, G, lab):
     """D1-A item 1. B: emission row (12), G: posterior mass per window (T), lab: S/Q/W per window."""
-    Bm = B.reshape(4, 3)
-    still = Bm[0].sum(); mv = Bm[1:].sum(1)
+    still = B[0]; mv = B[1:]
     band = 'QUIESCENT' if still >= 0.9 else ('MIXED' if still >= 0.5 else 'ACTIVE')
     move = '-' if band == 'QUIESCENT' else ['FLICK', 'LOCAL', 'TRAVEL'][int(np.argmax(mv))]
-    zone = ['BEYOND1', 'END', 'MIDDLE'][int(np.argmax(Bm.sum(0)))]
     share = np.array([G[lab == L].sum() for L in (pl.S, pl.Q, pl.W)]); share = share / max(share.sum(), 1e-300)
     label = ['S', 'Q', 'W'][int(np.argmax(share))]
-    return (band, move, zone, label), share
+    return (band, move, label), share
 
 
-def describe(model, seqs, lab_days):
+def describe(model, seqs, lab_days, zone_days=None, ph_days=None):
     G = hc.posterior(model, seqs)
     Gc = np.concatenate(G); lab = np.concatenate(lab_days)
     pi, P, B = model; K = B.shape[0]
@@ -45,14 +43,25 @@ def describe(model, seqs, lab_days):
         tp, sh = type_of(B[k], Gc[:, k], lab); types.append(tp); shares.append(sh)
     dwell = [float(np.mean([10.0 / max(1 - P[p, k, k], 1e-12) for p in range(NP)])) for k in range(K)]
     argmax = Gc.argmax(1)
-    return dict(types=types, shares=shares, dwell=dwell, argmax=argmax)
+    place = None
+    if zone_days is not None:
+        z = np.concatenate(zone_days); ph = np.concatenate(ph_days); place = []
+        for k in range(K):
+            pk = {}
+            for pn, pv in (('L', 0), ('D', 1)):
+                m = ph == pv; tot = max(Gc[m, k].sum(), 1e-300)
+                pk[pn] = [float(Gc[m & (z == zz), k].sum() / tot) for zz in (0, 1, 2)]
+            allm = max(Gc[:, k].sum(), 1e-300)
+            pk['beyond1_share'] = float(Gc[z == 0, k].sum() / allm)
+            place.append(pk)
+    return dict(types=types, shares=shares, dwell=dwell, argmax=argmax, place=place)
 
 
 def candidates(desc):
     out = []
-    labs = [tp[3] for tp in desc['types']]
+    labs = [tp[-1] for tp in desc['types']]
     for k, (tp, sh) in enumerate(zip(desc['types'], desc['shares'])):
-        splits = labs.count(tp[3]) > 1
+        splits = labs.count(tp[-1]) > 1
         straddles = sh.max() < 0.6
         if splits or straddles:
             out.append(k)
@@ -90,6 +99,8 @@ def run_fly(x, t, valid, fly_idx, seed_base=1001, boot_base=2001, extra=None, lo
     n = min(len(days_y), len(lab)) // WPD * WPD
     y = days_y[:n]; lab = lab[:n]
     seqs = to_days(y); lab_days = [lab[d*WPD:(d+1)*WPD] for d in range(len(seqs))]
+    zall = sp.window_zones(x)[:n]; zone_days = [zall[d*WPD:(d+1)*WPD] for d in range(len(seqs))]
+    ph_days = [ph for _, ph in seqs]
     nd = len(seqs); odd = list(range(0, nd, 2)); even = list(range(1, nd, 2))
     out = dict(n_days=nd)
     # K sweep
@@ -109,7 +120,8 @@ def run_fly(x, t, valid, fly_idx, seed_base=1001, boot_base=2001, extra=None, lo
     full, ll_full, lls_full, _ = hc.fit(seqs, Kstar, M, NP, ss, n_restarts=10)
     nobs = int((y >= 0).sum())
     out['bic'] = {}
-    desc = describe(full, seqs, lab_days)
+    desc = describe(full, seqs, lab_days, zone_days, ph_days)
+    out['place'] = desc['place']
     out['types'] = [list(tp) for tp in desc['types']]; out['shares'] = [list(map(float, s)) for s in desc['shares']]
     out['dwell_s'] = desc['dwell']
     cand = candidates(desc); out['candidates'] = cand
@@ -138,7 +150,7 @@ def run_fly(x, t, valid, fly_idx, seed_base=1001, boot_base=2001, extra=None, lo
     hdesc = [describe(halves[0], [seqs[i] for i in odd], [lab_days[i] for i in odd]),
              describe(halves[1], [seqs[i] for i in even], [lab_days[i] for i in even])]
     refits = {}
-    for nm, kw in (('a_flick_merged', dict(merge_flick=True)), ('b_beyond_merged', dict(merge_beyond=True))):
+    for nm, kw in (('a_flick_merged', dict(merge_flick=True)),):
         ym = sp.window_symbols(x, valid, **kw)[:n]; sm = to_days(ym)
         mod, _, _, _ = hc.fit(sm, Kstar, M, NP, np.random.SeedSequence([seed_base, fly_idx, Kstar, 7 if nm[0] == 'a' else 8]), n_restarts=10)
         refits[nm] = np.concatenate(hc.posterior(mod, sm)).argmax(1)
@@ -166,8 +178,9 @@ def run_fly(x, t, valid, fly_idx, seed_base=1001, boot_base=2001, extra=None, lo
                 wj = am == j; inter = (win & wj).sum(); uni = (win | wj).sum()
                 best = max(best, inter / uni if uni else 0.0)
             c4[nm] = float(best)
+        b1 = desc['place'][k]['beyond1_share']
         per[k] = dict(type=list(tp), candidate=k in cand, dwell_s=desc['dwell'][k], C2=bool(c2), C3=bool(c3),
-                      C4_jaccard=c4, C4_pass=bool(all(v >= 0.5 for v in c4.values())))
+                      C4_jaccard=c4, beyond1_share=b1, C4_pass=bool(all(v >= 0.5 for v in c4.values()) and b1 < 0.5))
     out['states'] = per
     out['argmax_full'] = desc['argmax']        # removed before saving; used by the gate
     return out

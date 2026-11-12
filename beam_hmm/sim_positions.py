@@ -89,8 +89,17 @@ BEYOND1, END, MIDDLE = 0, 1, 2
 WIN = 25    # samples per 10-s window
 
 
-def window_symbols(x, valid=None, merge_flick=False, merge_beyond=False):
-    """10-s symbols (activity*3 + zone); -1 for windows with any invalid sample. x: readings at 0.4 s."""
+def window_zones(x):
+    """Zone of each 10-s window (BEYOND1 / END / MIDDLE), D1 definitions. Place layer of D1-B."""
+    x = np.asarray(x).astype(np.int64); n = (len(x) // WIN) * WIN; X = x[:n].reshape(n // WIN, WIN)
+    n0 = (X == 0).sum(1)
+    mode = np.array([np.bincount(r, minlength=17).argmax() for r in X])
+    return np.where(n0 >= 13, BEYOND1, np.where((mode <= 2) | (mode >= 14), END, MIDDLE))
+
+
+def window_symbols(x, valid=None, merge_flick=False, merge_beyond=False, activity_only=True):
+    """10-s symbols; -1 for windows with any invalid sample. x: readings at 0.4 s.
+    D1-B (default): activity class only (M = 4). activity_only=False gives D1's activity*3 + zone (M = 12)."""
     x = np.asarray(x).astype(np.int64); n = (len(x) // WIN) * WIN; x = x[:n]
     dx = np.r_[0, np.diff(x)]; chg = dx != 0
     fl = np.zeros(n, bool)
@@ -102,6 +111,11 @@ def window_symbols(x, valid=None, merge_flick=False, merge_beyond=False):
     act = np.where(nc == 0, STILL, np.where(nc == nf, FLICK, np.where(path <= 3, LOCAL, TRAVELC)))
     if merge_flick:
         act = np.where(act == FLICK, STILL, act)
+    if activity_only:
+        y = act.copy()
+        if valid is not None:
+            bad = (~np.asarray(valid)[:n]).reshape(W, WIN).any(1); y[bad] = -1
+        return y.astype(np.int64)
     X = x.reshape(W, WIN)
     n0 = (X == 0).sum(1)
     mode = np.array([np.bincount(r, minlength=17).argmax() for r in X])
