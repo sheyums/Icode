@@ -43,3 +43,11 @@ Descriptive (included flies; per-fly values, median over minutes; range over 8 f
 - W minutes: median beam changes per minute 3.7-15.5 (light), 3.8-22.7 (dark); longest still run inside a
   W minute median 25.6-60 s (light), 15.6-60 s (dark).
 - Per-minute medians are dominated by zeros for S and Q; distribution-level summaries are needed (next).
+
+## 2026-11-12 — D1 gate code smoke test (code a8447bc; toy settings, NOT the gate)
+1 synthetic fly per scenario, 4 days, K in {2,3,4}, 1 restart, 60 iterations, 2 bootstrap replicates.
+- G1: K* = 4, but the four states were quiescent-END-S, quiescent-BEYOND1-S, quiescent-MIDDLE-S and
+  active-LOCAL-W: sleep split by place; the planted BOUNDARY state's best match had Jaccard 0.06.
+- G2: K* = 3; a spurious candidate passed C1 and was "promoted".
+Reading: with zone in the symbol, persistent position during rest makes place look like hidden state.
+Logged, not acted on: the gate (full settings) runs as pre-specified.
