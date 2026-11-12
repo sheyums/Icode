@@ -221,3 +221,29 @@ Changes to D1 (everything not named here stays exactly as in D1, D1-A and D1-A2)
                windows (where movement is unseen) is DETECTION-LIMITED and not promoted.
 5 Gate         G1, G2 and their pass rules unchanged (truth unchanged, D1-A item 7); evaluation per D1-A
                item 6 with the D1-A2 secondary count (Jaccard >= 0.5) reported.
+
+### 2026-11-12  P1-B — include all pilot flies except ch30; hub repair (user request; before any D1 data run)
+
+Why: user request 2026-11-12 to analyse every channel 17-32 except 30 (dead). No D1/D1-B analysis has
+touched real data, so the change cannot be result-driven. Disclosure: the repair rule below was designed
+after seeing the week-1 hub structure (ledger, E0 follow-up); it is validated on synthetic data (R1) and,
+like everything in the pilot, confirmed only on the repeat experiment.
+
+1 Inclusion   Channels 17-29 and 31-32 (15 flies). P1's artifact flag is kept as a LABEL, not an exclusion.
+2 Hub repair  Applied to every fly-week by the same rule, after the P1 spike filter:
+              hub = the value receiving the most >= 4-beam jumps, IF it receives >= 30% of them AND >= 20% of
+              the runs at it that were entered by such a jump end by returning to the pre-jump value.
+              Every run at the hub entered by a >= 4-beam jump is replaced by the last value before it
+              (the fly is taken not to have moved; if it exits to a different value, that exit is the move).
+              A fly-week with no qualifying hub is unchanged. Hub, its two shares and the number of samples
+              replaced are reported per fly-week.
+3 Primary and sensitivity sets  Every pilot result is reported for ALL 15 flies (primary) and, beside it,
+              for the 8 flies never labelled artifact-heavy (sensitivity). A conclusion that holds in one set
+              only is reported as such.
+4 R1 synthetic repair check (must PASS before repaired data are used; seeds 4001+). 10 synthetic G1 flies x
+              7 days; a hub artifact is added to each: hub value uniform on 2..14, blocking episodes start at
+              rate 1/min and last Exp(mean 1.5 s), during which the reading is the hub value. PASS iff, after
+              spike filter + repair, compared with the same fly WITHOUT the artifact: (a) S/Q/W minute
+              agreement >= 95% in every fly; (b) D1-B window-symbol agreement >= 95% in every fly; and (c) on
+              the 10 artifact-free flies the repair changes <= 0.1% of samples. Agreement before repair is
+              reported beside it.

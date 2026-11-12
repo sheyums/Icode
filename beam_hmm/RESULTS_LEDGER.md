@@ -51,3 +51,10 @@ Descriptive (included flies; per-fly values, median over minutes; range over 8 f
 - G2: K* = 3; a spurious candidate passed C1 and was "promoted".
 Reading: with zone in the symbol, persistent position during rest makes place look like hidden state.
 Logged, not acted on: the gate (full settings) runs as pre-specified.
+
+## 2026-11-12 — E0 follow-up: jump artifacts have a hub (code 157bf37; week 1, descriptive)
+Per channel: share of >= 4-beam jumps going to the single most common target, and share of runs at that
+target that return to the pre-jump value. Artifact-heavy: ch17 16 (45%, returns 76%), ch21 5 (44%, 21%),
+ch23 3 (44%, 30%), ch25 8 (40%, 45%), ch27 16 (45%, 52%), ch31 3 (47%, 35%), ch32 11 (41%, 55%); median stay
+at the hub 1.2-3.8 s. Clean channels: top target 15-39%, returns 0-8%. Reading: an intermittently blocked
+beam whose reading overrides the fly's position.
