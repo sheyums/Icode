@@ -1,4 +1,4 @@
-# PRESPEC T1 — DRAFT (2026-11-12): clock-dependent transitions for the behavioural HMM
+# PRESPEC T1 — DRAFT (2026-11-12) — SUPERSEDED: adopted into PRESPEC.md as entry T1 (with decisions)
 
 **Status: DRAFT for the user's review. Not a pre-specification until it is moved into `PRESPEC.md` as a
 dated entry and committed. Nothing in it has been run.** Open choices are marked **[DECIDE]**.

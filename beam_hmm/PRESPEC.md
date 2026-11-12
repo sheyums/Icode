@@ -268,3 +268,34 @@ after seeing that ch27, ch31 and ch32 stay above it in week 1; it reuses P1's th
 Sets: PRIMARY = fly-weeks passing this rule (week 1: ch18-26, 28, 29 = 12 flies); SENSITIVITY = flies never
 labelled artifact-heavy (week 1: ch18, 19, 20, 22, 24, 26, 28, 29 = 8 flies). Every pilot result is reported
 in both. Applied per fly-week, so a fly can enter or leave in later weeks.
+
+### 2026-11-12  T1 — clock-dependent transitions (input-output HMM)
+
+Adopted from beam_hmm/PRESPEC_T1_DRAFT.md (commit 3eb0231) with the user's decisions of 2026-11-12:
+NO startle terms (the light/dark step only; M4 dropped), ridge lambda = 0.01, and the pilot's across-fly
+thresholds accepted (only large, consistent clock effects are detectable). Everything in the draft holds
+except where this entry is more specific; where they differ, this entry wins.
+
+Question, data, time window, preconditions, model family M0-M3, estimation, model selection, decision rule,
+matched null and exclusions: as in the draft. Fixed here in addition:
+1 Covariates  z(ZT) at window-of-day w (ZT = 10 w s): M0 [1, dark]; M1 + cos, sin(2 pi ZT/24);
+              M2 + cos, sin(4 pi ZT/24); M3 + cos, sin(6 pi ZT/24), cos, sin(8 pi ZT/24). dark = ZT >= 12.
+              Ridge 0.01 on every coefficient except the intercept and the dark step.
+2 C6 (new D1 criterion, entered here as D1-C): as in the draft.
+3 Gate truth  0.4-s simulator, states SLEEP, QUIET, TRAVEL with D1-A item 7 dwells and jumps (BOUNDARY
+              removed, rows renormalised). Clock modulation (T-G1, T-G3) multiplies the SLEEP exit
+              probability by exp(f(ZT)), f = a [cos(th) + cos(2 th)], th = 2 pi (ZT - 12.5)/24,
+              a = ln 3 / 3.125 = 0.35156 (peak-to-trough of the modulation = 3; main peak ZT 12.5, secondary
+              ZT 0.5). T-G2: no modulation. T-G3: per-fly heterogeneity as D1 G2 (each rate x exp(N(0,0.3))).
+4 Gate criteria, made exact
+  T-G1 peak     the SLEEP state of the fit = the state with the largest Jaccard overlap with true-SLEEP
+                windows (>= half the window in SLEEP). Its fitted exit profile 1 - P_ii(ZT) is compared with
+                the TRUE total exit profile (light/dark base x modulation, per 10-s window). PASS needs the
+                circular distance between their argmax ZTs <= 2 h in >= 16/20 flies, the median ratio of
+                fitted to true peak-to-trough in [0.67, 1.5], and M1-M3 chosen over M0 in >= 16/20.
+  T-G2          M1-M3 chosen over M0 in <= 3/20.
+  T-G3          the D1-B procedure run with M* transitions (K sweep, C1 bootstrap from the M* model at
+                K*-1, C2, C3): a candidate passing C1-C3 in <= 1/20. The same procedure under M0 is run on
+                the same flies and reported beside it.
+  Seeds: data SeedSequence([6001, scenario, fly]); fits SeedSequence([5001 + r, fly, K, model, fold]).
+5 Order       The T1 gate starts after the D1-B gate finishes (they would compete for the same 4 cores).
