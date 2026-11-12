@@ -176,7 +176,13 @@ def hub_repair(x, thr=4, min_share=0.30, min_return=0.20):
         runs.append((i, k))
     ret = np.mean([(k + 1 < len(x)) and x[k + 1] == x[i - 1] for i, k in runs]) if runs else 0.0
     info.update(hub=int(hub), share=float(share), returns=float(ret))
-    if share >= min_share and ret >= min_return:
-        for i, k in runs:
-            x[i:k + 1] = x[i - 1]; info['replaced'] += k - i + 1
+    if share >= min_share and ret >= min_return:          # P1-C: hub beam declared dead
+        at = x == hub
+        info['replaced'] = int(at.sum())
+        if at[0]:
+            nz = np.nonzero(~at)[0]
+            x[0] = x[nz[0]] if len(nz) else x[0]; at[0] = False
+        idx = np.where(~at, np.arange(len(x)), 0)
+        np.maximum.accumulate(idx, out=idx)
+        x = x[idx]
     return x, info
