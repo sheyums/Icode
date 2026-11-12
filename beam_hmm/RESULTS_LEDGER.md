@@ -23,3 +23,23 @@ Silence / death
 Descriptive (clean channels 18,19,22,24,26,28,29; hours 0-150)
 - Time in runs of no beam change: >= 5 min 71%, 1-5 min 13.5%, 5-60 s 10.6%, < 5 s 4.9%.
 - Midday occupancy concentrates at beam 16 in ch18, 26, 29 (partly 19, 28), at low beams in ch22, 24.
+
+## 2026-11-12 — P1 on week 1 (code 3151481; PRESPEC P1, pilot; descriptive)
+Inclusion (channels 17-32, week 1)
+- Included (8): ch18, 19, 20, 22, 24, 26, 28, 29.
+- Artifact-heavy (7; > 5% of changes are >= 4-beam jumps after the spike filter): ch17 (13.9%), 21 (9.3%),
+  23 (8.0%), 25 (8.1%), 27 (20.4%), 31 (52.8%), 32 (43.0%).
+- Empty/dead at load (1): ch30 (0 changes in the first 24 h).
+HANDLING DETECTOR FAILED: the pre-specified rule (>= 50% of included channels above their own 99th
+percentile in one 10-min window) found NO window in week 1, although E0 shows a common event at ~153-157 h.
+So the whole file after hour 2 was treated as valid, and the 13.6-14.4-h silences that end the file for
+ch19, 22, 29 are counted as valid inactivity (they inflate day-7 sleep). Not re-tuned on these data: the
+rule will be replaced by the user's transfer times, or by a new dated detector entry tested on weeks 2-9.
+Descriptive (included flies; per-fly values, median over minutes; range over 8 flies)
+- Sleep per day (whole week, inflated as above): 864-1281 min (median ~1080; 14-21 h). ch20 and ch26 are
+  the 1280-min flies and also the least active in the first 24 h (396 and 204 changes).
+- Share of active seconds that contain ONLY edge flicker (1-beam A-B-A): S minutes 0.9-10.8% (light),
+  1.2-12.9% (dark); Q 0-5.5% / 1.0-8.8%; W 0.9-6.5% / 0.5-7.4%.
+- W minutes: median beam changes per minute 3.7-15.5 (light), 3.8-22.7 (dark); longest still run inside a
+  W minute median 25.6-60 s (light), 15.6-60 s (dark).
+- Per-minute medians are dominated by zeros for S and Q; distribution-level summaries are needed (next).
