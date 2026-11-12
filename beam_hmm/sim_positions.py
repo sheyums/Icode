@@ -11,16 +11,29 @@ JUMP = np.array([[0, .6, .3, .1],
                  [.5, .3, .2, 0]])
 
 
+A_HARM = np.log(3) / 3.125      # T1 entry item 3
+
+
+def true_sleep_exit_profile(scenario):
+    """True per-10-s-window SLEEP exit probability across the day (before per-fly heterogeneity)."""
+    exitp, _ = truth(scenario)
+    zt = np.arange(8640) * 10 / 3600; ph = (zt >= 12).astype(int)
+    e = exitp[ph, 0].copy()
+    if scenario in ('TG1', 'TG3'):
+        th = 2 * np.pi * (zt - 12.5) / 24; e = e * np.exp(A_HARM * (np.cos(th) + np.cos(2 * th)))
+    return 1 - (1 - np.minimum(e, 1)) ** 25
+
+
 def truth(scenario):
     """Per-phase per-sample exit probabilities (2 x S) and jump matrix (S x S)."""
-    S = 4 if scenario == 'G1' else 3
+    S = 4 if scenario == 'G1' else 3     # G2 and the T1 scenarios TG1-TG3 have 3 states
     J = JUMP[:S, :S].copy(); J /= J.sum(1, keepdims=True)
     exitp = np.array([DT / (60 * DWELL_MIN[p][:S]) for p in (0, 1)])
     return exitp, J
 
 
 @njit(cache=True)
-def _sim(n, exitp, J, mod_amp, u, x0):
+def _sim(n, exitp, J, mod_amp, u, x0, modtype=1, a_harm=0.0):
     S = J.shape[0]
     state = np.empty(n, np.int8); pos = np.empty(n, np.int16); read = np.empty(n, np.int16)
     s = 0; p = x0; d = 1; flick = 0; last = x0
@@ -34,8 +47,13 @@ def _sim(n, exitp, J, mod_amp, u, x0):
         tt = t * 0.4
         ph = 0 if (tt % 86400.0) < 43200.0 else 1
         e = exitp[ph, s]
-        if s == 0 and mod_amp > 0:
+        if s == 0 and modtype == 1 and mod_amp > 0:
             e = e * (1.0 + mod_amp * np.cos(2 * np.pi * tt / 21600.0))
+        if s == 0 and modtype == 2:
+            th = 2 * np.pi * ((tt % 86400.0) / 3600.0 - 12.5) / 24.0
+            e = e * np.exp(a_harm * (np.cos(th) + np.cos(2 * th)))
+            if e > 1.0:
+                e = 1.0
         if u[k] < e:
             r = u[k+1]; ns = S - 1
             for j in range(S):
@@ -72,14 +90,16 @@ def _sim(n, exitp, J, mod_amp, u, x0):
 def simulate_fly(scenario, days, seed_seq):
     rng = np.random.default_rng(seed_seq)
     exitp, J = truth(scenario)
-    if scenario == 'G2':
+    modtype, amp, a_h = 1, 0.0, 0.0
+    if scenario in ('G2', 'TG3'):
         exitp = exitp * np.exp(rng.normal(0, 0.3, size=exitp.shape))
+    if scenario == 'G2':
         amp = 0.5
-    else:
-        amp = 0.0
+    if scenario in ('TG1', 'TG3'):
+        modtype, a_h = 2, A_HARM
     n = int(days * 86400 / DT)
     u = rng.random(7 * n + 10)
-    state, pos, read = _sim(n, exitp, J, amp, u, int(rng.integers(0, 17)))
+    state, pos, read = _sim(n, exitp, J, amp, u, int(rng.integers(0, 17)), modtype, a_h)
     return state, read, np.arange(n) * DT
 
 
