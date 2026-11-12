@@ -29,3 +29,16 @@ Food end must be inferred per fly. It must NOT be inferred from midday-sleep pos
 report that flies nap near food: that is circular. Any inference rule is pre-specified in PRESPEC.md,
 uses a block that is then excluded from analyses involving place, or uses a criterion independent of
 the quantity being reported.
+
+## Added 2026-11-12 (user, chat)
+- All flies male. LD 12:12 throughout.
+- Roughly every 7 days flies were moved to a tube with fresh food and put back in the monitor: every file
+  boundary is a transfer (a disturbance and a break in the record), not a continuation.
+- Death rule (lab convention): no activity for >= 12 h = dead; exclude the preceding 24 h as well.
+
+## File format (week 1, measured on the file itself)
+- 3 header lines: "Recording started at: Wed Sep 09 04:26:13 2026", blank, "Recording frequency: 5 Hz".
+  CRLF line endings, tab-separated.
+- 3,024,000 data lines = 604,800 s x 5 Hz, 65 fields each: 64 channels then a time column.
+- Lines alternate: a line of beam positions with a time stamp, then a line of 64 x "-1" with an empty time
+  field. Meaning of the -1 lines is to be asked, not assumed.
