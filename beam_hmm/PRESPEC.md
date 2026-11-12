@@ -159,3 +159,35 @@ Notes           - Window (10 s), symbol cells, zone cut-offs and all thresholds 
                   promoted sleep sub-state is named by its observable signature, not as "deep" or "light".
                 - Compute estimate: ~3 h for the K sweep, ~5 h for C1 bootstraps (8 flies); results are saved
                   per fly as they complete, so a restart resumes.
+
+### 2026-11-12  D1-A — implementation details for D1 (written before any D1 code has run)
+
+Purpose: D1 leaves some operational details open. They are fixed here, before the simulator or the HMM
+code has been run once. Nothing in D1's criteria or thresholds changes.
+
+1 TYPE (refines D1 "Mapping", because argmax activity is STILL for most quiet states and would merge them):
+  still band   P(STILL) >= 0.9 QUIESCENT; 0.5-0.9 MIXED; < 0.5 ACTIVE  (P summed over zones)
+  movement     the most probable of FLICK / LOCAL / TRAVEL (summed over zones); "-" if QUIESCENT
+  zone         argmax zone (summed over activity classes)
+  label        dominant S/Q/W share of the state's posterior mass
+  TYPE = (still band, movement, zone, label). Candidate rule as in D1.
+2 Sequences: each fly-day (ZT0-ZT0) is a separate sequence with its own initial distribution pi; held-out
+  days are scored independently. Held-out logL per window = total / number of non-missing windows.
+3 Random starts: seed = SeedSequence([base + r, fly index, K, fold code]); base 1001 (fits), 2001
+  (bootstrap), 3001 (synthetic data). Init: emission rows = 0.5 x Dirichlet(1) + 0.5 x pooled symbol
+  frequencies; transition rows: 0.9 on the diagonal, off-diagonal 0.1 x Dirichlet(1); pi uniform.
+4 C3 matching: the state of the other half with the same TYPE and the smallest JS distance; if none, absent.
+5 C4 "still found": some state of the refit has Jaccard overlap >= 0.5 with the candidate's windows
+  (windows whose posterior argmax is the candidate).
+6 Gate scope: in G1/G2 each synthetic fly is evaluated on its own (C1 per fly, no across-fly binomial);
+  C5 is not computed in the gate. G1 "planted state promoted in a fly" = the fitted state with the largest
+  Jaccard overlap with the TRUE planted-state windows (a window counts if >= half of it is in the planted
+  state) is a candidate and passes C1, C2 and C3 in that fly. G2 "spurious candidate" = any candidate.
+7 Synthetic truth (0.4-s hidden chain; positions 0..16; true position 15 reads as the previous reading,
+  i.e. beam 15 dead; reflecting ends). Mean dwells (min) light / dark:
+     SLEEP 20 / 40   QUIET 3 / 2   TRAVEL 0.67 / 0.5   BOUNDARY 3 / 3
+  Jump probabilities (row = from): SLEEP -> Q .6 T .3 B .1 | QUIET -> S .4 T .4 B .2 |
+     TRAVEL -> Q .6 S .1 B .3 | BOUNDARY -> S .5 Q .3 T .2   (G2: BOUNDARY removed, rows renormalised)
+  Movement per 0.4 s: SLEEP none; QUIET +-1 with p .03; TRAVEL moves with p .5, keeps direction with
+  p .85, step 2 with p .1 (else 1); BOUNDARY none, plus single-sample flicker to an adjacent position at
+  rate 1/min (p = 0.4/60 per sample). G2 heterogeneity and 6-h modulation exactly as in D1.
