@@ -112,3 +112,17 @@ Looked at to check output sanity before the gate finishes; the pass rules are fi
   M0 fit scores 12 h. It re-measures "clock model chosen", not peak placement. Not changed (gate running).
 - TG2: M0 chosen in 11/12 (allowed <= 3/20 false selections); the single false one (fly 15, M1) had a gain of
   +0.05e-4 nats/window.
+
+## 2026-11-13 — T1 synthetic gate, TG1 + TG2 (code ac6007d; run on the user's machine, pushed as 2622927): FAIL
+TG3 deferred (T1-A). TG2_fly09 did not finish (~13.4 h, skipped at the user's request; note in
+results/t1_gate/NOTE_TG2_fly09_skipped.txt); neither verdict depends on it.
+TG1 (planted morning/evening sleep-exit rhythm, peak-to-trough 3): clock model chosen in 13/20 (need >= 16) -> FAIL.
+  M* = [2,2,2,0,2,1,0,0,1,2,1,2,1,2,0,0,0,0,1,2]. Peak within 2 h: 13/20 (the same 13: the criterion is
+  uninformative as specified, see the interim entry). Median fitted/true peak-to-trough 0.95 -> within [0.67, 1.5].
+TG2 (no rhythm beyond the step): clock model chosen in 1/19 (allowed <= 3) -> PASS.
+Reading: the clock models do not invent rhythms and recover the rhythm's size when chosen, but per-fly
+held-out selection detects a 3-fold sleep-exit rhythm in only ~65% of flies at 14 days.
+POST HOC (computed after the verdict, from the per-fly held-out gains; not pre-specified): resampling 12-fly
+cohorts from these flies, T1's own across-fly decision rule (one-sided sign test on best-of-M1/M2 minus M0)
+rejects in 15% of cohorts with the rhythm present (Wilcoxon signed-rank 22%) and 0% without it. So at the
+pilot's size, the pre-specified real-data test has low power for a rhythm of this size.
