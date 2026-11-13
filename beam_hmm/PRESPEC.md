@@ -299,3 +299,47 @@ matched null and exclusions: as in the draft. Fixed here in addition:
                 the same flies and reported beside it.
   Seeds: data SeedSequence([6001, scenario, fly]); fits SeedSequence([5001 + r, fly, K, model, fold]).
 5 Order       The T1 gate starts after the D1-B gate finishes (they would compete for the same 4 cores).
+
+### 2026-11-13  D1-D — sample-level (0.4-s) behavioural HMM; null simulated at the level it is fitted
+
+Why: the D1-B gate FAILED (run on the user's machine; numbers to be logged in the ledger from the pushed
+files): G1 chose K* = 4 in only 7/20 flies (most 5-6) although the planted state was promoted in 17/20;
+G2 produced a spurious promoted state in 18/20. G1 has neither clock modulation nor heterogeneity, so its
+extra states point to MISSPECIFICATION by windowing: a 0.4-s process switching state inside 10-s windows
+creates mixed windows that a window-level HMM absorbs with transitional states, while the C1 null
+(simulated directly at the window level) has no mixed windows and cannot see the effect. User decision
+2026-11-13: fit at the sample level instead. This replaces D1-B's symbol and procedure; D1, D1-A (except
+item 3 seeds, which carry over unchanged), D1-A2, D1-B items 3-5 and P1-B/C/D hold unless changed here.
+
+1 Observation  Per 0.4-s step after spike filter + P1-C hub repair: symbol = min(|x_t - x_{t-1}|, 3), i.e.
+               M = 4 classes {no change, 1-beam, 2-beam, >= 3-beam}. A purely local function of two
+               consecutive readings: no windows, no aggregation. (Beam 15 being dead turns a 14<->16
+               crossing into a 2-beam step in data and simulator alike.) Missing samples = -1.
+2 Model        Per fly, categorical HMM on the step symbols, transition matrices separate for light and dark
+               (step INTO sample t uses the phase of t), each fly-day a separate sequence. K = 2..8.
+3 Fitting      Random starts as D1-A item 3. Convergence: tolerance 0.01 nats (absolute, per fit), max 300
+               iterations. Observed-data fits (K sweep, both folds): 5 random starts. Full fit at K*,
+               K*-1 null, half fits, C4 refit: 5 random starts. Bootstrap fits: 2 starts each, one random and
+               one warm start (K*-1 fits start from the generating null; K* fits start from the fly's
+               observed K* fit). A warm start can only add a candidate optimum.
+               Reason for the reduction from D1's 10 restarts / 1e-4: measured cost (0.10-0.24 s per EM
+               iteration on 7 days; ~200 core-hours for the gate at D1 settings).
+4 K selection  Two-fold by day, held-out logL per step; K* = argmax over non-degenerate fits (JS < 0.05 bits
+               between two emission rows = degenerate). BIC reported beside it for K*.
+5 TYPE         still band on P(no change): QUIESCENT >= 0.999; LOW 0.95-0.999; ACTIVE < 0.95. Movement = most
+               probable of {1-beam, 2-beam, >= 3-beam} ("-" if QUIESCENT). Label = dominant S/Q/W share of
+               the state's posterior mass (each sample takes its minute's P1 label). Candidate rule as D1.
+6 Criteria     C1 as D1 but the 19 bootstrap replicates are simulated from the fly's K*-1 SAMPLE-LEVEL fit with
+               the same sequence lengths, phases and missing pattern, i.e. at the same level as the fitted
+               data. C2: expected dwell 0.4 s / (1 - p_kk), mean of light and dark, >= 30 s. C3 as D1 (halves
+               = the two fold fits). C4(a) replaced: positions with single-sample 1-beam excursions removed
+               (A-B-A, |B-A| = 1, B set to A), recoded, refit at K*; candidate still found (Jaccard >= 0.5
+               over samples). C4(b) as D1-B (>= 50% of posterior mass at position 0 = detection-limited).
+               C5 as D1 (not computed in the gate).
+7 Gate         G1 and G2 truths, seeds and pass rules exactly as D1 / D1-A item 7 (G1: planted state promoted
+               in >= 16/20 and K* = 4 in >= 14/20; G2: spurious C1 pass <= 2/20 and promoted <= 1/20), with the
+               D1-A2 secondary count (Jaccard >= 0.5, over samples). Remaining known gap, stated now: the
+               spike filter is applied to the data but not re-applied inside bootstrap replicates (they are
+               generated as symbols); the number of samples it changes is reported per fly.
+8 If the gate fails again, next step (stated in advance, not run without a new entry): a minimum held-out
+               gain per added state, calibrated on simulated flies, before any change to the model family.
