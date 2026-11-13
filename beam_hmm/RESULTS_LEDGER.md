@@ -98,3 +98,17 @@ Post hoc reading of the per-fly fits (state types and dwells in the JSONs; not a
   K* > 3, so D1-B fails under either reading.
 - C1's bootstrap thresholds were ~0 (null simulated exactly from the window-level HMM), so tiny gains passed.
 - The T1 gate's TG3 uses the same "any promoted candidate" rule and inherits the same flaw; TG1/TG2 do not.
+
+## 2026-11-13 — T1 gate INTERIM sanity check (30/40 flies, pushed as 10b7f8d; code ac6007d) — not the verdict
+Looked at to check output sanity before the gate finishes; the pass rules are fixed and unchanged.
+- Sleep-state matching works: Jaccard with true SLEEP 0.98-0.99 in all 18 TG1 flies.
+- TG1: a clock model (M1-M3) chosen over M0 in 13/18 (needs >= 16/20 at the end; with 2 flies left it cannot
+  reach 16, so TG1 will FAIL on selection). The 5 flies choosing M0 had held-out gains of M1-M3 of
+  -0.2 to -11e-4 nats/window; 3 of them had K* = 4 (an extra, over-split state). Where a clock model was chosen,
+  the fitted/true peak-to-trough ratio was 0.80-1.64.
+- TG1 peak criterion is UNINFORMATIVE as specified (design weakness, mine): the true total sleep-exit
+  profile = light/dark base x modulation peaks at ZT 12.0 (the last light window, where the higher light-phase
+  base meets the rising modulation), so any fit with the step and a roughly right shape scores 0 h, and any
+  M0 fit scores 12 h. It re-measures "clock model chosen", not peak placement. Not changed (gate running).
+- TG2: M0 chosen in 11/12 (allowed <= 3/20 false selections); the single false one (fly 15, M1) had a gain of
+  +0.05e-4 nats/window.
