@@ -343,3 +343,18 @@ item 3 seeds, which carry over unchanged), D1-A2, D1-B items 3-5 and P1-B/C/D ho
                generated as symbols); the number of samples it changes is reported per fly.
 8 If the gate fails again, next step (stated in advance, not run without a new entry): a minimum held-out
                gain per added state, calibrated on simulated flies, before any change to the model family.
+
+### 2026-11-13  D1-D2 — gate evaluation corrected (after the D1-B gate results; BEFORE the D1-D gate runs)
+
+The D1-B results (ledger) show that D1-A item 6's G2 rule ("spurious candidate = any candidate") counts TRUE
+states as spurious whenever the S/Q/W scoring merges them (true QUIET and TRAVEL are both scored W). A
+negative control must count only states that do not exist. Disclosure: this correction was made after seeing
+the D1-B gate; it changes how the gate is SCORED, not the model, the data, the criteria or the pass counts.
+For D1-D (G1 and G2):
+- Each fitted state gets its best Jaccard overlap (over samples, posterior argmax) with each TRUE state.
+- A state is SPURIOUS if its best Jaccard with every true state is < 0.5.
+- G2 PASS iff a SPURIOUS candidate passes C1 in <= 2/20 flies and is promoted (C1-C3) in <= 1/20.
+- G1 unchanged (planted state promoted in >= 16/20, K* = 4 in >= 14/20), plus the same spurious count reported.
+- The original D1-A item 6 count is reported beside the corrected one.
+The T1 gate's TG3 is already running under the old rule; its TG3 verdict is therefore to be read as
+uninformative, and TG3 will be re-scored the same way only if re-run (TG1 and TG2 are unaffected).

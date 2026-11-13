@@ -80,3 +80,21 @@ ch23 21.8% / 3.1%; ch25 11.7% / 2.5%; ch31 29.1% / 11.3%; ch32 9.9% / 18.1%; ch2
 Clean flies for comparison: 0.1-3.7% jumps >= 4.
 ch27 is essentially unreadable (hub 16 holds 97.6% of its readings). ch31 and ch32 keep a second artifact
 source (e.g. ch32's second target, 16, takes 39% of its big jumps).
+
+## 2026-11-13 — D1-B synthetic gate (per-fly results from code 752e34f; REPORT.txt written at 9790253, gate_d1.py
+## and d1.py identical between them; run on the user's machine, pushed as 17a458c): FAIL
+G1 (planted BOUNDARY state): K* = [5,6,6,6,7,5,4,5,5,4,6,4,6,4,4,4,5,4,5,5] -> K* = 4 in 7/20 (need 14). Planted state:
+candidate 20/20, C1 19/20, C2 20/20, C3 17/20, C4 0/20 (expected: flicker-defined), promoted 17/20 (need 16);
+matched Jaccard 0.66-0.75, so the secondary (D1-A2) count is also 17/20.
+G2 (no extra state): K* = 3 in 11/20, 4 in 6/20, 5 in 3/20; spurious C1 18/20, promoted 18/20 (allowed 2 and 1).
+Post hoc reading of the per-fly fits (state types and dwells in the JSONs; not a pre-specified analysis):
+- Extra states: K* > true K in 13/20 G1 flies; the surplus states have expected dwell 10-14 s (one window) in
+  most of them, e.g. ACTIVE/LOCAL/W 10 s, ACTIVE/TRAVEL/W 10 s, and add 0.0001-0.0006 nats/window of held-out
+  logL (a real state adds ~0.017). Consistent with the windowing explanation behind D1-D.
+- The G2 rule itself is unpassable: with K* = 3 the three fitted states ARE the true ones (QUIESCENT/S ~1700-
+  2400 s, ACTIVE/LOCAL/W ~120-160 s, ACTIVE/TRAVEL/W ~40-60 s), but true QUIET and TRAVEL are both scored W,
+  so they "split a label", become candidates, pass C1 against K = 2, and count as spurious. A gate design
+  error (mine), fixed for D1-D in entry D1-D2. G2 also fails on genuine over-splitting in its 9 flies with
+  K* > 3, so D1-B fails under either reading.
+- C1's bootstrap thresholds were ~0 (null simulated exactly from the window-level HMM), so tiny gains passed.
+- The T1 gate's TG3 uses the same "any promoted candidate" rule and inherits the same flaw; TG1/TG2 do not.
