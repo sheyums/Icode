@@ -1,0 +1,18 @@
+T1 (TG1,TG2) run note - 2026-11-13, local Windows run (Python 3.12.10, numpy 2.5.4,
+scipy 1.18.1, numba 0.68.1), code ac6007d, command:
+  python -I gate_t1.py results/t1_gate 11 --scenarios TG1,TG2
+
+TG2_fly09 was NOT completed. It ran from about 00:00 to 13:25 local (~13.4 h wall,
+~12.9 h CPU on its worker), far longer than any other fly in the run (the next
+longest was about 5 h). The user chose to skip it, and the gate was stopped at
+13:25 with 39/40 flies done. No partial result exists for fly09.
+
+REPORT.txt was written from the 39 finished flies, so it prints no overall
+"T1 GATE" line (the report prints that only when every fly is present).
+Reading the pass rules against the 39 flies:
+  TG1 (20/20): clock chosen 13/20; the rule needs >= 16, so TG1 FAILS.
+  TG2 (19/20): clock chosen 1/19; the rule allows <= 3, so TG2 PASSES whatever
+               fly09 would give (at most 2/20).
+fly09 therefore cannot change either verdict.
+
+To finish fly09 later, rerun the same command: finished flies are skipped.
