@@ -22,3 +22,13 @@ heterogeneity; free per-fly emissions made states degenerate).
   estimate (e.g. chi2p), since folding at 24 h fails when the clock free-runs. Not needed while the files'
   stated start (lights-on) is trusted. Note: its arguments-block comment for BinMinutes says 15/60, the code
   and help say 10/30.
+
+## MATLAB: BeamFingerprint (beam_hmm/matlab/)
+`out = BeamFingerprint('raw_file.txt')` reads one raw multibeam file (3 header lines, 64 position columns + time,
+the all -1 lines dropped), applies the P1/P1-C preprocessing (spike filter, dead-hub repair), prints a CHANNEL
+STATUS block (empty/dead, artifact-heavy, included, each with its flags), returns a QC table (with a Flags
+column) and draws four figures: activity heatmap, one-day traces, 10-min zoom, occupancy by ZT hour.
+`'Plot', false` gives the QC only; `'SaveFolder', dir` writes PNGs and the QC as CSV.
+Golden test: `test_BeamFingerprint('raw_positions_all64_week1.txt')` from beam_hmm/matlab must match the Python
+pipeline (golden_week1_qc.json, channels 17-32). Verified in Octave 8.4 on a one-day excerpt (all 16 channels
+exact); the FULL-file test and the figures still need a MATLAB run (Octave here cannot render figures).

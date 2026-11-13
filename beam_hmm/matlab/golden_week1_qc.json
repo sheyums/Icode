@@ -1,0 +1,182 @@
+{
+ "file": "raw_positions_all64_week1.txt",
+ "n_samples": 1511985,
+ "channels": [
+  {
+   "channel": 17,
+   "spikes": 3967,
+   "hub": 16,
+   "share": 0.4457804497884658,
+   "returns": 0.7582417582417582,
+   "replaced": 121711,
+   "changes": 25145,
+   "frac_big_final": 0.03105985285344999,
+   "changes24": 2492
+  },
+  {
+   "channel": 18,
+   "spikes": 1,
+   "hub": 7,
+   "share": 0.1657142857142857,
+   "returns": 0.034482758620689655,
+   "replaced": 0,
+   "changes": 18139,
+   "frac_big_final": 0.009647720381498429,
+   "changes24": 2730
+  },
+  {
+   "channel": 19,
+   "spikes": 5,
+   "hub": 4,
+   "share": 0.15306122448979592,
+   "returns": 0.0,
+   "replaced": 0,
+   "changes": 20841,
+   "frac_big_final": 0.004702269564800154,
+   "changes24": 4453
+  },
+  {
+   "channel": 20,
+   "spikes": 2,
+   "hub": 4,
+   "share": 0.18571428571428572,
+   "returns": 0.0,
+   "replaced": 0,
+   "changes": 6490,
+   "frac_big_final": 0.02157164869029276,
+   "changes24": 396
+  },
+  {
+   "channel": 21,
+   "spikes": 934,
+   "hub": 5,
+   "share": 0.4421012991903596,
+   "returns": 0.20868824531516184,
+   "replaced": 182766,
+   "changes": 49076,
+   "frac_big_final": 0.023718314451055506,
+   "changes24": 8322
+  },
+  {
+   "channel": 22,
+   "spikes": 36,
+   "hub": 5,
+   "share": 0.2779220779220779,
+   "returns": 0.06542056074766354,
+   "replaced": 0,
+   "changes": 12661,
+   "frac_big_final": 0.030408340573414423,
+   "changes24": 1528
+  },
+  {
+   "channel": 23,
+   "spikes": 429,
+   "hub": 3,
+   "share": 0.4395029431000654,
+   "returns": 0.2976190476190476,
+   "replaced": 330012,
+   "changes": 32062,
+   "frac_big_final": 0.030534589233360363,
+   "changes24": 4927
+  },
+  {
+   "channel": 24,
+   "spikes": 43,
+   "hub": 4,
+   "share": 0.3876500857632933,
+   "returns": 0.0752212389380531,
+   "replaced": 0,
+   "changes": 15905,
+   "frac_big_final": 0.03665513989311537,
+   "changes24": 1544
+  },
+  {
+   "channel": 25,
+   "spikes": 351,
+   "hub": 8,
+   "share": 0.40384615384615385,
+   "returns": 0.45021645021645024,
+   "replaced": 177280,
+   "changes": 12171,
+   "frac_big_final": 0.024566592720400952,
+   "changes24": 1201
+  },
+  {
+   "channel": 26,
+   "spikes": 0,
+   "hub": 9,
+   "share": 0.21052631578947367,
+   "returns": 0.25,
+   "replaced": 0,
+   "changes": 3206,
+   "frac_big_final": 0.005926388022457892,
+   "changes24": 204
+  },
+  {
+   "channel": 27,
+   "spikes": 421,
+   "hub": 16,
+   "share": 0.4509090909090909,
+   "returns": 0.5241935483870968,
+   "replaced": 1475195,
+   "changes": 843,
+   "frac_big_final": 0.2752075919335706,
+   "changes24": 253
+  },
+  {
+   "channel": 28,
+   "spikes": 2,
+   "hub": 4,
+   "share": 0.22857142857142856,
+   "returns": 0.041666666666666664,
+   "replaced": 0,
+   "changes": 30064,
+   "frac_big_final": 0.0034925492283129325,
+   "changes24": 6392
+  },
+  {
+   "channel": 29,
+   "spikes": 21,
+   "hub": 9,
+   "share": 0.2028985507246377,
+   "returns": 0.07142857142857142,
+   "replaced": 0,
+   "changes": 49151,
+   "frac_big_final": 0.0014038371548900327,
+   "changes24": 9100
+  },
+  {
+   "channel": 30,
+   "spikes": 0,
+   "hub": 16,
+   "share": 0.5,
+   "returns": 0.0,
+   "replaced": 0,
+   "changes": 4,
+   "frac_big_final": 1.0,
+   "changes24": 0
+  },
+  {
+   "channel": 31,
+   "spikes": 6508,
+   "hub": 3,
+   "share": 0.4715266558966074,
+   "returns": 0.3404710920770878,
+   "replaced": 439540,
+   "changes": 18832,
+   "frac_big_final": 0.11347706032285472,
+   "changes24": 3655
+  },
+  {
+   "channel": 32,
+   "spikes": 4967,
+   "hub": 11,
+   "share": 0.4130586106083809,
+   "returns": 0.5483653522076172,
+   "replaced": 150278,
+   "changes": 10647,
+   "frac_big_final": 0.18117779656241195,
+   "changes24": 602
+  }
+ ]
+}
