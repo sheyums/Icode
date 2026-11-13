@@ -83,15 +83,19 @@ def init_model(K, M, nP, freq, rng):
     return np.full(K, 1.0 / K), P, B
 
 
-def fit(seqs, K, M, nP=2, seed_seq=None, n_restarts=10, max_iter=500, tol=1e-4, floor=1e-12):
-    """Baum-Welch from n_restarts random starts. Returns (best_model, best_ll, all_lls, n_iters_best)."""
+def fit(seqs, K, M, nP=2, seed_seq=None, n_restarts=10, max_iter=500, tol=1e-4, floor=1e-12, inits=None):
+    """Baum-Welch from n_restarts starts: the models in `inits` (warm starts) first, then random starts.
+    Returns (best_model, best_ll, all_lls, n_iters_best)."""
     ys = np.concatenate([y for y, _ in seqs]); ys = ys[ys >= 0]
     freq = np.bincount(ys, minlength=M).astype(float); freq = (freq + 1e-6) / (freq + 1e-6).sum()
     children = seed_seq.spawn(n_restarts)
     best, best_ll, lls, best_it = None, -np.inf, [], 0
     for r in range(n_restarts):
         rng = np.random.default_rng(children[r])
-        pi, P, B = init_model(K, M, nP, freq, rng)
+        if inits is not None and r < len(inits):
+            pi, P, B = (a.copy() for a in inits[r])
+        else:
+            pi, P, B = init_model(K, M, nP, freq, rng)
         prev = -np.inf
         for it in range(max_iter):
             Xi = np.zeros((nP, K, K)); Eb = np.zeros((K, M)); G0 = np.zeros(K); ll = 0.0
@@ -134,3 +138,38 @@ def js_bits(p, q):
     def kl(a, b):
         a = np.maximum(a, 1e-300); return float((a * np.log2(a / np.maximum(b, 1e-300))).sum())
     return 0.5 * kl(p, m) + 0.5 * kl(q, m)
+
+
+@njit(cache=True)
+def _sim_seq(pi, P, B, ph, u):
+    T = ph.shape[0]; K = pi.shape[0]; M = B.shape[1]
+    s = np.empty(T, np.int64); y = np.empty(T, np.int64)
+    acc = 0.0; k = K - 1
+    for j in range(K):
+        acc += pi[j]
+        if u[0] < acc:
+            k = j; break
+    s[0] = k
+    for t in range(1, T):
+        acc = 0.0; nk = K - 1
+        for j in range(K):
+            acc += P[ph[t], s[t-1], j]
+            if u[2*t] < acc:
+                nk = j; break
+        s[t] = nk
+    for t in range(T):
+        acc = 0.0; m = M - 1
+        for j in range(M):
+            acc += B[s[t], j]
+            if u[2*t+1] < acc:
+                m = j; break
+        y[t] = m
+    return y
+
+
+def simulate_fast(model, lengths_phases, missing_masks, rng):
+    """As simulate(), compiled (for sample-level sequences)."""
+    pi, P, B = model; out = []
+    for (T, ph), miss in zip(lengths_phases, missing_masks):
+        y = _sim_seq(pi, P, B, ph, rng.random(2 * T)); y[miss] = -1; out.append((y, ph))
+    return out
