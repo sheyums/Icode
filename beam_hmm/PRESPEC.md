@@ -367,3 +367,61 @@ own gate, and scores spurious states with the D1-A item 6 rule that D1-D2 correc
 on the D1-D sample-level model with D1-D2 scoring, in a new entry, only if D1-D passes its gate.
 TG1 and TG2 run exactly as specified in T1 (truth, seeds, criteria unchanged). gate_t1.py gains an option to
 run named scenarios only; the T1 gate verdict is then reported for TG1 and TG2 alone.
+
+### 2026-11-13  T1-B — population-level clock test on sleep entry and exit (replaces T1's decision rule)
+
+Why: the T1 gate FAILED (ledger 423aba4). Per-fly clock selection found a planted 3-fold sleep-exit rhythm
+in 13/20 flies; post hoc, T1's across-fly sign test would detect it in ~15% of 12-fly cohorts. The power
+lies in pooling sleep exits across flies, which needs a clock term shared by flies.
+Status: written before D1-D's gate result. T1-B runs on real data only on a model family that has passed
+its own gate (D1-D's sample-level HMM if it passes); otherwise it waits.
+
+Question       Do the rates of falling asleep and of waking vary with time of day beyond the light/dark step,
+               in a way shared by the flies of a cohort? (LD only: "clock" = light + clock.)
+Data           Pilot PRIMARY set (P1-D; 12 flies in week 1), SENSITIVITY set (8 flies) beside it; weeks 1-2;
+               preprocessing and exclusions as D1-D. Each week also fitted separately (descriptive).
+Model          Per fly, the D1-D sample-level HMM with that fly's K* (from D1-D). SLEEP state of each fly = its
+               QUIESCENT/S state; if there are two, the one with the longer expected dwell. Transitions:
+               - out of SLEEP: P(leave | ZT) = logistic(a_{f,phase} + h(ZT)); the destination split is per fly
+                 and phase, constant in ZT.
+               - from each wake state i: P(i -> SLEEP | ZT) = logistic(b_{f,i,phase} + g(ZT)); the rest of row i
+                 is split among the other states by per-fly, per-phase constants.
+               - h, g SHARED by all flies of the cohort; everything else per fly (intercepts, light/dark step,
+                 destination splits, emissions).
+               Models: C0 h = g = 0 (= D1-D with light/dark transitions); C1 1st harmonic in h and g (4 shared
+               coefficients); C2 1st + 2nd harmonics (8). T1's M3 is dropped (never selected; overfits).
+               No ridge on h, g (the test needs the unpenalised likelihood).
+Estimation     Joint EM over the cohort: E-step per fly; M-step = per-fly closed forms plus one weighted
+               binomial logistic fit per transition family (exit, entry) over all flies and windows-of-day,
+               with per-fly-phase intercepts and shared h (or g), by L-BFGS. C1 and C2 warm-start from the C0
+               fit (+ 2 random perturbations of the shared terms, seeds SeedSequence([8001, cohort, model, r])).
+               Tolerance 0.01 nats, max 300 iterations.
+Decision rule  PRIMARY: C2 vs C0, LR = 2 (logL_C2 - logL_C0) on all fly-days. p from a parametric bootstrap:
+               99 cohorts simulated from the fitted C0 model (each fly at its own length, phases and missing
+               pattern), refitted with C0 and C2 (warm starts from the generating fit). One-sided alpha 0.05.
+               The chi-square(8) p is reported beside it; if the two disagree on the decision, both are
+               reported and the bootstrap decides. SECONDARY (descriptive): C1 vs C0 the same way; fitted
+               shared exit and entry profiles with a fly bootstrap (20 resamples) for pointwise bands; the
+               phase of h and g inside each 12-h phase.
+Matched null   The cohort's own C0 fit, simulated at each fly's length, phase sequence and missing pattern and
+               passed through the same fitting.
+
+Synthetic gate (must PASS before any real-data run; 0.4-s simulator, 12-fly cohorts x 14 days, 3 states as
+T1's TG truth, per-fly heterogeneity of every rate x exp(N(0, 0.3)); K fixed at the true 3 in the gate,
+because the gate tests the clock test, not state discovery; seeds SeedSequence([9001, scenario, cohort])):
+  B-P power     sleep-exit modulation as T1 (peak-to-trough 3, main peak ZT 12.5); 20 cohorts. PASS iff the
+                C2-vs-C0 test rejects in >= 16/20, the fitted h's peak (harmonic part only, step excluded)
+                is within +-2 h of ZT 12.5 in >= 16/20, and the median fitted/true peak-to-trough of the
+                harmonic part is in [0.67, 1.5].
+  B-N null      no modulation; 20 cohorts. PASS iff rejections <= 2/20.
+  To keep the gate affordable, it uses the chi-square(8) p instead of the bootstrap. In 5 B-N and 5 B-P
+  cohorts the bootstrap p is also computed and both are reported; if the chi-square test is anti-conservative
+  in B-N (> 2/20) the gate FAILS rather than switching tests.
+  If the gate fails, the failure is logged and the design is changed in a new entry.
+
+Notes          - T1's per-fly M* fits remain a descriptive extra, never a test.
+               - A significant C2 means shared time-of-day structure in sleep entry/exit beyond lights on/off;
+                 it does not separate light from clock (no DD in the pilot).
+               - Age (T2) and homeostatic covariates (T3) come later and need their own entries.
+               - Compute estimate for the gate: ~30 min per cohort (C0 and C2, 3 starts) -> ~20 CPU-hours; the
+                 10 bootstrap cohorts add ~10x each. Results saved per cohort; resumable.
