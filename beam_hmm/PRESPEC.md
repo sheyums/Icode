@@ -425,3 +425,21 @@ Notes          - T1's per-fly M* fits remain a descriptive extra, never a test.
                - Age (T2) and homeostatic covariates (T3) come later and need their own entries.
                - Compute estimate for the gate: ~30 min per cohort (C0 and C2, 3 starts) -> ~20 CPU-hours; the
                  10 bootstrap cohorts add ~10x each. Results saved per cohort; resumable.
+
+### 2026-11-13  T1-B1 — within-phase shape criteria (from a code check; before the T1-B gate runs)
+
+The T1-B code check (test_t1b.py, direct HMM simulation with a planted shared exit harmonic) showed that
+the first-harmonic sine, sin(2 pi ZT/24), is nearly collinear with the light/dark step (positive through the
+light phase, negative through the dark), so the "harmonic part" of h is not identified on its own: only the
+shape of the profile WITHIN each 12-h phase is (at the gate's size the within-phase profile was recovered to
+0.05 log-odds). The test itself (LR of C2 vs C0) is unaffected: it compares likelihoods. Gate criteria
+replaced, before the gate runs:
+- B-P peak: the argmax over the DARK phase (ZT 12-24) of the fitted shared exit profile h(ZT) within +-2 h
+  of ZT 12.5 (the true modulation's peak, which lies in the dark phase) in >= 16/20 cohorts.
+- B-P size: exp(max - min of h over the dark phase) / 3 (the true within-dark range of the modulation is
+  exactly ln 3) with median over cohorts in [0.67, 1.5].
+- Real-data description likewise reports h and g as within-phase shapes, never as absolute harmonic parts.
+Implementation details fixed now: per-fly C0 = hc.fit, K = 3 in the gate, 3 random starts, D1-D tolerance and
+iteration cap, seeds SeedSequence([9101, scenario, cohort, fly]); bootstrap replicates (B = 99, cohorts 0-4
+of each scenario) run as separate jobs, seeds SeedSequence([9201, scenario, cohort, replicate]); each
+replicate refits each fly's C0 from a warm start at its generating fit (1 start) and C2 from h = g = 0 (1 start).
