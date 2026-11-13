@@ -1,0 +1,15 @@
+G1: 20/20 flies done
+  K*: [5, 6, 6, 6, 7, 5, 4, 5, 5, 4, 6, 4, 6, 4, 4, 4, 5, 4, 5, 5]
+  planted candidate: 20/20
+  planted C1: 19/20
+  planted C2: 20/20
+  planted C3: 17/20
+  planted C4_pass: 0/20
+  planted promoted: 17/20
+  planted jaccard: [0.68, 0.66, 0.71, 0.7, 0.73, 0.68, 0.72, 0.71, 0.7, 0.71, 0.7, 0.7, 0.67, 0.74, 0.75, 0.73, 0.71, 0.71, 0.72, 0.73]
+  G1 PASS iff promoted >= 16/20 and K*=4 >= 14/20: promoted 17, K*=4 7
+  [D1-A2, secondary] promoted AND matched state Jaccard >= 0.5: 17/20
+G2: 20/20 flies done
+  K*: [5, 3, 3, 3, 4, 5, 3, 3, 4, 4, 3, 4, 3, 3, 4, 3, 4, 3, 4, 5]
+  G2 PASS iff spurious C1 <= 2/20 and promoted <= 1/20: C1 18, promoted 18
+GATE: G1 FAIL, G2 FAIL -> FAIL
