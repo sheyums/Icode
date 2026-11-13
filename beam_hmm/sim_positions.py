@@ -91,11 +91,11 @@ def simulate_fly(scenario, days, seed_seq):
     rng = np.random.default_rng(seed_seq)
     exitp, J = truth(scenario)
     modtype, amp, a_h = 1, 0.0, 0.0
-    if scenario in ('G2', 'TG3'):
+    if scenario in ('G2', 'TG3', 'TBP', 'TBN'):          # TBP/TBN: T1-B gate (heterogeneous cohorts)
         exitp = exitp * np.exp(rng.normal(0, 0.3, size=exitp.shape))
     if scenario == 'G2':
         amp = 0.5
-    if scenario in ('TG1', 'TG3'):
+    if scenario in ('TG1', 'TG3', 'TBP'):
         modtype, a_h = 2, A_HARM
     n = int(days * 86400 / DT)
     u = rng.random(7 * n + 10)
