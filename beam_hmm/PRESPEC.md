@@ -358,3 +358,12 @@ For D1-D (G1 and G2):
 - The original D1-A item 6 count is reported beside the corrected one.
 The T1 gate's TG3 is already running under the old rule; its TG3 verdict is therefore to be read as
 uninformative, and TG3 will be re-scored the same way only if re-run (TG1 and TG2 are unaffected).
+
+### 2026-11-13  T1-A — TG3 deferred (before any T1 gate result exists)
+
+The T1 gate was stopped at the user's decision after ~1.3 h with 0/60 flies finished (no T1 result exists or
+was seen). TG3 is deferred: as specified it reruns D1 discovery with the D1-B window model, which FAILED its
+own gate, and scores spurious states with the D1-A item 6 rule that D1-D2 corrected. TG3 will be re-specified
+on the D1-D sample-level model with D1-D2 scoring, in a new entry, only if D1-D passes its gate.
+TG1 and TG2 run exactly as specified in T1 (truth, seeds, criteria unchanged). gate_t1.py gains an option to
+run named scenarios only; the T1 gate verdict is then reported for TG1 and TG2 alone.

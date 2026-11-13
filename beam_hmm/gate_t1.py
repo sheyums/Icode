@@ -1,5 +1,6 @@
 """T1 synthetic gate (T-G1 recovery, T-G2 false positive, T-G3 spurious states). Resumable, one JSON per fly.
-Usage: python3 -I gate_t1.py <outdir> [nproc]  |  python3 -I gate_t1.py <outdir> --report"""
+Usage: python3 -I gate_t1.py <outdir> [nproc] [--scenarios TG1,TG2]  |  python3 -I gate_t1.py <outdir> --report
+T1-A: TG3 is deferred; pass --scenarios TG1,TG2 to run the scenarios that remain specified."""
 import sys, os, json, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pipeline as pl, sim_positions as sp, d1, t1, iohmm as io, hmm_cat as hc
@@ -81,7 +82,9 @@ def report(outdir):
         s1 = sum(r['Mstar_d1']['spurious'] for r in g); s0 = sum(r['M0_d1']['spurious'] for r in g)
         print(f"TG3 ({len(g)}/20): M* {[r['Mstar'] for r in g]}; spurious promoted under M* {s1} (PASS iff <= 1); under M0 {s0}")
         ok['TG3'] = s1 <= 1
-    if all(len(R[s]) == N_FLIES for s in SCEN):
+    if all(len(R[s]) == N_FLIES for s in SCEN if R[s] or s != 'TG3') and ok:
+        if not R['TG3']:
+            print('TG3 deferred (T1-A): verdict below covers TG1 and TG2 only')
         print('T1 GATE:', {k: ('PASS' if v else 'FAIL') for k, v in ok.items()}, '->', 'PASS' if all(ok.values()) else 'FAIL')
 
 
@@ -89,8 +92,12 @@ if __name__ == '__main__':
     outdir = sys.argv[1]; os.makedirs(outdir, exist_ok=True)
     if '--report' in sys.argv:
         report(outdir); sys.exit()
-    nproc = int(sys.argv[2]) if len(sys.argv) > 2 else 4
-    jobs = [(s, i, outdir) for s in ('TG3', 'TG1', 'TG2') for i in range(N_FLIES)]    # longest first
+    nproc = int(sys.argv[2]) if len(sys.argv) > 2 and not sys.argv[2].startswith('--') else 4
+    scen = ('TG3', 'TG1', 'TG2')
+    if '--scenarios' in sys.argv:
+        scen = tuple(x for x in sys.argv[sys.argv.index('--scenarios') + 1].split(',') if x)
+        assert all(x in SCEN for x in scen), scen
+    jobs = [(s, i, outdir) for s in scen for i in range(N_FLIES)]    # longest first
     from multiprocessing import Pool
     with Pool(nproc) as p:
         for f in p.imap_unordered(one, jobs):
