@@ -1,0 +1,29 @@
+DESCRIPTIVE NOTE - NOT A PRE-SPECIFIED TEST. Added 2026-11-13 at the user's request,
+after the T1 (TG1,TG2) results were seen. It changes no code, rule or verdict.
+Source: the per-fly JSONs in this folder at commit 2622927 (fields Kstar_M0, Mstar,
+heldout_models, TG1.peak_dist_h, TG1.ptt_ratio). Observation passed on by another
+Claude session; every count below was re-read from the JSONs on this machine.
+
+TG1 (true model: 3 states, clock-dependent exit). Clock model chosen in 13/20 (needs >= 16: FAIL).
+- K*=3 (the true number): 14 flies; 2 chose M0 (fly03, fly17).
+- K*=4 or 5: 6 flies; 5 chose M0 (fly06 K4, fly07 K5, fly14 K5, fly15 K4, fly16 K4);
+  only fly05 (K4) chose a clock model (M1).
+- All 7 failures are M*=0. All 13 flies that chose a clock model have peak_dist_h = 0
+  and ptt_ratio 0.80-1.64.
+- Held-out gain of the chosen clock model over M0 (heldout_models[M*] - heldout_models[0],
+  per 10-s window): 1.7e-5 to 3.2e-4 across the 13 TG1 flies (fly05 lowest, fly09 highest).
+  TG2's one clock choice (fly15) gained 4.7e-6.
+
+Interpretations from the sending session, NOT checked here:
+- The "12 h" peak distance of the M*=0 flies is an artifact: M0's exit profile is flat
+  within light and within dark, so the argmax lands on window 0 (ZT 0). TG1 then has
+  one failure mode (selection), not two.
+- Hypothesis: extra window-level states (the windowing misspecification behind the D1-B
+  failure) absorb the clock modulation; a state visited at particular ZTs can mimic a
+  ZT-dependent exit rate. If D1-D's sample-level model brings K* back to 3, rerunning TG1
+  under it would test this.
+
+Run order (checked against gate_t1.log): the first 13 flies to finish all had K*=3; the
+last 6 to finish (TG1 fly07, TG2 fly16, TG1 fly14, TG2 fly00, TG2 fly17, TG2 fly05) had
+K*=4-5. Hypothesis, not checked: TG2_fly09 (skipped after ~13.4 h) went to K*>=5, or a
+fit ran to the iteration cap.
