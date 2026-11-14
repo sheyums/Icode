@@ -46,7 +46,8 @@ function R = LoadingCheck(filePath, varargin)
 %   criteria), BeamsSpanned.
 %
 %   NAME-VALUE: 'Hours' (default 2), 'Channels' (default 1:64), 'Plot' (default true),
-%   'SaveFile' (PNG path; default none), 'Visible' ('on'/'off').
+%   'SaveFile' (PNG path; default none), 'Visible' ('on'/'off'). With 'Visible','off' and a SaveFile the
+%   figure is closed after saving. For headless runs end the batch command with: close all; exit
 %
 %   EXAMPLE
 %     R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFile', 'week2_loading.png');
@@ -158,6 +159,8 @@ if o.Plot
         if k > nC - nCol, xlabel(ax, 'min'); end
     end
     if ~isempty(o.SaveFile), print(fh, o.SaveFile, '-dpng', '-r150'); end
+    if strcmpi(o.Visible, 'off') && ~isempty(o.SaveFile), close(fh); end   % saved, never shown: close it, so a
+                                                                            % headless (-batch) MATLAB can exit
 end
 names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'HubReturns', 'BeamsSpanned'};
 cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span};
