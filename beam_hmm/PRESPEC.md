@@ -593,3 +593,44 @@ Matched null (all three)   Within-fly contrasts at each fly's own sample sizes; 
            a day-bootstrap 95% interval (1000 resamples of days).
 Notes      n ~ 12 flies: the smallest exact two-sided Wilcoxon p is 2/4096; nulls are weak evidence. The
            fly-to-fly SD of every primary statistic is recorded for planning the repeat experiment.
+
+### 2026-11-14  A5 — ageing and the approach to death (Track A); P1-F corrected death rule; week-6 phase
+
+Week-6 phase (P1-E hand check, done 2026-11-14 before any A5 measure): the flagged estimate came from ONE fly
+(ch28, nearly silent all week; its single burst at ~2 h dominates the pooled profile after dividing by its tiny
+mean). Without it the lights-off rise is at 11.83-12.0 h. Decision: week 6 lights-on = 23.83 h into the file
+(lights-off at 11.83 h). Noted for the repeat experiment: build the stamp profile as the MEDIAN across flies.
+
+P1-F — corrected death rule (replaces P1-E rule 4 for A5 and every later analysis). Per fly-week, after spike
+filter + hub repair:
+  DEAD-LIKE   < 100 position changes in the whole fly-week;
+  UNREADABLE  >= 100 changes but the hub repair replaced > 50% of samples, or the positions span < 8 beams;
+  READABLE    otherwise (artifact-heavy fly-weeks are readable but excluded from measures, as before).
+  A fly is DEAD from the start of the last >= 12-h silence in its last READABLE fly-week, if every later fly-week is
+  DEAD-LIKE. If any later fly-week is UNREADABLE, the death is UNDETERMINED and the fly is excluded from that
+  point on (never counted as dead). A DEAD-LIKE week followed by a READABLE active week is an outage, not a death.
+  The 24 h before a death are excluded. Each call is compared with the survival sheet (PROTOCOL.md); every
+  disagreement is reported.
+
+A5
+Question   How do sleep, activity, resting place and walking change with age in the pilot flies, and how do
+           they change as death approaches?
+Data       Channels 17-32, weeks 1-9; P1/P1-C preprocessing; P1-E rules 1-3 (behavioural ZT, first 24 h of each
+           file excluded, transfers), P1-F deaths, P1-D inclusion, narrow-range exclusion (A2-A4).
+Measures   per fly-week (valid days >= 3):
+           M1 sleep minutes per day (P1 standard measure);
+           M2 position changes per waking hour;
+           M3 A1's light-phase D (share of sleep at an end minus share of pauses at an end);
+           M4 median walking speed (A4 bouts, both phases pooled).
+Test       (primary) within-fly linear trend over WEEKS 2-5 (most flies alive; week 1 has been viewed and
+           includes the acclimation to the monitor). Per fly: least-squares slope of the measure on week number,
+           flies with >= 3 qualifying weeks among 2-5. Across flies: two-sided Wilcoxon on the slopes, Holm over
+           M1-M4. Supported iff Holm p < 0.05; direction reported either way.
+Descriptive (no tests) (a) every measure per fly per week, weeks 1-9, with the number of flies contributing
+           each week (survivor bias: late weeks hold only the longest-lived flies); (b) aligned to death, for flies
+           with a determined death: daily M1 and M2 over the last 21 days, and the mean of the last 7 days vs days
+           8-21 before death per fly; (c) light/dark sleep ratio per week (circadian contrast vs age).
+Matched null  Within-fly slopes are their own control. Each fly's slope is reported with a day-bootstrap 95%
+           interval (1000 resamples of days within each week).
+Notes      Survivor bias is why the test uses within-fly slopes and stops at week 5. With ~11 flies the smallest
+           exact two-sided p is 2/2048; the ageing descriptives beyond week 5 rest on 3-9 flies.
