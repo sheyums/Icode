@@ -1,0 +1,63 @@
+primary flies [17, 18, 19, 20, 21, 22, 23, 24, 26, 28, 29] | sensitivity [18, 28]
+{
+ "A2": {
+  "A2_pre_mid": {
+   "n": 11,
+   "median": 0.0012883453,
+   "n_positive": 6,
+   "sd": 0.07038970184551326,
+   "p": 0.9658203125,
+   "method": "exact",
+   "p_holm": 1.0
+  },
+  "A2_post_mid": {
+   "n": 11,
+   "median": 0.0230555556,
+   "n_positive": 6,
+   "sd": 0.046083556891410644,
+   "p": 0.9658203125,
+   "method": "exact",
+   "p_holm": 1.0
+  }
+ },
+ "A3": {
+  "A3_diff": {
+   "n": 11,
+   "median": -0.0018241742,
+   "n_positive": 5,
+   "sd": 0.9913236929040262,
+   "p": 0.9658203125,
+   "method": "exact"
+  }
+ },
+ "A4": {
+  "A4_speed_diff": {
+   "n": 10,
+   "median": -0.23096264365,
+   "n_positive": 0,
+   "sd": 0.2012106190092007,
+   "p": 0.007685794055213263,
+   "method": "approx (ties/zeros)",
+   "p_holm": 0.015371588110426526
+  },
+  "A4_path_diff": {
+   "n": 10,
+   "median": 0.0,
+   "n_positive": 3,
+   "sd": 0.6992058987801011,
+   "p": 0.10247043485974937,
+   "method": "approx (ties/zeros)",
+   "p_holm": 0.10247043485974937
+  }
+ },
+ "secondary": {
+  "A3_diff_middle": {
+   "n": 11,
+   "median": 0.017432661,
+   "n_positive": 8,
+   "sd": 0.42141472531585955,
+   "p": 0.10974463874701328,
+   "method": "approx (ties/zeros)"
+  }
+ }
+}
