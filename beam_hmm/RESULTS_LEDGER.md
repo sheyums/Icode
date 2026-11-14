@@ -167,3 +167,20 @@ All four files: same format as week 1 (3 header lines, 64 channels + time, alter
 Phase check (pooled 10-min activity, days 2-6, largest rise and largest rise >= 6 h away): see PROTOCOL.md;
 lights apparently on ~05:06 and off ~17:00 by the recording computer's clock in every week; files 1, 2, 5
 start ~30-40 min before lights-on. No A1 measure was computed on weeks 2-3.
+
+## 2026-11-14 — A1 PRIMARY TEST, weeks 2-3 (code a427580; PRESPEC A1 + P1-E; weeks 4-5 used only for the death rule)
+Phase stamps (P1-E rule 1): lights-on 0.67 h (wk2), 0.00 h (wk3), 23.83 h (wk4), 0.33 h (wk5) into the file; none
+flagged. Deaths (P1-E rule 4): ch27 dead from the start of week 2; ch30 from week 4; ch32 possibly dead in week 5.
+PRIMARY set, 12 flies (valid days 5.4-10.9 per fly):
+- LIGHT: D > 0 in 11/12, median D +0.293, SD 0.147; Wilcoxon two-sided p 0.0033 (normal approximation, because
+  one D = 0 exactly), Holm p 0.0067 -> SUPPORTED: by day, flies rest at the tube ends more when asleep than in
+  short pauses awake.
+- DARK: D > 0 in 4/12, median -0.029, SD 0.136; p 1.0, Holm 1.0 -> not supported, and not the opposite.
+SENSITIVITY set: 2 flies (more channels exceed the raw-jump threshold in weeks 2-3 than in week 1): untestable.
+POST HOC notes (checked after the result; not part of the decision):
+- ch25 (the D = 0 fly) reads only beams 14 and 16 in week 2 (a narrow-range channel, like monitor 1 in week 1),
+  so every sample is "at an end" and D = 0 by construction. P1-D has no narrow-range rule (BeamFingerprint
+  flags it). Excluding ch25: 11/11 positive, exact two-sided p 0.00098. The conclusion does not depend on it.
+- Week 1 (descriptive, before A1 was written) showed the same pattern: light 10/12 positive, median +0.32.
+- For the repeat experiment: fly-to-fly SD of D ~0.15 in the light phase; a NARROW-RANGE exclusion rule should
+  be pre-specified (range < 8 beams in a fly-week).
