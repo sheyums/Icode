@@ -126,3 +126,22 @@ POST HOC (computed after the verdict, from the per-fly held-out gains; not pre-s
 cohorts from these flies, T1's own across-fly decision rule (one-sided sign test on best-of-M1/M2 minus M0)
 rejects in 15% of cohorts with the rhythm present (Wilcoxon signed-rank 22%) and 0% without it. So at the
 pilot's size, the pre-specified real-data test has low power for a rhythm of this size.
+
+## 2026-11-14 — D1-D synthetic gate (code 2f10f70, D1-D2 scoring; run on the user's machine, pushed as 81ff31a): FAIL
+G1: K* = 2 in 20/20 (need K* = 4 in >= 14/20); planted state promoted 0/20 (need >= 16) -> FAIL.
+G2: K* = 2 in 20/20; spurious C1 0/20, promoted 0/20 -> PASS, but only trivially: a 2-state fit cannot hold
+a spurious state (the user's observation), so G2's pass is uninformative.
+Diagnosis (post hoc, from the per-fly JSONs):
+1 The degeneracy rule carried over from D1 (two emission rows with JS < 0.05 bits) flagged EVERY fit with
+  K >= 3 in all 40 flies, so K* = 2 was forced. At the sample level the true states differ mostly in their
+  dynamics, not their emissions: SLEEP (1,0,0,0) and QUIET (0.97,0.03,0,0) are only ~0.015 bits apart. The
+  0.05-bit threshold was fixed for 10-s window symbols and is wrong at this level (my error in D1-D).
+2 Ignoring the degeneracy flag, held-out logL would pick K = 7-8 (the cap) in 38/40 flies. Gain of adding
+  the k-th state, median over flies (1e-4 nats/sample):
+     K=3: G1 52.9, G2 59.5 | K=4: G1 2.73, G2 2.77 | K=5: G1 2.63, G2 1.14 | K=6-8: G1 2.0-2.5, G2 0.04-0.76
+  The REAL 4th state in G1 (the planted boundary rest) adds 2.73; a SPURIOUS 4th state in G2 adds 2.77.
+  So D1-D item 8's pre-stated fallback (a minimum held-out gain per added state) CANNOT separate them at
+  this resolution: the misspecification of the step-symbol HMM (TRAVEL's direction persistence and the
+  out-and-back pairing of a flicker are serial correlations within a state, which a conditionally
+  independent emission model can only absorb with extra states) produces gains of the same size as the
+  planted state.
