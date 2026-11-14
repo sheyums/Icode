@@ -160,3 +160,10 @@ dark-phase one has no consistent sign.
     CORRECTION (same day): the dark-phase summary above was typed before the summary script ran. From
     results/a1_week1.json: dark D > 0 in 5/12 flies (not 6), median -0.028 (not -0.01), mean -0.052 (not
     -0.04), SD 0.149 (not 0.16). Light values confirmed: 10/12, median +0.321, mean +0.258, SD 0.186.
+
+## 2026-11-14 — weeks 2-5 format and timing QC (code: explore/load_week.py at 6628d30 + inline check)
+All four files: same format as week 1 (3 header lines, 64 channels + time, alternating all -1 lines), step
+0.4 s with a few irregular steps (largest: one 60.6-s gap in week 3, one 13.6-s gap in week 4).
+Phase check (pooled 10-min activity, days 2-6, largest rise and largest rise >= 6 h away): see PROTOCOL.md;
+lights apparently on ~05:06 and off ~17:00 by the recording computer's clock in every week; files 1, 2, 5
+start ~30-40 min before lights-on. No A1 measure was computed on weeks 2-3.

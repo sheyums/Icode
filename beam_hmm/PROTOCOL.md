@@ -60,3 +60,16 @@ Consequences for this project (fixed before any analysis): keep 0 as its own pos
 beam 1") rather than merging it; drop the -1 lines rather than fill them (true step 0.4 s); any speed is
 computed per 0.4 s. Detection is place-dependent: movement beyond beam 1 is unseen, so stillness there is an
 upper bound.
+
+## Weeks 2-5 (uploaded 2026-11-14) — timing facts measured from the files
+Header start times: wk1 Sep 09 04:26:13, wk2 Sep 16 04:26:13, wk3 Sep 23 05:06:18 ("trimmed"), wk4 Sep 30
+05:09:05 ("trimmed"), wk5 Oct 08 04:38:36 ("trimmed"). Lengths 168.0 / 154.7 / 156.0 / 180.5 / 156.4 h.
+- Weeks 2-5 end on day 7 in the afternoon (15:06-17:37) and the next file starts the next morning: the gaps
+  (11-14 h) are the TRANSFERS. Week 1 recorded through its transfer: its silent last ~14 h (from hour ~153)
+  are tubes out of the monitor, not deaths or sleep.
+- User (2026-11-14): "all files should start at ZT0, according to the person who did the experiment".
+- Behavioural check (pooled activity, 10-min bins, days 2-6 of each file): lights-off rise at clock 16:56-17:06
+  in all five weeks; lights-on rise at 05:06-05:09 in weeks 2-5 (week 1's is weak, 04:16). So weeks 3 and 4
+  start at lights-on (0 and +3 min) but weeks 1, 2 and 5 appear to start ~40, ~40 and ~30 min BEFORE it.
+  Unresolved: the light timer's settings, and what "trimmed" means. Until resolved, light/dark boundaries
+  taken from file start are suspect by up to 40 min.
