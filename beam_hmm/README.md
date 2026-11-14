@@ -42,3 +42,8 @@ and 'legacy' (exactly PreProcess + multibeam_locomotion). Options 'Repair', 'Kee
 Golden test: `test_RawToActivity1s('raw_positions_all64_week1.txt')` (golden_week1_activity.json, 4 variants x
 channels 17-32, written by labconv.py). Verified in Octave 8.4 on a one-day excerpt (all match); the full-week test
 needs a MATLAB run (Octave takes ~5 min for one day).
+
+## MATLAB: LoadingCheck (beam_hmm/matlab/) — run on the first 2 h after loading
+`R = LoadingCheck('raw.txt')` prints a RE-SEAT list: BLOCKED BEAM k (end = food/plug, mid-tube = debris), NARROW
+RANGE, LOW ACTIVITY. On the 2026 pilot it caught ~half of the blocked beams found later by the full-week QC directly,
+~70% with any flag. Python twin: labconv.loading_check (identical flags on 64 excerpts in Octave).

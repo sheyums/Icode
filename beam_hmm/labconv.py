@@ -73,3 +73,25 @@ def beam_counts_1s(x, t, keep_beyond_beam1=True):
     d = np.r_[0, np.abs(np.diff(x))]; sec = np.floor(np.asarray(t)).astype(int)
     n = int(np.floor(t[-1])) + 1
     return np.bincount(sec, weights=d, minlength=n)[:n].astype(np.int64)
+
+
+def loading_check(x, t, hours=2.0):
+    """Python twin of LoadingCheck.m for one channel: x positions on timed lines, t times (s)."""
+    m = (t - t[0]) < hours * 3600; x = np.asarray(x)[m].astype(np.int64)
+    d = np.diff(x); nchg = int((d != 0).sum()); big = np.nonzero(np.abs(d) >= 4)[0] + 1
+    span = int(x.max() - x.min()) if len(x) else 0
+    hub = None; share = 0.0; ret = 0.0
+    if len(big):
+        v, c = np.unique(x[big], return_counts=True); hub = int(v[np.argmax(c)]); share = float(c.max() / len(big))
+        rs = []
+        for i in big[x[big] == hub]:
+            k = i
+            while k + 1 < len(x) and x[k + 1] == hub: k += 1
+            rs.append(k + 1 < len(x) and x[k + 1] == x[i - 1])
+        ret = float(np.mean(rs)) if rs else 0.0
+    flags = []
+    if len(big) >= 10 and share >= 0.30 and ret >= 0.20:
+        flags.append(f"BLOCKED BEAM {hub} ({'end' if hub in (1, 2, 15, 16) else 'mid-tube'})")
+    if nchg >= 50 and span < 8: flags.append('NARROW RANGE')
+    if nchg < 20: flags.append('LOW ACTIVITY')
+    return dict(changes=nchg, big_jumps=int(len(big)), hub=hub, hub_share=share, hub_returns=ret, span=span, flags=flags)

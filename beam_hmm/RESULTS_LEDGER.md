@@ -312,3 +312,14 @@ Runs of 0 (all weeks): 109,618, every one entered from beam 1, none from beam 16
 beam 1. Open: the monitor's rule when two beams are broken, and the food end per tube.
 RawToActivity1s.m (beam_hmm/matlab): golden test vs labconv.py passes for all 4 variants x 16 channels on the one-day
 excerpt in Octave 8.4; full-week MATLAB run pending on the user's machine.
+
+## 2026-11-14 — LoadingCheck (first 2 h after loading) validated against the full-week hub QC (weeks 1-9, ch17-32)
+LoadingCheck.m and its Python twin (labconv.loading_check) give identical flags on 64 channel x 2-h excerpts (Octave 8.4).
+BLOCKED BEAM flag in the first 2 h vs "hub declared dead" over the whole week, 144 fly-weeks: both 18; 2-h only 1
+(wk1 ch24, beam 4); week only 20; neither 105. Of the 20 missed, 9 were flagged LOW ACTIVITY in the first 2 h (so a
+re-seat check would still have caught the tube); 11 had no flag -- hubs that develop or strengthen later in the week
+(e.g. wk1 ch17: hub-16 readings 0.00 on day 1, 0.04-0.07 later) or give too few jumps in 2 h.
+Reading: the 2-h screen catches ~half of blocked beams directly and ~70% with any flag; it complements, not replaces,
+the full-file QC (RawToActivity1s / BeamFingerprint). Thresholds were NOT tuned on this run (they are the P1-C hub
+criteria plus a minimum of 10 jumps); tuning them would need a new, dated entry and new data.
+In weeks 8-9 nearly every channel is LOW ACTIVITY: the flies are dead, as the survival record says.
