@@ -443,3 +443,70 @@ Implementation details fixed now: per-fly C0 = hc.fit, K = 3 in the gate, 3 rand
 iteration cap, seeds SeedSequence([9101, scenario, cohort, fly]); bootstrap replicates (B = 99, cohorts 0-4
 of each scenario) run as separate jobs, seeds SeedSequence([9201, scenario, cohort, replicate]); each
 replicate refits each fly's C0 from a warm start at its generating fit (1 start) and C2 from h = g = 0 (1 start).
+
+### 2026-11-14  B1 (= D1-E) — direction-aware autoregressive HMM at 0.4 s
+
+Why: the D1-D gate FAILED (ledger 64105d6): the 0.05-bit degeneracy rule forced K = 2, and without it the
+held-out gain of a spurious state (G2, 2.77e-4 nats/sample) equalled that of the real planted state (G1,
+2.73e-4). Likely cause: serial correlation within states (travel keeps its direction; a flicker is a step
+out followed at once by a step back), which a conditionally independent emission model can only absorb with
+extra states. User decision 2026-11-14 (option 3): build and gate this model in parallel with Track A.
+Everything not changed here is as D1-D / D1-D2.
+
+1 Symbol       Per 0.4-s step after spike filter + P1-C hub repair, relative to the direction of the LAST
+               non-zero step of the same fly: 0 STAY (no change); 1 SAME (1-beam step, same direction);
+               2 REV (1-beam step, opposite direction); 3 BIG (>= 2 beams). The first step of a record, and
+               the first after a missing stretch, counts its direction from itself (SAME). Missing = -1.
+2 Model        Per fly, HMM with first-order autoregressive categorical emissions: P(y_t | state k,
+               y_{t-1}) = B[k, y_{t-1}, y_t] (K x 4 x 4, each (k, prev) row sums to 1); y_{-1} := STAY at the
+               start of each fly-day and after a missing sample. Transitions per phase (light/dark) as D1-D.
+3 Fitting      As D1-D item 3 (5 random starts, tolerance 0.01 nats, max 300 iterations; bootstrap fits 1
+               warm + 1 random start), with the M-step normalising B within each (k, prev) row.
+4 Degeneracy   Two states are DEGENERATE only if BOTH (a) their emissions are close: the JS distance between
+               their stationary emission distributions (each state's B rows weighted by its own stationary
+               distribution of y_{t-1}) < 0.05 bits, AND (b) their dynamics are close: expected dwells within
+               a factor 1.5 of each other in both light and dark. K* is chosen over non-degenerate fits.
+5 TYPE         (band, movement, pattern, label). band on the state's stationary P(STAY): QUIESCENT >= 0.999,
+               LOW 0.95-0.999, ACTIVE < 0.95. movement: STEP or BIG, whichever is more probable among moves
+               ("-" if QUIESCENT). pattern from rho = P(REV | previous symbol a 1-beam step, current a 1-beam
+               step), averaged over prev SAME and REV: FLICKER-LIKE rho >= 0.8, PERSISTENT rho <= 0.3, else
+               RANDOM ("-" if QUIESCENT). label as D1-D.
+6 Criteria     C1-C4 and C5 as D1-D (C1 null simulated from the fly's own K*-1 B1 model, i.e. with the same
+               autoregressive emissions), D1-D2 scoring.
+7 Gate         G1 and G2 truths, seeds and pass rules exactly as D1-D, run at 14 days (the pass/fail run).
+               For breadth (PLAN.md): the same procedure at 7 days on flies 0-9 of each scenario, REPORTED,
+               not a gate. If the gate fails, the next step is a new entry; nothing runs on real data before
+               a pass.
+Pre-stated expectation (so the gate can surprise us): under the simulator, B1's within-state steps are iid
+except for forced reversals at the tube ends; if spurious states persist in G2, end reflection is the first
+suspect.
+
+### 2026-11-14  A1 — where flies rest (Track A, targeted, model-free)
+
+Question       Do flies rest at the tube ENDS more when asleep than during short pauses awake? A within-fly
+               contrast between two kinds of stillness, so neither the unknown food end nor the geometry of
+               walking (walking passes through the middle) can produce it.
+Data           Pilot, channels 17-32, P1-D PRIMARY set (SENSITIVITY set beside it), P1/P1-C preprocessing.
+Time window    TEST: weeks 2 and 3 pooled per fly (not yet seen by anyone). Week 1 (already viewed in E0/P1):
+               the same measures reported DESCRIPTIVELY only, labelled post hoc. Weeks 4-9: descriptive,
+               per week (ageing), after A5 is specified.
+               Blocks: light (ZT 0-12) and dark (ZT 12-24), fixed. Handling periods and the 24 h before
+               death excluded (needs the transfer times or a gated detector; until then weeks 2-3 do not run).
+Definitions    END = position 0, 1, 2, 14, 15 or 16 (as D1); BEYOND1 = position 0.
+               SLEEP stillness = samples inside P1 sleep bouts (>= 5 min without a position change, lab
+               bridging). PAUSE stillness = samples inside runs without a position change lasting 30 s to
+               < 5 min, outside sleep bouts.
+               Per fly x block: E_S = share of SLEEP samples at END, E_P = share of PAUSE samples at END,
+               D = E_S - E_P. Same for BEYOND1 (descriptive).
+Decision rule  Primary: D across flies, two-sided Wilcoxon signed-rank, one test per block (light, dark), Holm
+               over the two. Values rounded to 10 decimals before ranking; exact p only without ties (else
+               normal approximation, stated). Supported in a block iff Holm p < 0.05 AND the median D > 0;
+               a significant D < 0 is reported as the opposite finding. Flies with < 30 min of PAUSE or of
+               SLEEP in a block are excluded from that block's test (count reported).
+Matched null   The within-fly contrast is its own control: under "where a fly is still does not depend on how
+               long it stays still", E_S = E_P in expectation at each fly's own sample sizes. Each fly's D is
+               reported with a fly-level bootstrap interval over days.
+Secondary      (descriptive) D by ZT hour; which end (low vs high) holds the SLEEP; BEYOND1 shares; the same
+               measures in the SENSITIVITY set.
+Notes          n = 12 flies: the exact two-sided Wilcoxon cannot go below p = 2/4096; a null result at this n
+               is weak evidence. The fly-to-fly SD of D is the number the repeat experiment needs for power.
