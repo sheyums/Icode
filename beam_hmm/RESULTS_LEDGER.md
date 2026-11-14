@@ -350,3 +350,14 @@ pre-specified real-data decision by the bootstrap stands.
 Limits, stated: the gate fixes K at the truth and the simulator's dynamics are close to the fitted model family; it
 does not test state discovery (D1-D failed; B1 pending). Power at the planted 3-fold rhythm is saturated, so the gate
 says nothing about smaller rhythms. Per T1-B, a real-data run needs a state model that has passed its own gate.
+
+## 2026-11-14 — T1-C synthetic gate (code b4dd91d; run here): FAIL (false-detection arm)
+B-P (planted 3-fold sleep-exit rhythm): rejected in 20/20 (rotation p 0.001, the minimum, in all); dark-phase peak of the
+fitted wake-up shape within 2 h of ZT 12.5 in 20/20 (ZT 12.2-12.8) -> PASS.
+B-N (no rhythm beyond the light/dark step): rejected in 3/20 (p 0.020, 0.036, 0.041; allowed <= 2) -> FAIL.
+Null p values: mean 0.46, 5/20 below 0.10. 3/20 is not strong evidence of miscalibration on its own (P(X >= 3) = 0.075
+at a true size of 0.05), but the pre-specified rule fails and stands.
+Likely mechanism (stated, not tested): in the observed scoring, the wake-up hazard depends on time asleep (bouts last
+>= 5 min), so after each light switch the mix of short and long sleepers re-equilibrates; that transient is aligned to
+ZT in every fly, i.e. SHARED within-phase structure produced by the step itself, which the rotation null destroys.
+The hidden-state T1-B model has no such transient (its rates are constant within a phase), which is why T1-B passed.
