@@ -261,3 +261,18 @@ recordings (file names "multibeam_pruned"), so "beam vs count detector" does not
 Remaining candidate explanations (untested): the preprocessing that turns 0.4-s positions into 1-s activity (the pilot
 uses spike filter + hub repair + "any change in the second"; the per0 DD files come from the lab pipeline, PreProcess.m
 style), LD vs DD, genotype/cohort, and fly age.
+
+## 2026-11-14 — POST HOC: A2b with the LAB activity conversion (code a4d4c8d; labconv.py = port of PreProcess.m +
+## multibeam_locomotion.m, binner 5; same 11 flies, valid seconds, ZT and statistics as the A2b test, weeks 2-3)
+Not pre-specified; asked to separate preprocessing from biology after A2b's direction disagreed with the earlier project.
+- L300: z median +0.61, Wilcoxon 0.014, flies p<.05 2/11 (binomial 0.10, fails), day-block z +0.42 (p 0.032).
+- L120: z median +2.56, Wilcoxon 0.00098, 6/11 flies p<.05, day-block z +1.65 (p 0.00098).
+- Profile d(tau) (L120, 5-s bins): -0.009, -0.057, -0.025, -0.004, -0.002, then +0.005 to +0.021: the SAME direction as with
+  the beam_hmm conversion (less active in the first ~20-25 s after waking than before falling asleep).
+=> The lab conversion does not reverse the pilot's direction. Preprocessing does not explain the difference from the
+   earlier per0 DD / CS DD result; LD vs DD, genotype, cohort or age remain.
+Side result for the lab pipeline (sleep per day, same seconds): the two conversions differ in 0.3-5.7% of seconds; sleep
+agrees within ~1% in most fly-weeks, but the lab conversion gives much LESS sleep where a blocked-beam (hub) artifact is
+present, because it counts the artifact as movement: ch20 wk2 966 vs 1227 min/day, ch29 wk3 595 vs 763, ch17 wk2 1001 vs
+1041 (and ch21 wk2 679 vs 621 the other way, where the beyond-beam-1 zone counts as movement only in beam_hmm's version).
+Note: labconv.py is checked against the MATLAB code by reading only; a MATLAB golden run on one raw file would confirm it.
