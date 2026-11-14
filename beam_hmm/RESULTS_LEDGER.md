@@ -184,3 +184,7 @@ POST HOC notes (checked after the result; not part of the decision):
 - Week 1 (descriptive, before A1 was written) showed the same pattern: light 10/12 positive, median +0.32.
 - For the repeat experiment: fly-to-fly SD of D ~0.15 in the light phase; a NARROW-RANGE exclusion rule should
   be pre-specified (range < 8 beams in a fly-week).
+
+## 2026-11-14 — weeks 6-9 format, timing and phase QC (code a427580 p1e.py + load_week.py)
+See PROTOCOL.md "Weeks 6-9". Week 6 fails the P1-E phase guard (12-h ambiguity); weeks 7-9 pass (week 9 at
+1.50 h, the limit, with 3 flies). Live channels 12/9/4/3 in weeks 6-9.

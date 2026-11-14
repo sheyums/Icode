@@ -73,3 +73,11 @@ Header start times: wk1 Sep 09 04:26:13, wk2 Sep 16 04:26:13, wk3 Sep 23 05:06:1
   start at lights-on (0 and +3 min) but weeks 1, 2 and 5 appear to start ~40, ~40 and ~30 min BEFORE it.
   Unresolved: the light timer's settings, and what "trimmed" means. Until resolved, light/dark boundaries
   taken from file start are suspect by up to 40 min.
+
+## Weeks 6-9 (uploaded 2026-11-14)
+Header starts: wk6 Oct 15 05:09:00 (trimmed), wk7 Oct 23 05:18:12, wk8 Oct 30 05:18:12, wk9 Nov 04 05:18:12 (trimmed).
+Lengths 176.8 / 168.0 / 105.0 / 127.1 h. Same format; irregular steps rare (largest one 61-s gap in week 7).
+Live channels among 17-32 (P1 rule): 12 / 9 / 4 / 3 -- consistent with deaths.
+Phase stamps (P1-E rule 1): wk7 lights-on 23.33 h into the file (file starts ~40 min after lights-on), wk8 23.83 h,
+wk9 1.50 h (at the guard's limit, 3 flies). WEEK 6 FLAGGED: estimate 14.00 h, i.e. a 12-h ambiguity (the largest
+rise sits at ~2 h into the file). Per P1-E, week 6 is not analysed until checked by hand.
