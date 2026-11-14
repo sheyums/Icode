@@ -58,3 +58,18 @@ def ironout(wave, max_wake_s=1.0, dt=1.0):
     for s, e in zip(st[q], en[q]):
         w[s:e + 1] = 0
     return w, int(q.sum()), int(ln[q].sum())
+
+
+def beam_counts_1s(x, t, keep_beyond_beam1=True):
+    """beam_hmm mode, the reference for RawToActivity1s.m: x = positions on TIMED lines only (already spike-filtered
+    and hub-repaired if required). Counts per second = beams travelled (sum of |dx|) over position changes whose
+    sample time falls in [s, s+1); seconds 0 .. floor(t[-1]). If keep_beyond_beam1 is False, a reading of 0 is
+    replaced by the previous reading first (the PreProcess convention for 0 only)."""
+    x = np.asarray(x).astype(np.int64).copy()
+    if not keep_beyond_beam1:
+        for k in range(1, len(x)):
+            if x[k] == 0:
+                x[k] = x[k - 1]
+    d = np.r_[0, np.abs(np.diff(x))]; sec = np.floor(np.asarray(t)).astype(int)
+    n = int(np.floor(t[-1])) + 1
+    return np.bincount(sec, weights=d, minlength=n)[:n].astype(np.int64)

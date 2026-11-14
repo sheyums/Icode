@@ -300,3 +300,15 @@ All wake bouts used (as in the earlier project's CS LD block). Bouts per fly 25-
 - Profile d(tau) (L120): -0.028, -0.056, -0.036, -0.019, -0.009, then +0.009 to +0.021: the SAME direction as with the exclusion.
 => The light-switch exclusion does not explain the pilot's direction. Every method difference with the earlier project is
    now ruled out; the remaining explanations are biological or experimental (cohort, age, genotype, LD vs DD).
+
+## 2026-11-14 — Food-blocking check of hub beams; RawToActivity1s golden test
+Hub beams per fly-week (spike-filtered, weeks 1-9, channels 17-32): 35 fly-weeks where the dead-hub rule fired;
+13 at an end beam (beam 16 in ch17, 20, 22, 27, 30, 31, 32; beam 1 in ch26), 22 mid-tube (beams 3-11). End-beam hubs
+often read 60-100% of samples (fly nearly invisible). Within the week, the hub's share of readings fell from day 1 to
+day 6 in 8/13 end-beam cases (mean 0.61 -> 0.56; e.g. ch17 wk2 0.45 -> 0.03, ch30 wk3 0.83 -> 0.62, ch32 wk6 0.99 ->
+0.60): consistent with food (or condensation) blocking an end beam and clearing, NOT decisive (descriptive, post hoc;
+food end per tube unknown). Mid-tube hubs cannot be food at an end.
+Runs of 0 (all weeks): 109,618, every one entered from beam 1, none from beam 16: "no beam broken" occurs only beyond
+beam 1. Open: the monitor's rule when two beams are broken, and the food end per tube.
+RawToActivity1s.m (beam_hmm/matlab): golden test vs labconv.py passes for all 4 variants x 16 channels on the one-day
+excerpt in Octave 8.4; full-week MATLAB run pending on the user's machine.

@@ -1,0 +1,421 @@
+{
+ "file": "raw_positions_all64_week1.txt",
+ "channels": {
+  "17": {
+   "legacy": {
+    "n": 604800,
+    "sum": 105119,
+    "nonzero": 29770,
+    "wsum": 488942143
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 31781,
+    "nonzero": 23233,
+    "wsum": 160085803
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 29453,
+    "nonzero": 21721,
+    "wsum": 148415500
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 108315,
+    "nonzero": 31259,
+    "wsum": 505742684
+   }
+  },
+  "18": {
+   "legacy": {
+    "n": 604800,
+    "sum": 22951,
+    "nonzero": 16834,
+    "wsum": 111991856
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 23069,
+    "nonzero": 16779,
+    "wsum": 112451590
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 23055,
+    "nonzero": 16775,
+    "wsum": 112386513
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 23085,
+    "nonzero": 16781,
+    "wsum": 112585742
+   }
+  },
+  "19": {
+   "legacy": {
+    "n": 604800,
+    "sum": 21031,
+    "nonzero": 17276,
+    "wsum": 103273372
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 25051,
+    "nonzero": 19825,
+    "wsum": 123330753
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 21347,
+    "nonzero": 17362,
+    "wsum": 104935556
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 25091,
+    "nonzero": 19831,
+    "wsum": 123399105
+   }
+  },
+  "20": {
+   "legacy": {
+    "n": 604800,
+    "sum": 9022,
+    "nonzero": 5190,
+    "wsum": 42813736
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 10500,
+    "nonzero": 5992,
+    "wsum": 50117875
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 9622,
+    "nonzero": 5383,
+    "wsum": 45911531
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 10522,
+    "nonzero": 5994,
+    "wsum": 50151085
+   }
+  },
+  "21": {
+   "legacy": {
+    "n": 604800,
+    "sum": 82152,
+    "nonzero": 44136,
+    "wsum": 419059248
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 65698,
+    "nonzero": 44364,
+    "wsum": 332680614
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 57498,
+    "nonzero": 39000,
+    "wsum": 291256474
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 103552,
+    "nonzero": 51128,
+    "wsum": 529592485
+   }
+  },
+  "22": {
+   "legacy": {
+    "n": 604800,
+    "sum": 12489,
+    "nonzero": 9922,
+    "wsum": 61068688
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 16173,
+    "nonzero": 11657,
+    "wsum": 80186094
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 14249,
+    "nonzero": 10331,
+    "wsum": 70319019
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 16445,
+    "nonzero": 11695,
+    "wsum": 81543518
+   }
+  },
+  "23": {
+   "legacy": {
+    "n": 604800,
+    "sum": 60010,
+    "nonzero": 27679,
+    "wsum": 293649514
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 46014,
+    "nonzero": 28798,
+    "wsum": 221297908
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 38618,
+    "nonzero": 24008,
+    "wsum": 185903185
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 74760,
+    "nonzero": 34135,
+    "wsum": 368161163
+   }
+  },
+  "24": {
+   "legacy": {
+    "n": 604800,
+    "sum": 15846,
+    "nonzero": 11943,
+    "wsum": 80402057
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 22068,
+    "nonzero": 14369,
+    "wsum": 112741884
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 19220,
+    "nonzero": 12728,
+    "wsum": 98391060
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 22402,
+    "nonzero": 14412,
+    "wsum": 114229522
+   }
+  },
+  "25": {
+   "legacy": {
+    "n": 604800,
+    "sum": 27459,
+    "nonzero": 12588,
+    "wsum": 134842463
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 18219,
+    "nonzero": 10792,
+    "wsum": 92371158
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 17897,
+    "nonzero": 10621,
+    "wsum": 90568191
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 27925,
+    "nonzero": 12808,
+    "wsum": 137290079
+   }
+  },
+  "26": {
+   "legacy": {
+    "n": 604800,
+    "sum": 3992,
+    "nonzero": 2886,
+    "wsum": 19260665
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 4248,
+    "nonzero": 3054,
+    "wsum": 21055013
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 4014,
+    "nonzero": 2894,
+    "wsum": 19342302
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 4248,
+    "nonzero": 3054,
+    "wsum": 21055013
+   }
+  },
+  "27": {
+   "legacy": {
+    "n": 604800,
+    "sum": 17770,
+    "nonzero": 3675,
+    "wsum": 86141378
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 2383,
+    "nonzero": 748,
+    "wsum": 10253235
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 2351,
+    "nonzero": 735,
+    "wsum": 10143487
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 18092,
+    "nonzero": 3683,
+    "wsum": 87719867
+   }
+  },
+  "28": {
+   "legacy": {
+    "n": 604800,
+    "sum": 31302,
+    "nonzero": 26354,
+    "wsum": 152882496
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 34740,
+    "nonzero": 28176,
+    "wsum": 168696291
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 31542,
+    "nonzero": 26405,
+    "wsum": 153830752
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 34768,
+    "nonzero": 28178,
+    "wsum": 168912087
+   }
+  },
+  "29": {
+   "legacy": {
+    "n": 604800,
+    "sum": 46534,
+    "nonzero": 38991,
+    "wsum": 230747966
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 54592,
+    "nonzero": 43981,
+    "wsum": 270498401
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 46536,
+    "nonzero": 38991,
+    "wsum": 230397118
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 54720,
+    "nonzero": 44000,
+    "wsum": 271310853
+   }
+  },
+  "30": {
+   "legacy": {
+    "n": 604800,
+    "sum": 36,
+    "nonzero": 4,
+    "wsum": 144414
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 36,
+    "nonzero": 4,
+    "wsum": 144450
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 36,
+    "nonzero": 4,
+    "wsum": 144450
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 36,
+    "nonzero": 4,
+    "wsum": 144450
+   }
+  },
+  "31": {
+   "legacy": {
+    "n": 604800,
+    "sum": 281375,
+    "nonzero": 31248,
+    "wsum": 1388864685
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 42965,
+    "nonzero": 16067,
+    "wsum": 212433775
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 41965,
+    "nonzero": 15305,
+    "wsum": 207188651
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 293497,
+    "nonzero": 34787,
+    "wsum": 1450760676
+   }
+  },
+  "32": {
+   "legacy": {
+    "n": 604800,
+    "sum": 82478,
+    "nonzero": 16291,
+    "wsum": 416230101
+   },
+   "beam_hmm": {
+    "n": 604800,
+    "sum": 22088,
+    "nonzero": 8182,
+    "wsum": 109518215
+   },
+   "beam_hmm_fold0": {
+    "n": 604800,
+    "sum": 22082,
+    "nonzero": 8180,
+    "wsum": 109490088
+   },
+   "norepair": {
+    "n": 604800,
+    "sum": 82496,
+    "nonzero": 16263,
+    "wsum": 416346891
+   }
+  }
+ }
+}

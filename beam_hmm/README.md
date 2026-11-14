@@ -32,3 +32,13 @@ column) and draws four figures: activity heatmap, one-day traces, 10-min zoom, o
 Golden test: `test_BeamFingerprint('raw_positions_all64_week1.txt')` from beam_hmm/matlab must match the Python
 pipeline (golden_week1_qc.json, channels 17-32). Verified in Octave 8.4 on a one-day excerpt (all 16 channels
 exact); the FULL-file test and the figures still need a MATLAB run (Octave here cannot render figures).
+
+## MATLAB: RawToActivity1s (beam_hmm/matlab/) — replaces PreProcess.m + multibeam_locomotion.m
+`A = RawToActivity1s('raw.txt')` gives beams travelled per second per channel (the lab's unit; feeds sleeptrace /
+process_LocomToSleep unchanged), plus a QC table and printout (EMPTY/DEAD, HUB declared dead or detected, END-BEAM
+HUB, NARROW RANGE). Modes: 'beam_hmm' (default: -1 lines dropped, spike filter, dead-hub repair, position 0 kept)
+and 'legacy' (exactly PreProcess + multibeam_locomotion). Options 'Repair', 'KeepBeyondBeam1', 'Channels',
+'OutputFolder' (writes '%d \r\n' files; refuses to append or overwrite unless 'Overwrite' is true).
+Golden test: `test_RawToActivity1s('raw_positions_all64_week1.txt')` (golden_week1_activity.json, 4 variants x
+channels 17-32, written by labconv.py). Verified in Octave 8.4 on a one-day excerpt (all match); the full-week test
+needs a MATLAB run (Octave takes ~5 min for one day).
