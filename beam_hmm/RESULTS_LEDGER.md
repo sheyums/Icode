@@ -361,3 +361,10 @@ Likely mechanism (stated, not tested): in the observed scoring, the wake-up haza
 >= 5 min), so after each light switch the mix of short and long sleepers re-equilibrates; that transient is aligned to
 ZT in every fly, i.e. SHARED within-phase structure produced by the step itself, which the rotation null destroys.
 The hidden-state T1-B model has no such transient (its rates are constant within a phase), which is why T1-B passed.
+
+## 2026-11-14 — T1-C1 implementation note (before any T1-C1 gate result was read)
+The first T1-C1 gate start was stopped after 4/80 cohorts (no result read) and restarted from scratch with the same seeds:
+(1) the Poisson fits now maximise the PROFILE likelihood over the shared harmonics, with the per-fly x phase intercepts
+in closed form -- exactly the same maximum; on a simulated cohort it agreed with the full fit to <= 8.4e-4 in the LR
+(the full L-BFGS fit stops slightly short; the profile fit is the tighter one); (2) worker processes run with
+OMP/OPENBLAS/MKL threads = 1 (4 workers x 4 BLAS threads on 4 cores had slowed the run ~50x).

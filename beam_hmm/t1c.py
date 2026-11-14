@@ -71,6 +71,38 @@ def fit(Y, E, model_id, keep=None):
     return float(-r.fun), r.x[2 * nf:]
 
 
+def _profile(h, Ysum, ZY, E, Zk, ph):
+    """Profile negative log-likelihood over the per-fly x phase intercepts (closed form), up to a constant:
+    f(h) = sum_{f,p} Y_fp log S_fp(h) - h . sum_{f,b} y_fb z_b,  S_fp(h) = sum_{b in p} E_fb exp(z_b . h).
+    Exactly equivalent to the full fit; LR = 2 (f(0) - min_h f(h))."""
+    w = np.exp(Zk @ h)                                   # bins
+    EW = E * w[None, :]
+    S = np.stack([EW[:, ph == 0].sum(1), EW[:, ph == 1].sum(1)], 1)        # flies x 2
+    m = Ysum > 0
+    f = (Ysum[m] * np.log(S[m])).sum() - h @ ZY
+    G = np.zeros_like(h)
+    for p_ in (0, 1):
+        a = Ysum[:, p_] / np.where(S[:, p_] > 0, S[:, p_], 1.0)          # Y_fp / S_fp
+        G += ((a[:, None] * EW[:, ph == p_]).sum(0)) @ Zk[ph == p_]
+    return f, G - ZY
+
+
+def lr_profile(Y, E, model_id=2, keep=None):
+    keep = np.arange(NB) if keep is None else keep
+    Y = Y[:, keep]; E = E[:, keep]; ph = PH[keep]; Zk = harmonics(model_id)[keep]
+    Ysum = np.stack([Y[:, ph == 0].sum(1), Y[:, ph == 1].sum(1)], 1); ZY = Zk.T @ Y.sum(0)
+    f0, _ = _profile(np.zeros(Zk.shape[1]), Ysum, ZY, E, Zk, ph)
+    r = minimize(_profile, np.zeros(Zk.shape[1]), args=(Ysum, ZY, E, Zk, ph), jac=True, method='BFGS')
+    return 2 * (f0 - r.fun), r.x
+
+
+def lr_stat_fast(B, model_id=2, keep=None):
+    Ywu = np.stack([b['wu'] for b in B]); Ees = np.stack([b['es'] for b in B])
+    Yon = np.stack([b['on'] for b in B]); Eew = np.stack([b['ew'] for b in B])
+    la, h = lr_profile(Ywu, Ees, model_id, keep); lb, g = lr_profile(Yon, Eew, model_id, keep)
+    return la + lb, h, g
+
+
 def lr_stat(B, model_id=2, l0=None, keep=None):
     """B: list of fly_bins dicts. Returns LR (both event types), h (wake-ups), g (onsets), and the C0 logLs.
     The C0 fit has only per-fly x phase intercepts, so it is unchanged by a within-phase rotation: pass l0 to reuse it."""
@@ -95,11 +127,11 @@ def rotate(b, oL, oD, keep=None):
 def rotation_test(B, seed_seq, n=999, model_id=2, excl_h=0.0):
     keep = keep_bins(excl_h) if excl_h > 0 else None
     nL = HALF if keep is None else int((keep < HALF).sum()); nD = HALF if keep is None else int((keep >= HALF).sum())
-    LR, h, g, l0 = lr_stat(B, model_id, keep=keep)
+    LR, h, g = lr_stat_fast(B, model_id, keep=keep)       # profile likelihood: exact, much faster (T1-C1 note)
     rng = np.random.default_rng(seed_seq); null = []
     for _ in range(n):
         Br = [rotate(b, int(rng.integers(0, nL)), int(rng.integers(0, nD)), keep) for b in B]
-        null.append(lr_stat(Br, model_id, l0, keep)[0])
+        null.append(lr_stat_fast(Br, model_id, keep)[0])
     p = (1 + sum(x >= LR for x in null)) / (n + 1)
     return dict(LR=float(LR), p=float(p), h=h.tolist(), g=g.tolist(), null_median=float(np.median(null)))
 
