@@ -323,3 +323,8 @@ Reading: the 2-h screen catches ~half of blocked beams directly and ~70% with an
 the full-file QC (RawToActivity1s / BeamFingerprint). Thresholds were NOT tuned on this run (they are the P1-C hub
 criteria plus a minimum of 10 jumps); tuning them would need a new, dated entry and new data.
 In weeks 8-9 nearly every channel is LOW ACTIVITY: the flies are dead, as the survival record says.
+    CORRECTION (same day): the "64 channel x 2-h excerpts" used for the Octave-vs-Python equality check above held
+    only ~1 h (the line count ignored the alternating -1 lines), and LoadingCheck.m's own line budget was too small
+    in Octave (it counts CRLF line ends twice). Fixed (budget doubled; the time window still trims to 2 h); rerun on
+    true 2-h excerpts of weeks 1-4: identical flags, 0 short-file warnings. The validation against the full-week QC
+    (18 / 1 / 20 / 105) used the full data and is unaffected.
