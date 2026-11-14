@@ -7,3 +7,4 @@ __pycache__/
 *.tmp
 supervisor.log
 results/*/run.log
+results/t1c1_gate/run.log

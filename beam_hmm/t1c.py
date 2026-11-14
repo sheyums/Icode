@@ -37,56 +37,69 @@ def labels_from_activity(act):
     return lab
 
 
-def _nll(theta, Y, E, Z, nf):
-    """Poisson negative log-likelihood (without the y! term) for one event type; Y, E: nf x 144."""
+def keep_bins(excl_h=0.0):
+    """T1-C1: indices of the 10-min bins kept when the first excl_h hours after each light switch are dropped."""
+    k = int(round(excl_h * 6)); b = np.arange(NB)
+    return np.nonzero(~((b < k) | ((b >= HALF) & (b < HALF + k))))[0]
+
+
+def _nll(theta, Y, E, Z, nf, ph=None):
+    """Poisson negative log-likelihood (without the y! term) for one event type; Y, E: nf x bins."""
+    ph = PH if ph is None else ph
     c = theta[:2 * nf].reshape(nf, 2); h = theta[2 * nf:]
-    hz = Z @ h if len(h) else np.zeros(NB)
-    eta = c[:, PH] + hz[None, :]
+    hz = Z @ h if len(h) else np.zeros(Y.shape[1])
+    eta = c[:, ph] + hz[None, :]
     m = E > 0
     mu = np.exp(eta) * E
     nll = -(Y[m] * eta[m]).sum() + mu[m].sum()
     r = np.where(m, mu - Y, 0.0)
-    gc = np.stack([r[:, PH == 0].sum(1), r[:, PH == 1].sum(1)], 1).ravel()
+    gc = np.stack([r[:, ph == 0].sum(1), r[:, ph == 1].sum(1)], 1).ravel()
     gh = Z.T @ r.sum(0) if len(h) else np.zeros(0)
     return nll, np.r_[gc, gh]
 
 
-def fit(Y, E, model_id):
-    nf = Y.shape[0]; Z = harmonics(model_id)
+def fit(Y, E, model_id, keep=None):
+    keep = np.arange(NB) if keep is None else keep
+    Y = Y[:, keep]; E = E[:, keep]; ph = PH[keep]
+    nf = Y.shape[0]; Z = harmonics(model_id)[keep]
     c0 = np.zeros((nf, 2))
-    for ph in (0, 1):
-        ys = Y[:, PH == ph].sum(1); es = E[:, PH == ph].sum(1)
-        c0[:, ph] = np.log(np.maximum(ys, 0.5) / np.maximum(es, 1.0))
+    for p_ in (0, 1):
+        ys = Y[:, ph == p_].sum(1); es = E[:, ph == p_].sum(1)
+        c0[:, p_] = np.log(np.maximum(ys, 0.5) / np.maximum(es, 1.0))
     th0 = np.r_[c0.ravel(), np.zeros(Z.shape[1])]
-    if Z.shape[1] == 0:
-        r = minimize(_nll, th0, args=(Y, E, Z, nf), jac=True, method='L-BFGS-B')
-        return float(-r.fun), r.x[2 * nf:]
-    r = minimize(_nll, th0, args=(Y, E, Z, nf), jac=True, method='L-BFGS-B', options=dict(maxiter=1000))
+    r = minimize(_nll, th0, args=(Y, E, Z, nf, ph), jac=True, method='L-BFGS-B', options=dict(maxiter=1000))
     return float(-r.fun), r.x[2 * nf:]
 
 
-def lr_stat(B, model_id=2, l0=None):
+def lr_stat(B, model_id=2, l0=None, keep=None):
     """B: list of fly_bins dicts. Returns LR (both event types), h (wake-ups), g (onsets), and the C0 logLs.
     The C0 fit has only per-fly x phase intercepts, so it is unchanged by a within-phase rotation: pass l0 to reuse it."""
     Ywu = np.stack([b['wu'] for b in B]); Ees = np.stack([b['es'] for b in B])
     Yon = np.stack([b['on'] for b in B]); Eew = np.stack([b['ew'] for b in B])
     if l0 is None:
-        l0 = (fit(Ywu, Ees, 0)[0], fit(Yon, Eew, 0)[0])
-    l2a, h = fit(Ywu, Ees, model_id); l2b, g = fit(Yon, Eew, model_id)
+        l0 = (fit(Ywu, Ees, 0, keep)[0], fit(Yon, Eew, 0, keep)[0])
+    l2a, h = fit(Ywu, Ees, model_id, keep); l2b, g = fit(Yon, Eew, model_id, keep)
     return 2 * ((l2a - l0[0]) + (l2b - l0[1])), h, g, l0
 
 
-def rotate(b, oL, oD):
-    idx = np.r_[(np.arange(HALF) + oL) % HALF, HALF + (np.arange(HALF) + oD) % HALF]
+def rotate(b, oL, oD, keep=None):
+    """Rotate within each phase; with keep (T1-C1), only among the kept bins of each phase."""
+    if keep is None:
+        idx = np.r_[(np.arange(HALF) + oL) % HALF, HALF + (np.arange(HALF) + oD) % HALF]
+        return {k: v[idx] for k, v in b.items()}
+    L = keep[keep < HALF]; D = keep[keep >= HALF]; idx = np.arange(NB)
+    idx[L] = L[(np.arange(len(L)) + oL) % len(L)]; idx[D] = D[(np.arange(len(D)) + oD) % len(D)]
     return {k: v[idx] for k, v in b.items()}
 
 
-def rotation_test(B, seed_seq, n=999, model_id=2):
-    LR, h, g, l0 = lr_stat(B, model_id)
+def rotation_test(B, seed_seq, n=999, model_id=2, excl_h=0.0):
+    keep = keep_bins(excl_h) if excl_h > 0 else None
+    nL = HALF if keep is None else int((keep < HALF).sum()); nD = HALF if keep is None else int((keep >= HALF).sum())
+    LR, h, g, l0 = lr_stat(B, model_id, keep=keep)
     rng = np.random.default_rng(seed_seq); null = []
     for _ in range(n):
-        Br = [rotate(b, *rng.integers(0, HALF, 2)) for b in B]
-        null.append(lr_stat(Br, model_id, l0)[0])
+        Br = [rotate(b, int(rng.integers(0, nL)), int(rng.integers(0, nD)), keep) for b in B]
+        null.append(lr_stat(Br, model_id, l0, keep)[0])
     p = (1 + sum(x >= LR for x in null)) / (n + 1)
     return dict(LR=float(LR), p=float(p), h=h.tolist(), g=g.tolist(), null_median=float(np.median(null)))
 
