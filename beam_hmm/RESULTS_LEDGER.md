@@ -249,3 +249,15 @@ OPPOSITE of the earlier project's description (per0 DD / CS DD, DAM 1-s counts: 
 abrupt return within ~20 s). Week 1 (descriptive) shows the same near-boundary sign (-0.027, -0.037, -0.024).
 Caveats: secondary setting only; LD (light and clock drive not excluded); different detector (beam crossings vs counts),
 genotype context (CS LD here) and data from a different experiment.
+
+## 2026-11-14 — A2b port reproduces the earlier per0 DD wind-down result exactly (beam_hmm/repro_a2b_per0dd.py)
+Data: the 25 per0 DD 1-s files (per0DD_activity_files_1sec_res, uploaded by the user; not in the repo), cut to the
+trace lengths in analysis_20r/per0DD_bouts_20r_replication.mat. Both the ORIGINAL planB_21.py functions and the A2b
+port (pipeline.sleep_bouts + the same windows and statistics) give, identically, and identical to planB_21.log:
+L300 z median +0.58, Wilcoxon 0.0136, flies p<.05 0.32, day-block z median +0.93 (p 0.0051), d(tau) +0.002 +0.030 +0.045 ...;
+L120 z median +0.95, Wilcoxon 0.000912, flies p<.05 0.44, day-block +0.66 (p 0.0275), d(tau) -0.007 +0.019 +0.019 ...
+So A2b's opposite-direction profile on the pilot is not a porting error. The earlier per0 DD files are ALSO multibeam
+recordings (file names "multibeam_pruned"), so "beam vs count detector" does not explain the difference either.
+Remaining candidate explanations (untested): the preprocessing that turns 0.4-s positions into 1-s activity (the pilot
+uses spike filter + hub repair + "any change in the second"; the per0 DD files come from the lab pipeline, PreProcess.m
+style), LD vs DD, genotype/cohort, and fly age.
