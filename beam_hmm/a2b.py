@@ -9,7 +9,7 @@ import pipeline as pl, p1e
 SETTINGS = {'L300': (300, 10), 'L120': (120, 5)}; NFLIP = 2000
 
 
-def week_bouts(x, t, v, lights_on_h, week, L, b):
+def week_bouts(x, t, v, lights_on_h, week, L, b, switch_exclusion=True):
     """Per-bout binned start-minus-end differences (activity and count intensity), block keys, levels."""
     a = pl.activity_1s(x, t, v)                                     # 1 active, 0 inactive, -1 excluded
     n = len(a); sec = np.floor(t).astype(int)
@@ -23,7 +23,7 @@ def week_bouts(x, t, v, lights_on_h, week, L, b):
         if w1 - w0 < 2 * L or (a[w0:w1] == -1).any():
             continue
         z0, z1 = zt(w0), zt(w1 - 1); dur_h = (w1 - w0) / 3600
-        if not ((1 <= z0 < 11 and 1 <= z1 < 11 and dur_h < 10) or (13 <= z0 < 23 and 13 <= z1 < 23 and dur_h < 10)):
+        if switch_exclusion and not ((1 <= z0 < 11 and 1 <= z1 < 11 and dur_h < 10) or (13 <= z0 < 23 and 13 <= z1 < 23 and dur_h < 10)):
             continue
         for arr, lst in ((act, D), (cnt, Dc)):
             st = arr[w0:w0 + L].reshape(-1, b).mean(1); en = arr[w1 - L:w1][::-1].reshape(-1, b).mean(1); lst.append(st - en)
@@ -53,7 +53,9 @@ def group(rows, zk, pk):
 
 
 if __name__ == '__main__':
-    outdir = sys.argv[1]; aw = [int(w) for w in sys.argv[2].split(',')]; weeks = [int(w) for w in sys.argv[3:]]
+    SWX = '--no-switch-exclusion' not in sys.argv          # POST HOC option (ledger 2026-11-14): all bouts
+    args = [a for a in sys.argv[1:] if a != '--no-switch-exclusion']
+    outdir = args[0]; aw = [int(w) for w in args[1].split(',')]; weeks = [int(w) for w in args[2:]]
     os.makedirs(outdir, exist_ok=True)
     F = {}
     for w in weeks:
@@ -72,7 +74,7 @@ if __name__ == '__main__':
                 x = F[w]['P'][:, j]; t = F[w]['t']; v = p1e.valid_mask(t, w, death, fi)
                 if v.sum() == 0 or (x[v].max() - x[v].min()) < 8:
                     continue
-                d_, dc_, b_, l_ = week_bouts(x, t, v, F[w]['stamp']['lights_on_h'], w, L, b)
+                d_, dc_, b_, l_ = week_bouts(x, t, v, F[w]['stamp']['lights_on_h'], w, L, b, SWX)
                 D += d_; Dc += dc_; blk += b_; lev += l_
             if not D:
                 continue
@@ -109,5 +111,5 @@ if __name__ == '__main__':
             print(f"   VERDICT: {verdict}{' [secondary setting]' if st == 'L120' else ''}")
             print(f"   level (first 60 s, start - end) median {res[st]['level_median']:+.3f} Wilcoxon {res[st]['level_wilcoxon']} | counts-shape z med {res[st]['counts_shape_zmed']:+.2f} Wilcoxon {res[st]['counts_shape_wilcoxon']}")
             print('   median d(tau) start - end, bins from the sleep boundary:', ' '.join(f'{v:+.3f}' for v in md[:12]))
-    json.dump(dict(analysis_weeks=aw, results=res), open(os.path.join(outdir, f"a2b_weeks{'-'.join(map(str, aw))}.json"), 'w'),
+    json.dump(dict(analysis_weeks=aw, switch_exclusion=SWX, results=res), open(os.path.join(outdir, f"a2b_weeks{'-'.join(map(str, aw))}{'' if SWX else '_allbouts'}.json"), 'w'),
               indent=1, default=lambda o: o.item() if hasattr(o, 'item') else str(o))
