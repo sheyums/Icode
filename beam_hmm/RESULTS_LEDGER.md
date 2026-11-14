@@ -374,3 +374,13 @@ Fresh cohorts (seeds 9501 / 11201), 12 flies x 12 days. E = 2 h (decision): B-P 
 within 2 h of ZT 12.5 in 20/20; B-N rejected 2/60 (0.033; allowed <= 5). Null p quartiles 0.28 / 0.61 / 0.85.
 Sensitivity (same data): E = 1 h B-N 2/60, E = 3 h 3/60; B-P 20/20 at both. The exclusion window barely matters on
 these cohorts, so T1-C's 3/20 was probably partly chance as well as the switch transient; T1-C1 stands as specified.
+
+## 2026-11-14 — T1-C1 REAL-DATA TEST, weeks 2-3 (code 3472418; PRESPEC T1-C + T1-C1): SUPPORTED
+11 flies (ch17-24, 26, 28, 29; none dies inside the window). E = 2 h (decision): LR 1012.5, rotation p 0.001 (the minimum
+with 999 rotations; null median LR 81.4) -> time-of-day dependence of sleep onsets and wake-ups beyond the light/dark
+step, shared by the cohort, is SUPPORTED (LD: light + clock). Sensitivity: E = 1 h LR 1002 (p 0.001), E = 3 h LR 977
+(p 0.001). Secondary C1 (24-h harmonic only) vs C0: LR 177.5, p 0.019.
+Fitted within-phase shapes (E = 2 h; descriptive): wake-ups peak late in the light phase (ZT 10.8) and at the start of the
+dark phase (ZT 12.1 -- inside the excluded 2 h, i.e. the harmonic fit's extrapolation toward lights-off); onsets peak at
+midday (ZT 5.1, the siesta) and in the early night (ZT 16.9). Dark-phase log-rate range 0.80 (wake-ups), 0.98 (onsets).
+Week 1 (descriptive): same picture (LR 487, p 0.001; wake-up peak ZT 11.9 / 12.1; onset peaks ZT 5.2 / 17.2).
