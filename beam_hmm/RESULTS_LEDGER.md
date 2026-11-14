@@ -211,3 +211,22 @@ POST - MID +0.045 (7/10); A3 median +0.013 (6/12); A4 speed -0.105 (1/12 positiv
 NOTE: week 1's strong A2 wind-down pattern did NOT replicate in weeks 2-3 under the pre-specified test; A4's
 direction did. A descriptive pattern in viewed data is not a finding; this is the case in point.
 Sleep per day in these flies (weeks 2-3, standard measure): 726-1229 min.
+
+## 2026-11-14 — A5 ageing (code 2b9ac4f; PRESPEC A5 + P1-F; week-6 phase by hand check)
+PRIMARY TEST, within-fly slopes over weeks 2-5 (9 flies with >= 3 qualifying weeks), Wilcoxon two-sided, Holm over 4:
+- M1 sleep min/day: median slope +28.0 min/day per week, 7/9 positive, SD 24.8, exact p 0.0195, Holm 0.078
+- M2 changes per waking hour: median +9.0, 7/9 positive, p 0.43, Holm 0.43
+- M3 light-phase D (A1): median +0.031 per week, 8/9 positive, p 0.0195, Holm 0.078
+- M4 median walking speed: median +0.073 beams/s per week, 7/9 positive, p 0.035 (approx.), Holm 0.078
+-> NONE supported after Holm (three nominal p < 0.05, all in the same direction: more sleep, more end-resting by
+   day, faster walking as flies age from ~1 to ~5 weeks). With 9 flies the smallest exact Holm-adjusted p
+   attainable for the first-ranked measure is 4 x 2/512 = 0.016.
+P1-F deaths vs the survival sheet: ch17 wk5 (end of file), ch18 wk7, ch20 wk8, ch21 wk6, ch22 wk7, ch23 wk8, ch24 wk8,
+ch26 wk6, ch28 wk6, ch31 wk7; undetermined: ch25 (after wk4; wk5 unreadable), ch29 (after wk8), ch32 (from wk1);
+never dead: ch19 (alive in wk9), ch27 and ch30 (unreadable, as the sheet implies). One disagreement: ch25, sheet
+"died in/after wk5", rule undetermined (its week 5 is unreadable). The ch27 mislabel of P1-E is gone.
+DESCRIPTIVE (survivor-biased; flies per week 12, 4, 11, 8, 10, 5, 4, 1, 2): mean sleep 1009 / 922 / 1016 / 1050 /
+1083 / 1079 / 1102 min/day in weeks 1-7; light-phase D 0.28 -> 0.49 (wk6); walking speed 1.23 -> 2.03 beams/s (wk6).
+Death-aligned (last 7 days vs days 8-21 before death, 9 flies, few valid days near death because of the first-day
+and transfer exclusions): sleep rose in 6/8 flies with data, activity per waking hour fell in 5/8.
+Week 2 holds only 4 flies: five channels read nothing that week (whole-week outages).
