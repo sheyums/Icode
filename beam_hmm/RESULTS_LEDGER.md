@@ -368,3 +368,9 @@ The first T1-C1 gate start was stopped after 4/80 cohorts (no result read) and r
 in closed form -- exactly the same maximum; on a simulated cohort it agreed with the full fit to <= 8.4e-4 in the LR
 (the full L-BFGS fit stops slightly short; the profile fit is the tighter one); (2) worker processes run with
 OMP/OPENBLAS/MKL threads = 1 (4 workers x 4 BLAS threads on 4 cores had slowed the run ~50x).
+
+## 2026-11-14 — T1-C1 synthetic gate (code 5463e67; run here): PASS
+Fresh cohorts (seeds 9501 / 11201), 12 flies x 12 days. E = 2 h (decision): B-P rejected 20/20, dark-phase wake-up peak
+within 2 h of ZT 12.5 in 20/20; B-N rejected 2/60 (0.033; allowed <= 5). Null p quartiles 0.28 / 0.61 / 0.85.
+Sensitivity (same data): E = 1 h B-N 2/60, E = 3 h 3/60; B-P 20/20 at both. The exclusion window barely matters on
+these cohorts, so T1-C's 3/20 was probably partly chance as well as the switch transient; T1-C1 stands as specified.

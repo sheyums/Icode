@@ -1,0 +1,4 @@
+E = 2 h [DECISION]: B-P (20/20) reject 20, peak within 2 h 20 | B-N (60/60) reject 2 (0.033); null p mean 0.56
+E = 1 h [sensitivity]: B-P (20/20) reject 20, peak within 2 h 20 | B-N (60/60) reject 2 (0.033); null p mean 0.55
+E = 3 h [sensitivity]: B-P (20/20) reject 20, peak within 2 h 20 | B-N (60/60) reject 3 (0.050); null p mean 0.57
+T1-C1 GATE (E = 2 h): {'B-P': 'PASS', 'B-N': 'PASS'} -> PASS
