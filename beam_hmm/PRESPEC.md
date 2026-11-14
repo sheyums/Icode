@@ -634,3 +634,44 @@ Matched null  Within-fly slopes are their own control. Each fly's slope is repor
            interval (1000 resamples of days within each week).
 Notes      Survivor bias is why the test uses within-fly slopes and stops at week 5. With ~11 flies the smallest
            exact two-sided p is 2/2048; the ageing descriptives beyond week 5 rest on 3-9 flies.
+
+### 2026-11-14  A2b — seconds-scale shape of wake bouts (exact port of hmm_audit PRESPEC 21 + amendment B, adapted to LD)
+
+Why: A2 (pause fractions in 10-min windows) did not test what the earlier project found (C13: 1-s activity winds
+down gradually into sleep and rises abruptly out of it). This entry reproduces that test on the pilot. Source:
+origin/claude/trusting-allen-7nxrsf, hmm_audit/PRESPEC_21.md (with amendment B, which supersedes A) and
+hmm_audit/planB_21.py. Everything below is that test unless marked ADAPTED.
+
+Activity       1-s activity: second s is active if any position change occurs in it (pipeline.activity_1s, after
+               spike filter + P1-C hub repair). Sleep bouts: sqw_ref rule (>= 300 s inactive, lab bridging;
+               pipeline.sleep_bouts is a line-by-line port). ADAPTED: count intensity for the secondary readout =
+               number of position changes in the second (the beam analogue of the 1-s count).
+Bouts          Wake bouts [w0, w1) between consecutive sleep bouts with w1 - w0 >= 2L (no window overlap).
+               ADAPTED (LD): a bout is used only if it lies entirely within ZT 1-11 or ZT 13-23 (behavioural ZT,
+               P1-E), i.e. at least 1 h from both light switches, and contains no excluded second (P1-E/P1-F).
+Windows        x_start(tau) = activity at w0 + tau - 1, x_end(tau) = activity at w1 - tau, tau = 1..L.
+               PRIMARY L = 300 s in 30 bins of 10 s; SECONDARY L = 120 s in 24 bins of 5 s (reported, outside
+               the decision). Bin 1 = next to the sleep boundary.
+Statistic      Per bout d_b = binned x_start - binned x_end, centred by its own mean over bins (removes the level
+               difference, i.e. the already-known W -> Q -> S cycle). S = sum over bins of (mean over bouts of
+               centred d_b)^2.
+Nulls          (1) per-bout sign flips, 2000 (seed default_rng(27_000 + fly index)); p_fly = (1 + #{S* >= S}) /
+               2001; z_fly = (S - mean S*) / sd S*. (2) per-fly whole-DAY block flips, all 2^(days) configurations
+               enumerated (days = (week, day) units), z_fly_block. (3) group-level block null: every fly-day flipped
+               independently, 2000 configurations (seed default_rng(30_000)), statistic = sum of the flies' S.
+Decision       ONE primary block here (CS LD pilot, weeks 2-3 pooled per fly; Holm over 1). "TIME-ASYMMETRIC SHAPE"
+               iff (a) Wilcoxon of z_fly against 0 has p < 0.05 with median z > 0 AND the number of flies with
+               p_fly < 0.05 exceeds Binomial(n, 0.05) at p < 0.05; AND (b) Wilcoxon of z_fly_block p < 0.05 with
+               median > 0; AND (c) group-level block p < 0.05. If (a) passes but (b) or (c) fails: "not robust to
+               dependence between bouts within a day", no claim. Otherwise "no shape asymmetry detected".
+Secondary      level (first 60 s, start - end) with the sign-flip null; count-intensity shape; pooled median
+               profiles d(tau) to read the DIRECTION (gradual into sleep / abrupt out, or the reverse) as description.
+Data           Primary set (P1-D, narrow-range rule), flies with >= 5 qualifying bouts (excluded flies counted).
+               TEST: weeks 2-3 (this measure has not been computed on them). Week 1: descriptive.
+Wording        If detected: "within wake bouts away from the light switches, the 1-s activity trajectory into sleep
+               is not the time-reverse of the trajectory out of sleep, beyond their level difference"; LD adds
+               "the circadian and light drive is not excluded as its source" (stated, as for CS DD before). Never
+               "broken detailed balance". If not: "no seconds-scale shape asymmetry detected".
+Notes          The earlier test's primary blocks were DD (stationary records); in LD the light switches break the
+               stationarity the null needs, which the 1-h exclusion only reduces. A positive here is the weaker,
+               CS-DD-type claim. n ~ 11 flies.
