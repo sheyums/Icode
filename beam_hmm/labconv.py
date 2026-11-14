@@ -1,0 +1,35 @@
+"""Port of the lab's raw-beam -> 1-s activity conversion: PreProcess.m + multibeam_locomotion.m (binner = 5).
+Operates on ALL data lines of a raw week file (the -1 lines included, as dlmread reads them).
+PreProcess per column: leading 0/1 values set to the first other value; then, row by row, a value equal to 0, -1,
+or 1 with the previous (processed) value != 2 is replaced by the previous value. multibeam_locomotion: displacement
+|A[k+1] - A[k]| per row (last row copies the one before), summed in consecutive blocks of 5 rows = 1 s.
+(PreProcess's while-loop has an operator-precedence quirk with the row bound; it only matters for a column made
+entirely of 0/1, which raises an index error in MATLAB; here such a column is left unchanged.)"""
+import numpy as np
+from numba import njit
+
+
+@njit(cache=True)
+def _preprocess_col(a):
+    a = a.copy(); n = a.shape[0]
+    i = 0
+    while i < n and (a[i] == 0 or a[i] == 1):
+        i += 1
+    if i < n:
+        for k in range(i + 1):
+            a[k] = a[i]
+    for k in range(1, n):
+        if a[k] == 0 or a[k] == -1 or (a[k] == 1 and a[k - 1] != 2):
+            a[k] = a[k - 1]
+    return a
+
+
+def lab_activity_per_second(Xall):
+    """Xall: all data lines (rows) x channels, -1 lines included. Returns counts per second (beams travelled)."""
+    out = []
+    for j in range(Xall.shape[1]):
+        a = _preprocess_col(Xall[:, j].astype(np.int64))
+        d = np.empty_like(a); d[:-1] = np.abs(a[1:] - a[:-1]); d[-1] = d[-2]
+        n = (len(d) // 5) * 5
+        out.append(d[:n].reshape(-1, 5).sum(1))
+    return np.stack(out, 1)
