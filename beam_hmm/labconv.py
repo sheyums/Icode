@@ -33,3 +33,28 @@ def lab_activity_per_second(Xall):
         n = (len(d) // 5) * 5
         out.append(d[:n].reshape(-1, 5).sum(1))
     return np.stack(out, 1)
+
+
+def sleeptrace(activity, dt=1.0):
+    """Port of sleeptrace.m: 1 = wake, 0 = sleep; inactivity runs (activity <= 0) of N samples with N*dt >= 300 s."""
+    act = np.asarray(activity); out = np.ones(len(act))
+    inact = (act <= 0).astype(np.int8); tr = np.diff(np.r_[0, inact, 0])
+    st = np.nonzero(tr == 1)[0]; en = np.nonzero(tr == -1)[0] - 1
+    for s, e in zip(st, en):
+        if (e - s + 1) * dt >= 300:
+            out[s:e + 1] = 0
+    return out
+
+
+def ironout(wave, max_wake_s=1.0, dt=1.0):
+    """Port of ironout.m: interior wake runs (1s) of <= floor(max_wake_s/dt) samples become sleep (0); one pass on
+    the original wave. Returns (wave_out, n_bridged, n_samples)."""
+    w = np.asarray(wave, float).copy(); mb = int(np.floor(max_wake_s / dt))
+    if mb < 1:
+        return w, 0, 0
+    iw = (w == 1).astype(np.int8); tr = np.diff(np.r_[0, iw, 0])
+    st = np.nonzero(tr == 1)[0]; en = np.nonzero(tr == -1)[0] - 1; ln = en - st + 1
+    q = (st > 0) & (en < len(w) - 1) & (ln <= mb)
+    for s, e in zip(st[q], en[q]):
+        w[s:e + 1] = 0
+    return w, int(q.sum()), int(ln[q].sum())

@@ -276,3 +276,19 @@ agrees within ~1% in most fly-weeks, but the lab conversion gives much LESS slee
 present, because it counts the artifact as movement: ch20 wk2 966 vs 1227 min/day, ch29 wk3 595 vs 763, ch17 wk2 1001 vs
 1041 (and ch21 wk2 679 vs 621 the other way, where the beyond-beam-1 zone counts as movement only in beam_hmm's version).
 Note: labconv.py is checked against the MATLAB code by reading only; a MATLAB golden run on one raw file would confirm it.
+
+## 2026-11-14 — Lab sleep scoring vs beam_hmm scoring: identical (labconv.sleeptrace/ironout = ports of sleeptrace.m,
+## ironout.m; process_LocomToSleep.m read)
+sleeptrace (5-min rule) + ironout (1-s interior wake runs flanked by sleep -> sleep, one pass) vs pipeline.sleep_bouts
+(sqw_ref rule: a single active second is bridged iff the unbridged inactive runs on both sides are each >= 300 s):
+weeks 2-3, every live channel 17-32, both activity conversions (beam_hmm and lab) -> 50 fly-week-conversions,
+27,978,555 seconds, 0 differ. So all differences between the lab pipeline and beam_hmm lie OUTSIDE sleep scoring:
+1 activity conversion (PreProcess + multibeam_locomotion vs spike filter + hub repair + 0 kept): measured above;
+  sleep differs by up to 261 min/day in fly-weeks with a blocked-beam (hub) artifact;
+2 death rule: process_LocomToSleep cuts 24 h before the FIRST >= 12-h run of zero activity in each file; beam_hmm (P1-F)
+  works across files and separates dead from unreadable. Applied to this run's week 1, the lab rule would treat the
+  ~14 h with tubes out of the monitor (from ~153 h) as a death in every fly and cut from ~129 h; and a blocked-beam
+  channel never reads zero, so it cannot be called dead;
+3 phase: startZT = 0 (file start) in the lab call vs the flies' own lights-off rise here (files 1, 2, 5, 7 start
+  ~30-40 min away from lights-on);
+4 entrainment: Teliminate 24 h = beam_hmm's first-24 h exclusion (same).
