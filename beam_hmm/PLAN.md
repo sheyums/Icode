@@ -45,8 +45,8 @@ does not work at this resolution) and the data needed per fly.
 | how many flies / days needed | gate runs at 7 vs 14 days; A-measure spread | before the repeat experiment is designed |
 
 ## Needed from the user
-- Weeks 2-9 (channels 17-32 are enough).
-- Transfer times (or a go-ahead for a new handling detector, tested on weeks 2-9).
+- (resolved 2026-11-14) Weeks 2-9 uploaded.
+- (resolved 2026-11-14) Transfers = the gaps between files; week 1's last ~14 h = tubes out (P1-E).
 
 ## Open question: direction of the seconds-scale wake-bout asymmetry (A2b), recorded 2026-11-14
 Pilot (CS LD, this run): first ~20-25 s after waking LESS active than the last ~25 s before sleep (secondary setting).
