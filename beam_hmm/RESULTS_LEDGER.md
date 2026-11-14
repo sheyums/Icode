@@ -337,3 +337,16 @@ beam 16 (plug or food, the user's hypothesis) can hide a living fly completely: 
 These are the "whole-week outages" of A5; P1-F already treats them as outages, not deaths.
 LoadingCheck/labconv.loading_check gain FROZEN AT END BEAM k / FROZEN AT BEAM k / FROZEN AT 0. In the first 2 h it
 flags all 14 of 14 hidden-alive fly-weeks as FROZEN AT END BEAM 16. Octave and Python flags identical on 2-h excerpts.
+
+## 2026-11-14 — T1-B synthetic gate (code dc3a50c + T1-B1; run on the user's machine, pushed as f5eb874): PASS
+12-fly cohorts x 14 days, per-fly heterogeneity, K fixed at the true 3, sample-level HMM.
+B-P (planted morning/evening sleep-exit rhythm, peak-to-trough 3): C2 vs C0 rejected in 20/20 (need >= 16; chi-square
+p 1e-236 to 3e-178, LR median 961); dark-phase peak of the fitted exit profile within 2 h of ZT 12.5 in 20/20 (ZT 12.3-12.7);
+fitted/true within-dark range median 1.03 (0.92-1.11; need 0.67-1.5). B-N (no rhythm): 0/20 rejected (allowed <= 2;
+chi-square p mean 0.37, 2/20 below 0.10). Sleep state identified as QUIESCENT/S in all 480 fly fits (0 fallbacks).
+Bootstrap vs chi-square (5 + 5 cohorts, 99 replicates): B-P p_boot 0.010 (the minimum attainable) in 5/5; B-N p_boot
+0.25-0.69 vs chi-square 0.14-0.71 -- chi-square p was the smaller in 4/5 null cohorts (mildly anti-conservative), so the
+pre-specified real-data decision by the bootstrap stands.
+Limits, stated: the gate fixes K at the truth and the simulator's dynamics are close to the fitted model family; it
+does not test state discovery (D1-D failed; B1 pending). Power at the planted 3-fold rhythm is saturated, so the gate
+says nothing about smaller rhythms. Per T1-B, a real-data run needs a state model that has passed its own gate.
