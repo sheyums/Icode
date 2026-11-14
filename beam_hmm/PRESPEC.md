@@ -535,3 +535,61 @@ Rules, for every pilot analysis that has not run yet (A1's test included):
 5 Fly-weeks     Inclusion per fly-week by P1-D (after spike filter and hub repair).
 A1 amendment    A1's test uses rules 1-5. Per fly, weeks 2 and 3 are pooled over its INCLUDED fly-weeks; a fly
                 needs >= 3 valid days in total. Everything else in A1 is unchanged.
+
+### 2026-11-14  A2-A4 — pauses, edge flicker, walking (Track A, targeted, model-free)
+
+Common to A2, A3, A4
+- Data: pilot channels 17-32; P1/P1-C preprocessing; P1-E rules (behavioural ZT per file, first 24 h of each
+  file excluded, transfers, death rule over all supplied files); inclusion per fly-week by P1-D.
+- NEW exclusion (added after A1 showed the gap, before any A2-A4 measure is computed): a fly-week whose positions
+  over its valid samples span fewer than 8 beams (max - min < 8) is NARROW-RANGE and excluded.
+- TEST data: weeks 2-3 pooled per fly (>= 3 valid days). Week 1: the same measures, descriptive only.
+  Disclosure: A1's output file (a1_test_weeks2-3.json) contains per-fly pause minutes for weeks 2-3; they were
+  not inspected, and no A2-A4 measure has been computed on weeks 2-3.
+- Flies are the unit. Per-fly values are rounded to 10 decimals before ranking; Wilcoxon signed-rank,
+  two-sided, exact when there are no ties or zeros, else the normal approximation (stated). Holm within each
+  analysis. Sensitivity set (flies never artifact-heavy before repair) reported beside, tested only if >= 6 flies.
+- Definitions shared with A1: SLEEP bouts (P1, 1-s activity, lab bridging); PAUSE = a run of samples without a
+  position change lasting 30 s to < 5 min, outside sleep bouts; END and MIDDLE zones as in D1.
+
+A2 — pauses around sleep
+Question   Do short pauses (below the 5-min criterion) become more frequent just before falling asleep, and
+           are they less frequent just after waking, than in the middle of the same wake bout?
+Units      Wake bouts between two consecutive sleep bouts, entirely in valid data, lasting >= 30 min. Windows:
+           PRE = the 10 min before the next sleep onset; MID = the middle 10 min; POST = the first 10 min after
+           waking. Pause fraction of a window = share of its samples inside PAUSE runs (runs found on the whole
+           record, clipped to the window). Per fly: mean over its wake bouts of (PRE - MID) and of (POST - MID);
+           flies with >= 5 qualifying wake bouts.
+Tests      PRE - MID and POST - MID across flies, Holm over the two. Supported iff Holm p < 0.05; direction
+           reported either way.
+Secondary  (descriptive) the same split by the phase of sleep onset (light/dark); pause rate per waking hour
+           and pause-duration distribution, light vs dark; where pauses happen (END share, cf. A1).
+
+A3 — edge flicker
+Question   Is one-beam out-and-back flicker during rest a behaviour (micro-movement) or a detector effect of
+           sitting on a beam boundary? Prediction if behavioural: fewer flickers per hour of rest at night, when
+           fly sleep is deeper (higher arousal thresholds; van Alphen et al. 2013, J Neurosci 33:6917). A
+           boundary effect predicts no day/night difference.
+Units      FLICKER = a single-sample 1-beam excursion (A-B-A, |B - A| = 1), counted once. FLICKER-TOLERANT REST
+           (FTR) = runs >= 5 min in which the position, after removing flickers (B set to A), does not change.
+           Per fly x block: flicker events inside FTR per hour of FTR; flies with >= 1 h of FTR in each block.
+Test       rate_dark - rate_light across flies (one test). Supported as "behaviour-like" iff p < 0.05 and the
+           median difference < 0; a significant > 0 is reported as the opposite.
+Secondary  (descriptive) the same restricted to rest in the MIDDLE zone (removes the A1 place difference); the
+           change in measured sleep (min/day, and number of sleep bouts) when flickers are not counted as
+           movement: how sensitive the lab's 5-min sleep measure is to flicker.
+
+A4 — walking
+Question   Do flies walk differently by night than by day, beyond how much they walk?
+Units      WALKING BOUT = a maximal sequence of position changes in which consecutive changes are <= 2 s apart,
+           with path length (sum of |step|) >= 3 beams. Speed = path length / (time from first to last change +
+           0.4 s), beams/s. Per fly x block: median speed and median path length; flies with >= 50 bouts in each
+           block.
+Tests      dark - light median speed; dark - light median path length; Holm over the two.
+Secondary  (descriptive) bout rate per waking hour; share of bouts that cross the tube (path >= 12 beams);
+           speed distribution per fly (for modelling: the TRAVEL state's step statistics).
+
+Matched null (all three)   Within-fly contrasts at each fly's own sample sizes; each fly's value is reported with
+           a day-bootstrap 95% interval (1000 resamples of days).
+Notes      n ~ 12 flies: the smallest exact two-sided Wilcoxon p is 2/4096; nulls are weak evidence. The
+           fly-to-fly SD of every primary statistic is recorded for planning the repeat experiment.
