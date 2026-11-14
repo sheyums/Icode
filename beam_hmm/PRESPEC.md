@@ -675,3 +675,43 @@ Wording        If detected: "within wake bouts away from the light switches, the
 Notes          The earlier test's primary blocks were DD (stationary records); in LD the light switches break the
                stationarity the null needs, which the 1-h exclusion only reduces. A positive here is the weaker,
                CS-DD-type claim. n ~ 11 flies.
+
+### 2026-11-14  T1-C — clock test on OBSERVED sleep entry and exit (no hidden states)
+
+Why: T1-B (hidden-state cohort clock test) passed its gate, but its real-data run needs a state model that passed its
+own gate, and B1 is pending. User decision 2026-11-14: build the observed-level version now. It asks the same
+question with the same harmonic terms, on the scored sleep/wake sequence, so it works whatever happens to B1.
+
+Question       Do the rates of falling asleep and of waking vary with time of day beyond the light/dark step, in a
+               way shared by the flies of a cohort? (LD: light + clock.)
+Data           Pilot, P1-D primary set with the narrow-range rule (sensitivity set beside it if >= 6 flies);
+               P1/P1-C preprocessing; P1-E behavioural ZT per file, first 24 h of each file excluded, transfers;
+               P1-F deaths. TEST: weeks 2-3 pooled per fly (this measure has not been computed on them). Week 1:
+               descriptive. Weeks 4-9: descriptive (ageing), later.
+Observed events 1-s sleep/wake from the P1 scoring (identical to sleeptrace + ironout). WAKE-UP = a second labelled
+               wake following one labelled sleep; SLEEP ONSET = the reverse; both seconds valid. Exposure = valid
+               seconds in sleep (for wake-ups) or in wake (for onsets).
+Bins           10-min bins of ZT (144 per day). Per fly x day x bin: number of wake-ups and onsets, seconds asleep
+               and awake.
+Model          Poisson log-linear, offset log(exposure), separately for wake-ups and onsets, fitted jointly:
+               log rate = c_{fly, phase} + Z(ZT) . h   (wake-ups),   d_{fly, phase} + Z(ZT) . g   (onsets),
+               Z = T1-B's harmonics (C0: none; C1: 1st; C2: 1st + 2nd), shared by the cohort; c, d per fly and phase.
+Statistic      LR = 2 (logL_C2 - logL_C0), 8 df, summed over both event types.
+Null           ROTATION within phase: for each fly, one random offset (uniform over the 72 bins of a 12-h phase) is
+               applied to all its light-phase bins and another to all its dark-phase bins, the same offset for every
+               day of that fly (wrapping within the phase). This keeps each fly's counts, exposures, day structure,
+               bout memory and own within-phase rhythm, and destroys only the SHARED alignment to ZT. 999 rotations,
+               seed SeedSequence([11001, set code]); p = (1 + #{LR* >= LR}) / 1000.
+Decision       Clock dependence beyond the step is SUPPORTED iff p < 0.05. Reported either way: fitted within-phase
+               shapes of h and g (T1-B1 rule: only within-phase shape is identified), peak ZT of each within each
+               phase, C1 vs C0 with the same null (secondary).
+Synthetic gate (must PASS before the real-data run; runs here): T1-B's scenarios with seeds and truth unchanged,
+               12-fly cohorts x 14 days, positions from the 0.4-s simulator, scored with the P1 rule, first 24 h of
+               the simulated record excluded like the data. B-P (TBP, planted 3-fold sleep-exit rhythm): PASS iff
+               rejected in >= 16/20 cohorts and the dark-phase peak of the fitted wake-up shape h is within +-2 h of
+               ZT 12.5 in >= 16/20. B-N (TBN, no rhythm beyond the step): PASS iff rejected in <= 2/20. Rotation
+               seeds for the gate: SeedSequence([11101, scenario, cohort]).
+Notes          The rotation null tests SHARED time-of-day structure; a rhythm whose phase differs between flies is
+               not detected (that is a feature: it asks about the clock-and-light drive common to the cohort).
+               The 5-min criterion makes wake-up rates depend on time asleep; the rotation null keeps that, a
+               model-based null would not. n ~ 11 flies.
