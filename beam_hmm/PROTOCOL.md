@@ -81,3 +81,12 @@ Live channels among 17-32 (P1 rule): 12 / 9 / 4 / 3 -- consistent with deaths.
 Phase stamps (P1-E rule 1): wk7 lights-on 23.33 h into the file (file starts ~40 min after lights-on), wk8 23.83 h,
 wk9 1.50 h (at the guard's limit, 3 flies). WEEK 6 FLAGGED: estimate 14.00 h, i.e. a 12-h ambiguity (the largest
 rise sits at ~2 h into the file). Per P1-E, week 6 is not analysed until checked by hand.
+
+## Survival sheet vs data (2026-11-14) — fly "No." = channel number
+Position changes per week (after repair) agree with the sheet for channels 17-32: No. 25 active to week 5, silent
+from week 6 (sheet: died in/after week 5); No. 19, 20, 23, 24, 31, 32 active into weeks 7-9 (sheet: alive in/after
+week 6); No. 19 active in week 9 (sheet: alive in/after week 8). Unlisted 17, 18, 21, 22, 26, 28, 29 collapse in
+weeks 6-7. EXCEPTIONS: No. 27 and 30 are alive per the sheet but their channels carry almost no readable signal
+in any week: unreadable tubes, not deaths. The P1-E death rule therefore mislabels ch27 ("dead from week 2"):
+an artifact channel must not be read as a death (to be handled in A5's entry). Whole-week outages also occur
+(ch19 and ch29 read nothing in week 2, then return): a silent WEEK is not a death either.
