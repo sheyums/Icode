@@ -188,3 +188,26 @@ POST HOC notes (checked after the result; not part of the decision):
 ## 2026-11-14 — weeks 6-9 format, timing and phase QC (code a427580 p1e.py + load_week.py)
 See PROTOCOL.md "Weeks 6-9". Week 6 fails the P1-E phase guard (12-h ambiguity); weeks 7-9 pass (week 9 at
 1.50 h, the limit, with 3 flies). Live channels 12/9/4/3 in weeks 6-9.
+
+## 2026-11-14 — A2-A4 PRIMARY TESTS, weeks 2-3 (code 3fb5405; PRESPEC A2-A4 + P1-E; weeks 1-9 supplied for the death rule)
+Primary set 11 flies (ch17-24, 26, 28, 29; ch25 excluded by the new narrow-range rule, as intended).
+Sensitivity set 2 flies: not tested.
+A2 pauses around sleep (Holm over 2):
+- PRE - MID pause fraction: median +0.001, 6/11 positive, SD 0.070, exact p 0.966, Holm 1.0 -> NOT supported.
+- POST - MID: median +0.023, 6/11 positive, SD 0.046, exact p 0.966, Holm 1.0 -> NOT supported.
+A3 edge flicker during rest, dark - light rate (events per hour of flicker-tolerant rest):
+- median -0.002, 5/11 positive, SD 0.99, exact p 0.966 -> NOT supported: no day/night difference, so no
+  evidence that flicker during rest is behaviour (consistent with a beam-boundary effect; a null at n = 11 is
+  weak evidence). Secondary, middle zone only: median +0.017, 8/11 positive, p 0.11.
+  Secondary, sleep-measure sensitivity: not counting flickers as movement adds 1-5 min/day of sleep in 10/11
+  flies (36 min/day in ch21) and changes bout counts by <= 3% except ch21 (+7%): the 5-min sleep measure is
+  robust to flicker in this pilot.
+A4 walking, dark - light (Holm over 2):
+- median walking speed: median difference -0.231 beams/s, 0/10 positive, SD 0.20, p 0.0077 (normal
+  approximation, ties), Holm 0.015 -> SUPPORTED: flies walk more slowly at night than by day.
+- median path length per walking bout: median difference 0.0 beams, 3/10 positive, Holm 0.10 -> not supported.
+Week 1 (descriptive, code 3fb5405, same measures): A2 PRE - MID +0.092 with 10/10 positive (exact p 0.002),
+POST - MID +0.045 (7/10); A3 median +0.013 (6/12); A4 speed -0.105 (1/12 positive, p 0.074), path 0.0.
+NOTE: week 1's strong A2 wind-down pattern did NOT replicate in weeks 2-3 under the pre-specified test; A4's
+direction did. A descriptive pattern in viewed data is not a finding; this is the case in point.
+Sleep per day in these flies (weeks 2-3, standard measure): 726-1229 min.
