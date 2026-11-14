@@ -157,3 +157,6 @@ Reading (post hoc, NOT a test): by day, flies sleep at the tube ends more than t
 and several flies sleep away from the ends. The pre-specified TEST is on weeks 2-3 (A1).
 For planning: with SD ~0.19 and a mean difference ~0.26, the light-phase contrast would need few flies; the
 dark-phase one has no consistent sign.
+    CORRECTION (same day): the dark-phase summary above was typed before the summary script ran. From
+    results/a1_week1.json: dark D > 0 in 5/12 flies (not 6), median -0.028 (not -0.01), mean -0.052 (not
+    -0.04), SD 0.149 (not 0.16). Light values confirmed: 10/12, median +0.321, mean +0.258, SD 0.186.
