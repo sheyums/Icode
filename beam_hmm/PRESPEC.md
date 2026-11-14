@@ -715,3 +715,28 @@ Notes          The rotation null tests SHARED time-of-day structure; a rhythm wh
                not detected (that is a feature: it asks about the clock-and-light drive common to the cohort).
                The 5-min criterion makes wake-up rates depend on time asleep; the rotation null keeps that, a
                model-based null would not. n ~ 11 flies.
+
+### 2026-11-14  T1-C1 — T1-C with the post-switch transient excluded (after T1-C's gate FAILED; user go-ahead)
+
+Why: T1-C's gate failed on false detections (3/20; ledger 0abae61). Stated mechanism: in scored sleep the wake-up hazard
+depends on time asleep, so after each light switch the mix of sleepers re-settles, a transient aligned to ZT in every
+fly that the within-phase rotation null destroys. The fix follows chi2p's rule for a permutation null (the protected
+window must be long relative to the process's memory; "err long"): exclude a window after each switch that is long
+relative to the sleep-bout time scale (20-40 min mean in the simulator; often longer in real flies).
+Everything not changed here is as T1-C.
+
+1 Exclusion    Bins in the first E hours after lights-on and after lights-off are dropped from the fit and from the
+               rotation. PRIMARY E = 2 h (ZT 0-2 and ZT 12-14 dropped; 60 bins remain per phase). Rotation: one
+               random offset per fly within the remaining light bins and one within the remaining dark bins.
+               SENSITIVITY (reported, no decision): E = 1 h and E = 3 h, same data and seeds.
+2 Peak         The fitted harmonic shapes h, g are evaluated on the full ZT grid (harmonics are defined everywhere);
+               the gate's peak criterion uses the dark-phase peak of h on that grid, as in T1-C.
+3 Gate         FRESH cohorts (the T1-C cohorts have been seen): data seeds SeedSequence([9501, scenario, cohort])
+               (spawned per fly as before), rotation seeds SeedSequence([11201, scenario, cohort]); 12 flies x 12 days
+               (11 valid days, about the real flies' weeks 2-3 maximum), truth as T1-B/T1-C (TBP, TBN).
+               B-P: 20 cohorts; PASS iff rejected in >= 16/20 and the dark-phase peak of h within +-2 h of ZT 12.5 in
+               >= 16/20. B-N: 60 cohorts (more, to estimate the false-positive rate); PASS iff rejected in <= 5/60
+               (8.3%; at a true rate of 0.05, P(X >= 6) = 0.18, so a calibrated test passes 82% of the time).
+               If it fails: logged; no further change without a new entry.
+4 Real data    As T1-C (weeks 2-3, primary set, rotation p from 999 rotations), with E = 2 h; E = 1 h, 3 h as
+               sensitivity. Runs only if this gate passes.
