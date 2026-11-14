@@ -47,3 +47,14 @@ does not work at this resolution) and the data needed per fly.
 ## Needed from the user
 - Weeks 2-9 (channels 17-32 are enough).
 - Transfer times (or a go-ahead for a new handling detector, tested on weeks 2-9).
+
+## Open question: direction of the seconds-scale wake-bout asymmetry (A2b), recorded 2026-11-14
+Pilot (CS LD, this run): first ~20-25 s after waking LESS active than the last ~25 s before sleep (secondary setting).
+Earlier project (per0 DD, CS DD; and CS LD descriptively): the reverse (wind-down into sleep, abrupt waking).
+Ruled out (ledger): porting error (exact reproduction of per0 DD), detector type (both multibeam), activity conversion
+(lab conversion gives the same pilot direction), sleep scoring (identical second for second).
+Agreed with the user: the difference is in the flies or the conditions -- cohort, age, genotype, LD vs DD -- or in the
+one remaining method difference (the pilot excludes bouts within 1 h of a light switch; the earlier CS LD block did
+not). Earlier CS LD already showed the earlier direction, so LD alone is an unlikely explanation.
+For the repeat experiment: CS in LD AND DD in the same cohort, ages recorded, A2b's 5-s setting pre-specified as
+primary, and the light-switch exclusion reported both ways.
