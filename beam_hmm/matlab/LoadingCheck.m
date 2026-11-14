@@ -92,7 +92,7 @@ end
 if o.Plot
     tt = (t(m) - t(1)) / 60;                                       % minutes since file start
     nCol = min(8, nC); nRow = ceil(nC / nCol);
-    fh = figure('Color', 'w', 'Visible', o.Visible, 'Position', [50 50 min(1800, 220 * nCol) 170 * nRow + 60], ...
+    fh = figure('Color', 'w', 'Visible', o.Visible, 'Position', [50 50 min(1600, 200 * nCol) 200 * nRow + 60], ...
                 'Name', 'LoadingCheck');
     try, theme(fh, 'light'); catch, end                          % pin the theme before any axes (CLAUDE.md)
     for k = 1:nC
@@ -103,9 +103,9 @@ if o.Plot
         stairs(ax, tt, A(:, ch(k)), 'k', 'LineWidth', 0.5);
         ylim(ax, [-0.5 16.5]); xlim(ax, [0 o.Hours * 60]); set(ax, 'YTick', [0 8 16], 'FontSize', 7);
         if isempty(flags{k})
-            title(ax, sprintf('ch%d  OK', ch(k)), 'FontSize', 8, 'Color', [0 0 0]);
+            title(ax, {sprintf('ch%d', ch(k)), 'OK'}, 'FontSize', 8, 'Color', [0 0 0]);
         else
-            title(ax, sprintf('ch%d  %s', ch(k), flags{k}), 'FontSize', 7, 'Color', [0.85 0.1 0.1], 'Interpreter', 'none');
+            title(ax, {sprintf('ch%d', ch(k)), shortFlag(flags{k})}, 'FontSize', 8, 'Color', [0.85 0.1 0.1], 'Interpreter', 'none');
         end
         if mod(k - 1, nCol) == 0, ylabel(ax, 'beam'); end
         if k > nC - nCol, xlabel(ax, 'min'); end
@@ -116,4 +116,14 @@ names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'Hub
 cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span};
 if exist('table', 'file') || exist('table', 'builtin'), R = table(cols{:}, 'VariableNames', names);
 else, R = cell2struct(cols, names, 2); end
+end
+
+function s = shortFlag(f)
+% Compact panel label; the full wording is in the printout and in R.Flags.
+s = regexprep(f, 'BLOCKED BEAM (\d+) \((end|mid-tube)\)', 'BLOCKED $1');
+s = regexprep(s, 'FROZEN AT END BEAM (\d+)', 'FROZEN $1');
+s = regexprep(s, 'FROZEN AT BEAM (\d+)', 'FROZEN $1');
+s = strrep(s, 'FROZEN AT 0 (no beam broken)', 'FROZEN 0');
+s = strrep(s, 'NARROW RANGE', 'NARROW'); s = strrep(s, 'LOW ACTIVITY', 'LOW ACT');
+s = strrep(s, '; ', ' · ');
 end
