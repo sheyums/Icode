@@ -328,3 +328,12 @@ In weeks 8-9 nearly every channel is LOW ACTIVITY: the flies are dead, as the su
     in Octave (it counts CRLF line ends twice). Fixed (budget doubled; the time window still trims to 2 h); rerun on
     true 2-h excerpts of weeks 1-4: identical flags, 0 short-file warnings. The validation against the full-week QC
     (18 / 1 / 20 / 105) used the full data and is unaffected.
+
+## 2026-11-14 — Live flies hidden behind a blocked beam 16; LoadingCheck FROZEN flag
+Channel-weeks with one value in >= 99% of readings (weeks 1-9, ch17-32): 44 -- value 16 in 25, value 0 in 17 (dead flies,
+e.g. all of week 9), 2 and 6 once each. In 14 of them the reading was a constant 16 for the WHOLE week while the fly
+was alive (active again in a later week): wk1 ch30; wk2 ch19, 27, 29, 30, 31, 32; ch27 in weeks 3-8; ch32 wk5. A blocked
+beam 16 (plug or food, the user's hypothesis) can hide a living fly completely: ~1 in 10 fly-weeks of the pilot.
+These are the "whole-week outages" of A5; P1-F already treats them as outages, not deaths.
+LoadingCheck/labconv.loading_check gain FROZEN AT END BEAM k / FROZEN AT BEAM k / FROZEN AT 0. In the first 2 h it
+flags all 14 of 14 hidden-alive fly-weeks as FROZEN AT END BEAM 16. Octave and Python flags identical on 2-h excerpts.

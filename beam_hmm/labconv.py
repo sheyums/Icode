@@ -93,5 +93,9 @@ def loading_check(x, t, hours=2.0):
     if len(big) >= 10 and share >= 0.30 and ret >= 0.20:
         flags.append(f"BLOCKED BEAM {hub} ({'end' if hub in (1, 2, 15, 16) else 'mid-tube'})")
     if nchg >= 50 and span < 8: flags.append('NARROW RANGE')
+    if len(x):
+        vals, cnts = np.unique(x, return_counts=True); fv = int(vals[np.argmax(cnts)]); fs = cnts.max() / len(x)
+        if fs >= 0.99:
+            flags.append(f"FROZEN AT {'END BEAM' if fv in (1, 2, 15, 16) else 'BEAM'} {fv}" if fv != 0 else 'FROZEN AT 0 (no beam broken)')
     if nchg < 20: flags.append('LOW ACTIVITY')
     return dict(changes=nchg, big_jumps=int(len(big)), hub=hub, hub_share=share, hub_returns=ret, span=span, flags=flags)

@@ -14,6 +14,10 @@ function R = LoadingCheck(filePath, varargin)
 %                       0.4 s. An END beam (1, 2, 15, 16) points to food or the plug; mid-tube to debris,
 %                       a droplet or a mark on the tube.
 %     NARROW RANGE      the fly moves (>= 50 position changes) but spans < 8 beams: part of the tube obstructed.
+%     FROZEN AT END BEAM k  one value in >= 99% of readings, at beam 1, 2, 15 or 16: the fly may be HIDDEN behind a
+%                       blocked end beam (food or plug), or dead. In the 2026 pilot, 14 fly-weeks read a constant 16
+%                       for the whole week while the fly was alive (active again later): re-seat these first.
+%                       FROZEN AT BEAM k (mid-tube) and FROZEN AT 0 (no beam broken; dead flies often read 0) likewise.
 %     LOW ACTIVITY      < 20 position changes: a dead or stuck fly, or a blocked tube.
 %   A fly resting on one beam is NOT flagged by "reads one beam a lot"; only the jump signature counts.
 %   These are the beam_hmm hub criteria (PRESPEC P1-C) with a minimum jump count for short recordings.
@@ -62,6 +66,12 @@ for k = 1:nC
         end
     end
     if nchg(k) >= 50 && span(k) < 8, f{end + 1} = 'NARROW RANGE'; end
+    [vals, ~, jj] = unique(x); cnts = accumarray(jj, 1); [mxc, imc] = max(cnts); fv = vals(imc);
+    if mxc / numel(x) >= 0.99
+        if fv == 0, f{end + 1} = 'FROZEN AT 0 (no beam broken)';
+        elseif any(fv == [1 2 15 16]), f{end + 1} = sprintf('FROZEN AT END BEAM %d', fv);
+        else, f{end + 1} = sprintf('FROZEN AT BEAM %d', fv); end
+    end
     if nchg(k) < 20, f{end + 1} = 'LOW ACTIVITY'; end
     flags{k} = strjoin(f, '; ');
 end
