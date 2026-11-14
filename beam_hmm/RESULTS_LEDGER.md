@@ -292,3 +292,11 @@ weeks 2-3, every live channel 17-32, both activity conversions (beam_hmm and lab
 3 phase: startZT = 0 (file start) in the lab call vs the flies' own lights-off rise here (files 1, 2, 5, 7 start
   ~30-40 min away from lights-on);
 4 entrainment: Teliminate 24 h = beam_hmm's first-24 h exclusion (same).
+
+## 2026-11-14 — POST HOC: A2b without the light-switch exclusion (code 56f4013, --no-switch-exclusion; weeks 2-3, 11 flies)
+All wake bouts used (as in the earlier project's CS LD block). Bouts per fly 25-190 (L300), 68-320 (L120).
+- L300: z median +0.20, Wilcoxon 0.52, flies p<.05 2/11 -> no shape asymmetry (as with the exclusion).
+- L120: z median +3.13, Wilcoxon 0.00098, 7/11 flies p<.05, day-block +2.57 (p 0.00098), group block p 0.0005 -> all arms pass.
+- Profile d(tau) (L120): -0.028, -0.056, -0.036, -0.019, -0.009, then +0.009 to +0.021: the SAME direction as with the exclusion.
+=> The light-switch exclusion does not explain the pilot's direction. Every method difference with the earlier project is
+   now ruled out; the remaining explanations are biological or experimental (cohort, age, genotype, LD vs DD).
