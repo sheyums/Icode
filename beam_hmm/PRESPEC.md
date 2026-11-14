@@ -510,3 +510,28 @@ Secondary      (descriptive) D by ZT hour; which end (low vs high) holds the SLE
                measures in the SENSITIVITY set.
 Notes          n = 12 flies: the exact two-sided Wilcoxon cannot go below p = 2/4096; a null result at this n
                is weak evidence. The fly-to-fly SD of D is the number the repeat experiment needs for power.
+
+### 2026-11-14  P1-E — ZT from the flies' own light response; first cycle and transfers excluded (before A1's test runs)
+
+Facts (user, 2026-11-14): files were meant to start at ZT0; the recording computer's clock and the incubator
+clock drifted apart over the two months; "trimmed" files had the start after reloading cut so that they
+begin at about ZT0; the first LD cycle after each reloading may show acclimation to the new tube.
+Measured (PROTOCOL.md, ledger b1abbe6): lights-off rise at clock 16:56-17:06 in weeks 1-5, file starts 0 to 40
+min before lights-on.
+Rules, for every pilot analysis that has not run yet (A1's test included):
+1 ZT per file   Pooled activity of the file's included flies (share of 0.4-s samples with a position change),
+                10-min bins, folded at 24 h, from hour 24 to the last whole day of the file. LIGHTS-OFF = the
+                bin with the largest rise over the previous bin; LIGHTS-ON = lights-off - 12 h; ZT0 of the file
+                = that lights-on time. Guard: if the estimate is more than 1.5 h from the file start (mod 24),
+                the file is FLAGGED and not analysed until checked by hand (protects against a 12-h inversion).
+                Resolution 10 min; the estimate and the bin size are reported per file.
+2 First cycle   The first 24 h of every file are excluded (acclimation after reloading).
+3 Transfers     File boundaries are the transfers (weeks 2-5 stop on day 7 and restart the next morning).
+                Week 1: from hour 150 on, excluded (tubes out of the monitor from ~153 h).
+4 Death         Lab rule, within the files available: a silence >= 12 h after which the fly never again has
+                >= 100 changes in a 24-h window (within that file and every later file supplied) = dead from the
+                start of that silence; the 24 h before it are excluded. A fly with a >= 12-h silence in the last
+                file supplied is marked "possibly dead" and excluded from that file onward.
+5 Fly-weeks     Inclusion per fly-week by P1-D (after spike filter and hub repair).
+A1 amendment    A1's test uses rules 1-5. Per fly, weeks 2 and 3 are pooled over its INCLUDED fly-weeks; a fly
+                needs >= 3 valid days in total. Everything else in A1 is unchanged.
