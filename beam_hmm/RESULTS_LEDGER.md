@@ -230,3 +230,22 @@ DESCRIPTIVE (survivor-biased; flies per week 12, 4, 11, 8, 10, 5, 4, 1, 2): mean
 Death-aligned (last 7 days vs days 8-21 before death, 9 flies, few valid days near death because of the first-day
 and transfer exclusions): sleep rose in 6/8 flies with data, activity per waking hour fell in 5/8.
 Week 2 holds only 4 flies: five channels read nothing that week (whole-week outages).
+
+## 2026-11-14 — A2b PRIMARY TEST, weeks 2-3 (code c46431d; PRESPEC A2b = port of hmm_audit PRESPEC 21 + amendment B, LD-adapted)
+11 flies (none excluded for < 5 bouts); bouts used per fly 14-147 (L300), 46-262 (L120); only bouts >= 1 h from a light switch.
+PRIMARY setting L = 300 s, 10-s bins:
+- (a) per-bout null: z median +0.37, Wilcoxon p 0.042, flies with p_fly < 0.05: 2/11 (binomial p 0.10) -> FAILS (binomial arm)
+- (b) per-fly day-block: z median +0.29, Wilcoxon p 0.12; (c) group fly-day block p 0.009
+-> VERDICT: "no shape asymmetry detected".
+SECONDARY setting L = 120 s, 5-s bins (reported; by the rule it does not change the verdict):
+- (a) z median +2.15, Wilcoxon p 0.002, 6/11 flies p_fly < 0.05 (binomial p 6e-6); (b) z median +1.72, Wilcoxon p 0.002;
+  (c) group block p 0.0005 -> all three arms pass ("TIME-ASYMMETRIC SHAPE" in the secondary setting). Count-intensity
+  shape agrees (z median +1.93, p 0.002). Level (first 60 s, start - end): median -0.014, p 0.32.
+DIRECTION (descriptive, median per-fly d(tau) = activity after waking - activity before sleep onset, 5-s bins from the
+boundary, L120): -0.028, -0.058, -0.026, -0.011, -0.007, then +0.005 to +0.019 from ~25 s on. I.e. in the first ~25 s
+after waking flies are LESS active than in the last ~25 s before falling asleep, and more active beyond that. Read
+plainly: waking up builds up over ~20-30 s, while activity continues until shortly before sleep onset. This is the
+OPPOSITE of the earlier project's description (per0 DD / CS DD, DAM 1-s counts: gradual wind-down into sleep over ~5 min,
+abrupt return within ~20 s). Week 1 (descriptive) shows the same near-boundary sign (-0.027, -0.037, -0.024).
+Caveats: secondary setting only; LD (light and clock drive not excluded); different detector (beam crossings vs counts),
+genotype context (CS LD here) and data from a different experiment.
