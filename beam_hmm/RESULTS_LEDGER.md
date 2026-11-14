@@ -145,3 +145,15 @@ Diagnosis (post hoc, from the per-fly JSONs):
   out-and-back pairing of a flicker are serial correlations within a state, which a conditionally
   independent emission model can only absorb with extra states) produces gains of the same size as the
   planted state.
+
+## 2026-11-14 — A1 on week 1 (code 081479e; DESCRIPTIVE ONLY, week 1 was viewed before A1 was written)
+Window: hours 2-150 of week 1 (first 2 h dropped; stops before the hour-153 handling event seen in E0; chosen
+ad hoc for this descriptive run because transfer times are not yet known). Primary set: 12 flies.
+D = (share of SLEEP stillness at a tube end) - (share of PAUSE stillness, 30 s - 5 min, at a tube end):
+- light: D > 0 in 10/12 flies; median +0.32, mean +0.26, SD 0.19; day-bootstrap 95% intervals exclude 0
+  (above) in 9 flies, below 0 in none.
+- dark: D > 0 in 6/12; median -0.01, mean -0.04, SD 0.16; intervals above 0 in 1 fly (ch28), below 0 in 5.
+Reading (post hoc, NOT a test): by day, flies sleep at the tube ends more than they pause there; at night not,
+and several flies sleep away from the ends. The pre-specified TEST is on weeks 2-3 (A1).
+For planning: with SD ~0.19 and a mean difference ~0.26, the light-phase contrast would need few flies; the
+dark-phase one has no consistent sign.
