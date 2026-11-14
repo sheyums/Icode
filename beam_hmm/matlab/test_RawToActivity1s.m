@@ -5,6 +5,11 @@ function test_RawToActivity1s(rawFile, goldenFile)
 %   multibeam_locomotion), beam_hmm (repairs, 0 kept), beam_hmm with 0 folded, and beam_hmm without repairs --
 %   on four numbers each: length, total beams, seconds with movement, and a position-weighted checksum
 %   sum(v .* mod(1:n, 9973)). All must match exactly.
+%   Expected output: "test_RawToActivity1s: all 4 variants x 16 channels match the Python reference".
+%   Run time: a few minutes in MATLAB for a full week (legacy mode loops over every line); ~5 min per DAY in Octave.
+%   A mismatch prints [FAIL] lines with the four numbers and ends in an error.
+%   Run once per installation (and after any change to the function), before using it on new data.
+%   See also BEAMFINGERPRINT, RAWTOACTIVITY1S, LOADINGCHECK.
 if nargin < 2, goldenFile = 'golden_week1_activity.json'; end
 assert(strcmp(fileparts(which('RawToActivity1s')), pwd), 'run from beam_hmm/matlab (a stale copy would win otherwise)');
 G = jsondecode(fileread(goldenFile));

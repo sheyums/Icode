@@ -4,6 +4,10 @@ function test_BeamFingerprint(rawFile)
 %       test_BeamFingerprint('path/to/raw_positions_all64_week1.txt')
 %   Checks, channels 17-32: spikes fixed, hub value/share/returns, samples replaced, position changes
 %   (total and first 24 h), share of >= 4-beam jumps after repair. Integers must match exactly; shares to 1e-12.
+%   Expected output: "test_BeamFingerprint: all 16 channels match the Python pipeline".
+%   Run time: about a minute in MATLAB for a full week. A mismatch prints [FAIL] lines and ends in an error.
+%   Run once per installation (and after any change to the function), before using it on new data.
+%   See also BEAMFINGERPRINT, RAWTOACTIVITY1S, LOADINGCHECK.
 assert(strcmp(fileparts(which('BeamFingerprint')), pwd), 'run from beam_hmm/matlab (a stale copy would win otherwise)');
 G = jsondecode(fileread('golden_week1_qc.json'));
 out = BeamFingerprint(rawFile, 'Channels', 17:32, 'Plot', false);

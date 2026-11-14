@@ -22,13 +22,48 @@ function R = LoadingCheck(filePath, varargin)
 %   A fly resting on one beam is NOT flagged by "reads one beam a lot"; only the jump signature counts.
 %   These are the beam_hmm hub criteria (PRESPEC P1-C) with a minimum jump count for short recordings.
 %
+%   BLOCKED vs FROZEN, and WHAT TO DO (also printed after the RE-SEAT list, for the flags present):
+%     BLOCKED    blocked SOMETIMES: the fly is visible most of the time, with impossible jumps to beam k and
+%                back. Data usable after repair (RawToActivity1s / dead-hub rule). Re-seat if easy.
+%     FROZEN     blocked ALL THE TIME (or a dead fly): one reading >= 99% of the time; a living fly can be
+%                completely hidden. Data LOST while it lasts. Re-seat NOW: check that the plug or food is
+%                not covering the end beam.
+%     NARROW     part of the tube obstructed: check how far the food and plug reach into the tube.
+%     LOW ACT    dead or stuck fly, or a blocked tube: check the fly; re-seat or replace.
+%     Both BLOCKED and FROZEN (e.g. ch32 in the pilot): mostly hidden, occasional glimpses -- treat as FROZEN.
+%
+%   LIMITS (2026 pilot, 9 weekly files x 16 tubes): the 2-h screen flagged all 14 live flies hidden behind a
+%   blocked beam 16, but only about half of the intermittent blockages found later in the full week (~70% with
+%   any flag); some blockages develop during the week. Always run the full-file QC as well (RawToActivity1s
+%   or BeamFingerprint) before scoring sleep.
+%
 %   OUTPUT: a line per channel in the Command Window (OK or its flags, with the numbers behind them), the
 %   RE-SEAT list, a table R, and a figure with one panel per channel: the position trace over the window
 %   (0 = beyond beam 1 ... 16), the suspected blocked beam as a red line, the title red when flagged.
 %
+%   R (table; a struct of columns in Octave): Channel, Flags (full wording), Changes (position changes),
+%   BigJumps (>= 4 beams), HubValue/HubShare/HubReturns (the most frequent jump target and the two hub
+%   criteria), BeamsSpanned.
+%
 %   NAME-VALUE: 'Hours' (default 2), 'Channels' (default 1:64), 'Plot' (default true),
 %   'SaveFile' (PNG path; default none), 'Visible' ('on'/'off').
-%   Python twin: beam_hmm/labconv.py loading_check (validated against the full-week QC of a 9-week run).
+%
+%   EXAMPLE
+%     R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFile', 'week2_loading.png');
+%
+%   TYPICAL SEQUENCE (functions in beam_hmm/matlab: cd there or addpath it; one weekly raw file at a time)
+%     1  After loading the tubes, record ~2 h, then screen the tubes and re-seat the flagged ones:
+%          R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32);
+%     2  After the recording, look at the whole file (QC table, channel status, four figures):
+%          F = BeamFingerprint('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFolder', 'fp_week2');
+%     3  Convert to activity per second (repairs + QC), one .txt per channel:
+%          A = RawToActivity1s('raw_positions_all64_week2.txt', 'Channels', 17:32, 'OutputFolder', 'week2_1s');
+%     4  Score sleep with the lab pipeline, unchanged (one experiment per folder; set startZT -- nothing checks it):
+%          S = process_LocomToSleep(timeInterval=1, folderPath='week2_1s', selectAll=true, startZT=0);
+%     Optional: EstimatePhaseStamp to check the phase (startZT) from behaviour; chi2p for the period in DD.
+%     Once per installation: test_BeamFingerprint and test_RawToActivity1s on the week-1 raw file (golden tests).
+%   Python twin: beam_hmm/labconv.py loading_check (identical flags; validated against the full-week QC).
+%   See also RAWTOACTIVITY1S, BEAMFINGERPRINT, PROCESS_LOCOMTOSLEEP.
 
 p = inputParser;
 p.addRequired('filePath', @(s) ischar(s) || isstring(s));
@@ -88,6 +123,18 @@ if isempty(bad)
 else
     fprintf('  RE-SEAT / CHECK %d tube(s):\n', numel(bad));
     for k = bad(:)', fprintf('    ch%-3d %s\n', ch(k), flags{k}); end
+    allf = strjoin(flags(bad)', ' ');
+    fprintf('  WHAT TO DO:\n');
+    if ~isempty(strfind(allf, 'FROZEN'))
+        fprintf('    FROZEN   blocked all the time (or dead fly): a live fly can be HIDDEN, data lost while it lasts.\n');
+        fprintf('             Re-seat NOW; check that the plug or food is not covering the end beam.\n');
+    end
+    if ~isempty(strfind(allf, 'BLOCKED'))
+        fprintf('    BLOCKED  blocked sometimes: fly visible most of the time; data usable after repair. Re-seat if easy.\n');
+    end
+    if ~isempty(strfind(allf, 'NARROW')), fprintf('    NARROW   part of the tube obstructed: check how far food and plug reach into the tube.\n'); end
+    if ~isempty(strfind(allf, 'LOW ACTIVITY')), fprintf('    LOW ACT  dead or stuck fly, or a blocked tube: check the fly; re-seat or replace.\n'); end
+    fprintf('  (A 2-h screen misses blockages that develop later: run the full-file QC before scoring sleep.)\n');
 end
 if o.Plot
     tt = (t(m) - t(1)) / 60;                                       % minutes since file start
@@ -97,7 +144,7 @@ if o.Plot
     try, theme(fh, 'light'); catch, end                          % pin the theme before any axes (CLAUDE.md)
     for k = 1:nC
         ax = subplot(nRow, nCol, k, 'Parent', fh); hold(ax, 'on');
-        if ~isempty(flags{k}) && contains(flags{k}, 'BLOCKED')
+        if ~isempty(flags{k}) && ~isempty(strfind(flags{k}, 'BLOCKED'))
             plot(ax, [0 o.Hours * 60], [hubV(k) hubV(k)], '-', 'Color', [0.85 0.1 0.1], 'LineWidth', 1.5);
         end
         stairs(ax, tt, A(:, ch(k)), 'k', 'LineWidth', 0.5);

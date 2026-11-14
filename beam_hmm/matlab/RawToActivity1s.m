@@ -55,6 +55,23 @@ function out = RawToActivity1s(filePath, varargin)
 %
 %   Golden test: test_RawToActivity1s (checks both modes against the Python reference, beam_hmm/labconv.py).
 %   Written for MATLAB R2025a+; also runs in Octave (no arguments block).
+%
+%   TYPICAL SEQUENCE (functions in beam_hmm/matlab: cd there or addpath it; one weekly raw file at a time)
+%     1  After loading the tubes, record ~2 h, then screen the tubes and re-seat the flagged ones:
+%          R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32);
+%     2  After the recording, look at the whole file (QC table, channel status, four figures):
+%          F = BeamFingerprint('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFolder', 'fp_week2');
+%     3  Convert to activity per second (repairs + QC), one .txt per channel:
+%          A = RawToActivity1s('raw_positions_all64_week2.txt', 'Channels', 17:32, 'OutputFolder', 'week2_1s');
+%     4  Score sleep with the lab pipeline, unchanged (one experiment per folder; set startZT -- nothing checks it):
+%          S = process_LocomToSleep(timeInterval=1, folderPath='week2_1s', selectAll=true, startZT=0);
+%     Optional: EstimatePhaseStamp to check the phase (startZT) from behaviour; chi2p for the period in DD.
+%     Once per installation: test_BeamFingerprint and test_RawToActivity1s on the week-1 raw file (golden tests).
+%     (Step 4's sleeptrace + ironout score this output identically to beam_hmm, verified second by second.)
+%   NOTE      the startZT you give process_LocomToSleep is NOT checked by anything; in the 2026 pilot several
+%             weekly files started 30-40 min away from lights-on (computer and incubator clocks drifted).
+%   See also LOADINGCHECK, BEAMFINGERPRINT, PROCESS_LOCOMTOSLEEP, SLEEPTRACE, IRONOUT, PREPROCESS,
+%            MULTIBEAM_LOCOMOTION.
 
 p = inputParser;
 p.addRequired('filePath', @(s) ischar(s) || isstring(s));

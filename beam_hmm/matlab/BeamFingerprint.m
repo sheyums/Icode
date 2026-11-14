@@ -47,6 +47,20 @@ function out = BeamFingerprint(filePath, varargin)
 %
 %   Written for MATLAB R2025a+; also runs in Octave (no arguments block, no tiledlayout). The figure
 %   theme is pinned to light (CLAUDE.md: an unpinned R2026a figure can come out dark).
+%   TYPICAL SEQUENCE (functions in beam_hmm/matlab: cd there or addpath it; one weekly raw file at a time)
+%     1  After loading the tubes, record ~2 h, then screen the tubes and re-seat the flagged ones:
+%          R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32);
+%     2  After the recording, look at the whole file (QC table, channel status, four figures):
+%          F = BeamFingerprint('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFolder', 'fp_week2');
+%     3  Convert to activity per second (repairs + QC), one .txt per channel:
+%          A = RawToActivity1s('raw_positions_all64_week2.txt', 'Channels', 17:32, 'OutputFolder', 'week2_1s');
+%     4  Score sleep with the lab pipeline, unchanged (one experiment per folder; set startZT -- nothing checks it):
+%          S = process_LocomToSleep(timeInterval=1, folderPath='week2_1s', selectAll=true, startZT=0);
+%     Optional: EstimatePhaseStamp to check the phase (startZT) from behaviour; chi2p for the period in DD.
+%     Once per installation: test_BeamFingerprint and test_RawToActivity1s on the week-1 raw file (golden tests).
+%
+%   Golden test: test_BeamFingerprint (QC numbers vs the Python pipeline).
+%   See also LOADINGCHECK, RAWTOACTIVITY1S, ESTIMATEPHASESTAMP.
 
 p = inputParser;
 p.addRequired('filePath', @(s) ischar(s) || isstring(s));
