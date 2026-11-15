@@ -78,3 +78,9 @@ logic checks (no graphics, no `contains`/`gobjects`/`table`).
 - Keep this session active while computing here (idle containers are reclaimed; background jobs die).
 - Commit code before running; commit results after; append-only ledger, corrections appended.
 - Use `git pull --rebase` before pushing (the local session pushes results to the same branch).
+
+## Update 2026-11-15 (after compaction)
+- B1 main gate on the user's PC: ~15-18 core-h per fly (not 3-4 h as I estimated here); 3/40 done at 12:56 local;
+  finish expected ~midday 11-17 or later. Breadth run DROPPED by the user (no b1_gate7). Local session pushes
+  results/b1_gate + REPORT.txt when the launcher exits.
+- DESIGN_NOTE.md written (repeat experiment: ~70 loaded flies recommended; QC protocol; DD segment; compute budget).
