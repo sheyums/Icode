@@ -45,9 +45,29 @@ function R = LoadingCheck(filePath, varargin)
 %   BigJumps (>= 4 beams), HubValue/HubShare/HubReturns (the most frequent jump target and the two hub
 %   criteria), BeamsSpanned.
 %
-%   NAME-VALUE: 'Hours' (default 2), 'Channels' (default 1:64), 'Plot' (default true),
-%   'SaveFile' (PNG path; default none), 'Visible' ('on'/'off'). With 'Visible','off' and a SaveFile the
-%   figure is closed after saving. For headless runs end the batch command with: close all; exit
+%   NAME-VALUE:
+%     'Hours'      length of the window checked (default 2 -- RECOMMENDED). 1 h is acceptable for a first quick
+%                  look, but the count thresholds below are fixed, so a quiet fly gives fewer jumps (BLOCKED
+%                  missed more often) and a fly resting at one beam fills more of the window (FROZEN more often
+%                  on a resting fly). A warning is printed for windows shorter than 2 h.
+%     'StartHour'  where the window starts, in hours after the file's first reading (default 0). Use it to
+%                  check tubes AFTER a re-seat in the same, still-running file: re-seated at ~2.3 h into the
+%                  file -> 'StartHour', 2.5 (leave a few minutes for handling).
+%     'Previous'   the R returned by an earlier LoadingCheck (e.g. before the re-seat). Each channel is then
+%                  labelled RESOLVED (flagged before, OK now), STILL FLAGGED, NEW FLAG (OK before, flagged
+%                  now -- re-seating can disturb a neighbour) or OK (OK before and now); the printout lists
+%                  before -> after, R gains PreviousFlags and Change, and the panel titles show the change.
+%     'Channels' (default 1:64), 'Plot' (default true), 'SaveFile' (PNG path; default none),
+%     'Visible' ('on'/'off'). With 'Visible','off' and a SaveFile the figure is closed after saving.
+%     For headless runs end the batch command with: close all; exit
+%
+%   AFTER RE-SEATING: did it work?
+%     R1 = LoadingCheck(f, 'Channels', 17:32);                       % first 2 h: RE-SEAT list
+%     ... re-seat the flagged tubes at, say, 2.3 h into the recording; keep recording >= 2 h more ...
+%     R2 = LoadingCheck(f, 'Channels', 17:32, 'StartHour', 2.5, 'Previous', R1);
+%     RESOLVED only means "not seen in this window": about half of the intermittent blockages in the pilot
+%     appeared later in the week, so the full-file QC is still needed. (Or start a new file after re-seating
+%     and check its first 2 h with 'Previous', R1.)
 %
 %   EXAMPLE
 %     R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFile', 'week2_loading.png');
@@ -55,6 +75,8 @@ function R = LoadingCheck(filePath, varargin)
 %   TYPICAL SEQUENCE (functions in beam_hmm/matlab: cd there or addpath it; one weekly raw file at a time)
 %     1  After loading the tubes, record ~2 h, then screen the tubes and re-seat the flagged ones:
 %          R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32);
+%        After re-seating (here at ~2.3 h), record >= 2 h more and confirm:
+%          R2 = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32, 'StartHour', 2.5, 'Previous', R);
 %     2  After the recording, look at the whole file (QC table, channel status, four figures):
 %          F = BeamFingerprint('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFolder', 'fp_week2');
 %     3  Convert to activity per second (repairs + QC), one .txt per channel:
@@ -70,17 +92,28 @@ p = inputParser;
 p.addRequired('filePath', @(s) ischar(s) || isstring(s));
 p.addParameter('Hours', 2); p.addParameter('Channels', 1:64);
 p.addParameter('Plot', true); p.addParameter('SaveFile', ''); p.addParameter('Visible', 'on');
+p.addParameter('StartHour', 0, @(v) isnumeric(v) && isscalar(v) && v >= 0); p.addParameter('Previous', []);
 p.parse(filePath, varargin{:}); o = p.Results; filePath = char(filePath);
 fid = fopen(filePath, 'r');
 if fid < 0, error('LoadingCheck:NoFile', 'Cannot open %s', filePath); end
 for i = 1:3, fgetl(fid); end
-nLines = 2 * ceil(o.Hours * 3600 / 0.2) + 2000;        % ample for the window at <= 5 Hz, -1 lines and CRLF line ends included (Octave counts CRLF twice)
+nLines = 2 * ceil((o.StartHour + o.Hours) * 3600 / 0.2) + 2000;        % ample for the window at <= 5 Hz, -1 lines and CRLF line ends included (Octave counts CRLF twice)
 C = textscan(fid, [repmat('%d8', 1, 64) '%f'], nLines, 'Delimiter', '\t', 'EmptyValue', NaN, 'CollectOutput', true);
 fclose(fid);
 A = C{1}; t = C{2}; keep = ~isnan(t); A = A(keep, :); t = t(keep);
-m = (t - t(1)) < o.Hours * 3600; A = double(A(m, :));
-if (t(find(m, 1, 'last')) - t(1)) < 0.95 * o.Hours * 3600
-    warning('LoadingCheck:Short', 'File holds only %.2f h; checked what there is.', (t(find(m, 1, 'last')) - t(1)) / 3600);
+rel = t - t(1); m = rel >= o.StartHour * 3600 & rel < (o.StartHour + o.Hours) * 3600;
+if ~any(m)
+    error('LoadingCheck:NoData', 'No readings %.2f-%.2f h after the file start (the file holds %.2f h).', ...
+          o.StartHour, o.StartHour + o.Hours, rel(end) / 3600);
+end
+tw = rel(m); A = double(A(m, :));
+if (tw(end) - o.StartHour * 3600) < 0.95 * o.Hours * 3600
+    warning('LoadingCheck:Short', 'Only %.2f h of readings in the window; checked what there is.', ...
+            (tw(end) - o.StartHour * 3600) / 3600);
+end
+if o.Hours < 2
+    warning('LoadingCheck:ShortWindow', ['%.1f-h window: thresholds are fixed counts, so BLOCKED is missed more ' ...
+            'often and FROZEN fires more often on a resting fly than in the recommended 2 h.'], o.Hours);
 end
 ch = o.Channels(:)'; nC = numel(ch);
 [nchg, nbig, hubV, hubSh, hubRet, span] = deal(nan(nC, 1)); flags = repmat({''}, nC, 1);
@@ -112,7 +145,26 @@ for k = 1:nC
     flags{k} = strjoin(f, '; ');
 end
 bad = find(~cellfun(@isempty, flags));
-fprintf('LoadingCheck: %s, first %.1f h, %d channels\n', filePath, o.Hours, nC);
+if o.StartHour == 0
+    fprintf('LoadingCheck: %s, first %.1f h, %d channels\n', filePath, o.Hours, nC);
+else
+    fprintf('LoadingCheck: %s, %.2f-%.2f h after the file start, %d channels\n', filePath, o.StartHour, ...
+            o.StartHour + o.Hours, nC);
+end
+% ---- comparison with an earlier check ('Previous') ----
+hasPrev = ~isempty(o.Previous); prevF = repmat({''}, nC, 1); change = repmat({''}, nC, 1);
+if hasPrev
+    pc = double(o.Previous.Channel(:)); pf = o.Previous.Flags; if ischar(pf), pf = {pf}; end
+    for k = 1:nC
+        i = find(pc == ch(k), 1);
+        if isempty(i), change{k} = 'NOT IN PREVIOUS'; prevF{k} = ''; continue; end
+        prevF{k} = pf{i}; b = ~isempty(prevF{k}); a = ~isempty(flags{k});
+        if b && ~a, change{k} = 'RESOLVED';
+        elseif b && a, change{k} = 'STILL FLAGGED';
+        elseif ~b && a, change{k} = 'NEW FLAG';
+        else, change{k} = 'OK'; end
+    end
+end
 fprintf('  %-6s %8s %9s %5s %6s %8s %6s   %s\n', 'chan', 'changes', 'bigjumps', 'hub', 'share', 'returns', 'span', 'verdict');
 for k = 1:nC
     v = flags{k}; if isempty(v), v = 'OK'; end
@@ -137,8 +189,23 @@ else
     if ~isempty(strfind(allf, 'LOW ACTIVITY')), fprintf('    LOW ACT  dead or stuck fly, or a blocked tube: check the fly; re-seat or replace.\n'); end
     fprintf('  (A 2-h screen misses blockages that develop later: run the full-file QC before scoring sleep.)\n');
 end
+if hasPrev
+    fprintf('  COMPARED WITH THE PREVIOUS CHECK (before -> now):\n');
+    for k = 1:nC
+        if strcmp(change{k}, 'OK'), continue; end
+        b = prevF{k}; if isempty(b), b = 'OK'; end
+        a = flags{k}; if isempty(a), a = 'OK'; end
+        fprintf('    ch%-3d %-15s %s  ->  %s\n', ch(k), change{k}, b, a);
+    end
+    nRes = sum(strcmp(change, 'RESOLVED')); nSt = sum(strcmp(change, 'STILL FLAGGED'));
+    nNew = sum(strcmp(change, 'NEW FLAG')); nOK = sum(strcmp(change, 'OK'));
+    fprintf('    %d resolved, %d still flagged, %d new, %d OK before and now\n', nRes, nSt, nNew, nOK);
+    if nSt > 0, fprintf('    STILL FLAGGED: re-seat again or look at the tube and fly (food/plug position, fly stuck or dead).\n'); end
+    if nNew > 0, fprintf('    NEW FLAG: check whether handling disturbed this tube or its fly.\n'); end
+    if nRes > 0, fprintf('    RESOLVED means not seen in this window only; run the full-file QC after the recording.\n'); end
+end
 if o.Plot
-    tt = (t(m) - t(1)) / 60;                                       % minutes since file start
+    tt = (tw - o.StartHour * 3600) / 60;                           % minutes since the window start
     nCol = min(8, nC); nRow = ceil(nC / nCol);
     fh = figure('Color', 'w', 'Visible', o.Visible, 'Position', [50 50 min(1600, 200 * nCol) 200 * nRow + 60], ...
                 'Name', 'LoadingCheck');
@@ -150,13 +217,19 @@ if o.Plot
         end
         stairs(ax, tt, A(:, ch(k)), 'k', 'LineWidth', 0.5);
         ylim(ax, [-0.5 16.5]); xlim(ax, [0 o.Hours * 60]); set(ax, 'YTick', [0 8 16], 'FontSize', 7);
-        if isempty(flags{k})
-            title(ax, {sprintf('ch%d', ch(k)), 'OK'}, 'FontSize', 8, 'Color', [0 0 0]);
-        else
-            title(ax, {sprintf('ch%d', ch(k)), shortFlag(flags{k})}, 'FontSize', 8, 'Color', [0.85 0.1 0.1], 'Interpreter', 'none');
+        if isempty(flags{k}), l2 = 'OK'; col = [0 0 0]; else, l2 = shortFlag(flags{k}); col = [0.85 0.1 0.1]; end
+        if hasPrev
+            switch change{k}
+                case 'RESOLVED', l2 = 'RESOLVED'; col = [0 0.5 0];
+                case 'STILL FLAGGED', l2 = ['STILL ' l2];
+                case 'NEW FLAG', l2 = ['NEW ' l2];
+            end
         end
+        title(ax, {sprintf('ch%d', ch(k)), l2}, 'FontSize', 8, 'Color', col, 'Interpreter', 'none');
         if mod(k - 1, nCol) == 0, ylabel(ax, 'beam'); end
-        if k > nC - nCol, xlabel(ax, 'min'); end
+        if k > nC - nCol
+            if o.StartHour == 0, xlabel(ax, 'min'); else, xlabel(ax, sprintf('min after %.2f h', o.StartHour)); end
+        end
     end
     if ~isempty(o.SaveFile), print(fh, o.SaveFile, '-dpng', '-r150'); end
     if strcmpi(o.Visible, 'off') && ~isempty(o.SaveFile), close(fh); end   % saved, never shown: close it, so a
@@ -164,6 +237,7 @@ if o.Plot
 end
 names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'HubReturns', 'BeamsSpanned'};
 cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span};
+if hasPrev, names = [names {'PreviousFlags', 'Change'}]; cols = [cols {prevF, change}]; end
 if exist('table', 'file') || exist('table', 'builtin'), R = table(cols{:}, 'VariableNames', names);
 else, R = cell2struct(cols, names, 2); end
 end

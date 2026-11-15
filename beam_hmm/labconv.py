@@ -75,9 +75,11 @@ def beam_counts_1s(x, t, keep_beyond_beam1=True):
     return np.bincount(sec, weights=d, minlength=n)[:n].astype(np.int64)
 
 
-def loading_check(x, t, hours=2.0):
-    """Python twin of LoadingCheck.m for one channel: x positions on timed lines, t times (s)."""
-    m = (t - t[0]) < hours * 3600; x = np.asarray(x)[m].astype(np.int64)
+def loading_check(x, t, hours=2.0, start_hour=0.0):
+    """Python twin of LoadingCheck.m for one channel: x positions on timed lines, t times (s). The window is
+    [start_hour, start_hour + hours) after the first reading (LoadingCheck's 'StartHour' and 'Hours')."""
+    t = np.asarray(t); rel = t - t[0]
+    m = (rel >= start_hour * 3600) & (rel < (start_hour + hours) * 3600); x = np.asarray(x)[m].astype(np.int64)
     d = np.diff(x); nchg = int((d != 0).sum()); big = np.nonzero(np.abs(d) >= 4)[0] + 1
     span = int(x.max() - x.min()) if len(x) else 0
     hub = None; share = 0.0; ret = 0.0
@@ -99,3 +101,9 @@ def loading_check(x, t, hours=2.0):
             flags.append(f"FROZEN AT {'END BEAM' if fv in (1, 2, 15, 16) else 'BEAM'} {fv}" if fv != 0 else 'FROZEN AT 0 (no beam broken)')
     if nchg < 20: flags.append('LOW ACTIVITY')
     return dict(changes=nchg, big_jumps=int(len(big)), hub=hub, hub_share=share, hub_returns=ret, span=span, flags=flags)
+
+
+def loading_change(prev_flags, now_flags):
+    """LoadingCheck's 'Previous' label for one channel; flags are lists (empty = OK)."""
+    b, a = bool(prev_flags), bool(now_flags)
+    return 'RESOLVED' if b and not a else 'STILL FLAGGED' if b and a else 'NEW FLAG' if a else 'OK'
