@@ -32,6 +32,12 @@ function R = SleepVarianceTime(flies, opts)
 % The surrogates are RenewalSurrogate draws: with the same Seed, identical to
 % those of SleepAmountACF and ProcessSProxy.
 %
+% CAUTION: the tool is meant for ARRHYTHMIC data (e.g. per0 in DD). In LD, or
+% with a free-running rhythm, the 24-h cycle alone dominates the variance at
+% long scales, and the renewal surrogates (bouts in random order) do not keep
+% that rhythm -- so logR and Slope then measure the rhythm, not regulation of
+% sleep amount. This is why PRESPEC entry E used per0 DD only.
+%
 % INPUT   flies: struct array (or cell) with Dur (s), IsSleep, Onset (s), in
 %         time order, CONTIGUOUS (each bout starts where the previous ends;
 %         an error otherwise).
@@ -53,6 +59,7 @@ function R = SleepVarianceTime(flies, opts)
 %
 % CHANGE LOG
 %   2026-11-06  First version (PRESPEC 2026-11-06 entry E).
+%   2026-11-15  Header only: CAUTION paragraph (arrhythmic data). No code change.
 
 arguments
     flies
