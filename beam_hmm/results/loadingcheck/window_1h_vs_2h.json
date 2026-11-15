@@ -1,0 +1,1775 @@
+{
+ "summary": {
+  "1h": {
+   "blocked_both": 18,
+   "blocked_window_only": 1,
+   "blocked_week_only": 20,
+   "week_only_but_other_flag": 9,
+   "neither": 105,
+   "hidden_caught": 14,
+   "hidden_total": 14,
+   "clean_readable_fly_weeks": 59,
+   "clean_flagged": 8,
+   "clean_flag_kinds": {
+    "LOW ACTIVITY": 6,
+    "BLOCKED BEAM": 1,
+    "FROZEN": 4,
+    "NARROW RANGE": 1
+   }
+  },
+  "2h": {
+   "blocked_both": 18,
+   "blocked_window_only": 1,
+   "blocked_week_only": 20,
+   "week_only_but_other_flag": 9,
+   "neither": 105,
+   "hidden_caught": 14,
+   "hidden_total": 14,
+   "clean_readable_fly_weeks": 59,
+   "clean_flagged": 7,
+   "clean_flag_kinds": {
+    "LOW ACTIVITY": 6,
+    "BLOCKED BEAM": 1,
+    "FROZEN": 4
+   }
+  }
+ },
+ "rows": [
+  {
+   "week": 1,
+   "ch": 17,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 21,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 23,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 4 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 4 (mid-tube)"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 25,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 27,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 29,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 1,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 1,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 17,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 16 (end)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 16 (end)"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 20,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 21,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 22,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 16 (end)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 16 (end)"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 23,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "NARROW RANGE"
+   ],
+   "flags_2h": [
+    "NARROW RANGE"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 26,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 27,
+   "week_hub_dead": true,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 2,
+   "ch": 29,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 31,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 2,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": true,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 16 (end)",
+    "FROZEN AT END BEAM 16"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 16 (end)",
+    "FROZEN AT END BEAM 16"
+   ]
+  },
+  {
+   "week": 3,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 23,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 25,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 8 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 8 (mid-tube)"
+   ]
+  },
+  {
+   "week": 3,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 27,
+   "week_hub_dead": true,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 3,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 29,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ]
+  },
+  {
+   "week": 3,
+   "ch": 30,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 16 (end)"
+   ],
+   "flags_2h": []
+  },
+  {
+   "week": 3,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 3,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 23,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 25,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": [
+    "BLOCKED BEAM 8 (mid-tube)"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 26,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 27,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 4,
+   "ch": 29,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [],
+   "flags_2h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 4,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 5,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 23,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "NARROW RANGE"
+   ]
+  },
+  {
+   "week": 5,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 27,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 5,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 29,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ]
+  },
+  {
+   "week": 5,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 5,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 5,
+   "ch": 32,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 23,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 24,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 27,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 6,
+   "ch": 29,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 6 (mid-tube)"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 6,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 16 (end)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 16 (end)",
+    "FROZEN AT END BEAM 16"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 23,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 7,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 27,
+   "week_hub_dead": true,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 29,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "FROZEN AT BEAM 6",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT BEAM 6",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 31,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 3 (mid-tube)"
+   ]
+  },
+  {
+   "week": 7,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "BLOCKED BEAM 11 (mid-tube)",
+    "FROZEN AT BEAM 11"
+   ],
+   "flags_2h": [
+    "BLOCKED BEAM 11 (mid-tube)"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 2",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 2",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 8,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 23,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "FROZEN AT BEAM 3",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT BEAM 3",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [],
+   "flags_2h": []
+  },
+  {
+   "week": 8,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 27,
+   "week_hub_dead": false,
+   "hidden": true,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 29,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "FROZEN AT BEAM 6",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT BEAM 6",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 31,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT END BEAM 16",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 8,
+   "ch": 32,
+   "week_hub_dead": true,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "FROZEN AT BEAM 11",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT BEAM 11",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 17,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 18,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 19,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "NARROW RANGE"
+   ],
+   "flags_2h": []
+  },
+  {
+   "week": 9,
+   "ch": 20,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 21,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 22,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 23,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 24,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 25,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 26,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 27,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "READABLE",
+   "flags_1h": [
+    "FROZEN AT BEAM 13",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT BEAM 13",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 28,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 29,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "UNREADABLE",
+   "flags_1h": [
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": []
+  },
+  {
+   "week": 9,
+   "ch": 30,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 31,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  },
+  {
+   "week": 9,
+   "ch": 32,
+   "week_hub_dead": false,
+   "hidden": false,
+   "status": "DEAD-LIKE",
+   "flags_1h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ],
+   "flags_2h": [
+    "FROZEN AT 0 (no beam broken)",
+    "LOW ACTIVITY"
+   ]
+  }
+ ]
+}

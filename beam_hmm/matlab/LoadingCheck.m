@@ -47,9 +47,13 @@ function R = LoadingCheck(filePath, varargin)
 %
 %   NAME-VALUE:
 %     'Hours'      length of the window checked (default 2 -- RECOMMENDED). 1 h is acceptable for a first quick
-%                  look, but the count thresholds below are fixed, so a quiet fly gives fewer jumps (BLOCKED
-%                  missed more often) and a fly resting at one beam fills more of the window (FROZEN more often
-%                  on a resting fly). A warning is printed for windows shorter than 2 h.
+%                  look: in the pilot (144 fly-weeks), the first 1 h and the first 2 h flagged the same blocked
+%                  beams (18 + 1) and the same 14 hidden flies; 1 h added one NARROW flag. But the thresholds
+%                  are fixed counts, so in a quieter hour a fly gives fewer jumps (BLOCKED missed) and a resting
+%                  fly fills more of the window (FROZEN / LOW ACTIVITY on a sleeping fly). A warning is printed
+%                  for windows shorter than 2 h.
+%                  Check soon after loading or re-seating, while handling keeps the flies active; a window in
+%                  the midday siesta or at night flags sleeping flies as LOW ACTIVITY or FROZEN.
 %     'StartHour'  where the window starts, in hours after the file's first reading (default 0). Use it to
 %                  check tubes AFTER a re-seat in the same, still-running file: re-seated at ~2.3 h into the
 %                  file -> 'StartHour', 2.5 (leave a few minutes for handling).
@@ -112,8 +116,8 @@ if (tw(end) - o.StartHour * 3600) < 0.95 * o.Hours * 3600
             (tw(end) - o.StartHour * 3600) / 3600);
 end
 if o.Hours < 2
-    warning('LoadingCheck:ShortWindow', ['%.1f-h window: thresholds are fixed counts, so BLOCKED is missed more ' ...
-            'often and FROZEN fires more often on a resting fly than in the recommended 2 h.'], o.Hours);
+    warning('LoadingCheck:ShortWindow', ['%.1f-h window: thresholds are fixed counts, so BLOCKED can be missed and ' ...
+            'FROZEN / LOW ACTIVITY can fire on a resting fly more easily than in the recommended 2 h.'], o.Hours);
 end
 ch = o.Channels(:)'; nC = numel(ch);
 [nchg, nbig, hubV, hubSh, hubRet, span] = deal(nan(nC, 1)); flags = repmat({''}, nC, 1);

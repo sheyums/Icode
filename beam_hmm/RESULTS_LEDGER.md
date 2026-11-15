@@ -391,3 +391,17 @@ one-sample Wilcoxon at the Holm worst case (alpha/m), 4000 replicates per n. Ana
 pilot effect / at half of it: A1 light D 8 / 15; A4 speed 12 / 40; A5 M1 15 / 40; A5 M3 50 / >100; A5 M4 100 / >100;
 A5 M2 >100 / >100; A2 illustrative 0.03 effect 60 / >100. Output results/design/power.json; reading in DESIGN_NOTE.md.
 No new data were looked at.
+
+## 2026-11-15 — LoadingCheck 'StartHour' / 'Previous' added; first-screen window 1 h vs 2 h (code 3fc1e50, loadingcheck_window.py)
+New options: 'StartHour' (window start after the file's first reading, to re-check after a re-seat in a running file) and
+'Previous' (an earlier R; per channel RESOLVED / STILL FLAGGED / NEW FLAG / OK). Octave LoadingCheck.m vs Python twin on
+weeks 1-2, ch17-32 (first 2 h, then a 1-h window at 30 h with 'Previous'): identical flags and labels, 32/32.
+Window comparison, weeks 1-9, ch17-32 (144 fly-weeks; thresholds unchanged):
+- 2 h reproduces the 2026-11-14 validation exactly: BLOCKED vs full-week dead hub 18 both / 1 window only / 20 week only
+  (9 of them with another flag) / 105 neither; hidden live flies 14/14 FROZEN AT END BEAM 16.
+- 1 h: identical on all of these.
+- Flags on READABLE fly-weeks with no full-week hub and no hidden fly (59): 7 at 2 h (LOW ACTIVITY 6, FROZEN 4, BLOCKED 1),
+  8 at 1 h (+1 NARROW RANGE). Candidate false alarms, not proven ones.
+Side observation (the 30-h Octave check, week 1 = ZT ~5, siesta): several active flies came out LOW ACTIVITY and one
+FROZEN AT END BEAM 16 -- a window during sleep flags sleeping flies. Re-checks should follow the re-seat promptly.
+Recommendation unchanged: 2 h (default); 1 h acceptable for a first look on this evidence (one pilot run).
