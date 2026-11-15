@@ -384,3 +384,10 @@ Fitted within-phase shapes (E = 2 h; descriptive): wake-ups peak late in the lig
 dark phase (ZT 12.1 -- inside the excluded 2 h, i.e. the harmonic fit's extrapolation toward lights-off); onsets peak at
 midday (ZT 5.1, the siesta) and in the early night (ZT 16.9). Dark-phase log-rate range 0.80 (wake-ups), 0.98 (onsets).
 Week 1 (descriptive): same picture (LR 487, p 0.001; wake-up peak ZT 11.9 / 12.1; onset peaks ZT 5.2 / 17.2).
+
+## 2026-11-15 — PLANNING (not a result): sample sizes for the repeat experiment (code 6633f48 design_power.py)
+Uses only per-fly summaries already in this ledger (pilot median / fly-to-fly SD) and simulates the pre-specified
+one-sample Wilcoxon at the Holm worst case (alpha/m), 4000 replicates per n. Analysable flies for 80% power at the
+pilot effect / at half of it: A1 light D 8 / 15; A4 speed 12 / 40; A5 M1 15 / 40; A5 M3 50 / >100; A5 M4 100 / >100;
+A5 M2 >100 / >100; A2 illustrative 0.03 effect 60 / >100. Output results/design/power.json; reading in DESIGN_NOTE.md.
+No new data were looked at.
