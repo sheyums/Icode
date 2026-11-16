@@ -458,3 +458,14 @@ Checks (Octave 8.4, week 1 first ~24 h, ch17-32): AtZero, EntriesToZeroPerDay an
 references on 16/16 channels (max difference 3e-11, file precision; NaN pattern identical); Counts identical to the
 previous RawToActivity1s in all 4 golden-test variants (legacy, beam_hmm, fold 0, no repair); AtZeroFolder =
 OutputFolder refused. The golden test checks Counts only, so it is unaffected; a MATLAB run is still needed.
+
+## 2026-11-16 — MATLAB R2026a check of 4cb63ba (user's PC, run from the repo copy): all PASS; one fix from it
+test_RawToActivity1s on week 1: all 4 variants x 16 channels match. Week 1 EntriesToZeroPerDay = Python reference on
+16/16 (to 2 decimals); size(AtZero) = size(Counts) = 604800 x 16, all in [0,1], no NaN; 16 *_at0.txt files;
+AtZeroFolder = OutputFolder refused. LoadingCheck week 2: EntriesToZero [42 0 0 69 143 6 63 12 0 0 0 49 0 0 0 1] as
+expected, flags identical to the f3ede2c run, NO VISIT TO 0 list: ch18, ch25.
+Finding from that run (local session): the folder clash and the existing-file refusals were checked only AFTER the
+computation, with the activity files already written, and the clash check missed relative vs absolute spellings.
+Fixed in the next commit: both checks run before the file is read, folder names normalised (relative/absolute,
+'.', '..', trailing separator, case on Windows; not symlinks or mapped-drive vs UNC). Octave: 4 spellings of one
+folder refused in <= 0.02 s, different folders run, an existing output file refused up front.

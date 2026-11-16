@@ -48,6 +48,9 @@ function out = RawToActivity1s(filePath, varargin)
 %     'AtZeroFolder'     if given, one file per channel with out.AtZero (see OUTPUT): <FilePrefix><channel>_at0.txt,
 %                        one value per line ('%.4f'; NaN for a second with no reading). Must differ from
 %                        OutputFolder: process_LocomToSleep(selectAll=true) reads every file in its folder.
+%                        Both folders are checked BEFORE the file is read: the same folder under two spellings
+%                        (relative/absolute, '.', '..', trailing separator, letter case on Windows) and any
+%                        existing output file (without 'Overwrite') stop the call at once, with nothing written.
 %
 %   OUTPUT
 %     out.Counts    seconds x channels, beams travelled per second (double)
@@ -101,6 +104,26 @@ p.addParameter('AtZeroFolder', '');
 p.parse(filePath, varargin{:});
 o = p.Results; filePath = char(filePath); mode = lower(char(o.Mode));
 ch = o.Channels(:)';
+
+%% output checks BEFORE any work (a refusal after a long run, with half the files written, helps nobody)
+pre = o.FilePrefix;
+if isempty(pre), [~, nm] = fileparts(filePath); pre = [nm '_ch']; end
+if ~isempty(o.OutputFolder) && ~isempty(o.AtZeroFolder) && sameFolder(o.OutputFolder, o.AtZeroFolder)
+    error('RawToActivity1s:AtZeroFolder', ['AtZeroFolder and OutputFolder are the same folder; they must differ ' ...
+          '(process_LocomToSleep reads every file there).']);
+end
+if ~o.Overwrite
+    for k = 1:numel(ch)
+        fo = fullfile(char(o.OutputFolder), sprintf('%s%d.txt', pre, ch(k)));
+        fz = fullfile(char(o.AtZeroFolder), sprintf('%s%d_at0.txt', pre, ch(k)));
+        if ~isempty(o.OutputFolder) && exist(fo, 'file')
+            error('RawToActivity1s:Exists', '%s exists; refusing to append or overwrite (set ''Overwrite'', true).', fo);
+        end
+        if ~isempty(o.AtZeroFolder) && exist(fz, 'file')
+            error('RawToActivity1s:Exists', '%s exists; refusing to overwrite (set ''Overwrite'', true).', fz);
+        end
+    end
+end
 
 %% read every data line (the -1 lines included; legacy mode needs them)
 fid = fopen(filePath, 'r');
@@ -203,9 +226,6 @@ if ~isempty(o.OutputFolder)
     end
 end
 if ~isempty(o.AtZeroFolder)
-    if ~isempty(o.OutputFolder) && strcmp(fullfile(o.AtZeroFolder, '.'), fullfile(o.OutputFolder, '.'))
-        error('RawToActivity1s:AtZeroFolder', 'AtZeroFolder must differ from OutputFolder (process_LocomToSleep reads every file there).');
-    end
     if ~exist(o.AtZeroFolder, 'dir'), mkdir(o.AtZeroFolder); end
     pre = o.FilePrefix;
     if isempty(pre), [~, nm] = fileparts(filePath); pre = [nm '_ch']; end
@@ -222,6 +242,28 @@ out = struct('Counts', Counts, 'AtZero', AtZero, 'Channels', ch, 'Mode', mode, '
 end
 
 %% ======================================================================== local functions
+function tf = sameFolder(a, b)
+% True if two folder names point to the same folder: relative vs absolute, '.' and '..' segments, trailing
+% separators and (on Windows) letter case are normalised. Symbolic links and mapped-drive vs UNC aliases are not.
+tf = strcmp(normFolder(a), normFolder(b));
+if ispc, tf = strcmpi(normFolder(a), normFolder(b)); end
+end
+
+function f = normFolder(f)
+f = strrep(char(f), '\', '/');
+isAbs = ~isempty(regexp(f, '^([A-Za-z]:)?/', 'once')) || strncmp(f, '//', 2);
+if ~isAbs, f = [strrep(pwd, '\', '/') '/' f]; end
+parts = strsplit(f, '/'); keep = {};
+for i = 1:numel(parts)
+    q = parts{i};
+    if isempty(q) && i > 1, continue; end                         % '//' inside, trailing '/'
+    if strcmp(q, '.'), continue; end
+    if strcmp(q, '..') && numel(keep) > 1, keep(end) = []; continue; end
+    keep{end + 1} = q;
+end
+f = strjoin(keep, '/');
+end
+
 function a = legacyPreProcess(a)
 % PreProcess.m on one column (all lines). The row bound is checked first (PreProcess checked it after
 % indexing, which errors on a column of only 0s and 1s); otherwise identical.
