@@ -418,3 +418,13 @@ behind a blocked end beam look the same in a window of quiet behaviour.
 Later commit b02159e (made from the user's Box analysis folder by another session: 16-channel figure pages, file dialog,
 full-path output, 'Previous' re-reads its file, review fixes) leaves the flag logic unchanged: re-checked here in Octave
 against the Python twin on weeks 1-2 (2 h, and 1 h at 30 h with 'Previous'), 32/32 identical.
+
+## 2026-11-16 — FACT (user): position 0 = at the food in a correctly oriented tube; DESCRIPTIVE look at existing A1 output
+User: with the tube oriented correctly, beam 1 is the beam nearest the food, so 0 means the fly is very likely eating.
+Open: the info sheet says the food end differs between flies (PROTOCOL.md) -- were some pilot tubes reversed?
+Descriptive only (numbers already in results/a1/a1_test_weeks2-3.json, the A1 BEYOND1 secondary; nothing recomputed),
+12 primary flies, weeks 2-3, share of scored SLEEP / PAUSE samples at position 0:
+- light: sleep median 0.000 (max 0.029, ch21); pauses median 0.010 (max 0.040)
+- dark:  sleep median 0.002 (max 0.075, ch21); pauses median 0.010 (max 0.361, ch21)
+Reading: little scored sleep happens at 0, so "a still fly at the food scored as asleep" moves the pilot's sleep totals
+little (at most ~7.5% of one fly's dark sleep). Short stillness at 0 is ~1% of pauses (36% of ch21's dark pauses).

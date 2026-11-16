@@ -8,6 +8,10 @@ Source: user's info sheet "Super long CS multibeam exp" (PDF, uploaded 2026-11-1
 - Each fly keeps the same column position in every file.
 - Food end differs between flies: near beam 1 for some, near beam 16 for others. Which end, per fly, is
   NOT recorded. The user's prior: flies typically spend the midday nap near the food end.
+- (User, 2026-11-16) Meaning of position 0: in a CORRECTLY ORIENTED tube, beam 1 is the beam closest to the
+  food, so a reading of 0 (no beam broken, fly beyond beam 1) means the fly is at the food and very likely
+  eating. Open: how this squares with the info sheet's "food near beam 1 for some flies, near beam 16 for
+  others" -- were some pilot tubes reversed? In a reversed tube, 0 is the PLUG end and does not mean feeding.
 - Survival as recorded (coarse, by week):
   - No. 1 died in/after week 4.
   - No. 10, 14, 25, 41, 47, 50, 58 died in/after week 5.

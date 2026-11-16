@@ -56,7 +56,9 @@ measured, so plan on the pilot yields.
    all 14 fly-weeks in which a live fly was hidden behind a blocked beam 16 (about 1 fly-week in 10). It also caught
    about half of the blocked beams directly, and about 70% with any flag. Freeze its thresholds now; changing them
    needs a new PRESPEC entry.
-2. **Record which end the food is at, for every tube.** This tests whether beam blockages come from the food or the
+2. **Mount every tube the correct way round (food next to beam 1) and record any exception.** Then 0 means "at
+   the food" (user, 2026-11-16), and time at 0 becomes a feeding proxy for every fly. **Record which end the
+   food is at, for every tube.** This tests whether beam blockages come from the food or the
    plug. It also lets A1 ("flies nap at the tube ends") be split into food end vs plug end, which is your hypothesis
    that flies nap near food. The pilot cannot test this.
 3. **Record clock times:** lights-on and lights-off by the incubator, the recording computer's clock offset at each

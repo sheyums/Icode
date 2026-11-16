@@ -19,8 +19,10 @@ equals the channel number. In the 2026 pilot only channels 17-32 were readable.
 broken: 1 to 16. Beams 1, 2, 15 and 16 are the **end beams**.
 
 **Position 0 ("no beam broken").** No beam is interrupted. In the pilot, 0 was always entered from beam 1, so a
-live fly reading 0 is beyond beam 1, in the detection-limited end of the tube. Dead flies often read 0 as
-well. `RawToActivity1s` keeps 0 as a position by default (`'KeepBeyondBeam1', true`), so crossing beam 1
+live fly reading 0 is beyond beam 1, in the detection-limited end of the tube. **In a correctly oriented tube
+beam 1 is the beam closest to the food, so 0 means the fly is at the food and very likely eating** (user,
+2026-11-16). It is a proxy for "at the food", not a measure of ingestion; in a tube mounted the other way
+round, 0 is the plug end. Record the orientation of every tube. Dead flies often read 0 as well. `RawToActivity1s` keeps 0 as a position by default (`'KeepBeyondBeam1', true`), so crossing beam 1
 counts as movement. The lab's `PreProcess.m` folds 0 into the previous reading instead.
 
 **Beam 15 (dead).** In this monitor beam 15 never reports. A fly walking from 14 to 16 therefore shows up as

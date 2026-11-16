@@ -15,7 +15,8 @@ function out = RawToActivity1s(filePath, varargin)
 %         that start with such a jump return to the value before it, that beam is treated as DEAD (as the
 %         hardware already treats beam 15): every reading of it is replaced by the last other reading. This is
 %         an intermittently blocked beam (debris, a droplet, food) whose reading overrides the fly's position;
-%       - position 0 ("no beam broken": in these data always entered from beam 1, i.e. the fly beyond beam 1)
+%       - position 0 ("no beam broken": in these data always entered from beam 1, i.e. the fly beyond beam 1;
+%         in a correctly oriented tube beam 1 is nearest the food, so 0 = fly at the food, very likely eating)
 %         is KEPT, so crossing beam 1 counts as movement ('KeepBeyondBeam1', true). Set false to fold 0 into
 %         the previous reading, as PreProcess does;
 %       - second s = all position changes whose sample time t falls in [s, s+1), t from the file's time column.
