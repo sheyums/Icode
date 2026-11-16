@@ -469,3 +469,9 @@ computation, with the activity files already written, and the clash check missed
 Fixed in the next commit: both checks run before the file is read, folder names normalised (relative/absolute,
 '.', '..', trailing separator, case on Windows; not symlinks or mapped-drive vs UNC). Octave: 4 spellings of one
 folder refused in <= 0.02 s, different folders run, an existing output file refused up front.
+
+## 2026-11-16 — MATLAB R2026a targeted check of 6c5aa41 (user's PC, repo copy, 1-h excerpt of week 1, ch17): PASS 7/7
+Same folder for both outputs refused before reading, nothing created: a 'out'/'out' (0.59 s, first call incl. loading),
+b relative/absolute (0.07 s), c 'out\'/'.\out' (0.04 s), d 'sub\..\out'/'OUT' (0.03 s; no 'sub' or 'OUT' made),
+e absolute path, upper vs lower case incl. drive letter (0.08 s). f different folders: ran (2.8 s), both files written.
+g f repeated without Overwrite: RawToActivity1s:Exists in 0.04 s, f's files untouched. No errors; MATLAB exited cleanly.
