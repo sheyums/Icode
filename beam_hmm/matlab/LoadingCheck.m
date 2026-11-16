@@ -1,4 +1,4 @@
-function R = LoadingCheck(filePath, varargin)
+function [R, filePath] = LoadingCheck(varargin)
 %LOADINGCHECK  Quick tube check on the first hours after loading a multibeam monitor.
 %
 %   R = LOADINGCHECK(FILEPATH) reads the first 2 h of a raw multibeam file (3 header lines; 64 positions and a
@@ -37,13 +37,20 @@ function R = LoadingCheck(filePath, varargin)
 %   any flag); some blockages develop during the week. Always run the full-file QC as well (RawToActivity1s
 %   or BeamFingerprint) before scoring sleep.
 %
+%   R = LOADINGCHECK() or R = LOADINGCHECK('Channels', 17:32, ...) -- no file given -- opens a file dialog
+%   (uigetfile; it starts in the folder of the last file picked). With 'Previous' and no file, the file of
+%   the Previous check is used instead (see 'Previous').
+%   [R, FILE] = LOADINGCHECK(...) also returns the full path of the file read.
+%
 %   OUTPUT: a line per channel in the Command Window (OK or its flags, with the numbers behind them), the
-%   RE-SEAT list, a table R, and a figure with one panel per channel: the position trace over the window
-%   (0 = beyond beam 1 ... 16), the suspected blocked beam as a red line, the title red when flagged.
+%   RE-SEAT list, a table R, and figures of 16 channels each (4 x 4 panels; 64 channels -> 4 figures, which
+%   MATLAB R2025a+ shows as tabs of one window): the position trace over the window (0 = beyond beam 1 ... 16),
+%   the suspected blocked beam as a red line, the title red when flagged.
 %
 %   R (table; a struct of columns in Octave): Channel, Flags (full wording), Changes (position changes),
 %   BigJumps (>= 4 beams), HubValue/HubShare/HubReturns (the most frequent jump target and the two hub
-%   criteria), BeamsSpanned.
+%   criteria), BeamsSpanned. R.Properties.UserData holds File (full path), StartHour and Hours (Octave: the
+%   fields R.File, R.StartHour, R.Hours); R.Properties.Description is the full path as well.
 %
 %   NAME-VALUE:
 %     'Hours'      length of the window checked (default 2 -- RECOMMENDED). 1 h is acceptable for a first quick
@@ -61,14 +68,21 @@ function R = LoadingCheck(filePath, varargin)
 %                  labelled RESOLVED (flagged before, OK now), STILL FLAGGED, NEW FLAG (OK before, flagged
 %                  now -- re-seating can disturb a neighbour) or OK (OK before and now); the printout lists
 %                  before -> after, R gains PreviousFlags and Change, and the panel titles show the change.
-%     'Channels' (default 1:64), 'Plot' (default true), 'SaveFile' (PNG path; default none),
-%     'Visible' ('on'/'off'). With 'Visible','off' and a SaveFile the figure is closed after saving.
+%                  With no file given, the Previous check's file is read again (R2 = LoadingCheck('StartHour',
+%                  2.5, 'Previous', R1)). If a file IS given and differs from the Previous one, a warning names
+%                  both (fine after starting a new file; otherwise a wrong file). A Previous from a version
+%                  without the stored path is compared as before, unchecked.
+%     'Channels' (default 1:64), 'Plot' (default true), 'SaveFile' (PNG path; default none; with more than
+%     16 channels one PNG per figure, named <SaveFile>_ch1-16.png, ...; with a SaveFile the figures get a
+%     fixed size, so the PNGs are reproducible, and do not dock as tabs),
+%     'Visible' ('on'/'off'). With 'Visible','off' the figures are closed at the end (after saving).
 %     For headless runs end the batch command with: close all; exit
 %
 %   AFTER RE-SEATING: did it work?
 %     R1 = LoadingCheck(f, 'Channels', 17:32);                       % first 2 h: RE-SEAT list
 %     ... re-seat the flagged tubes at, say, 2.3 h into the recording; keep recording >= 2 h more ...
 %     R2 = LoadingCheck(f, 'Channels', 17:32, 'StartHour', 2.5, 'Previous', R1);
+%     R2 = LoadingCheck('Channels', 17:32, 'StartHour', 2.5, 'Previous', R1);   % same, f taken from R1
 %     RESOLVED only means "not seen in this window": about half of the intermittent blockages in the pilot
 %     appeared later in the week, so the full-file QC is still needed. (Or start a new file after re-seating
 %     and check its first 2 h with 'Previous', R1.)
@@ -92,14 +106,41 @@ function R = LoadingCheck(filePath, varargin)
 %   Python twin: beam_hmm/labconv.py loading_check (identical flags; validated against the full-week QC).
 %   See also RAWTOACTIVITY1S, BEAMFINGERPRINT, PROCESS_LOCOMTOSLEEP.
 
+persistent lastDir                                               % folder of the last file picked in the dialog
+pNames = {'Hours', 'Channels', 'Plot', 'SaveFile', 'Visible', 'StartHour', 'Previous'};
+isTxt = nargin >= 1 && (ischar(varargin{1}) || isstring(varargin{1}));
+if isTxt, a1 = char(varargin{1}); else, a1 = ''; end
+isName = ~isempty(a1) && any(strncmpi(a1, pNames, numel(a1))) && ~exist(a1, 'file');  % a parameter name,
+if isTxt && ~isempty(a1) && ~isName                                 % or a prefix of one ('Chan'), as inputParser
+    filePath = a1; args = varargin(2:end);                       % LoadingCheck(f, ...)   accepts those too
+elseif nargin >= 1 && (isempty(varargin{1}) || (isTxt && isempty(a1)))   % [], '' or ""
+    filePath = ''; args = varargin(2:end);                       % LoadingCheck([], ...) or LoadingCheck('', ...)
+else
+    filePath = ''; args = varargin;                              % LoadingCheck() or LoadingCheck('Channels', ...)
+end
 p = inputParser;
-p.addRequired('filePath', @(s) ischar(s) || isstring(s));
 p.addParameter('Hours', 2); p.addParameter('Channels', 1:64);
 p.addParameter('Plot', true); p.addParameter('SaveFile', ''); p.addParameter('Visible', 'on');
 p.addParameter('StartHour', 0, @(v) isnumeric(v) && isscalar(v) && v >= 0); p.addParameter('Previous', []);
-p.parse(filePath, varargin{:}); o = p.Results; filePath = char(filePath);
+p.parse(args{:}); o = p.Results;
+prevFile = previousFile(o.Previous);                             % '' if Previous is absent or predates this field
+if isempty(filePath) && ~isempty(prevFile)
+    filePath = prevFile;                                         % re-check the file the Previous check read
+    fprintf('LoadingCheck: no file given; using the Previous check''s file\n');
+elseif isempty(filePath)
+    if isempty(lastDir) || ~exist(lastDir, 'dir'), lastDir = pwd; end
+    [fn, fd] = uigetfile({'*.txt', 'Raw multibeam files (*.txt)'; '*.*', 'All files (*.*)'}, ...
+                         'LoadingCheck: pick a raw multibeam file', [lastDir filesep]);
+    if isequal(fn, 0), error('LoadingCheck:NoFileChosen', 'No file chosen (dialog cancelled).'); end
+    filePath = fullfile(fd, fn); lastDir = fd;
+end
 fid = fopen(filePath, 'r');
 if fid < 0, error('LoadingCheck:NoFile', 'Cannot open %s', filePath); end
+filePath = fullPathOf(fopen(fid));                               % absolute, '.' and '..' resolved
+if ~isempty(prevFile) && ~sameFile(filePath, prevFile)
+    warning('LoadingCheck:DifferentFile', ['Previous came from a DIFFERENT file:\n  previous: %s\n  now:      %s\n' ...
+            'Fine if you started a new file after re-seating; otherwise check the file name.'], prevFile, filePath);
+end
 for i = 1:3, fgetl(fid); end
 nLines = 2 * ceil((o.StartHour + o.Hours) * 3600 / 0.2) + 2000;        % ample for the window at <= 5 Hz, -1 lines and CRLF line ends included (Octave counts CRLF twice)
 C = textscan(fid, [repmat('%d8', 1, 64) '%f'], nLines, 'Delimiter', '\t', 'EmptyValue', NaN, 'CollectOutput', true);
@@ -198,24 +239,37 @@ if hasPrev
     for k = 1:nC
         if strcmp(change{k}, 'OK'), continue; end
         b = prevF{k}; if isempty(b), b = 'OK'; end
+        if strcmp(change{k}, 'NOT IN PREVIOUS'), b = '(not checked)'; end
         a = flags{k}; if isempty(a), a = 'OK'; end
         fprintf('    ch%-3d %-15s %s  ->  %s\n', ch(k), change{k}, b, a);
     end
     nRes = sum(strcmp(change, 'RESOLVED')); nSt = sum(strcmp(change, 'STILL FLAGGED'));
     nNew = sum(strcmp(change, 'NEW FLAG')); nOK = sum(strcmp(change, 'OK'));
-    fprintf('    %d resolved, %d still flagged, %d new, %d OK before and now\n', nRes, nSt, nNew, nOK);
+    nNot = sum(strcmp(change, 'NOT IN PREVIOUS'));
+    fprintf('    %d resolved, %d still flagged, %d new, %d OK before and now', nRes, nSt, nNew, nOK);
+    if nNot > 0, fprintf(', %d not in the previous check', nNot); end
+    fprintf('\n');
     if nSt > 0, fprintf('    STILL FLAGGED: re-seat again or look at the tube and fly (food/plug position, fly stuck or dead).\n'); end
     if nNew > 0, fprintf('    NEW FLAG: check whether handling disturbed this tube or its fly.\n'); end
     if nRes > 0, fprintf('    RESOLVED means not seen in this window only; run the full-file QC after the recording.\n'); end
 end
 if o.Plot
     tt = (tw - o.StartHour * 3600) / 60;                           % minutes since the window start
-    nCol = min(8, nC); nRow = ceil(nC / nCol);
-    fh = figure('Color', 'w', 'Visible', o.Visible, 'Position', [50 50 min(1600, 200 * nCol) 200 * nRow + 60], ...
-                'Name', 'LoadingCheck');
+    perFig = 16; nPage = ceil(nC / perFig);                        % 16 channels per figure (4 x 4), one figure
+    [~, fstem] = fileparts(filePath);                              % per 16 -- R2025a+ opens them as tabs
+    for pg = 1:nPage
+    kk = (pg - 1) * perFig + 1:min(pg * perFig, nC); nOn = numel(kk);
+    nCol = min(4, nOn); nRow = ceil(nOn / nCol);
+    figArgs = {'Color', 'w', 'Visible', o.Visible, 'Name', sprintf('LoadingCheck ch%d-%d', ch(kk(1)), ch(kk(end))), ...
+               'NumberTitle', 'off'};
+    if ~isempty(o.SaveFile) || strcmpi(o.Visible, 'off') || isOctave   % saved: a fixed size, so the PNG is
+        figArgs = [figArgs {'Position', [50 50 260 * nCol 210 * nRow + 70]}];   % reproducible; shown, unsaved
+    end                                                            % MATLAB figures keep the default size and dock as tabs
+    fh = figure(figArgs{:});
     try, theme(fh, 'light'); catch, end                          % pin the theme before any axes (CLAUDE.md)
-    for k = 1:nC
-        ax = subplot(nRow, nCol, k, 'Parent', fh); hold(ax, 'on');
+    try, sgtitle(fh, sprintf('%s   ch%d-%d', fstem, ch(kk(1)), ch(kk(end))), 'FontSize', 9, 'Interpreter', 'none'); catch, end
+    for k = kk
+        ax = subplot(nRow, nCol, k - kk(1) + 1, 'Parent', fh); hold(ax, 'on');
         if ~isempty(flags{k}) && ~isempty(strfind(flags{k}, 'BLOCKED'))
             plot(ax, [0 o.Hours * 60], [hubV(k) hubV(k)], '-', 'Color', [0.85 0.1 0.1], 'LineWidth', 1.5);
         end
@@ -227,23 +281,76 @@ if o.Plot
                 case 'RESOLVED', l2 = 'RESOLVED'; col = [0 0.5 0];
                 case 'STILL FLAGGED', l2 = ['STILL ' l2];
                 case 'NEW FLAG', l2 = ['NEW ' l2];
+                case 'NOT IN PREVIOUS', l2 = ['(new ch) ' l2];
             end
         end
         title(ax, {sprintf('ch%d', ch(k)), l2}, 'FontSize', 8, 'Color', col, 'Interpreter', 'none');
-        if mod(k - 1, nCol) == 0, ylabel(ax, 'beam'); end
-        if k > nC - nCol
+        j = k - kk(1) + 1;                                         % panel index within this figure
+        if mod(j - 1, nCol) == 0, ylabel(ax, 'beam'); end
+        if j > nOn - nCol
             if o.StartHour == 0, xlabel(ax, 'min'); else, xlabel(ax, sprintf('min after %.2f h', o.StartHour)); end
         end
     end
-    if ~isempty(o.SaveFile), print(fh, o.SaveFile, '-dpng', '-r150'); end
-    if strcmpi(o.Visible, 'off') && ~isempty(o.SaveFile), close(fh); end   % saved, never shown: close it, so a
-                                                                            % headless (-batch) MATLAB can exit
+    if ~isempty(o.SaveFile)
+        sf = char(o.SaveFile);
+        if nPage > 1                                               % one PNG per figure: name_ch17-32.png, ...
+            [sd, sn, se] = fileparts(sf); if isempty(se), se = '.png'; end
+            sf = fullfile(sd, sprintf('%s_ch%d-%d%s', sn, ch(kk(1)), ch(kk(end)), se));
+        end
+        print(fh, sf, '-dpng', '-r150');
+    end
+    if strcmpi(o.Visible, 'off'), close(fh); end                   % never shown (saved or not): close it, so a
+                                                                   % headless (-batch) MATLAB can exit and loops
+                                                                   % do not pile up invisible figures
+    end
 end
 names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'HubReturns', 'BeamsSpanned'};
 cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span};
 if hasPrev, names = [names {'PreviousFlags', 'Change'}]; cols = [cols {prevF, change}]; end
-if exist('table', 'file') || exist('table', 'builtin'), R = table(cols{:}, 'VariableNames', names);
-else, R = cell2struct(cols, names, 2); end
+info = struct('File', filePath, 'StartHour', o.StartHour, 'Hours', o.Hours);
+if exist('table', 'file') || exist('table', 'builtin')
+    R = table(cols{:}, 'VariableNames', names);
+    try                                                            % R.Properties.UserData.File: full path read
+        R.Properties.UserData = info; R.Properties.Description = filePath;
+    catch                                                          % Octave table packages may lack these
+        R = cell2struct(cols, names, 2); R.File = info.File; R.StartHour = info.StartHour; R.Hours = info.Hours;
+    end
+else
+    R = cell2struct(cols, names, 2); R.File = info.File; R.StartHour = info.StartHour; R.Hours = info.Hours;
+end
+end
+
+function f = previousFile(P)
+% Full path stored by an earlier LoadingCheck, or '' (no Previous, or one made before the field existed).
+f = '';
+if isempty(P), return; end
+if isa(P, 'table')                                                 % isa, not istable: Octave has no istable
+    u = P.Properties.UserData; if isstruct(u) && isfield(u, 'File'), f = char(u.File); end
+elseif isstruct(P) && isfield(P, 'File')
+    f = char(P.File);
+end
+end
+
+function f = fullPathOf(nm)
+% Absolute path of an opened file. dir() gives the resolved folder ('.', '..' removed); a file that fopen
+% found on the MATLAB path, not in pwd, is located with which(); the last resort prepends pwd.
+f = '';
+d = dir(nm);
+if numel(d) == 1 && isfield(d, 'folder'), f = fullfile(d.folder, d.name); return; end
+w = which(nm);
+if ~isempty(w), f = w; return; end
+f = nm;
+if isempty(regexp(f, '^([A-Za-z]:[\\/]|[\\/~])', 'once')), f = fullfile(pwd, f); end
+end
+
+function tf = sameFile(a, b)
+% Same file? Case-insensitive on Windows; slashes normalised.
+a = strrep(a, '\', '/'); b = strrep(b, '\', '/');
+if ispc, tf = strcmpi(a, b); else, tf = strcmp(a, b); end
+end
+
+function tf = isOctave
+tf = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 end
 
 function s = shortFlag(f)
