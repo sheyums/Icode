@@ -104,6 +104,7 @@ function [R, filePath] = LoadingCheck(varargin)
 %     Optional: EstimatePhaseStamp to check the phase (startZT) from behaviour; chi2p for the period in DD.
 %     Once per installation: test_BeamFingerprint and test_RawToActivity1s on the week-1 raw file (golden tests).
 %   Python twin: beam_hmm/labconv.py loading_check (identical flags; validated against the full-week QC).
+%   Definitions of every term and flag (hub, spike, FROZEN, P1-F death rule, S/Q/W ...): beam_hmm/GLOSSARY.md
 %   See also RAWTOACTIVITY1S, BEAMFINGERPRINT, PROCESS_LOCOMTOSLEEP.
 
 persistent lastDir                                               % folder of the last file picked in the dialog

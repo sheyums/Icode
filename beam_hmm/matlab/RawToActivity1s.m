@@ -72,6 +72,7 @@ function out = RawToActivity1s(filePath, varargin)
 %     (Step 4's sleeptrace + ironout score this output identically to beam_hmm, verified second by second.)
 %   NOTE      the startZT you give process_LocomToSleep is NOT checked by anything; in the 2026 pilot several
 %             weekly files started 30-40 min away from lights-on (computer and incubator clocks drifted).
+%   Definitions of every term and flag (hub, spike, FROZEN, P1-F death rule, S/Q/W ...): beam_hmm/GLOSSARY.md
 %   See also LOADINGCHECK, BEAMFINGERPRINT, PROCESS_LOCOMTOSLEEP, SLEEPTRACE, IRONOUT, PREPROCESS,
 %            MULTIBEAM_LOCOMOTION.
 

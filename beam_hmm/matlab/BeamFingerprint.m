@@ -62,6 +62,7 @@ function out = BeamFingerprint(filePath, varargin)
 %     Once per installation: test_BeamFingerprint and test_RawToActivity1s on the week-1 raw file (golden tests).
 %
 %   Golden test: test_BeamFingerprint (QC numbers vs the Python pipeline).
+%   Definitions of every term and flag (hub, spike, FROZEN, P1-F death rule, S/Q/W ...): beam_hmm/GLOSSARY.md
 %   See also LOADINGCHECK, RAWTOACTIVITY1S, ESTIMATEPHASESTAMP.
 
 p = inputParser;
