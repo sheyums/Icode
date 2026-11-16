@@ -428,3 +428,21 @@ Descriptive only (numbers already in results/a1/a1_test_weeks2-3.json, the A1 BE
 - dark:  sleep median 0.002 (max 0.075, ch21); pauses median 0.010 (max 0.361, ch21)
 Reading: little scored sleep happens at 0, so "a still fly at the food scored as asleep" moves the pilot's sleep totals
 little (at most ~7.5% of one fly's dark sleep). Short stillness at 0 is ~1% of pauses (36% of ch21's dark pauses).
+
+## 2026-11-16 — DESCRIPTIVE (post hoc): position-0 occupancy per fly-week (code 643d2eb zero_occupancy.py)
+Context: user, same day -- pilot tube orientation was mixed (food next to beam 1 for some tubes, maybe beam 16 for
+others), unrecorded, and may change weekly (each transfer is a new tube). Weeks 1-9, ch17-32, after spike filter + P1-C;
+80 P1-F READABLE fly-weeks:
+- 0 is entered from beam 1 in 103,386 of 103,850 entries (99.6%); from 16 in 144; the rest scattered (artifacts).
+  So "beyond beam 16" is essentially never reported as 0: if food sat at the beam-16 end, a fly at that food is not
+  seen as 0.
+- share of time at 0: median 1.35% (quantiles 10/25/75/90%: 0.04 / 0.42 / 3.15 / 6.7%).
+- entries into 0 per day: median 155 (10/25/75/90%: 1.4 / 23.6 / 266 / 488); 7 fly-weeks < 1/day (4 with none).
+- Fly-weeks with few entries cluster in some flies: ch18 (weeks 1, 2, 5, 7: <= 7/day; week 3: 53/day), ch25 (12-23/day),
+  ch31 (0-71/day), ch26 (17-64/day in weeks 1-5). Candidate reading: food at the beam-16 end in those tubes (the plug
+  then sits near beam 1, leaving no room beyond it). Equally possible: food or plug filling the space beyond beam 1.
+  The data cannot separate these without a recorded orientation.
+- Large weekly shares near death: ch28 week 5 37% (dies week 6), ch23 week 7 34% (dies week 8). Noted for Aim 3; not a
+  finding.
+Nothing here assigns a food end; nothing here may be used for the A1 food-end split. A rule based on 0-visit rate
+would need validation on data with recorded orientation (repeat experiment).

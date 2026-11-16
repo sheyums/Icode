@@ -12,6 +12,9 @@ Source: user's info sheet "Super long CS multibeam exp" (PDF, uploaded 2026-11-1
   food, so a reading of 0 (no beam broken, fly beyond beam 1) means the fly is at the food and very likely
   eating. Open: how this squares with the info sheet's "food near beam 1 for some flies, near beam 16 for
   others" -- were some pilot tubes reversed? In a reversed tube, 0 is the PLUG end and does not mean feeding.
+- (User, 2026-11-16) In the pilot, not every tube is known to have been oriented correctly: for some, the food
+  may have been next to beam 16. Orientation per tube (and per week: each transfer is a new tube) is UNKNOWN.
+  So in the pilot, 0 means "beyond beam 1" and only possibly "at the food".
 - Survival as recorded (coarse, by week):
   - No. 1 died in/after week 4.
   - No. 10, 14, 25, 41, 47, 50, 58 died in/after week 5.
