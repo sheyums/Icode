@@ -22,7 +22,14 @@ broken: 1 to 16. Beams 1, 2, 15 and 16 are the **end beams**.
 live fly reading 0 is beyond beam 1, in the detection-limited end of the tube. **In a correctly oriented tube
 beam 1 is the beam closest to the food, so 0 means the fly is at the food and very likely eating** (user,
 2026-11-16). It is a proxy for "at the food", not a measure of ingestion; in a tube mounted the other way
-round, 0 is the plug end. Record the orientation of every tube. Dead flies often read 0 as well. `RawToActivity1s` keeps 0 as a position by default (`'KeepBeyondBeam1', true`), so crossing beam 1
+round, 0 is the plug end. Record the orientation of every tube. Dead flies often read 0 as well.
+
+**AtZero / EntriesToZero (feeding proxy).** `RawToActivity1s` returns `out.AtZero`: for every second, the share
+of its readings at 0 (0..1), after the same repairs as the activity; optionally written to `AtZeroFolder` (never
+the activity folder, which `process_LocomToSleep` reads in full). Its QC table gives `ShareAtZero` and
+`EntriesToZeroPerDay`. `LoadingCheck` gives `EntriesToZero` in the window and lists active tubes with no visit
+to 0 (information, not a flag: possible reversed tube, or food or plug filling the space beyond beam 1). None of
+these changes the activity counts or the sleep scoring; they let a sleep bout spent at 0 be flagged. `RawToActivity1s` keeps 0 as a position by default (`'KeepBeyondBeam1', true`), so crossing beam 1
 counts as movement. The lab's `PreProcess.m` folds 0 into the previous reading instead.
 
 **Beam 15 (dead).** In this monitor beam 15 never reports. A fly walking from 14 to 16 therefore shows up as
@@ -94,7 +101,8 @@ and were not tuned on the pilot. Source: `LoadingCheck.m` header; Python twin `l
 |---|---|---|---|
 | `BLOCKED BEAM k (end / mid-tube)` | >= 10 big jumps, hub share >= 30%, hub returns >= 20% | beam k blocked SOMETIMES; the fly is visible most of the time | data usable after dead-hub repair; re-seat if easy |
 | `FROZEN AT END BEAM k` | one value in >= 99% of readings, at beam 1, 2, 15 or 16 | blocked ALL the time (or a dead fly, or a fly resting at the end beam): a live fly can be completely hidden | re-seat now; check plug and food |
-| `FROZEN AT BEAM k` / `FROZEN AT 0` | the same at a mid-tube beam / at 0 | stuck reading, dead fly, or long rest | check the tube and fly |
+| `FROZEN AT BEAM k` | the same at a mid-tube beam | stuck reading, dead fly, or long rest | check the tube and fly |
+| `FROZEN AT 0` | the same at 0 | fly beyond beam 1 the whole window: at the food (correct orientation; feeding or resting there), or dead | check the fly |
 | `NARROW RANGE` | >= 50 changes but < 8 beams spanned | part of the tube obstructed | check how far food and plug reach in |
 | `LOW ACTIVITY` | < 20 position changes | dead or stuck fly, blocked tube, or a sleeping fly | check the fly |
 

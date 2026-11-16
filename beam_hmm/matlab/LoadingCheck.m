@@ -17,9 +17,18 @@ function [R, filePath] = LoadingCheck(varargin)
 %     FROZEN AT END BEAM k  one value in >= 99% of readings, at beam 1, 2, 15 or 16: the fly may be HIDDEN behind a
 %                       blocked end beam (food or plug), or dead. In the 2026 pilot, 14 fly-weeks read a constant 16
 %                       for the whole week while the fly was alive (active again later): re-seat these first.
-%                       FROZEN AT BEAM k (mid-tube) and FROZEN AT 0 (no beam broken; dead flies often read 0) likewise.
+%                       FROZEN AT BEAM k (mid-tube) likewise. FROZEN AT 0 (no beam broken): the fly stayed beyond
+%                       beam 1 the whole window -- at the FOOD in a correctly oriented tube (food next to beam 1),
+%                       feeding or resting there -- or it is dead (dead flies often read 0). Check the fly.
 %     LOW ACTIVITY      < 20 position changes: a dead or stuck fly, or a blocked tube.
 %   A fly resting on one beam is NOT flagged by "reads one beam a lot"; only the jump signature counts.
+%
+%   VISITS TO 0 (information, not a flag): EntriesToZero = entries into position 0 in the window, printed per
+%   channel (column "to0") and in R. In a correctly oriented tube (food next to beam 1) a reading of 0 means the
+%   fly is at the food, so an active fly normally visits 0 (2026 pilot: median ~155 entries per day, but ~25% of
+%   fly-weeks had < 24 per day). Active tubes (>= 50 changes) with NO entry into 0 are listed after the table:
+%   check the orientation (food at the beam-16 end?) or whether food or plug fills the space beyond beam 1.
+%   Not validated as an orientation test: record the orientation of every tube, and this count will calibrate it.
 %   These are the beam_hmm hub criteria (PRESPEC P1-C) with a minimum jump count for short recordings.
 %
 %   BLOCKED vs FROZEN, and WHAT TO DO (also printed after the RE-SEAT list, for the flags present):
@@ -30,6 +39,7 @@ function [R, filePath] = LoadingCheck(varargin)
 %                not covering the end beam.
 %     NARROW     part of the tube obstructed: check how far the food and plug reach into the tube.
 %     LOW ACT    dead or stuck fly, or a blocked tube: check the fly; re-seat or replace.
+%     FROZEN 0   beyond beam 1 the whole window: at the food (correct orientation) or dead. Check the fly.
 %     Both BLOCKED and FROZEN (e.g. ch32 in the pilot): mostly hidden, occasional glimpses -- treat as FROZEN.
 %
 %   LIMITS (2026 pilot, 9 weekly files x 16 tubes): the 2-h screen flagged all 14 live flies hidden behind a
@@ -49,7 +59,7 @@ function [R, filePath] = LoadingCheck(varargin)
 %
 %   R (table; a struct of columns in Octave): Channel, Flags (full wording), Changes (position changes),
 %   BigJumps (>= 4 beams), HubValue/HubShare/HubReturns (the most frequent jump target and the two hub
-%   criteria), BeamsSpanned. R.Properties.UserData holds File (full path), StartHour and Hours (Octave: the
+%   criteria), BeamsSpanned, EntriesToZero (entries into position 0). R.Properties.UserData holds File (full path), StartHour and Hours (Octave: the
 %   fields R.File, R.StartHour, R.Hours); R.Properties.Description is the full path as well.
 %
 %   NAME-VALUE:
@@ -162,9 +172,10 @@ if o.Hours < 2
             'FROZEN / LOW ACTIVITY can fire on a resting fly more easily than in the recommended 2 h.'], o.Hours);
 end
 ch = o.Channels(:)'; nC = numel(ch);
-[nchg, nbig, hubV, hubSh, hubRet, span] = deal(nan(nC, 1)); flags = repmat({''}, nC, 1);
+[nchg, nbig, hubV, hubSh, hubRet, span, to0] = deal(nan(nC, 1)); flags = repmat({''}, nC, 1);
 for k = 1:nC
     x = A(:, ch(k)); d = diff(x); nchg(k) = sum(d ~= 0); big = find(abs(d) >= 4) + 1; nbig(k) = numel(big);
+    to0(k) = sum(x(2:end) == 0 & x(1:end - 1) ~= 0);                % entries into position 0 (information only)
     span(k) = max(x) - min(x); f = {};
     if ~isempty(big)
         [v, ~, j] = unique(x(big)); cnt = accumarray(j, 1); [mx, im] = max(cnt); hubV(k) = v(im); hubSh(k) = mx / numel(big);
@@ -211,11 +222,19 @@ if hasPrev
         else, change{k} = 'OK'; end
     end
 end
-fprintf('  %-6s %8s %9s %5s %6s %8s %6s   %s\n', 'chan', 'changes', 'bigjumps', 'hub', 'share', 'returns', 'span', 'verdict');
+fprintf('  %-6s %8s %9s %5s %6s %8s %6s %6s   %s\n', 'chan', 'changes', 'bigjumps', 'hub', 'share', 'returns', 'span', ...
+        'to0', 'verdict');
 for k = 1:nC
     v = flags{k}; if isempty(v), v = 'OK'; end
-    fprintf('  ch%-4d %8d %9d %5s %6.2f %8.2f %6d   %s\n', ch(k), nchg(k), nbig(k), num2str(hubV(k)), ...
-            hubSh(k), hubRet(k), span(k), v);
+    fprintf('  ch%-4d %8d %9d %5s %6.2f %8.2f %6d %6d   %s\n', ch(k), nchg(k), nbig(k), num2str(hubV(k)), ...
+            hubSh(k), hubRet(k), span(k), to0(k), v);
+end
+no0 = find(nchg >= 50 & to0 == 0);
+if ~isempty(no0)
+    fprintf('  NO VISIT TO 0 (active tubes; information, not a flag): %s\n', strjoin(arrayfun(@(c) sprintf('ch%d', c), ...
+            ch(no0), 'UniformOutput', false), ', '));
+    fprintf('    In a correctly oriented tube 0 = at the food. Check the orientation (food at the beam-16 end?) or\n');
+    fprintf('    whether food or plug fills the space beyond beam 1.\n');
 end
 if isempty(bad)
     fprintf('  no tube flagged\n');
@@ -224,9 +243,13 @@ else
     for k = bad(:)', fprintf('    ch%-3d %s\n', ch(k), flags{k}); end
     allf = strjoin(flags(bad)', ' ');
     fprintf('  WHAT TO DO:\n');
-    if ~isempty(strfind(allf, 'FROZEN'))
+    if ~isempty(regexp(allf, 'FROZEN AT (END )?BEAM', 'once'))
         fprintf('    FROZEN   blocked all the time (or dead fly): a live fly can be HIDDEN, data lost while it lasts.\n');
         fprintf('             Re-seat NOW; check that the plug or food is not covering the end beam.\n');
+    end
+    if ~isempty(strfind(allf, 'FROZEN AT 0'))
+        fprintf('    FROZEN 0 beyond beam 1 the whole window: at the food (correct orientation; feeding or resting\n');
+        fprintf('             there) or dead. Check the fly.\n');
     end
     if ~isempty(strfind(allf, 'BLOCKED'))
         fprintf('    BLOCKED  blocked sometimes: fly visible most of the time; data usable after repair. Re-seat if easy.\n');
@@ -305,8 +328,8 @@ if o.Plot
                                                                    % do not pile up invisible figures
     end
 end
-names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'HubReturns', 'BeamsSpanned'};
-cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span};
+names = {'Channel', 'Flags', 'Changes', 'BigJumps', 'HubValue', 'HubShare', 'HubReturns', 'BeamsSpanned', 'EntriesToZero'};
+cols = {ch', flags, nchg, nbig, hubV, hubSh, hubRet, span, to0};
 if hasPrev, names = [names {'PreviousFlags', 'Change'}]; cols = [cols {prevF, change}]; end
 info = struct('File', filePath, 'StartHour', o.StartHour, 'Hours', o.Hours);
 if exist('table', 'file') || exist('table', 'builtin')

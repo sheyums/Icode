@@ -54,3 +54,7 @@ After re-seating: `R2 = LoadingCheck('raw.txt', 'StartHour', 2.5, 'Previous', R)
 still-running file and labels each channel RESOLVED / STILL FLAGGED / NEW FLAG / OK. Check promptly after the re-seat
 (a window in the siesta or at night flags sleeping flies). 'Hours' 2 is recommended; 1 h gave the same catches on
 the pilot (ledger 2026-11-15) and prints a warning.
+Position 0 (fly beyond beam 1) = at the FOOD in a correctly oriented tube (food next to beam 1): `LoadingCheck` prints
+entries into 0 per tube (column to0) and lists active tubes that never visit 0; `RawToActivity1s` returns `out.AtZero`
+(share of each second at 0; files via 'AtZeroFolder', kept apart from the activity folder) and QC EntriesToZeroPerDay.
+A feeding proxy only where the orientation is known; the activity counts and the sleep scoring are unchanged.

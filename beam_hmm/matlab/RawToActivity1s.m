@@ -45,10 +45,21 @@ function out = RawToActivity1s(filePath, varargin)
 %                        which silently doubled a trace when run twice).
 %     'FilePrefix'       default: the raw file's name followed by '_ch'
 %     'Overwrite'        default false
+%     'AtZeroFolder'     if given, one file per channel with out.AtZero (see OUTPUT): <FilePrefix><channel>_at0.txt,
+%                        one value per line ('%.4f'; NaN for a second with no reading). Must differ from
+%                        OutputFolder: process_LocomToSleep(selectAll=true) reads every file in its folder.
 %
 %   OUTPUT
 %     out.Counts    seconds x channels, beams travelled per second (double)
+%     out.AtZero    seconds x channels, share of each second's readings at position 0 (0 .. 1; NaN if the second
+%                   has no reading). In a correctly oriented tube (food next to beam 1) 0 means the fly is at the
+%                   food: a FEEDING PROXY ("at the food", not ingestion). In a reversed tube it is the plug end.
+%                   Computed after the same repairs as Counts, in every mode and whatever 'KeepBeyondBeam1' is.
+%                   It does not change Counts or the sleep scoring: a fly still at 0 for >= 5 min is scored
+%                   asleep; use AtZero to flag such bouts (pilot: <= 7.5% of any fly's sleep, median ~0%).
 %     out.Channels, out.Mode, out.Settings, out.Info (header, step, irregular steps), out.QC
+%     QC columns include ShareAtZero (share of readings at 0, raw) and EntriesToZeroPerDay (entries into 0 per
+%     day of recording, after the repairs; pilot median ~155 per day in readable fly-weeks).
 %
 %   EXAMPLE
 %     A = RawToActivity1s('raw_positions_all64_week2.txt', 'Channels', 17:32, 'OutputFolder', 'week2_1s');
@@ -86,6 +97,7 @@ p.addParameter('Channels', 1:64);
 p.addParameter('OutputFolder', '');
 p.addParameter('FilePrefix', '');
 p.addParameter('Overwrite', false);
+p.addParameter('AtZeroFolder', '');
 p.parse(filePath, varargin{:});
 o = p.Results; filePath = char(filePath); mode = lower(char(o.Mode));
 ch = o.Channels(:)';
@@ -107,8 +119,10 @@ info = struct('File', filePath, 'Header', {hdr}, 'Lines', size(A, 1), 'TimedLine
               'IrregularSteps', sum(abs(diff(t) - stepS) > 1e-6));
 
 %% per channel
-nC = numel(ch); counts = cell(1, nC);
-[hubV, hubShare, hubRet, hubDead, hubN, spikes, rangeB, ch24, at0] = deal(nan(nC, 1));
+nC = numel(ch); counts = cell(1, nC); zeros1s = cell(1, nC);
+[hubV, hubShare, hubRet, hubDead, hubN, spikes, rangeB, ch24, at0, ent0] = deal(nan(nC, 1));
+nSec = floor(t(end)) + 1; secAll = floor(t) + 1; nPerSec = accumarray(secAll, 1, [nSec 1]);
+days = (t(end) - t(1)) / 86400;
 flags = repmat({''}, nC, 1);
 for k = 1:nC
     x = double(A(timed, ch(k)));
@@ -132,6 +146,10 @@ for k = 1:nC
         end
     end
     if ch24(k) >= 100 && rangeB(k) < 8, f{end + 1} = sprintf('NARROW RANGE: %g beams spanned', rangeB(k)); end
+    % ---- position 0 (feeding proxy in a correctly oriented tube): same repairs as the activity
+    if o.Repair, xz = xr; else, xz = x; end
+    z = xz == 0; ent0(k) = sum(z(2:end) & ~z(1:end - 1)) / days;
+    zs = accumarray(secAll, double(z), [nSec 1]) ./ nPerSec; zs(nPerSec == 0) = NaN; zeros1s{k} = zs;
     flags{k} = strjoin(f, '; ');
     % ---- activity
     if strcmp(mode, 'legacy')
@@ -152,8 +170,8 @@ for k = 1:nC
     end
 end
 nS = min(cellfun(@numel, counts));
-Counts = zeros(nS, nC);
-for k = 1:nC, Counts(:, k) = counts{k}(1:nS); end
+Counts = zeros(nS, nC); AtZero = nan(nS, nC);
+for k = 1:nC, Counts(:, k) = counts{k}(1:nS); m = min(nS, nSec); AtZero(1:m, k) = zeros1s{k}(1:m); end
 
 %% QC printout and table
 status = repmat({'INCLUDED'}, nC, 1); status(ch24 < 100) = {'EMPTY/DEAD'};
@@ -163,8 +181,8 @@ for k = 1:nC
     if ~isempty(flags{k}), fprintf('   ch%-3d %s\n', ch(k), flags{k}); end
 end
 names = {'Channel', 'Status', 'Flags', 'HubValue', 'HubShare', 'HubReturns', 'HubDeclaredDead', 'HubReadingsReplaced', ...
-         'SpikesFixed', 'BeamsSpanned', 'Changes24h', 'ShareAtZero'};
-cols = {ch', status, flags, hubV, hubShare, hubRet, logical(hubDead), hubN, spikes, rangeB, ch24, at0};
+         'SpikesFixed', 'BeamsSpanned', 'Changes24h', 'ShareAtZero', 'EntriesToZeroPerDay'};
+cols = {ch', status, flags, hubV, hubShare, hubRet, logical(hubDead), hubN, spikes, rangeB, ch24, at0, ent0};
 if exist('table', 'file') || exist('table', 'builtin')
     QC = table(cols{:}, 'VariableNames', names);
 else
@@ -184,7 +202,22 @@ if ~isempty(o.OutputFolder)
         fid = fopen(fn, 'w'); fprintf(fid, '%d \r\n', Counts(:, k)); fclose(fid);
     end
 end
-out = struct('Counts', Counts, 'Channels', ch, 'Mode', mode, 'Info', info, 'QC', QC, ...
+if ~isempty(o.AtZeroFolder)
+    if ~isempty(o.OutputFolder) && strcmp(fullfile(o.AtZeroFolder, '.'), fullfile(o.OutputFolder, '.'))
+        error('RawToActivity1s:AtZeroFolder', 'AtZeroFolder must differ from OutputFolder (process_LocomToSleep reads every file there).');
+    end
+    if ~exist(o.AtZeroFolder, 'dir'), mkdir(o.AtZeroFolder); end
+    pre = o.FilePrefix;
+    if isempty(pre), [~, nm] = fileparts(filePath); pre = [nm '_ch']; end
+    for k = 1:nC
+        fn = fullfile(o.AtZeroFolder, sprintf('%s%d_at0.txt', pre, ch(k)));
+        if exist(fn, 'file') && ~o.Overwrite
+            error('RawToActivity1s:Exists', '%s exists; refusing to overwrite (set ''Overwrite'', true).', fn);
+        end
+        fid = fopen(fn, 'w'); fprintf(fid, '%.4f\r\n', AtZero(:, k)); fclose(fid);
+    end
+end
+out = struct('Counts', Counts, 'AtZero', AtZero, 'Channels', ch, 'Mode', mode, 'Info', info, 'QC', QC, ...
              'Settings', struct('Repair', o.Repair, 'KeepBeyondBeam1', o.KeepBeyondBeam1));
 end
 

@@ -100,10 +100,27 @@ def loading_check(x, t, hours=2.0, start_hour=0.0):
         if fs >= 0.99:
             flags.append(f"FROZEN AT {'END BEAM' if fv in (1, 2, 15, 16) else 'BEAM'} {fv}" if fv != 0 else 'FROZEN AT 0 (no beam broken)')
     if nchg < 20: flags.append('LOW ACTIVITY')
-    return dict(changes=nchg, big_jumps=int(len(big)), hub=hub, hub_share=share, hub_returns=ret, span=span, flags=flags)
+    to0 = int(((x[1:] == 0) & (x[:-1] != 0)).sum()) if len(x) else 0      # entries into 0 (information only)
+    return dict(changes=nchg, big_jumps=int(len(big)), hub=hub, hub_share=share, hub_returns=ret, span=span, flags=flags,
+                entries_to_zero=to0)
 
 
 def loading_change(prev_flags, now_flags):
     """LoadingCheck's 'Previous' label for one channel; flags are lists (empty = OK)."""
     b, a = bool(prev_flags), bool(now_flags)
     return 'RESOLVED' if b and not a else 'STILL FLAGGED' if b and a else 'NEW FLAG' if a else 'OK'
+
+
+def at_zero_1s(x, t):
+    """Reference for RawToActivity1s out.AtZero: per second s = 0 .. floor(t[-1]), the share of the timed readings
+    with time in [s, s+1) that read 0 (NaN for a second without a reading). x: positions after the same repairs as
+    the activity (spike filter + hub repair when Repair is on)."""
+    x = np.asarray(x); sec = np.floor(np.asarray(t)).astype(int); n = int(np.floor(t[-1])) + 1
+    tot = np.bincount(sec, minlength=n)[:n].astype(float); z = np.bincount(sec, weights=(x == 0), minlength=n)[:n]
+    with np.errstate(invalid='ignore', divide='ignore'):
+        return np.where(tot > 0, z / tot, np.nan)
+
+
+def entries_to_zero_per_day(x, t):
+    """Reference for RawToActivity1s QC EntriesToZeroPerDay."""
+    x = np.asarray(x); return float(((x[1:] == 0) & (x[:-1] != 0)).sum() / ((t[-1] - t[0]) / 86400))

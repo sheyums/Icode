@@ -446,3 +446,15 @@ others), unrecorded, and may change weekly (each transfer is a new tube). Weeks 
   finding.
 Nothing here assigns a food end; nothing here may be used for the A1 food-end split. A rule based on 0-visit rate
 would need validation on data with recorded orientation (repeat experiment).
+
+## 2026-11-16 — Position-0 outputs added to RawToActivity1s and LoadingCheck (user request; code in the next commit)
+RawToActivity1s: out.AtZero (per second, share of readings at 0, after the same repairs as Counts; NaN for a second
+without a reading), optional 'AtZeroFolder' (<prefix><ch>_at0.txt; refused if equal to OutputFolder), QC column
+EntriesToZeroPerDay. LoadingCheck: EntriesToZero per channel (column "to0"), a NO VISIT TO 0 list for active tubes
+(>= 50 changes) -- information, not a flag, not validated as an orientation test -- and FROZEN AT 0 wording ("at the
+food, or dead"); flag strings unchanged. Python references: labconv.at_zero_1s, entries_to_zero_per_day,
+loading_check(...)['entries_to_zero'].
+Checks (Octave 8.4, week 1 first ~24 h, ch17-32): AtZero, EntriesToZeroPerDay and EntriesToZero equal to the Python
+references on 16/16 channels (max difference 3e-11, file precision; NaN pattern identical); Counts identical to the
+previous RawToActivity1s in all 4 golden-test variants (legacy, beam_hmm, fold 0, no repair); AtZeroFolder =
+OutputFolder refused. The golden test checks Counts only, so it is unaffected; a MATLAB run is still needed.
