@@ -59,6 +59,8 @@ function out = RawToActivity1s(filePath, varargin)
 %   TYPICAL SEQUENCE (functions in beam_hmm/matlab: cd there or addpath it; one weekly raw file at a time)
 %     1  After loading the tubes, record ~2 h, then screen the tubes and re-seat the flagged ones:
 %          R = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32);
+%        After re-seating (here at ~2.3 h), record >= 2 h more and confirm (RESOLVED / STILL FLAGGED / NEW FLAG):
+%          R2 = LoadingCheck('raw_positions_all64_week2.txt', 'Channels', 17:32, 'StartHour', 2.5, 'Previous', R);
 %     2  After the recording, look at the whole file (QC table, channel status, four figures):
 %          F = BeamFingerprint('raw_positions_all64_week2.txt', 'Channels', 17:32, 'SaveFolder', 'fp_week2');
 %     3  Convert to activity per second (repairs + QC), one .txt per channel:

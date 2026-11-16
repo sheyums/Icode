@@ -47,3 +47,8 @@ needs a MATLAB run (Octave takes ~5 min for one day).
 `R = LoadingCheck('raw.txt')` prints a RE-SEAT list: BLOCKED BEAM k (end = food/plug, mid-tube = debris), NARROW
 RANGE, LOW ACTIVITY. On the 2026 pilot it caught ~half of the blocked beams found later by the full-week QC directly,
 ~70% with any flag. Python twin: labconv.loading_check (identical flags on 64 excerpts in Octave).
+FROZEN AT END BEAM k: one reading >= 99% of the window -- caught all 14 live flies hidden behind a blocked beam 16.
+After re-seating: `R2 = LoadingCheck('raw.txt', 'StartHour', 2.5, 'Previous', R)` checks a later window of the same,
+still-running file and labels each channel RESOLVED / STILL FLAGGED / NEW FLAG / OK. Check promptly after the re-seat
+(a window in the siesta or at night flags sleeping flies). 'Hours' 2 is recommended; 1 h gave the same catches on
+the pilot (ledger 2026-11-15) and prints a warning.
