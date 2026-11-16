@@ -405,3 +405,16 @@ Window comparison, weeks 1-9, ch17-32 (144 fly-weeks; thresholds unchanged):
 Side observation (the 30-h Octave check, week 1 = ZT ~5, siesta): several active flies came out LOW ACTIVITY and one
 FROZEN AT END BEAM 16 -- a window during sleep flags sleeping flies. Re-checks should follow the re-seat promptly.
 Recommendation unchanged: 2 h (default); 1 h acceptable for a first look on this evidence (one pilot run).
+
+## 2026-11-16 — LoadingCheck re-check options verified in MATLAB R2026a (user's PC at 40de248; PNGs pushed as f3ede2c)
+Week 2, ch17-32: R1 = first 2 h; R2 = 2.5-4.5 h with 'Previous', R1; R3 = 1-h window. R2 flags and Change labels match the
+Python twin on all 16 channels (ch17 RESOLVED; ch24 NEW FLAG; 9 STILL FLAGGED; 5 OK). Printed summary "1 resolved, 9 still
+flagged, 1 new, 5 OK" -- correct; the expected line sent from here ("10 still flagged, 4 OK") was my counting slip. R3 printed
+the ShortWindow warning; no errors; MATLAB -batch exited normally. Figure: white background, RESOLVED green, STILL/NEW red,
+x label "min after 2.50 h".
+Not a re-seat experiment: nothing was re-seated at 2.3 h in the pilot, so this tests the code only. ch24's NEW FLAG (FROZEN AT
+END BEAM 16; LOW ACTIVITY) shows the trace sitting at 16 with one excursion: a fly resting at the end beam and a fly hidden
+behind a blocked end beam look the same in a window of quiet behaviour.
+Later commit b02159e (made from the user's Box analysis folder by another session: 16-channel figure pages, file dialog,
+full-path output, 'Previous' re-reads its file, review fixes) leaves the flag logic unchanged: re-checked here in Octave
+against the Python twin on weeks 1-2 (2 h, and 1 h at 30 h with 'Previous'), 32/32 identical.
