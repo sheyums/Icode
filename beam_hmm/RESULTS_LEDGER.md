@@ -517,3 +517,32 @@ repeat experiment, not a finding: the night-time structure of sleep onset flatte
 Weeks 2-3, 11 flies (ch17-24, 26, 28, 29 = the A2-A4 primary set). Fully observed bouts: SLEEP 3241 (4 dropped, 0.12%;
 300-27055 s), WAKE 3225 (4 dropped, 0.12%; 2-15004 s). File: results/o1a/bouts_weeks2-3.csv. The hazard and model
 fits (o1a_run.m) need MATLAB; not yet run. No duration distribution has been looked at here.
+
+## 2026-11-19 — O1-A RESULTS: bout hazards and models, CS LD pilot weeks 2-3 (MATLAB R2026a on the user's PC, o1a_run at
+## 6c409fd; outputs pushed as 9f12f1b; PRESPEC O1 55d8449)
+Code changes made by the local session during the run (all mechanical, none touches a fit, test or verdict): 6282d4f +
+dee1b36 BoutHazard ModelHazard shape fix for a column SurvivalHandle (= matlab-port cd2f86f; test_BoutHazard 11/11; the
+rise statistics never used ModelHazard), 6c409fd o1a_run prints R.Selected.Model. The run that produced the results is
+the second one.
+11 flies; WAKE n = 3225 (xmin 2 s, median 325 s), SLEEP n = 3241 (xmin 300 s, median 984 s); hazard null = hyperexp K=3
+(best identified hyperexponential) for both; NullDropped 0 everywhere.
+(a) WAKE hazard rise: RiseNullP 0.844 (16 bins), 0.968 (20 bins) -> NOT SUPPORTED. The wake hazard FALLS monotonically
+    from 2.0e-2/s at 1.4 s to 3.5e-4/s at 6000 s (bands overlap a monotone curve throughout). Unlike the per0 DD wake
+    bouts (FINDINGS.md: fall, rise to a peak near 1000 s, fall).
+    Models: NO model passed the fit test. weibull_mix ranked 1 (k 5; q 0.58 shape 0.50 scale 369 s / q 0.42 shape 1.25
+    scale 595 s), G 48.6 on 40 bins, chi2 bounds ambiguous (p 0.050-0.139), bootstrap p 0.050 (B 199) -> rejected;
+    hyperexp K=3 = hyper_erlang (identical logL: hyper_erlang collapsed to shapes [1 1 1]; tau 8.9 / 468 / 2356 s,
+    q 0.087 / 0.78 / 0.13) G 69.2, p 0.002 -> rejected. The largest misfit is the shortest bouts: 63 wake bouts in the
+    first GoF bin (2 s) against 41 expected. By CLAUDE.md, "the library cannot describe these bouts" is the finding.
+(b) SLEEP hazard (descriptive): falls from 1.7e-3/s at 5.7 min to ~6e-4/s by ~20 min, then roughly flat with a slow
+    decline; RiseNullP 0.478 / 0.879 -> no rise. Selected: hyper_erlang shapes [1 1 2] (G 32.7, p 0.53-0.75, GuardOK,
+    smallest branch ~326 bouts, TailFraction 0.54), but hyperexp K=3 is 0.11 AICc behind at the SAME k = 5 (0.06 nats):
+    NOT distinguishable; report as three time scales, hyperexp K=3: tau 142 s (below xmin: q only) / 1321 s (22 min) /
+    3900 s (65 min), q 0.20 / 0.70 / 0.097. Same three-scale shape as per0 DD sleep (55 s / 1041 s / 3141 s, q 0.05 /
+    0.93 / 0.02), with larger short and long shares here.
+Secondary (descriptive, censoring caveat, pooled null): wake starting in light RiseNullP 0.821 (n 1961, median 368 s),
+in dark 0.241 (n 1264, median 274 s); sleep starting in light 0.077 (n 1970, median 750 s), in dark 0.465 (n 1271,
+median 1545 s).
+Reading: in CS LD neither bout type shows a rising hazard, so neither needs a series (staged) branch; both are mixtures
+of time scales (parallel hidden sub-states chosen at bout start). The per0 DD wake hump does not appear here -- a second
+pilot-vs-per0 DD difference after A2b, again not separable into genotype / LD-DD / cohort without a DD segment.
