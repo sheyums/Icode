@@ -24,7 +24,6 @@ function test_BoutHazard()
 %  8.  MinAtRisk drops thin bins     - nDropped counts them
 %  9.  Truncation is free            - same hazard above a higher xmin
 % 10.  RandomSeed reproduces         - identical RiseCI twice
-% 11.  Column-returning handle       - ModelHazard stays one value per bin
 
 if exist('OCTAVE_VERSION', 'builtin')
     bh = @BoutHazard_oct;
@@ -282,22 +281,25 @@ catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 10, '', err.message);
 end
 
-%% Test 11: a SurvivalHandle that returns a COLUMN for a row input
-%  FitHyperexponentialMLE's handle does (it sums over dim 2 of t(:)). Before
-%  the fix ModelHazard came back n-by-n and the plot step errored.
+%% Test 11: the model overlay does not depend on the handle's output shape
+%  FitHyperexponentialMLE's SurvivalHandle returns a COLUMN for a row of
+%  edges; ModelHazard was then broadcast into an nb x nb matrix. A handle
+%  returning a row and one returning a column must give the same 1 x nb
+%  vector, equal to the exact rate.
 try
-    lam = 1/500; xm = 100; dt = 1;
-    Scol = @(t) exp(-lam*(t(:) - xm));
+    lam = 1/300; xm = 50; dt = 1;
     Srow = @(t) exp(-lam*(t - xm));
-    rng(11, 'twister');
-    d = xm + round(-log(rand(2000,1))/lam);
-    A = bh(d, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Scol);
-    B = bh(d, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Srow);
-    ok = isequal(size(A.ModelHazard), size(A.BinCenters)) && ...
-         max(abs(A.ModelHazard - B.ModelHazard)) <= 1e-12 * lam;
+    Scol = @(t) reshape(exp(-lam*(t - xm)), [], 1);
+    rs = RandStream('twister', 'Seed', 11);
+    x = xm + ceil(-log(rand(rs, 3000, 1)) / lam);
+    A = bh(x, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Srow);
+    B = bh(x, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Scol);
+    nb = numel(A.BinCenters);
+    ok = isequal(size(A.ModelHazard), [1 nb]) && isequal(size(B.ModelHazard), [1 nb]) && ...
+        max(abs(B.ModelHazard - A.ModelHazard)) == 0 && max(abs(A.ModelHazard - lam)) / lam < 1e-9;
     [nPassed, nFailed] = rep(ok, nPassed, nFailed, 11, ...
-        sprintf('ModelHazard %s, same as a row handle', mat2str(size(A.ModelHazard))), ...
-        sprintf('ModelHazard %s vs BinCenters %s', mat2str(size(A.ModelHazard)), mat2str(size(A.BinCenters))));
+        sprintf('row and column handles give the same 1 x %d model hazard', nb), ...
+        sprintf('sizes %s and %s', mat2str(size(A.ModelHazard)), mat2str(size(B.ModelHazard))));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 11, '', err.message);
 end
