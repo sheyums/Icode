@@ -24,6 +24,7 @@ function test_BoutHazard()
 %  8.  MinAtRisk drops thin bins     - nDropped counts them
 %  9.  Truncation is free            - same hazard above a higher xmin
 % 10.  RandomSeed reproduces         - identical RiseCI twice
+% 11.  Column-returning handle       - ModelHazard stays one value per bin
 
 if exist('OCTAVE_VERSION', 'builtin')
     bh = @BoutHazard_oct;
@@ -279,6 +280,26 @@ try
         sprintf('[%.4f %.4f] vs [%.4f %.4f]', A.RiseCI, B.RiseCI));
 catch err
     [nPassed, nFailed] = rep(false, nPassed, nFailed, 10, '', err.message);
+end
+
+%% Test 11: a SurvivalHandle that returns a COLUMN for a row input
+%  FitHyperexponentialMLE's handle does (it sums over dim 2 of t(:)). Before
+%  the fix ModelHazard came back n-by-n and the plot step errored.
+try
+    lam = 1/500; xm = 100; dt = 1;
+    Scol = @(t) exp(-lam*(t(:) - xm));
+    Srow = @(t) exp(-lam*(t - xm));
+    rng(11, 'twister');
+    d = xm + round(-log(rand(2000,1))/lam);
+    A = bh(d, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Scol);
+    B = bh(d, xm, 'SamplingInterval', dt, 'NumBins', 12, 'SurvivalHandle', Srow);
+    ok = isequal(size(A.ModelHazard), size(A.BinCenters)) && ...
+         max(abs(A.ModelHazard - B.ModelHazard)) <= 1e-12 * lam;
+    [nPassed, nFailed] = rep(ok, nPassed, nFailed, 11, ...
+        sprintf('ModelHazard %s, same as a row handle', mat2str(size(A.ModelHazard))), ...
+        sprintf('ModelHazard %s vs BinCenters %s', mat2str(size(A.ModelHazard)), mat2str(size(A.BinCenters))));
+catch err
+    [nPassed, nFailed] = rep(false, nPassed, nFailed, 11, '', err.message);
 end
 
 fprintf('\nSummary: %d passed, %d failed, %d total\n', ...
