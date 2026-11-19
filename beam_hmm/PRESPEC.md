@@ -740,3 +740,58 @@ Everything not changed here is as T1-C.
                If it fails: logged; no further change without a new entry.
 4 Real data    As T1-C (weeks 2-3, primary set, rotation p from 999 rotations), with E = 2 h; E = 1 h, 3 h as
                sensitivity. Runs only if this gate passes.
+
+### 2026-11-19  O1 — after B1 FAILED: bout-duration hazards (O1-A) and the clock test across age (O1-B)
+
+Why: the B1 gate failed (ledger 922c3ac); per B1 item 7 and PLAN.md's decision table, likelihood-based state discovery
+at 0.4 s is set aside and the model work moves to measures that need no hidden states. User decision 2026-11-19:
+"write/run option 1". A fixed-K descriptive HMM (also in option 1) is NOT specified here; it needs its own entry.
+Rules from the repo-root CLAUDE.md apply in full (hazard before fitting; NumBins fixed in advance and every one
+reported; q not w; the closed bout library only; censoring caveat for phase splits).
+
+O1-A  Sleep- and wake-bout duration hazards, CS LD pilot
+Question   (a) Does the WAKE-bout hazard fall and then RISE, as in the per0 DD wake bouts (FINDINGS.md: two turning
+           points; a rising hazard of falling asleep with time awake is the bout-level form of sleep pressure,
+           cf. Huber et al. 2004 Sleep 27:628; Wiggin et al. 2020 PNAS 117:10024 for per-minute P(doze))?
+           (b) What does the SLEEP-bout hazard look like (per0 DD: monotone, hyperexponential K = 3)?
+Data       Weeks 2-3, the A2-A4 primary set (P1-D included, narrow-range excluded, P1-E valid seconds incl. the
+           first-24-h, transfer and death exclusions), pooled across flies (pooling cannot create a hazard rise:
+           CLAUDE.md, BoutHazard header). Disclosure: weeks 2-3 sleep bouts were already used in A2b (shape
+           around boundaries, not durations); no duration distribution of these flies has been looked at.
+Bouts      SLEEP = P1 sleep bouts (>= 300 s without movement, lab 1-s bridging), from pipeline.sleep_bouts on the
+           1-s activity. WAKE = the interval between two consecutive sleep bouts of the same fly-week.
+           A bout is used only if fully observed: not touching an excluded second or a record edge (sleep: the
+           'censored' flag; wake: both flanking sleep bouts uncensored and no excluded second between them).
+           The number and share of bouts dropped this way is reported (they are the longest-biased).
+           xmin: sleep 300 s; wake (floor(1/1) + 1) x 1 = 2 s (CLAUDE.md formula, bridging 1 s). dt = 1 s.
+           Whole record: light and dark pooled (primary). The start ZT of every bout is stored.
+Analysis   MATLAB (repo-root functions), per bout type, in this order:
+           1 H = BoutHazard(x, xmin, SamplingInterval=1, NumBins=nb, NullSurvivalHandle=<best hyperexponential's
+             SurvivalHandle from step 2's table>, NullReplicates=999, RandomSeed=20261119, Bootstrap=999,
+             MinAtRisk=10) for nb in {16, 20} (fixed now; both reported). H.NullDropped must be 0.
+           2 R = CompareBoutModels(x, xmin, SamplingInterval=1, MaxComponents=5, RandomSeed=20261119)
+             (default library; pearson3/beta not fitted). Read R.Skipped, R.Table, R.Selected, R.SelectionPath;
+             report the winner's Diagnostics (GuardOK, MixtureMinCount, TailFraction), q not w.
+           Order of running: step 2 first only to obtain the null handle; nothing from step 2 is read before
+           step 1 is reported.
+Decision   (a) "Wake hazard rises" is SUPPORTED iff RiseNullP < 0.05 at BOTH 16 and 20 bins (and NullDropped = 0);
+           NOT SUPPORTED if >= 0.05 at both; MIXED otherwise (reported as such, no claim).
+           (b) and the model tables are descriptive; a non-monotone hazard (a) means every monotone family is
+           excluded by construction, whatever the information criteria say.
+Secondary  (descriptive) the same hazards by START phase (light / dark), with the CLAUDE.md caveat: bouts are
+           assigned by start and not clipped at the phase boundary, and the engine has no censoring, so long bouts
+           carry out-of-phase time; per-fly bout counts and median durations.
+Caveat     LD forcing: light switches can end bouts at fixed clock times, which can shape a pooled hazard; the
+           per0 comparison is DD. A rise here is therefore "CS LD wake bouts", not "intrinsic".
+
+O1-B  T1-C1 across weeks (circadian control vs age), DESCRIPTIVE
+Question   Does the shared time-of-day modulation of sleep onsets and wake-ups (T1-C1, SUPPORTED in weeks 2-3) weaken
+           as the flies age?
+Data       Each week 4-9 separately (and weeks 1, 2-3 for reference, already reported), the same per-fly rules as
+           t1c_real.py; ZT from the P1-E stamps in results/a5/a5.json (week 6 by hand check). Weeks with < 4
+           qualifying flies are listed and not computed.
+Analysis   t1c.rotation_test, E = 2 h, model 2, 999 rotations, seeds SeedSequence([11301, week]); report n flies, LR,
+           rotation p, null median LR, LR / null median, within-phase peak ZTs and dark-phase ranges of h and g.
+           No test across weeks and no p-value for a trend: survivor bias (the flies alive late are a selected
+           subset) and falling n make any trend descriptive only. A5 (no ageing trend survives Holm) is the
+           context.
