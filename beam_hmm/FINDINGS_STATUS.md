@@ -36,8 +36,9 @@ these and is labelled DESCRIPTIVE.
 | T1-C1 shapes (siesta onset peak ZT ~5, wake-up peak ZT ~11) | DESCRIPTIVE | | 2026-11-14 T1-C1 |
 | O1-B: T1-C1 per week 1-6 (night-onset peak flattens weeks 4-5) | DESCRIPTIVE | survivor bias, n varies | 2026-11-19 O1-B |
 | O1-A (a): wake-bout hazard rises with time awake | PRELIMINARY | not supported (RiseNullP 0.84 / 0.97); hazard falls | 2026-11-19 O1-A |
-| O1-A: no model in the closed library fits wake bouts | PRELIMINARY (pre-specified fit) | all rejected; excess 2-s bouts | 2026-11-19 O1-A |
-| O1-A (b): sleep bouts = three time scales (~2 min, ~22 min, ~65 min) | DESCRIPTIVE | hyper_erlang ~ hyperexp K=3 | 2026-11-19 O1-A |
+| O1-A: no model in the closed library fits the POOLED wake bouts | PRELIMINARY (pre-specified fit) | all rejected; excess 2-s bouts | 2026-11-19 O1-A |
+| Per-fly median bout lengths (4-fold spread between flies; light vs dark within flies) | DESCRIPTIVE (post hoc) | | 2026-11-19 correction |
+| O1-A (b): POOLED sleep bouts = three time scales (~2 min, ~22 min, ~65 min) | DESCRIPTIVE | pooled over flies and phases: may be heterogeneity (O1-C tests within flies) | 2026-11-19 O1-A + correction |
 | O1-A secondary: light vs dark bout hazards | DESCRIPTIVE | censoring caveat | 2026-11-19 O1-A |
 | Q1: Q at the start of a wake bout predicts its remaining duration | PRELIMINARY | not supported (p 0.13; L = 600 s: 0.18) | 2026-11-19 Q1 |
 | Q1 direction (Q-start bouts shorter in 9/11 flies) | DESCRIPTIVE | | 2026-11-19 Q1 |

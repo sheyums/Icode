@@ -831,3 +831,25 @@ Descriptive Distribution of k; per-group n and median R; per-fly medians and the
 Check      Before the real run: the same code on the real bouts with the group labels drawn at random (not from Q) must
            give a p-value distribution compatible with uniform over 200 draws (KS p > 0.01). If not, the result is not run.
 Language   Python (labconv-style), computed here; a MATLAB port only if this becomes a final analysis.
+
+### 2026-11-19  O1-C — are the bout time scales within flies, or only between flies and phases? (user go-ahead)
+
+Why: O1-A's mixtures of time scales (ledger d3fa2fd) come from bouts POOLED over 11 flies, light and dark, and two weeks.
+Pooling creates falling hazards and extra exponential components by itself (heterogeneity), so O1-A cannot say whether a
+single fly in a single phase has more than one time scale. A post hoc look at per-fly medians (ledger, same day) showed a
+~4-fold spread between flies and up to 4.6-fold light/dark differences within flies, so the question is open.
+Data       The O1-A bouts (results/o1a/bouts_weeks2-3.csv; 11 flies, weeks 2-3, fully observed), split into UNITS =
+           fly x start phase (light ZT 0-12 / dark ZT 12-24) x bout type. Units with >= 50 bouts are tested (count of
+           untested units reported). xmin: sleep 300 s, wake 2 s; dt = 1 s (as O1-A).
+Test       Per unit, HyperexponentialLRT(x, xmin, 1, 2, SamplingInterval = 1, B = 499, RandomSeed = 20261120 + unit
+           index): one exponential vs a two-component mixture, parametric bootstrap null (repo root; MATLAB).
+Decision   Per bout type: m tested units, r of them with p < 0.05. Under "each fly-phase has ONE time scale" r ~
+           Binomial(m, 0.05). "Within-fly-phase multiple time scales" is SUPPORTED for that bout type iff the one-sided
+           binomial p of r (vs rate 0.05) is < 0.05; NOT SUPPORTED otherwise. Both r/m and the binomial p are reported.
+Descriptive For each unit: LR, p, the K = 2 fit (tau_1, tau_2, q_1, q_2; q, not w) and AtomAtZero; whether the K = 2 time
+           scales line up across flies (spread of tau per component); K = 2 vs 3 (B = 499) for units with >= 150 bouts
+           whose 1 vs 2 test had p < 0.05, reported only.
+Caveat     A within-fly-phase mixture is necessary, not sufficient, for hidden kinds of bouts: time-of-day modulation
+           WITHIN a phase (T1-C1) and week-to-week change still mix inside a unit. A single time scale per unit would mean
+           the O1-A mixtures are heterogeneity, and the model should carry per-fly and per-phase rates instead of hidden
+           sub-kinds. With 50-260 bouts per unit, a small third component is not detectable.

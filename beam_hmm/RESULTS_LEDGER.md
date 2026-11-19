@@ -567,3 +567,11 @@ or METHOD (synthetic gates, tools, data quality), grouped by genotype and condit
 (earlier dataset, root FINDINGS.md), CS DD (earlier project, not analysed here). Cross-genotype contrasts are labelled
 DESCRIPTIVE and confounded (genotype x LD/DD x cohort x window). This ledger's entries keep their wording; where an entry
 says "SUPPORTED", read "PRELIMINARY, supported in the pilot".
+
+## 2026-11-19 — CORRECTION to the O1-A reading, and a POST HOC descriptive look (per-fly medians)
+The O1-A reading "both bout types are mixtures of time scales (parallel hidden sub-states chosen at bout start)" goes beyond
+the data: the bouts were pooled over 11 flies, both phases and two weeks, and pooling alone produces a falling hazard and
+extra exponential components. What stands from O1-A: the pooled wake hazard does not rise, and no library model fits the
+pooled wake bouts. Whether time scales exist WITHIN a fly is O1-C.
+Post hoc, descriptive (results/o1a/bouts_weeks2-3.csv): median sleep bout per fly 9-19 min in light, 15-62 min in dark;
+dark/light within a fly 1.3-4.6x. Median wake bout per fly 4-12 min in light, 1.6-7 min in dark.
