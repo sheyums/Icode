@@ -1,6 +1,7 @@
 # beam_hmm — sleep-wake dynamics from 0.2-s multibeam position
 
 Definitions of all terms, flags and rules (with their PRESPEC sources): `GLOSSARY.md`.
+Status of every result (PRELIMINARY / DESCRIPTIVE / METHOD, by genotype): `FINDINGS_STATUS.md`.
 
 New project, separate from hmm_audit (whose S/Q/W paper is under an analysis freeze since 2026-11-01).
 Root CLAUDE.md rules 1-5 apply here: PRESPEC committed before computing, append-only ledger with commit

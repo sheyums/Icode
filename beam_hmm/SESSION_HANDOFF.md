@@ -91,3 +91,8 @@ logic checks (no graphics, no `contains`/`gobjects`/`table`).
   with a flicker-defined planted state. Decision pending with the user (options in chat 2026-11-19).
 - Since 11-16: LoadingCheck StartHour/Previous, EntriesToZero; RawToActivity1s AtZero/AtZeroFolder (+ early output
   checks); GLOSSARY.md; position 0 = at the food in a correctly oriented tube, pilot orientation mixed/unknown.
+
+## Update 2026-11-19 (later)
+- O1-A done (wake hazard rise not supported, no wake model fits; sleep three time scales); O1-B per-week clock
+  descriptive; Q1 not supported (p 0.13, lean: Q-start bouts end sooner). All results classified in FINDINGS_STATUS.md
+  (PRELIMINARY / DESCRIPTIVE / METHOD, by genotype) at the user's request: keep that file current with every new result.

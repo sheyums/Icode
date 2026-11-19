@@ -1,0 +1,183 @@
+{
+ "excluded_bouts_no_reference_L300": 0,
+ "primary": {
+  "L": 300,
+  "n_bouts": 1680,
+  "k_counts": [
+   312,
+   326,
+   358,
+   344,
+   233,
+   107
+  ],
+  "n_qstart": 684,
+  "n_activestart": 638,
+  "median_R_qstart": 381.5,
+  "median_R_activestart": 547.0,
+  "Z": 1.5348538941793952,
+  "p": 0.1284,
+  "nperm": 9999,
+  "null_absZ_95": 1.9966599333915775,
+  "per_fly": {
+   "17": {
+    "n_q": 86,
+    "n_act": 63,
+    "med_q": 395.0,
+    "med_act": 564.0
+   },
+   "18": {
+    "n_q": 94,
+    "n_act": 68,
+    "med_q": 225.5,
+    "med_act": 395.5
+   },
+   "19": {
+    "n_q": 40,
+    "n_act": 39,
+    "med_q": 456.5,
+    "med_act": 658.0
+   },
+   "20": {
+    "n_q": 80,
+    "n_act": 52,
+    "med_q": 251.5,
+    "med_act": 533.5
+   },
+   "21": {
+    "n_q": 87,
+    "n_act": 76,
+    "med_q": 581.0,
+    "med_act": 792.0
+   },
+   "22": {
+    "n_q": 59,
+    "n_act": 46,
+    "med_q": 449.0,
+    "med_act": 497.0
+   },
+   "23": {
+    "n_q": 28,
+    "n_act": 50,
+    "med_q": 631.5,
+    "med_act": 523.0
+   },
+   "24": {
+    "n_q": 30,
+    "n_act": 30,
+    "med_q": 501.5,
+    "med_act": 520.5
+   },
+   "26": {
+    "n_q": 25,
+    "n_act": 15,
+    "med_q": 211.0,
+    "med_act": 510.0
+   },
+   "28": {
+    "n_q": 113,
+    "n_act": 117,
+    "med_q": 411.0,
+    "med_act": 651.0
+   },
+   "29": {
+    "n_q": 42,
+    "n_act": 82,
+    "med_q": 497.5,
+    "med_act": 441.5
+   }
+  },
+  "flies_qstart_shorter": 9,
+  "flies_compared": 11
+ },
+ "sensitivity_L600": {
+  "L": 600,
+  "n_bouts": 1034,
+  "k_counts": [
+   65,
+   110,
+   124,
+   142,
+   177,
+   135,
+   134,
+   83,
+   36,
+   18,
+   10
+  ],
+  "n_qstart": 281,
+  "n_activestart": 299,
+  "median_R_qstart": 389.0,
+  "median_R_activestart": 551.0,
+  "Z": 1.3286962753432165,
+  "p": 0.1787,
+  "nperm": 9999,
+  "null_absZ_95": 1.9459689616487894,
+  "per_fly": {
+   "17": {
+    "n_q": 43,
+    "n_act": 29,
+    "med_q": 323.0,
+    "med_act": 981.0
+   },
+   "18": {
+    "n_q": 30,
+    "n_act": 30,
+    "med_q": 311.0,
+    "med_act": 403.0
+   },
+   "19": {
+    "n_q": 18,
+    "n_act": 21,
+    "med_q": 898.0,
+    "med_act": 667.0
+   },
+   "20": {
+    "n_q": 27,
+    "n_act": 26,
+    "med_q": 194.0,
+    "med_act": 450.5
+   },
+   "21": {
+    "n_q": 41,
+    "n_act": 41,
+    "med_q": 626.0,
+    "med_act": 790.0
+   },
+   "22": {
+    "n_q": 21,
+    "n_act": 26,
+    "med_q": 402.0,
+    "med_act": 512.5
+   },
+   "23": {
+    "n_q": 21,
+    "n_act": 19,
+    "med_q": 403.0,
+    "med_act": 1033.0
+   },
+   "24": {
+    "n_q": 9,
+    "n_act": 19,
+    "med_q": 771.0,
+    "med_act": 206.0
+   },
+   "28": {
+    "n_q": 45,
+    "n_act": 50,
+    "med_q": 371.0,
+    "med_act": 490.5
+   },
+   "29": {
+    "n_q": 22,
+    "n_act": 35,
+    "med_q": 583.0,
+    "med_act": 615.0
+   }
+  },
+  "flies_qstart_shorter": 8,
+  "flies_compared": 10
+ },
+ "excluded_bouts_no_reference_L600": 0
+}

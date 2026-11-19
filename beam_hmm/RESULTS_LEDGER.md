@@ -551,3 +551,19 @@ BoutHazard's plot (ModelHazard shape); run 2 (dee1b36) stopped at the o1a_run R.
 the 4 PNGs, before the .mat; run 3 (6c409fd) completed and is what 9f12f1b holds. Runs 2 and 3 gave identical RiseNullP.
 Sample-size-matched null, for the record: each of the 999 null replicates draws the data's own n from the fitted
 hyperexp K=3 and is re-binned, so RiseNullP is already n-matched (seed 20261119).
+
+## 2026-11-19 — Q1 (code 042c3c3 q1.py; PRESPEC Q1 d9747ec): NOT SUPPORTED — PRELIMINARY, CS LD pilot
+Check first (random labels, 200 draws, 999 permutations each): KS p 0.66, 3.0% of p < 0.05 -> calibrated; real run done.
+PRIMARY L = 300 s: 1680 wake bouts >= 5 min (0 excluded for missing reference), k counts (0..5 Q windows)
+[312 326 358 344 233 107]; Q-START (k >= 3) 684 bouts, median remaining 381.5 s; ACTIVE-START (k <= 1) 638, median 547 s;
+stratified log-rank Z 1.53 (sign: Q-START ends sooner), permutation p 0.128 (null |Z| 95% 2.00) -> NOT SUPPORTED.
+Sensitivity L = 600 s: 1034 bouts, Z 1.33, p 0.179. Descriptive: Q-START median shorter in 9/11 flies (L 600: 8/10).
+Reading: a consistent lean (Q at the start of a wake bout -> it ends sooner) that does not reach the pre-set level in 11
+flies; no evidence here that Q marks a distinct kind of wake bout.
+
+## 2026-11-19 — Labelling of all findings (user request): beam_hmm/FINDINGS_STATUS.md
+Every result so far classified as PRELIMINARY (pre-specified test on the pilot), DESCRIPTIVE (post hoc / descriptive)
+or METHOD (synthetic gates, tools, data quality), grouped by genotype and condition: CS males LD (the pilot), per0 DD
+(earlier dataset, root FINDINGS.md), CS DD (earlier project, not analysed here). Cross-genotype contrasts are labelled
+DESCRIPTIVE and confounded (genotype x LD/DD x cohort x window). This ledger's entries keep their wording; where an entry
+says "SUPPORTED", read "PRELIMINARY, supported in the pilot".
