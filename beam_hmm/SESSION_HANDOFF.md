@@ -84,3 +84,10 @@ logic checks (no graphics, no `contains`/`gobjects`/`table`).
   finish expected ~midday 11-17 or later. Breadth run DROPPED by the user (no b1_gate7). Local session pushes
   results/b1_gate + REPORT.txt when the launcher exits.
 - DESIGN_NOTE.md written (repeat experiment: ~70 loaded flies recommended; QC protocol; DD segment; compute budget).
+
+## Update 2026-11-19
+- B1 gate FINISHED: FAIL (ledger 922c3ac; results 3aaff5d). Nothing runs on real data from B1. Extra states are mostly
+  short-dwell BIG states at the tube ends (end reflection + dead beam 15) and sub-30-s walking fragments; C4 conflicts
+  with a flicker-defined planted state. Decision pending with the user (options in chat 2026-11-19).
+- Since 11-16: LoadingCheck StartHour/Previous, EntriesToZero; RawToActivity1s AtZero/AtZeroFolder (+ early output
+  checks); GLOSSARY.md; position 0 = at the food in a correctly oriented tube, pilot orientation mixed/unknown.
