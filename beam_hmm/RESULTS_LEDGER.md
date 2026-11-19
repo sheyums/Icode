@@ -475,3 +475,22 @@ Same folder for both outputs refused before reading, nothing created: a 'out'/'o
 b relative/absolute (0.07 s), c 'out\'/'.\out' (0.04 s), d 'sub\..\out'/'OUT' (0.03 s; no 'sub' or 'OUT' made),
 e absolute path, upper vs lower case incl. drive letter (0.08 s). f different folders: ran (2.8 s), both files written.
 g f repeated without Overwrite: RawToActivity1s:Exists in 0.04 s, f's files untouched. No errors; MATLAB exited cleanly.
+
+## 2026-11-19 — B1 synthetic gate (code 2c745c1, unchanged since launch; run on the user's machine, 14 days, 20 flies per
+## scenario, one BLAS thread per worker; pushed as 3aaff5d): FAIL (G1 FAIL, G2 FAIL)
+G1 (planted BOUNDARY state): K* 3-8 (K* = 4 in 0/20; needed >= 14); planted state a candidate in 20/20, C1 19/20, C2 16/20,
+C3 7/20, C4 2/20, promoted 5/20 (needed >= 16). States matching no true state per fly: 0-5. Secondary (D1-A2): 3/20.
+G2 (no extra state): K* 5-8; 2-5 states per fly match no true state; SPURIOUS C1 19/20 (allowed 2), promoted 2/20
+(allowed 1). Original D1-A item 6 rule (reported only): spurious C1 19, promoted 11.
+Verdict by the pre-specified rule: FAIL. Per PRESPEC B1 item 7, nothing runs on real data; the next step is a new entry.
+Run time ~15-27 h per fly on one core (40 flies, 11 workers, 18:57 11-14 to 12:40 11-18 local).
+POST HOC description of the extra states (not part of the verdict; from the per-fly JSONs, truth Jaccard < 0.5):
+- G1 62 of 139 states, G2 88 of 148. Median dwell 2.5 s / 2.2 s (matched states: 126 s / 102 s); 66-70% dwell < 30 s.
+- About half are BIG-move states sitting mostly at the tube ends (END share > 0.5: G1 32 of 62, G2 46 of 88, nearly all
+  BIG). This is the pre-stated first suspect (end reflection), compounded by dead beam 15: every 14 <-> 16 crossing is a
+  2-beam step and so coded BIG, and every reflection at an end resets the direction code. The model buys states for
+  this geometry rather than for behaviour.
+- The rest: sub-30-s fragments of walking (ACTIVE/LOW STEP) and extra QUIESCENT states (13-14 per scenario).
+- G1's planted state was found (candidate 20/20, C1 19/20) but failed C3 (cross-half match by TYPE) and C4 (must survive
+  flicker removal). The planted BOUNDARY state is flicker by construction, so C4 removes its own signature: a design
+  conflict in the criteria, noted, NOT used to re-score the gate.
