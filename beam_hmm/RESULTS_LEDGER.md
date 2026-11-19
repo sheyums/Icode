@@ -494,3 +494,26 @@ POST HOC description of the extra states (not part of the verdict; from the per-
 - G1's planted state was found (candidate 20/20, C1 19/20) but failed C3 (cross-half match by TYPE) and C4 (must survive
   flicker removal). The planted BOUNDARY state is flicker by construction, so C4 removes its own signature: a design
   conflict in the criteria, noted, NOT used to re-score the gate.
+
+## 2026-11-19 — O1-B: T1-C1 per week, DESCRIPTIVE (code 452abf2 o1.py; PRESPEC O1 55d8449)
+E = 2 h, 999 rotations, per-week fly sets (P1-D, narrow, P1-E, >= 3 valid days); ZT from a5.json stamps.
+week  flies  LR     p      null median  LR/null | wake-ups h: L peak, D peak, D range | onsets g: L peak, D peak, D range
+ 1    12     487.0  0.001  33.8         14.4    | 11.9  12.1  0.46                    | 5.2  17.2  1.12
+ 2     5     345.6  0.001  56.3          6.1    | 10.6  12.1  0.81                    | 5.1  17.1  1.03
+ 3    11     690.7  0.001  51.3         13.5    | 10.9  12.1  0.80                    | 5.1  16.6  1.05
+ 4     9     530.2  0.001  47.9         11.1    | 10.8  12.1  0.65                    | 4.9  23.9  0.44
+ 5    11     384.1  0.001  38.4         10.0    | 11.1  12.1  0.59                    | 5.2  16.1  0.35
+ 6     6     260.8  0.001  42.7          6.1    | 10.4  12.1  0.86                    | 5.2  12.1  0.62
+ 7-9  3, 1, 2 qualifying flies: not computed (rule: < 4).
+Reading (descriptive; survivor bias; n differs by week, so LR is not comparable across weeks): shared time-of-day
+modulation is present in every computable week (p 0.001 each, the minimum). The wake-up shape (late-day peak ZT 10.4-11.9,
+evening anticipation) is stable through week 6. The onset shape changes: the midday (siesta) onset peak stays at ZT
+4.9-5.2, but the early-night onset peak (ZT 16.6-17.2, dark-phase range 1.03-1.12 in weeks 1-3) is gone in weeks 4-5
+(dark range 0.44, 0.35; dark peak moves to ZT 23.9 / 16.1) and partly back in week 6 (0.62, n = 6). Hypothesis for the
+repeat experiment, not a finding: the night-time structure of sleep onset flattens from ~week 4 of adult life.
+(Weeks 1, 2-3 match the earlier T1-C1 report: week 1 LR 487; weeks 2 and 3 here are per-week, the test pooled them.)
+
+## 2026-11-19 — O1-A bout extraction (code 452abf2 o1.py)
+Weeks 2-3, 11 flies (ch17-24, 26, 28, 29 = the A2-A4 primary set). Fully observed bouts: SLEEP 3241 (4 dropped, 0.12%;
+300-27055 s), WAKE 3225 (4 dropped, 0.12%; 2-15004 s). File: results/o1a/bouts_weeks2-3.csv. The hazard and model
+fits (o1a_run.m) need MATLAB; not yet run. No duration distribution has been looked at here.
