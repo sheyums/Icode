@@ -63,7 +63,8 @@ for s = 1:numel(spec)
     fprintf('R.Skipped:\n'); disp(R.Skipped);
     disp(tab(:, intersect({'Model', 'k', 'LogLik', 'AICc', 'dAICc', 'AkaikeWeight', 'BIC', 'dBIC', 'Degenerate', 'Reason', 'ParamText'}, ...
                           tab.Properties.VariableNames, 'stable')));
-    fprintf('R.Selected: %s\n', strjoin(string(R.Selected), ', ')); disp(R.SelectionPath);
+    if isempty(R.Selected), selName = "(none passed the fit test)"; else, selName = string(R.Selected.Model); end
+    fprintf('R.Selected: %s\n', selName); disp(R.SelectionPath);   % R.Selected is a table-row struct, not a string
     if ~isempty(R.SelectedFit) && isfield(R.SelectedFit, 'Full') && isfield(R.SelectedFit.Full, 'Diagnostics')
         disp(R.SelectedFit.Full.Diagnostics);
     end
