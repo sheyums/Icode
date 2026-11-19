@@ -1,0 +1,215 @@
+O1-A  beam_hmm/results/o1a/bouts_weeks2-3.csv  (19-Nov-2026 08:49:53)
+flies: [17 18 19 20 21 22 23 24 26 28 29]
+
+================ WAKE bouts: n = 3225, xmin = 2 s, dt = 1 s, median 325 s, max 15004 s
+hazard null: hyperexp K=3 (best identified hyperexponential by AICc)
+
+-- wake hazard, 16 bins: RiseNullP = 0.8440 (NullDropped 0), RiseRatio 0.741, trough at 3340 s, peak at 6091 s
+     center_s   atrisk  events     hazard      lower      upper       null
+        1.414     3225      63  1.973e-02  1.542e-02  2.523e-02  1.107e-02
+        2.449     3162      30  9.533e-03  6.676e-03  1.360e-02  1.018e-02
+        4.243     3132      63  6.773e-03  5.293e-03  8.662e-03  8.663e-03
+        8.124     3069      83  5.483e-03  4.423e-03  6.794e-03  6.375e-03
+        14.83     2986     104  3.939e-03  3.250e-03  4.771e-03  4.062e-03
+         27.2     2882     129  2.694e-03  2.267e-03  3.199e-03  2.463e-03
+        49.79     2753     176  2.202e-03  1.899e-03  2.552e-03  1.929e-03
+        90.41     2577     274  2.044e-03  1.815e-03  2.300e-03  1.855e-03
+        164.9     2303     374  1.755e-03  1.585e-03  1.941e-03  1.821e-03
+        301.6     1929     540  1.775e-03  1.630e-03  1.931e-03  1.753e-03
+        550.6     1389     539  1.466e-03  1.345e-03  1.595e-03  1.605e-03
+         1004      850     467  1.300e-03  1.183e-03  1.425e-03  1.278e-03
+         1831      383     228  8.099e-04  7.058e-04  9.228e-04  7.642e-04
+         3340      155      96  4.742e-04  3.822e-04  5.782e-04  4.641e-04
+         6091       59      43  3.512e-04  2.493e-04  4.700e-04  4.251e-04
+
+-- wake hazard, 20 bins: RiseNullP = 0.9680 (NullDropped 0), RiseRatio 0.663, trough at 4510 s, peak at 7295 s
+     center_s   atrisk  events     hazard      lower      upper       null
+        1.414     3225      63  1.973e-02  1.542e-02  2.523e-02  1.107e-02
+        2.449     3162      30  9.533e-03  6.676e-03  1.360e-02  1.018e-02
+        3.464     3132      23  7.371e-03  4.910e-03  1.106e-02  9.374e-03
+        5.292     3109      65  7.043e-03  5.525e-03  8.973e-03  7.994e-03
+        8.775     3044      58  4.809e-03  3.720e-03  6.214e-03  6.126e-03
+        14.07     2986      81  3.929e-03  3.160e-03  4.881e-03  4.275e-03
+        22.85     2905     106  3.379e-03  2.793e-03  4.085e-03  2.812e-03
+        36.92     2799     121  2.455e-03  2.054e-03  2.932e-03  2.085e-03
+        59.77     2678     168  2.234e-03  1.920e-03  2.597e-03  1.887e-03
+        96.29     2510     207  1.871e-03  1.632e-03  2.143e-03  1.853e-03
+        155.4     2303     283  1.725e-03  1.535e-03  1.938e-03  1.827e-03
+        251.7     2020     393  1.773e-03  1.605e-03  1.957e-03  1.782e-03
+        407.1     1627     460  1.678e-03  1.530e-03  1.838e-03  1.698e-03
+        658.9     1167     430  1.436e-03  1.304e-03  1.578e-03  1.539e-03
+         1066      737     354  1.264e-03  1.135e-03  1.403e-03  1.243e-03
+         1724      383     198  8.694e-04  7.518e-04  9.989e-04  8.204e-04
+         2789      185      93  5.163e-04  4.172e-04  6.306e-04  5.115e-04
+         4510       92      59  4.682e-04  3.540e-04  6.010e-04  4.306e-04
+         7295       33      22  3.103e-04  1.935e-04  4.581e-04  4.245e-04
+
+>> WAKE hazard rise: NOT SUPPORTED (RiseNullP >= 0.05 at both)
+
+-- wake model comparison (read in this order):
+R.Skipped:
+           Model           k      LogLik          AICc         dAICc       AkaikeWeight       BIC           dBIC       Degenerate                        Reason                                                                 ParamText                                          
+    ___________________    _    ___________    __________    __________    ____________    __________    __________    __________    ______________________________________________    ____________________________________________________________________________________________
+
+    {'weibull_mix'    }    5         -23681         47372             0        0.99964          47402             0      false       {0×0 char                                    }    {'q1=0.5835, scale1=369.2, shape1=0.4996, q2=0.4165, scale2=594.8, shape2=1.253'           }
+    {'hyperexp K=3'   }    5         -23689         47389        17.265     0.00017815          47419        17.265      false       {0×0 char                                    }    {'tau=[8.913 468.4 2356], q=[0.08749 0.7818 0.1307]'                                       }
+    {'hyper_erlang'   }    5         -23689         47389        17.265     0.00017815          47419        17.265      false       {0×0 char                                    }    {'rate1_m1=0.0004244, rate2_m1=0.002135, rate3_m1=0.1122, q1=0.1321, q2=0.7888, q3=0.07907'}
+    {'weibull'        }    2         -23735         47474        102.88     4.5755e-23          47487        84.656      false       {0×0 char                                    }    {'scale=495.4, shape=0.6646'                                                               }
+    {'exp_weibull'    }    3         -23735         47476        104.88     1.6822e-23          47495        92.732      false       {0×0 char                                    }    {'lambda=492.8, k=0.6632, alpha=1.004'                                                     }
+    {'powerlaw_cutoff'}    2         -23766         47536        164.47     1.9272e-36          47548        146.25      false       {0×0 char                                    }    {'alpha=0.4995, cutoff=1309'                                                               }
+    {'gamma'          }    2         -23766         47536        164.47     1.9272e-36          47548        146.25      false       {0×0 char                                    }    {'shape=0.5005, scale=1309'                                                                }
+    {'hyperexp K=2'   }    3         -23870         47746        374.07     5.9204e-82          47764        361.92      false       {0×0 char                                    }    {'tau=[357.8 1841], q=[0.7861 0.2139]'                                                     }
+    {'hyperexp K=1'   }    1         -24235         48472        1100.5    1.0626e-239          48478        1076.2      false       {0×0 char                                    }    {'tau=[675], q=[1]'                                                                        }
+    {'erlang'         }    2         -24235         48474        1102.5    3.9042e-240          48486        1084.3      false       {0×0 char                                    }    {'shape=1, scale=675'                                                                      }
+    {'powerlaw'       }    1         -26258         52518        5146.6              0          52524        5122.3      false       {0×0 char                                    }    {'alpha=0.1836'                                                                            }
+    {'chisquared'     }    1    -5.2803e+05    1.0561e+06    1.0087e+06              0     1.0561e+06    1.0087e+06      false       {0×0 char                                    }    {'nu=197.5'                                                                                }
+    {'hyperexp K=4'   }    7         -23674         47362        -9.917              0          47404        2.2242      true        {'component at the MaxRate ceiling (tau = 1)'}    {'tau=[1 18.82 488.2 2441], q=[0.02018 0.08621 0.7722 0.1214]'                             }
+    {'hyperexp K=5'   }    9         -23672         47363       -8.8357              0          47417        15.442      true        {'component at the MaxRate ceiling (tau = 1)'}    {'tau=[1 10.34 40.53 498.1 2483], q=[0.01834 0.04553 0.05291 0.7661 0.1171]'               }
+
+R.Selected: (none passed the fit test)
+    {'weibull_mix: ranked 1, G=48.64 p=0.1386 -- rejected at alpha=0.05'        }
+    {'hyperexp K=3: ranked 2, G=69.24 p=0.002024 -- rejected at alpha=0.05'     }
+    {'hyper_erlang: ranked 3, G=69.24 p=0.002024 -- rejected at alpha=0.05'     }
+    {'weibull: ranked 4, G=147.99 p=1.33e-14 -- rejected at alpha=0.05'         }
+    {'exp_weibull: ranked 5, G=148.11 p=1.273e-14 -- rejected at alpha=0.05'    }
+    {'powerlaw_cutoff: ranked 6, G=168.93 p=4.209e-18 -- rejected at alpha=0.05'}
+    {'gamma: ranked 7, G=168.93 p=4.208e-18 -- rejected at alpha=0.05'          }
+    {'hyperexp K=2: ranked 8, G=412.18 p=8.004e-64 -- rejected at alpha=0.05'   }
+    {'hyperexp K=1: ranked 9, G=892.77 p=1.105e-162 -- rejected at alpha=0.05'  }
+    {'erlang: ranked 10, G=892.77 p=1.105e-162 -- rejected at alpha=0.05'       }
+    {'powerlaw: ranked 11, G=4933.07 p=0 -- rejected at alpha=0.05'             }
+    {'chisquared: ranked 12, G=19217.29 p=0 -- rejected at alpha=0.05'          }
+    {'hyperexp K=4: skipped, component at the MaxRate ceiling (tau = 1)'        }
+    {'hyperexp K=5: skipped, component at the MaxRate ceiling (tau = 1)'        }
+
+                  G: 48.6387
+              nBins: 40
+            dfLower: 34
+            dfUpper: 39
+             pLower: 0.0496
+             pUpper: 0.1386
+          Ambiguous: 1
+         pBootstrap: 0.0500
+                  B: 199
+             Passed: 0
+              Basis: 'bootstrap'
+              Alpha: 0.0500
+           Observed: [63 93 83 81 74 82 83 84 81 81 80 82 79 82 79 81 75 86 81 79 83 80 79 80 82 82 80 82 80 80 81 80 82 79 82 81 80 81 80 82]
+           Expected: [41.1576 100.6746 82.4640 86.7627 79.4581 98.3127 77.0066 103.8378 60.3956 81.0109 92.6499 89.4988 83.2818 81.8388 77.1937 … ] (1×40 double)
+              Edges: [2 3 7 12 19 27 39 50 67 78 94 114 135 156 178 200 222 244 268 294 325 357 388 416 448 497 537 591 652 711 776 851 923 1034 1150 … ] (1×41 double)
+    ProbabilityMass: 1.0000
+            GoFBins: 40
+     GoFMinExpected: 5
+
+[secondary, descriptive] wake bouts starting in light: n 1961, median 368 s, RiseNullP(16 bins, pooled null) 0.8210
+[secondary, descriptive] wake bouts starting in dark: n 1264, median 273.5 s, RiseNullP(16 bins, pooled null) 0.2410
+
+================ SLEEP bouts: n = 3241, xmin = 300 s, dt = 1 s, median 984 s, max 27055 s
+hazard null: hyperexp K=3 (best identified hyperexponential by AICc)
+
+-- sleep hazard, 16 bins: RiseNullP = 0.4780 (NullDropped 0), RiseRatio 1.196, trough at 1.01e+04 s, peak at 1.338e+04 s
+     center_s   atrisk  events     hazard      lower      upper       null
+        344.1     3241     494  1.705e-03  1.560e-03  1.862e-03  1.699e-03
+          456     2747     393  1.197e-03  1.084e-03  1.321e-03  1.233e-03
+        604.5     2354     350  9.413e-04  8.473e-04  1.045e-03  9.130e-04
+        801.1     2004     311  7.462e-04  6.673e-04  8.335e-04  7.495e-04
+         1061     1693     314  6.838e-04  6.118e-04  7.634e-04  6.861e-04
+         1407     1379     302  6.211e-04  5.543e-04  6.948e-04  6.608e-04
+         1865     1077     306  6.354e-04  5.673e-04  7.104e-04  6.396e-04
+         2470      771     285  6.611e-04  5.873e-04  7.421e-04  6.097e-04
+         3274      486     195  5.545e-04  4.801e-04  6.373e-04  5.642e-04
+         4339      291     134  5.033e-04  4.223e-04  5.951e-04  4.981e-04
+         5750      157      70  3.635e-04  2.848e-04  4.571e-04  4.146e-04
+         7620       87      51  4.098e-04  3.048e-04  5.349e-04  3.340e-04
+     1.01e+04       36      18  2.430e-04  1.482e-04  3.733e-04  2.824e-04
+    1.338e+04       18      12  2.906e-04  1.522e-04  4.802e-04  2.619e-04
+
+-- sleep hazard, 20 bins: RiseNullP = 0.8790 (NullDropped 0), RiseRatio 0.933, trough at 9818 s, peak at 1.23e+04 s
+     center_s   atrisk  events     hazard      lower      upper       null
+        334.9     3241     405  1.756e-03  1.593e-03  1.936e-03  1.753e-03
+        419.4     2836     337  1.346e-03  1.209e-03  1.497e-03  1.360e-03
+        525.1     2499     289  1.033e-03  9.199e-04  1.158e-03  1.052e-03
+        657.9     2210     257  8.353e-04  7.389e-04  9.435e-04  8.486e-04
+        823.8     1953     260  7.681e-04  6.798e-04  8.669e-04  7.392e-04
+         1032     1693     253  6.947e-04  6.138e-04  7.853e-04  6.896e-04
+         1293     1440     233  6.045e-04  5.312e-04  6.868e-04  6.670e-04
+         1620     1207     273  7.006e-04  6.216e-04  7.883e-04  6.510e-04
+         2029      934     224  5.987e-04  5.245e-04  6.819e-04  6.323e-04
+         2541      710     224  6.615e-04  5.791e-04  7.534e-04  6.065e-04
+         3183      486     162  5.639e-04  4.820e-04  6.568e-04  5.704e-04
+         3988      324     117  4.978e-04  4.135e-04  5.953e-04  5.211e-04
+         4995      207      90  5.063e-04  4.086e-04  6.202e-04  4.586e-04
+         6257      117      41  3.053e-04  2.227e-04  4.108e-04  3.893e-04
+         7838       76      40  4.224e-04  3.036e-04  5.691e-04  3.273e-04
+         9818       36      17  2.884e-04  1.739e-04  4.486e-04  2.857e-04
+     1.23e+04       19      10  2.691e-04  1.373e-04  4.671e-04  2.655e-04
+
+>> SLEEP hazard rise: NOT SUPPORTED (RiseNullP >= 0.05 at both)
+
+-- sleep model comparison (read in this order):
+R.Skipped:
+           Model           k      LogLik          AICc         dAICc       AkaikeWeight       BIC           dBIC       Degenerate                                              Reason                                                                                         ParamText                                          
+    ___________________    _    ___________    __________    __________    ____________    __________    __________    __________    ___________________________________________________________________________________________    _____________________________________________________________________________________________
+
+    {'hyper_erlang'   }    5         -26279         52569             0         0.5138          52599             0      false       {0×0 char                                                                                 }    {'rate1_m1=0.0002591, rate2_m1=0.000765, rate3_m2=0.009384, q1=0.1007, q2=0.7034, q3=0.1959'}
+    {'hyperexp K=3'   }    5         -26279         52569       0.11307        0.48556          52599       0.11307      false       {0×0 char                                                                                 }    {'tau=[142.4 1321 3900], q=[0.2024 0.7004 0.09722]'                                         }
+    {'weibull_mix'    }    5         -26286         52582         13.36     0.00064513          52612         13.36      false       {0×0 char                                                                                 }    {'q1=0.1171, scale1=241.7, shape1=1.77, q2=0.8829, scale2=980.8, shape2=0.7184'             }
+    {'gamma'          }    2         -26307         52618        49.912     7.4581e-12          52631        31.676      false       {0×0 char                                                                                 }    {'shape=3.911e-16, scale=3492'                                                              }
+    {'powerlaw_cutoff'}    2         -26307         52618        49.912     7.4581e-12          52631        31.676      false       {0×0 char                                                                                 }    {'alpha=1, cutoff=3492'                                                                     }
+    {'exp_weibull'    }    3         -26307         52620        51.676     3.0869e-12          52638         39.52      false       {0×0 char                                                                                 }    {'lambda=1748, k=0.8497, alpha=1.072e-11'                                                   }
+    {'hyperexp K=2'   }    3         -26313         52633        64.205     5.8742e-15          52651        52.048      false       {0×0 char                                                                                 }    {'tau=[193.6 1765], q=[0.2751 0.7249]'                                                      }
+    {'weibull'        }    2         -26317         52639         70.25     2.8594e-16          52651        52.014      false       {0×0 char                                                                                 }    {'scale=472.1, shape=0.551'                                                                 }
+    {'hyperexp K=1'   }    1         -26560         53123        553.98    2.6085e-121          53129        529.66      false       {0×0 char                                                                                 }    {'tau=[1333], q=[1]'                                                                        }
+    {'erlang'         }    2         -26560         53125        555.98    9.5842e-122          53137        537.74      false       {0×0 char                                                                                 }    {'shape=1, scale=1333'                                                                      }
+    {'powerlaw'       }    1         -26630         53263        694.26    8.9932e-152          53269        669.94      false       {0×0 char                                                                                 }    {'alpha=0.7849'                                                                             }
+    {'chisquared'     }    1    -6.1854e+05    1.2371e+06    1.1845e+06              0     1.2371e+06    1.1845e+06      false       {0×0 char                                                                                 }    {'nu=896.4'                                                                                 }
+    {'hyperexp K=4'   }    7         -26279         52573        4.1292              0          52615         16.28      true        {'component with expected observed count 0.00 < 5; dead component (no logL gain over K-1)'}    {'tau=[142.4 1321 1406 3900], q=[0.2024 0.7004 2.99e-10 0.09722]'                           }
+    {'hyperexp K=5'   }    9         -26279         52577        8.1502              0          52631        32.448      true        {'duplicate/collapsed time constants; dead component (no logL gain over K-1)'             }    {'tau=[142.4 1321 1321 1321 3900], q=[0.2024 0.03215 0.005352 0.6629 0.09722]'              }
+
+R.Selected: hyper_erlang
+    {'hyper_erlang: ranked 1, G=32.70 p=0.7513 -- accepted'}
+
+                  nNonFinite: 0
+                  nBelowXmin: 0
+                     nAtXmin: 4
+           XminEqualsDataMin: 1
+                LooksGridded: 1
+                 GridSpacing: 1
+                GridMismatch: 0
+               nDistinctData: 1861
+             nDistinctOnGrid: 1861
+                 LocationGap: NaN
+             SupportCoverage: NaN
+                TailFraction: 0.5412
+                    DataSpan: 26755
+           LocationSpanRatio: NaN
+                           n: 3241
+               MixtureWeight: 0.1007
+             MixtureMinCount: 326.2228
+    MixtureWeightUntruncated: 0.0588
+                     GuardOK: 1
+              Recommendation: ''
+
+                  G: 32.7044
+              nBins: 40
+            dfLower: 34
+            dfUpper: 39
+             pLower: 0.5311
+             pUpper: 0.7513
+          Ambiguous: 0
+         pBootstrap: NaN
+                  B: 0
+             Passed: 1
+              Basis: 'chi2 at df=B-1-k (conservative bound)'
+              Alpha: 0.0500
+           Observed: [79 80 79 82 82 82 82 80 80 82 79 83 79 84 80 81 80 83 80 82 81 81 81 82 81 81 81 80 82 81 81 81 81 81 80 82 81 81 81 82]
+           Expected: [78.8117 79.8656 85.3102 79.3948 73.9345 81.3079 71.1235 86.8556 94.3368 84.4542 83.6186 81.9911 71.9348 62.0397 91.5097 100.6020 … ] (1×40 double)
+              Edges: [300 313 327 343 359 375 394 412 436 465 494 526 561 595 627 679 743 791 851 917 984 1057 1142 1223 1324 1439 1546 1648 1753 1883 … ] (1×41 double)
+    ProbabilityMass: 1.0000
+            GoFBins: 40
+     GoFMinExpected: 5
+
+[secondary, descriptive] sleep bouts starting in light: n 1970, median 749.5 s, RiseNullP(16 bins, pooled null) 0.0770
+[secondary, descriptive] sleep bouts starting in dark: n 1271, median 1545 s, RiseNullP(16 bins, pooled null) 0.4650
+
+saved beam_hmm\results\o1a\o1a_results.mat
