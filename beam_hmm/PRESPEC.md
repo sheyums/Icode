@@ -795,3 +795,39 @@ Analysis   t1c.rotation_test, E = 2 h, model 2, 999 rotations, seeds SeedSequenc
            No test across weeks and no p-value for a trend: survivor bias (the flies alive late are a selected
            subset) and falling n make any trend descriptive only. A5 (no ageing trend survives Holm) is the
            context.
+
+### 2026-11-19  Q1 — is quiet wake (Q) a kind of wake bout? Landmark comparison of wake-bout durations (user go-ahead)
+
+Why: O1-A (ledger d3fa2fd) found wake bouts to be a mixture of time scales with a falling hazard, and no library model
+fits them. The user's Q state (P1: a wake minute with activity below half the fly's own reference) is the first candidate
+for a hidden kind of wake. If Q marks a kind of wake bout, bouts that START in Q should end on a different time scale
+from bouts that start active. Model-free, so no branch assignment from a model that does not fit.
+Design note (stated now): grouping bouts by their WHOLE-bout Q share would use the bout's own future (long bouts hold
+more minutes, short ones give extreme shares). A LANDMARK design avoids it: Q is measured only in the first L seconds,
+and only the time AFTER L is compared.
+
+Data       The O1-A wake bouts (weeks 2-3, 11 flies, fully observed; results/o1a/bouts_weeks2-3.csv) and the 1-s activity
+           they were cut from (o1.py rules). Bouts with duration T >= L are used.
+Q at start Five consecutive 60-s windows from the bout start, [s + 60i, s + 60(i+1)), i = 0..4 (L = 300 s). A window is
+           Q if its share of active seconds is < 0.5 x ref, ref = the P1 reference of that fly-week for the light phase
+           of the window start (median active share of the middle 300 s of wake bouts >= 600 s; an event counts for a
+           phase if its wake start or its sleep onset falls in it). One change from pipeline.sqw_minutes, disclosed:
+           phase from ZT (P1-E stamp) instead of seconds since file start. Fly-week-phases with < 3 reference events:
+           their bouts excluded (count reported). k = number of Q windows (0-5).
+Groups     Q-START: k >= 3; ACTIVE-START: k <= 1; k = 2 reported, not compared.
+Statistic  Residual duration R = T - L (all observed; no censoring). Stratified log-rank Z of Q-START vs ACTIVE-START,
+           strata = fly x start-ZT block (6 blocks of 4 h), exact event times (1-s ties handled by the usual
+           hypergeometric variance).
+Null       Within-stratum permutation of the group labels (Q-START / ACTIVE-START bouts only), 9999 permutations,
+           SeedSequence([12001]); p two-sided = (1 + #{|Z_perm| >= |Z_obs|}) / 10000. Keeps each fly's and each time
+           block's own durations; only the link between start-Q and residual duration is broken.
+Decision   "Q at the start of a wake bout predicts its remaining duration" SUPPORTED iff p < 0.05; direction from the sign
+           of Z and the group medians of R. Either direction counts (shorter: Q as drowsy pre-sleep wake; longer: Q as a
+           stable quiet kind of wake). Not supported: no evidence that Q marks a kind of wake bout at this landmark.
+Sensitivity L = 600 s (ten windows; Q-START k >= 6, ACTIVE-START k <= 2), same seeds; reported, no decision.
+Descriptive Distribution of k; per-group n and median R; per-fly medians and the number of flies with Q-START median R below
+           ACTIVE-START (flies with >= 5 bouts in each group); per-group hazards with BoutHazard (MATLAB, NumBins 16,
+           xmin = 1 s on R + 1), optional.
+Check      Before the real run: the same code on the real bouts with the group labels drawn at random (not from Q) must
+           give a p-value distribution compatible with uniform over 200 draws (KS p > 0.01). If not, the result is not run.
+Language   Python (labconv-style), computed here; a MATLAB port only if this becomes a final analysis.
