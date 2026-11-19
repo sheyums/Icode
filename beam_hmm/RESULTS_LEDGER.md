@@ -546,3 +546,8 @@ median 1545 s).
 Reading: in CS LD neither bout type shows a rising hazard, so neither needs a series (staged) branch; both are mixtures
 of time scales (parallel hidden sub-states chosen at bout start). The per0 DD wake hump does not appear here -- a second
 pilot-vs-per0 DD difference after A2b, again not separable into genotype / LD-DD / cohort without a DD segment.
+Correction (local session, 2026-11-19): the results come from the THIRD run, not the second. Run 1 (b71eaac) stopped in
+BoutHazard's plot (ModelHazard shape); run 2 (dee1b36) stopped at the o1a_run R.Selected print after both verdicts and
+the 4 PNGs, before the .mat; run 3 (6c409fd) completed and is what 9f12f1b holds. Runs 2 and 3 gave identical RiseNullP.
+Sample-size-matched null, for the record: each of the 999 null replicates draws the data's own n from the fitted
+hyperexp K=3 and is re-binned, so RiseNullP is already n-matched (seed 20261119).
