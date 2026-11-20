@@ -1,0 +1,55 @@
+O1-C  beam_hmm/results/o1a/bouts_weeks2-3.csv  (19-Nov-2026 17:28:15)
+sleep ch17 light n  247  LR    60.47  p 0.002  (valid B 499, atom 0.19) | K1 tau   917.8 s | K2 tau   260.3 /  1648.2 s, q 0.53 / 0.47 | p(2 vs 3) 0.14
+sleep ch17 dark  n  153  LR     3.14  p 0.130  (valid B 499, atom 0.19) | K1 tau  2175.4 s | K2 tau     9.5 /  2214.0 s, q 0.02 / 0.98 | p(2 vs 3) NaN
+sleep ch18 light n  259  LR    10.88  p 0.004  (valid B 499, atom 0.20) | K1 tau  1198.3 s | K2 tau   175.8 /  1378.0 s, q 0.15 / 0.85 | p(2 vs 3) 0.566
+sleep ch18 dark  n  171  LR     9.49  p 0.012  (valid B 499, atom 0.22) | K1 tau  1825.8 s | K2 tau    58.3 /  1967.1 s, q 0.07 / 0.93 | p(2 vs 3) 1
+sleep ch19 light n  110  LR    18.20  p 0.002  (valid B 499, atom 0.25) | K1 tau  1056.3 s | K2 tau   278.9 /  1634.3 s, q 0.43 / 0.57 | p(2 vs 3) NaN
+sleep ch19 dark  n   51  LR     0.12  p 0.606  (valid B 499, atom 0.30) | K1 tau  3620.6 s | K2 tau    98.3 /  3666.2 s, q 0.01 / 0.99 | p(2 vs 3) NaN
+sleep ch20 light n  262  LR    12.41  p 0.002  (valid B 499, atom 0.20) | K1 tau  1214.5 s | K2 tau    96.9 /  1348.0 s, q 0.11 / 0.89 | p(2 vs 3) 0.148
+sleep ch20 dark  n  132  LR     0.45  p 0.512  (valid B 499, atom 0.25) | K1 tau  2618.8 s | K2 tau  2416.7 /  5602.2 s, q 0.94 / 0.06 | p(2 vs 3) NaN
+sleep ch21 light n  194  LR    25.44  p 0.002  (valid B 499, atom 0.21) | K1 tau   623.8 s | K2 tau   258.2 /  1101.6 s, q 0.57 / 0.43 | p(2 vs 3) 0.68
+sleep ch21 dark  n  166  LR    36.30  p 0.002  (valid B 499, atom 0.21) | K1 tau  1492.0 s | K2 tau   419.4 /  2544.9 s, q 0.50 / 0.50 | p(2 vs 3) 0.078
+sleep ch22 light n  126  LR    13.67  p 0.002  (valid B 499, atom 0.21) | K1 tau  1036.0 s | K2 tau   149.2 /  1307.9 s, q 0.23 / 0.77 | p(2 vs 3) NaN
+sleep ch22 dark  n  111  LR     0.00  p 1.000  (valid B 499, atom 0.24) | K1 tau  1202.0 s | K2 tau  1202.0 /  1202.0 s, q 0.29 / 0.71 | p(2 vs 3) NaN
+sleep ch23 light n  113  LR    23.09  p 0.002  (valid B 499, atom 0.26) | K1 tau   651.5 s | K2 tau    70.7 /   867.8 s, q 0.27 / 0.73 | p(2 vs 3) NaN
+sleep ch23 dark  n   56  LR     2.88  p 0.134  (valid B 499, atom 0.27) | K1 tau  3244.5 s | K2 tau  2734.8 / 12064.4 s, q 0.95 / 0.05 | p(2 vs 3) NaN
+sleep ch24 light n   99  LR    80.19  p 0.002  (valid B 499, atom 0.24) | K1 tau  1486.7 s | K2 tau   252.0 /  3577.6 s, q 0.63 / 0.37 | p(2 vs 3) NaN
+sleep ch24 dark  n   70  LR     0.44  p 0.518  (valid B 499, atom 0.28) | K1 tau  2475.5 s | K2 tau    61.0 /  2525.9 s, q 0.02 / 0.98 | p(2 vs 3) NaN
+sleep ch26 light n  114  LR    30.36  p 0.002  (valid B 499, atom 0.23) | K1 tau  1397.9 s | K2 tau   206.4 /  2094.8 s, q 0.37 / 0.63 | p(2 vs 3) NaN
+sleep ch26 dark  n   42  untested (< 50 bouts)
+sleep ch28 light n  298  LR    30.12  p 0.002  (valid B 499, atom 0.18) | K1 tau   587.6 s | K2 tau    92.3 /   743.6 s, q 0.24 / 0.76 | p(2 vs 3) 0.618
+sleep ch28 dark  n  227  LR     0.00  p 1.000  (valid B 499, atom 0.18) | K1 tau  1109.4 s | K2 tau   616.0 /  1109.4 s, q 0.00 / 1.00 | p(2 vs 3) NaN
+sleep ch29 light n  148  LR    26.19  p 0.002  (valid B 499, atom 0.24) | K1 tau   511.6 s | K2 tau    79.2 /   705.5 s, q 0.31 / 0.69 | p(2 vs 3) NaN
+sleep ch29 dark  n   92  LR    16.73  p 0.002  (valid B 499, atom 0.23) | K1 tau  1130.4 s | K2 tau   107.3 /  1445.5 s, q 0.24 / 0.76 | p(2 vs 3) NaN
+wake  ch17 light n  246  LR    89.71  p 0.002  (valid B 499, atom 0.17) | K1 tau   736.0 s | K2 tau   296.4 /  1992.8 s, q 0.74 / 0.26 | p(2 vs 3) 0.002
+wake  ch17 dark  n  152  LR    62.20  p 0.002  (valid B 499, atom 0.22) | K1 tau   414.6 s | K2 tau     3.6 /   482.2 s, q 0.14 / 0.86 | p(2 vs 3) 0.002
+wake  ch18 light n  257  LR    20.48  p 0.002  (valid B 499, atom 0.18) | K1 tau   430.2 s | K2 tau     1.3 /   445.6 s, q 0.03 / 0.97 | p(2 vs 3) 0.006
+wake  ch18 dark  n  171  LR    21.86  p 0.002  (valid B 499, atom 0.21) | K1 tau   434.0 s | K2 tau     1.0 /   452.6 s, q 0.04 / 0.96 | p(2 vs 3) 0.188
+wake  ch19 light n  111  LR    14.93  p 0.002  (valid B 499, atom 0.25) | K1 tau   892.3 s | K2 tau     1.0 /   923.4 s, q 0.03 / 0.97 | p(2 vs 3) NaN
+wake  ch19 dark  n   49  untested (< 50 bouts)
+wake  ch20 light n  260  LR    42.18  p 0.002  (valid B 499, atom 0.19) | K1 tau   396.6 s | K2 tau    31.3 /   488.7 s, q 0.20 / 0.80 | p(2 vs 3) 0.004
+wake  ch20 dark  n  132  LR     9.49  p 0.004  (valid B 499, atom 0.24) | K1 tau   409.7 s | K2 tau     7.3 /   437.6 s, q 0.06 / 0.94 | p(2 vs 3) NaN
+wake  ch21 light n  192  LR    50.23  p 0.002  (valid B 499, atom 0.20) | K1 tau  1373.2 s | K2 tau   723.6 /  4214.0 s, q 0.81 / 0.19 | p(2 vs 3) 0.068
+wake  ch21 dark  n  166  LR   116.83  p 0.002  (valid B 499, atom 0.23) | K1 tau  1083.9 s | K2 tau   127.1 /  2052.4 s, q 0.50 / 0.50 | p(2 vs 3) 0.002
+wake  ch22 light n  125  LR    47.14  p 0.002  (valid B 499, atom 0.21) | K1 tau   666.4 s | K2 tau    18.1 /   829.1 s, q 0.20 / 0.80 | p(2 vs 3) NaN
+wake  ch22 dark  n  111  LR     7.33  p 0.004  (valid B 499, atom 0.24) | K1 tau   494.7 s | K2 tau    37.5 /   559.6 s, q 0.12 / 0.88 | p(2 vs 3) NaN
+wake  ch23 light n  113  LR    28.17  p 0.002  (valid B 499, atom 0.17) | K1 tau  1078.6 s | K2 tau    12.0 /  1216.5 s, q 0.11 / 0.89 | p(2 vs 3) NaN
+wake  ch23 dark  n   55  LR    29.59  p 0.002  (valid B 499, atom 0.29) | K1 tau   557.7 s | K2 tau   234.7 /  2165.0 s, q 0.83 / 0.17 | p(2 vs 3) NaN
+wake  ch24 light n  100  LR    22.63  p 0.002  (valid B 499, atom 0.24) | K1 tau   760.1 s | K2 tau    68.3 /   999.7 s, q 0.26 / 0.74 | p(2 vs 3) NaN
+wake  ch24 dark  n   68  LR    13.70  p 0.002  (valid B 499, atom 0.25) | K1 tau   354.2 s | K2 tau    41.5 /   476.9 s, q 0.28 / 0.72 | p(2 vs 3) NaN
+wake  ch26 light n  114  LR    41.05  p 0.002  (valid B 499, atom 0.26) | K1 tau   505.3 s | K2 tau   282.6 /  2196.2 s, q 0.88 / 0.12 | p(2 vs 3) NaN
+wake  ch26 dark  n   41  untested (< 50 bouts)
+wake  ch28 light n  296  LR    53.44  p 0.002  (valid B 499, atom 0.19) | K1 tau   769.9 s | K2 tau    35.5 /   912.9 s, q 0.16 / 0.84 | p(2 vs 3) 0.002
+wake  ch28 dark  n  227  LR    23.59  p 0.002  (valid B 499, atom 0.25) | K1 tau   558.3 s | K2 tau     9.3 /   604.9 s, q 0.08 / 0.92 | p(2 vs 3) 0.06
+wake  ch29 light n  147  LR    10.44  p 0.002  (valid B 499, atom 0.25) | K1 tau   865.4 s | K2 tau   523.4 /  1665.2 s, q 0.70 / 0.30 | p(2 vs 3) NaN
+wake  ch29 dark  n   92  LR    35.66  p 0.002  (valid B 499, atom 0.23) | K1 tau   983.8 s | K2 tau   495.6 /  3889.8 s, q 0.86 / 0.14 | p(2 vs 3) NaN
+
+untested units (< 50 bouts): 3
+>> SLEEP: 14 of 21 fly-phases reject one time scale (p < 0.05); binomial p (vs 0.05) = 5.08e-14 -> within-fly-phase multiple time scales SUPPORTED
+   light: 11 of 11 reject; K2 tau1 median 175.8 s (range 70.7-278.9), tau2 median 1348.0 s (range 705.5-3577.6), q1 median 0.31
+   dark: 3 of 10 reject; K2 tau1 median 263.3 s (range 9.5-2734.8), tau2 median 2369.9 s (range 1109.4-12064.4), q1 median 0.15
+>> WAKE: 20 of 20 fly-phases reject one time scale (p < 0.05); binomial p (vs 0.05) = 9.54e-27 -> within-fly-phase multiple time scales SUPPORTED
+   light: 11 of 11 reject; K2 tau1 median 35.5 s (range 1.0-723.6), tau2 median 999.7 s (range 445.6-4214.0), q1 median 0.20
+   dark: 9 of 9 reject; K2 tau1 median 37.5 s (range 1.0-495.6), tau2 median 559.6 s (range 437.6-3889.8), q1 median 0.14
+
+saved beam_hmm\results\o1c\o1c_results.mat
