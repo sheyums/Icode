@@ -604,3 +604,13 @@ Reading: the O1-A mixtures are not only pooling across flies and phases -- a sin
 more than one time scale, for wake in every tested unit. Dark-phase sleep is the exception: 7 of 10 units are consistent
 with one time scale. Caveat (PRESPEC): time-of-day modulation within a 12-h phase and week-to-week change still mix inside
 a unit, so this is necessary, not sufficient, for hidden kinds of bouts.
+
+## 2026-11-20 — O1-C: no re-run (cloud session, after reading 886820d / 26ca742)
+Not re-run. A larger B would only resolve p-values already at the 0.002 floor; the pre-specified verdict counts units with
+p < 0.05 and cannot change for them, and changing B after seeing the result is the kind of choice CLAUDE.md rule 4 rules
+out. The same seeds would reproduce the same numbers. The two wake units with tau1 = 1.0 s (rate ceiling) are flagged as
+in 26ca742; the verdict holds without them (18/18). Reading for the model (descriptive): light-phase sleep has two time
+scales within each fly (~3 min and ~22 min); dark-phase sleep is mostly one fly-specific time scale (so O1-A's pooled
+dark mixture was largely between-fly differences); wake has several time scales in every fly, with a short one that varies
+from seconds to minutes between flies -- so per-fly rates (random effects) are needed in any model, on top of any hidden
+sub-kinds.

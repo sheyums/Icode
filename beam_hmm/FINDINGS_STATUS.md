@@ -40,6 +40,8 @@ these and is labelled DESCRIPTIVE.
 | Per-fly median bout lengths (4-fold spread between flies; light vs dark within flies) | DESCRIPTIVE (post hoc) | | 2026-11-19 correction |
 | O1-A (b): POOLED sleep bouts = three time scales (~2 min, ~22 min, ~65 min) | DESCRIPTIVE | pooled over flies and phases: may be heterogeneity (O1-C tests within flies) | 2026-11-19 O1-A + correction |
 | O1-A secondary: light vs dark bout hazards | DESCRIPTIVE | censoring caveat | 2026-11-19 O1-A |
+| O1-C: more than one time scale WITHIN a fly and light phase | PRELIMINARY | supported for wake (20/20 units) and sleep (14/21: light 11/11, dark only 3/10) | 2026-11-19 O1-C |
+| O1-C: dark-phase sleep mostly one time scale per fly (fly-specific rate); wake short time scale varies seconds-minutes across flies; wake often needs 3 (6/9 large units) | DESCRIPTIVE | 30/41 p at the B = 499 floor; 2 wake units with a 1-s component at the rate ceiling | 2026-11-19 O1-C |
 | Q1: Q at the start of a wake bout predicts its remaining duration | PRELIMINARY | not supported (p 0.13; L = 600 s: 0.18) | 2026-11-19 Q1 |
 | Q1 direction (Q-start bouts shorter in 9/11 flies) | DESCRIPTIVE | | 2026-11-19 Q1 |
 | Sleep 726-1229 min/day; E0 / P1 week-1 exploration | DESCRIPTIVE | | 2026-11-12, 2026-11-14 |
