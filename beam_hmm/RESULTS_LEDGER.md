@@ -575,3 +575,32 @@ extra exponential components. What stands from O1-A: the pooled wake hazard does
 pooled wake bouts. Whether time scales exist WITHIN a fly is O1-C.
 Post hoc, descriptive (results/o1a/bouts_weeks2-3.csv): median sleep bout per fly 9-19 min in light, 15-62 min in dark;
 dark/light within a fly 1.3-4.6x. Median wake bout per fly 4-12 min in light, 1.6-7 min in dark.
+
+## 2026-11-19 — O1-C RESULTS: within-fly-phase time scales, CS LD pilot weeks 2-3 (MATLAB R2026a on the user's PC,
+## o1c_run at 9200904, no code changes; outputs pushed as 886820d; PRESPEC O1-C 82c7239): SUPPORTED for both — PRELIMINARY
+Narrowest block: ONE unit = one fly x start phase (light ZT 0-12 / dark ZT 12-24) x bout type, bouts pooled over weeks 2-3
+(O1-A bouts, results/o1a/bouts_weeks2-3.csv). 44 units, 3 untested (< 50 bouts: sleep ch26 dark 42, wake ch19 dark 49,
+wake ch26 dark 41). Null: per unit, a parametric bootstrap of one exponential at the unit's own n (B 499, all 499 valid in
+every tested unit; seed 20261120 + unit), so each p is sample-size matched; the verdict is a one-sided binomial of the
+rejection count against rate 0.05. No warnings or errors; run 17:28-20:14.
+>> SLEEP: 14 of 21 reject one time scale (p < 0.05); binomial p 5.08e-14 -> SUPPORTED.
+   light 11/11 reject: K2 tau1 median 176 s (71-279), tau2 1348 s (705-3578), q1 median 0.31.
+   dark 3/10 reject (ch18 p 0.012, ch21 0.002, ch29 0.002): tau1 median 263 s (9.5-2735), tau2 2370 s (1109-12064),
+   q1 0.15. Two dark units collapse to one time scale (LR 0: ch22 tau1 = tau2; ch28 q1 ~ 0).
+>> WAKE: 20 of 20 reject; binomial p 9.54e-27 -> SUPPORTED.
+   light 11/11: tau1 median 35.5 s (1.0-724), tau2 1000 s (446-4214), q1 0.20.
+   dark 9/9: tau1 median 37.5 s (1.0-496), tau2 560 s (438-3890), q1 0.14.
+Descriptive:
+- 30 of the 41 tested units sit at the bootstrap p floor 0.002 (= 1/(B+1)); they cannot be ranked against each other.
+- AtomAtZero (null replicates with LR = 0) 0.17-0.30.
+- Two wake units put the short component at the 1-s floor (tau1 = 1.0 s, q1 3-4%): ch18 dark (n 171) and ch19 light
+  (n 111). Likely the same rate-ceiling edge as O1-A's dropped wake fits. Discounting both, wake is still 18/18.
+- Do the time scales line up across flies? Sleep in light: roughly (tau1 71-279 s, tau2 0.7-3.6 ks). Wake: no -- in some
+  units the "short" component is seconds (ch17 dark 3.6 s, ch20 dark 7.3 s), in others hundreds of seconds (ch21 light
+  724 s, ch26 light 283 s, ch29 dark 496 s).
+- K = 2 vs 3 (units >= 150 bouts with p < 0.05; reported only): sleep 0 of 7 reject (p 0.078-1); wake 6 of 9 reject
+  (ch17 light and dark, ch18 light, ch20 light, ch21 dark, ch28 light; p 0.002-0.006).
+Reading: the O1-A mixtures are not only pooling across flies and phases -- a single fly in a single phase usually has
+more than one time scale, for wake in every tested unit. Dark-phase sleep is the exception: 7 of 10 units are consistent
+with one time scale. Caveat (PRESPEC): time-of-day modulation within a 12-h phase and week-to-week change still mix inside
+a unit, so this is necessary, not sufficient, for hidden kinds of bouts.
