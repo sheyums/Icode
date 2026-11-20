@@ -614,3 +614,21 @@ scales within each fly (~3 min and ~22 min); dark-phase sleep is mostly one fly-
 dark mixture was largely between-fly differences); wake has several time scales in every fly, with a short one that varies
 from seconds to minutes between flies -- so per-fly rates (random effects) are needed in any model, on top of any hidden
 sub-kinds.
+
+## 2026-11-20 — P2 (code d5c42cb p2.py; PRESPEC P2 26ad23b): SUPPORTED — PRELIMINARY, CS LD pilot weeks 2-3, 11 flies
+Check first (random labels, 200 draws x 999 permutations): KS p 0.059 (> 0.01), 5.0% of p < 0.05 -> calibrated; real run done.
+PRIMARY sleep bouts by place (END 0-2/14-16 vs MIDDLE 3-13), strata fly x 4-h start-ZT block: n 3241 (END 1457, MIDDLE
+1784; 44 at 0); median END 1154 s vs MIDDLE 880 s; stratified log-rank Z -10.48 (END bouts end LESS often = longer),
+permutation p 0.0001 (the floor; null |Z| 95% 1.97); END longer in 10/11 flies -> SUPPORTED.
+Secondary (descriptive): light n 1970, END 940 s vs MIDDLE 608 s, Z -12.51, p 0.0001, 11/11 flies; dark n 1271, END 1811 s
+vs MIDDLE 1428 s, Z -0.82, p 0.42, 9/11 flies. Wake bouts by place of the preceding sleep: END 304 s vs MIDDLE 345 s,
+Z 1.80, p 0.071, 6/11 flies.
+POST HOC decomposition (descriptive, not tested; after the result): the effect is at the BEAM-16 end. Light: beam-1 end
+(0-2) n 62, median 508 s; beam-16 end (14-16) n 926, 1006 s; middle 608 s; by position 13: 822, 14: 869, 16: 1074 s.
+Dark: beam-1 end n 37, 1103 s; beam-16 end n 432, 1916 s; middle 1428 s. Almost all END sleep is at the beam-16 end.
+Three readings that the pilot cannot separate: (i) the food sits at the beam-16 end in most tubes (then: long naps near
+food, the user's prior); (ii) a plug-end preference (if most tubes were oriented correctly, food at beam 1, consistent
+with frequent visits to 0 in most fly-weeks); (iii) DETECTION: beam 15 is dead, so a fly between beams 14 and 16 can
+move over a wider stretch without a reading change, inflating stillness there. Against (iii) as the whole story:
+position 13 (unaffected by beam 15) is also elevated (822 s vs ~540-650 s mid-tube in light). For the repeat experiment:
+record orientation, and check beam 15 in the new monitors.

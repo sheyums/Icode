@@ -1,0 +1,382 @@
+{
+ "primary": {
+  "kind": "sleep",
+  "phase": "both",
+  "n": 3241,
+  "n_end": 1457,
+  "n_mid": 1784,
+  "n_beyond1": 44,
+  "median_end": 1154.0,
+  "median_mid": 880.0,
+  "Z": -10.481689249308095,
+  "p": 0.0001,
+  "nperm": 9999,
+  "null_absZ_95": 1.9716843387290313,
+  "per_fly": {
+   "17": {
+    "n_end": 106,
+    "n_mid": 294,
+    "share_end": 0.265,
+    "med_end": 1247.0,
+    "med_mid": 897.5
+   },
+   "18": {
+    "n_end": 204,
+    "n_mid": 226,
+    "share_end": 0.4744186046511628,
+    "med_end": 1423.5,
+    "med_mid": 1265.0
+   },
+   "19": {
+    "n_end": 84,
+    "n_mid": 77,
+    "share_end": 0.5217391304347826,
+    "med_end": 1864.0,
+    "med_mid": 887.0
+   },
+   "20": {
+    "n_end": 227,
+    "n_mid": 167,
+    "share_end": 0.5761421319796954,
+    "med_end": 1459.0,
+    "med_mid": 1321.0
+   },
+   "21": {
+    "n_end": 225,
+    "n_mid": 135,
+    "share_end": 0.625,
+    "med_end": 784.0,
+    "med_mid": 672.0
+   },
+   "22": {
+    "n_end": 108,
+    "n_mid": 129,
+    "share_end": 0.45569620253164556,
+    "med_end": 1609.0,
+    "med_mid": 793.0
+   },
+   "23": {
+    "n_end": 134,
+    "n_mid": 35,
+    "share_end": 0.7928994082840237,
+    "med_end": 1180.5,
+    "med_mid": 471.0
+   },
+   "24": {
+    "n_end": 36,
+    "n_mid": 133,
+    "share_end": 0.21301775147928995,
+    "med_end": 1543.0,
+    "med_mid": 1027.0
+   },
+   "26": {
+    "n_end": 103,
+    "n_mid": 53,
+    "share_end": 0.6602564102564102,
+    "med_end": 1434.0,
+    "med_mid": 1443.0
+   },
+   "28": {
+    "n_end": 120,
+    "n_mid": 405,
+    "share_end": 0.22857142857142856,
+    "med_end": 1000.0,
+    "med_mid": 822.0
+   },
+   "29": {
+    "n_end": 110,
+    "n_mid": 130,
+    "share_end": 0.4583333333333333,
+    "med_end": 677.0,
+    "med_mid": 599.0
+   }
+  },
+  "flies_end_longer": 10,
+  "flies_compared": 11
+ },
+ "sleep_light": {
+  "kind": "sleep",
+  "phase": "light",
+  "n": 1970,
+  "n_end": 988,
+  "n_mid": 982,
+  "n_beyond1": 16,
+  "median_end": 940.0,
+  "median_mid": 607.5,
+  "Z": -12.512129787689208,
+  "p": 0.0001,
+  "nperm": 9999,
+  "null_absZ_95": 1.9514840467536072,
+  "per_fly": {
+   "17": {
+    "n_end": 78,
+    "n_mid": 169,
+    "share_end": 0.3157894736842105,
+    "med_end": 1045.5,
+    "med_mid": 600.0
+   },
+   "18": {
+    "n_end": 134,
+    "n_mid": 125,
+    "share_end": 0.5173745173745173,
+    "med_end": 1378.5,
+    "med_mid": 821.0
+   },
+   "19": {
+    "n_end": 53,
+    "n_mid": 57,
+    "share_end": 0.4818181818181818,
+    "med_end": 1052.0,
+    "med_mid": 578.0
+   },
+   "20": {
+    "n_end": 165,
+    "n_mid": 97,
+    "share_end": 0.6297709923664122,
+    "med_end": 1199.0,
+    "med_mid": 984.0
+   },
+   "21": {
+    "n_end": 139,
+    "n_mid": 55,
+    "share_end": 0.7164948453608248,
+    "med_end": 690.0,
+    "med_mid": 519.0
+   },
+   "22": {
+    "n_end": 68,
+    "n_mid": 58,
+    "share_end": 0.5396825396825397,
+    "med_end": 1481.5,
+    "med_mid": 614.5
+   },
+   "23": {
+    "n_end": 88,
+    "n_mid": 25,
+    "share_end": 0.7787610619469026,
+    "med_end": 821.0,
+    "med_mid": 441.0
+   },
+   "24": {
+    "n_end": 24,
+    "n_mid": 75,
+    "share_end": 0.24242424242424243,
+    "med_end": 1096.0,
+    "med_mid": 548.0
+   },
+   "26": {
+    "n_end": 81,
+    "n_mid": 33,
+    "share_end": 0.7105263157894737,
+    "med_end": 1007.0,
+    "med_mid": 582.0
+   },
+   "28": {
+    "n_end": 82,
+    "n_mid": 216,
+    "share_end": 0.2751677852348993,
+    "med_end": 945.5,
+    "med_mid": 565.5
+   },
+   "29": {
+    "n_end": 76,
+    "n_mid": 72,
+    "share_end": 0.5135135135135135,
+    "med_end": 597.0,
+    "med_mid": 526.5
+   }
+  },
+  "flies_end_longer": 11,
+  "flies_compared": 11
+ },
+ "sleep_dark": {
+  "kind": "sleep",
+  "phase": "dark",
+  "n": 1271,
+  "n_end": 469,
+  "n_mid": 802,
+  "n_beyond1": 28,
+  "median_end": 1811.0,
+  "median_mid": 1428.5,
+  "Z": -0.8196460579630328,
+  "p": 0.4196,
+  "nperm": 9999,
+  "null_absZ_95": 2.0004998826493257,
+  "per_fly": {
+   "17": {
+    "n_end": 28,
+    "n_mid": 125,
+    "share_end": 0.1830065359477124,
+    "med_end": 2260.0,
+    "med_mid": 1885.0
+   },
+   "18": {
+    "n_end": 70,
+    "n_mid": 101,
+    "share_end": 0.4093567251461988,
+    "med_end": 1525.5,
+    "med_mid": 1822.0
+   },
+   "19": {
+    "n_end": 31,
+    "n_mid": 20,
+    "share_end": 0.6078431372549019,
+    "med_end": 3987.0,
+    "med_mid": 2923.0
+   },
+   "20": {
+    "n_end": 62,
+    "n_mid": 70,
+    "share_end": 0.4696969696969697,
+    "med_end": 2469.0,
+    "med_mid": 2320.5
+   },
+   "21": {
+    "n_end": 86,
+    "n_mid": 80,
+    "share_end": 0.5180722891566265,
+    "med_end": 1205.0,
+    "med_mid": 947.5
+   },
+   "22": {
+    "n_end": 40,
+    "n_mid": 71,
+    "share_end": 0.36036036036036034,
+    "med_end": 1852.5,
+    "med_mid": 859.0
+   },
+   "23": {
+    "n_end": 46,
+    "n_mid": 10,
+    "share_end": 0.8214285714285714,
+    "med_end": 2146.0,
+    "med_mid": 2294.5
+   },
+   "24": {
+    "n_end": 12,
+    "n_mid": 58,
+    "share_end": 0.17142857142857143,
+    "med_end": 2522.0,
+    "med_mid": 2196.5
+   },
+   "26": {
+    "n_end": 22,
+    "n_mid": 20,
+    "share_end": 0.5238095238095238,
+    "med_end": 3790.0,
+    "med_mid": 3543.5
+   },
+   "28": {
+    "n_end": 38,
+    "n_mid": 189,
+    "share_end": 0.16740088105726872,
+    "med_end": 1179.0,
+    "med_mid": 1161.0
+   },
+   "29": {
+    "n_end": 34,
+    "n_mid": 58,
+    "share_end": 0.3695652173913043,
+    "med_end": 1013.0,
+    "med_mid": 808.5
+   }
+  },
+  "flies_end_longer": 9,
+  "flies_compared": 11
+ },
+ "wake_by_preceding_place": {
+  "kind": "wake",
+  "phase": "both",
+  "n": 3225,
+  "n_end": 1450,
+  "n_mid": 1775,
+  "n_beyond1": 43,
+  "median_end": 304.0,
+  "median_mid": 345.0,
+  "Z": 1.795585820102976,
+  "p": 0.0705,
+  "nperm": 9999,
+  "null_absZ_95": 1.9634150947560571,
+  "per_fly": {
+   "17": {
+    "n_end": 105,
+    "n_mid": 293,
+    "share_end": 0.2638190954773869,
+    "med_end": 168.0,
+    "med_mid": 280.0
+   },
+   "18": {
+    "n_end": 203,
+    "n_mid": 225,
+    "share_end": 0.4742990654205608,
+    "med_end": 290.0,
+    "med_mid": 252.0
+   },
+   "19": {
+    "n_end": 84,
+    "n_mid": 76,
+    "share_end": 0.525,
+    "med_end": 544.0,
+    "med_mid": 441.0
+   },
+   "20": {
+    "n_end": 225,
+    "n_mid": 167,
+    "share_end": 0.5739795918367347,
+    "med_end": 239.0,
+    "med_mid": 225.0
+   },
+   "21": {
+    "n_end": 223,
+    "n_mid": 135,
+    "share_end": 0.6229050279329609,
+    "med_end": 446.0,
+    "med_mid": 578.0
+   },
+   "22": {
+    "n_end": 108,
+    "n_mid": 128,
+    "share_end": 0.4576271186440678,
+    "med_end": 277.5,
+    "med_mid": 369.5
+   },
+   "23": {
+    "n_end": 134,
+    "n_mid": 34,
+    "share_end": 0.7976190476190477,
+    "med_end": 455.0,
+    "med_mid": 467.0
+   },
+   "24": {
+    "n_end": 36,
+    "n_mid": 132,
+    "share_end": 0.21428571428571427,
+    "med_end": 484.0,
+    "med_mid": 265.0
+   },
+   "26": {
+    "n_end": 102,
+    "n_mid": 53,
+    "share_end": 0.6580645161290323,
+    "med_end": 224.5,
+    "med_mid": 150.0
+   },
+   "28": {
+    "n_end": 120,
+    "n_mid": 403,
+    "share_end": 0.2294455066921606,
+    "med_end": 214.5,
+    "med_mid": 441.0
+   },
+   "29": {
+    "n_end": 110,
+    "n_mid": 129,
+    "share_end": 0.4602510460251046,
+    "med_end": 501.5,
+    "med_mid": 411.0
+   }
+  },
+  "flies_end_longer": 6,
+  "flies_compared": 11
+ }
+}
