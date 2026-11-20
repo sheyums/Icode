@@ -84,6 +84,35 @@ measured, so plan on the pilot yields.
 - **Food end and siesta position:** with item 2 recorded, A1 can become a three-way comparison: food end vs plug
   end vs middle.
 
+## 3b. Food and place layer: hypotheses to pre-specify before the data (added 2026-11-20)
+
+The model keeps place as an OBSERVED layer coupled to sleep/wake (not as hidden states: D1). With orientation recorded,
+each 0.4-s reading maps to AT FOOD (0 in a correctly oriented tube), FOOD END (beams 1-2), MIDDLE, PLUG END (beams 15-16).
+Hypotheses (each needs its own PRESPEC entry, written before the data are looked at):
+
+- **F1 Postprandial sleep.** A wake bout that contains a food visit (any entry into 0) ends sooner after that visit than a
+  matched wake bout without one; sleep that follows a food visit is longer. Basis: feeding promotes sleep in flies
+  (Murphy et al. 2016, *eLife* 5:e19334). Test: landmark / time-varying covariate in the wake-bout hazard, strata fly x
+  time of day (as Q1, P2).
+- **F2 Where flies sleep.** By day, sleep happens at the FOOD end more than at the PLUG end (the user's prior; A1 found
+  "ends" by day without knowing which). Within-fly contrast of sleep-sample shares, food end vs plug end.
+- **F3 Sleep length by place.** P2 (pilot, PRELIMINARY): sleep bouts at the tube ends last longer, by day, and the effect sat
+  at the beam-16 end. With orientation known: is it the food end, the plug end, or neither (detection)?
+- **F4 Feeding rhythm.** Food visits (entries into 0, time at 0) follow a daily rhythm with a peak around the morning
+  (Ro et al. 2014, *PLoS ONE* 9:e101107; clock control of feeding: Xu et al. 2008, *Cell Metab* 8:289); the T1-C1-type
+  rotation test applied to food-visit rates.
+- **F5 Ageing and death.** Time at the food changes with age and in the last week of life (two pilot flies spent ~35% of
+  their last full week at 0: descriptive).
+- **Pilot hypotheses to re-test as they are:** night-onset peak flattening with age (O1-B), Q at the start of a wake bout
+  shortens it (Q1, the lean), within-fly time scales (O1-C), P2.
+
+Hardware and protocol for the place layer:
+- **Beam 15 is dead in the pilot monitor.** It widens the 14-16 stretch, where a fly can move without a reading change,
+  and is a candidate explanation for P2. Check every beam before the run (a fly or a probe walked through each tube), and
+  avoid monitors with dead beams, or record which ones.
+- **Mount tubes consistently (food next to beam 1), record any exception, photograph each monitor at loading and at
+  every transfer** (also in section 2).
+
 ## 4. Compute budget for the model work (Track B)
 
 The B1 synthetic gate takes about 15-18 core-hours per 14-day fly on the user's PC. Most of that goes on the
@@ -100,7 +129,8 @@ Either way, decide this before the new data arrive.
 - [ ] Test weeks and primary sets for A1, A4 and A5 M1 (replication of the pilot tests, same code).
 - [ ] T1-C1 on the new LD weeks, plus the DD segment as its own pre-specified test.
 - [ ] A2b on the DD segment (direction question).
-- [ ] Food-end split of A1.
+- [ ] Food-end split of A1 (= F2), and F1, F3-F5 from section 3b.
+- [ ] Re-tests of the pilot hypotheses O1-B, O1-C, Q1, P2.
 - [ ] LoadingCheck thresholds (frozen) and the re-seat rule.
 - [ ] Transfer-exclusion window.
 - [ ] Track B procedure, chosen after the B1 verdict.
