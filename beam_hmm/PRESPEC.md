@@ -853,3 +853,29 @@ Caveat     A within-fly-phase mixture is necessary, not sufficient, for hidden k
            WITHIN a phase (T1-C1) and week-to-week change still mix inside a unit. A single time scale per unit would mean
            the O1-A mixtures are heterogeneity, and the model should carry per-fly and per-phase rates instead of hidden
            sub-kinds. With 50-260 bouts per unit, a small third component is not detectable.
+
+### 2026-11-20  P2 — does where a fly falls asleep go with how long it sleeps? (orientation-free place; user go-ahead)
+
+Why: place enters the model as an OBSERVED layer coupled to the sleep/wake layer (not as hidden states: D1). The food
+end is unknown in the pilot (mixed, unrecorded orientation), so this tests the orientation-free version: tube END vs
+MIDDLE. A1 showed WHERE flies sleep (ends by day); O1-C showed bout lengths differ several-fold between flies and by
+phase; the two have not been combined. Disclosure: the O1-A bout file and per-fly medians have been viewed; durations by
+place have not.
+Data       The O1-A sleep bouts (weeks 2-3, 11 flies, fully observed, xmin 300 s). Place of a bout = the most frequent
+           reading among the 0.4-s samples inside the bout (after spike filter + P1-C repair; the fly does not move
+           during a sleep bout except bridged 1-s blips). END = 0, 1, 2, 14, 15, 16; MIDDLE = 3-13 (A1 / D1 zones).
+Statistic  Stratified log-rank Z, END vs MIDDLE, on bout duration T (all bouts at risk from 300 s; no censoring);
+           strata = fly x start-ZT block (6 blocks of 4 h), so fly differences and time of day (incl. the siesta, where
+           A1 found end-resting) are held fixed. Code: q1.logrank_perm.
+Null       Within-stratum permutation of the place labels, 9999 permutations, SeedSequence([13001]); two-sided
+           p = (1 + #{|Z_perm| >= |Z_obs|}) / 10000.
+Decision   "Sleep-bout duration depends on where the fly sleeps (end vs middle)" SUPPORTED iff p < 0.05; direction from Z
+           and per-group medians. PRELIMINARY either way (pilot).
+Secondary  (descriptive) the same within light and within dark separately (same strata, own permutations, seeds
+           [13002], [13003]); share of sleep bouts at END per fly and phase; per-fly medians END vs MIDDLE (flies with
+           >= 5 bouts in each); BEYOND1 (position 0) bouts counted separately (meaning differs by orientation).
+           WAKE bouts by the place at wake start (= place of the preceding sleep bout), same statistic, seed [13004].
+Check      As Q1: random place labels (Bernoulli at the observed END share), 200 draws, 999 permutations each; KS p > 0.01
+           required before the real run.
+Caveat     END pools the food end and the plug end in unknown proportions per fly, so a null here does not say place is
+           irrelevant, and a difference cannot be read as "near food". That is the repeat experiment's question.
